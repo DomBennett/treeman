@@ -16,3 +16,38 @@ adding and removing elements to a list. This also allows manipulations to be rea
 * Fast (vectorised or recursive)
 * Tested
 * Simple
+
+## Quick guide
+```{R}
+# install
+library(devtools)
+install_github('dombennett/treeman')
+# working with the TreeMan class
+library(treeman)
+?TreeMan
+tree <- randTree(10)
+print(tree)
+```
+```{bash}
+Tree (TreeMan Object):
+  -- [10] tips
+  -- [9] internal nodes
+  -- Binary
+  -- Age [3.49]
+  -- PD [7.66]
+  -- Not ultrametric (with extinct tips)
+  -- Root node is ["n1"]
+```
+```{R}
+# simple visualization
+viz(tree)
+```
+![tree-viz](https://raw.githubusercontent.com/DomBennett/treeman/master/other/viz-tree.jpeg)
+
+(See [ggtree](https://github.com/GuangchuangYu/ggtree) for more advanced plotting.)
+
+## Status
+In development
+
+## Author
+D.J. Bennett
