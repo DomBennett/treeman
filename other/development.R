@@ -1,10 +1,7 @@
 # TODO:
-# -- read newick
-# -- get functions
-# -- map and pin functions
-
+# -- read/write newick
+# -- get functions (esp. parent, postnodes)
 
 library (treeman)
 tree <- randTree (10)
 viz (tree)
-viz

@@ -78,3 +78,5 @@ randTree <- function (n) {
   tree <- new ('TreeMan', nodelist=nodelist, root='n1')
   .update (tree)
 }
+
+#TODO balancedTree
