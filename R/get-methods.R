@@ -116,10 +116,25 @@ getNodesPrenodes <- function(tree, nodes='all') {
 #' @export
 #' @examples
 
-getNodePostnodes <- function() {
-  #TODO
+getNodePostnodes <- function(tree, node) {
+  .get <- function(nds, pstnds) {
+    new_nds <- c()
+    for(nd in nds) {
+      new_nds <- c(new_nds, tree@nodelist[[nd]]$postnode)
+    }
+    pstnds <- c(pstnds, new_nds)
+    if(length(new_nds) > 0) {
+      pstnds <- .get(nds=new_nds, pstnds=pstnds)
+    }
+    pstnds
+  }
+  .get(nds=node, pstnds=NULL)
 }
 
-getNodesPostnodes <- function() {
-  #TODO
+getNodesPostnodes <- function(tree, nodes='all') {
+  if(nodes[1] == 'all') {
+    nodes <- c(tree@nodes, tree@tips)
+    nodes <- nodes[which(nodes != tree@root)]
+  }
+  sapply(nodes, getNodePostnodes, tree=tree)
 }
