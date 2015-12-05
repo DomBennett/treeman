@@ -76,7 +76,7 @@ setMethod ('viz', 'TreeMan',
   }
   # start with root node
   # TODO: handle unrooted tree
-  pnts <- data.frame (node=tree@root, x=0, y=0)
+  pnts <- data.frame (node=tree@root, x=0, y=0, stringsAsFactors=FALSE)
   root_node <- tree@nodelist[[tree@root]]
   pnts <- get_pnts (root_node, y=0, pnts=pnts)
   # add 10% to min y limit for node label
