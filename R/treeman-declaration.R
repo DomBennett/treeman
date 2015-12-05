@@ -88,7 +88,7 @@ setClass ('TreeMan', representation=representation (
 # Manip methods
 setMethod ('[[', c ('TreeMan', 'character', 'missing'),
            function(x, i, j, ...) {
-             x@nodelist[[i]]
+             .newNode(x, i)
            })
 setGeneric ("tips<-", signature=c("x"),
             function (x, value) {
