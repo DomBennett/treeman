@@ -138,3 +138,26 @@ getNodesPostnodes <- function(tree, nodes='all') {
   }
   sapply(nodes, getNodePostnodes, tree=tree)
 }
+
+#' @name getSubtree
+#' @title 
+#' @description 
+#' @details 
+#' @param
+#' @seealso
+#' @export
+#' @examples
+
+getSubtree <- function(tree, node) {
+  pstnds <- getNodePostnodes(tree, node)
+  ndlst <- tree@nodelist[c(node, pstnds)]
+  nd_prdst <- ndlst[[node]]$predist
+  ndlst <- lapply(ndlst, function(x) {
+    x$predist <- x$predist - nd_prdst
+    x
+  })
+  ndlst[[node]]$prenode <- NULL
+  ndlst[[node]]$span <- 0
+  new_tree <- new('TreeMan', nodelist=ndlst, root=node)
+  treeman:::.update(new_tree)
+}
