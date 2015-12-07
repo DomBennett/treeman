@@ -3,12 +3,11 @@
 \alias{treeman}
 \docType{package}
 \title{
-What the package does (short line)
-~~ package title ~~
+Phylogenetic Tree Manipulation
 }
 \description{
-More about what it does (maybe more than one line)
-~~ A concise (1-5 lines) description of the package ~~
+Manipulate phylogenetic trees in R simply, intuitively and efficiently with
+a list-based tree structure.
 }
 \details{
 \tabular{ll}{
@@ -16,25 +15,24 @@ Package: \tab treeman\cr
 Type: \tab Package\cr
 Version: \tab 1.0\cr
 Date: \tab 2015-12-02\cr
-License: \tab What license is it under?\cr
+License: \tab GPL-2\cr
 }
-~~ An overview of how to use the package, including the most important functions ~~
+I will do this later.
 }
 \author{
-Who wrote it
+D.J. Bennett
 
-Maintainer: Who to complain to <yourfault@somewhere.net>
-~~ The author and/or maintainer of the package ~~
+Maintainer: D.J. Bennett <dominic.john.bennett@gmail.com>
 }
 \references{
-~~ Literature or other references for background information ~~
+No key references
 }
-~~ Optionally other standard keywords, one per line, from file KEYWORDS in the R documentation directory ~~
+phylogeny
+evolution
+macroevolution
+tree simulation
 \keyword{ package }
 \seealso{
-~~ Optional links to other man pages, e.g. ~~
-~~ \code{\link[<pkg>:<pkg>-package]{<pkg>}} ~~
 }
 \examples{
-~~ simple examples of the most important functions ~~
 }

@@ -1,11 +1,5 @@
-#' @name get_Children
-#' @title 
-#' @description 
-#' @details 
-#' @param
-#' @seealso
-#' @export
-#' @examples
+# TODO: sort documentation
+# @name get_Children
 
 getNodeChildren <- function(tree, node) {
   node <- tree@nodelist[[node]]
@@ -19,14 +13,7 @@ getNodesChildren <- function(tree, nodes='all') {
   sapply(nodes, getNodeChildren, tree=tree)
 }
 
-#' @name get_Age
-#' @title 
-#' @description 
-#' @details 
-#' @param
-#' @seealso
-#' @export
-#' @examples
+# @name get_Age
 #TODO: how to effectively handle unrooted trees, age has no meaning
 getNodeAge <- function(tree, node) {
   node <- tree@nodelist[[node]]
@@ -59,15 +46,7 @@ getEdgesAge <- function(tree, edges='all') {
   data.frame(edge=edges, age_1=age_1s, age_2=age_2s, row.names=NULL)
 }
 
-#' @name getParent
-#' @title 
-#' @description 
-#' @details 
-#' @param
-#' @seealso
-#' @export
-#' @examples
-
+# @name getParent
 getParent <- function(tree, nodes) {
   prnds <- getNodesPrenodes(tree, nodes)
   rf <- prnds[[1]]
@@ -79,15 +58,7 @@ getParent <- function(tree, nodes) {
   rf[mn_rnk]
 }
 
-#' @name get_Prenodes
-#' @title 
-#' @description 
-#' @details 
-#' @param
-#' @seealso
-#' @export
-#' @examples
-
+# @name get_Prenodes
 getNodePrenodes <- function(tree, node) {
   .get <- function(nd, prnds) {
     prnd <- tree@nodelist[[nd]]$prenode
@@ -107,15 +78,7 @@ getNodesPrenodes <- function(tree, nodes='all') {
   sapply(nodes, getNodePrenodes, tree=tree)
 }
 
-#' @name get_Postnodes
-#' @title 
-#' @description 
-#' @details 
-#' @param
-#' @seealso
-#' @export
-#' @examples
-
+# @name get_Postnodes
 getNodePostnodes <- function(tree, node) {
   .get <- function(nds, pstnds) {
     new_nds <- c()
@@ -139,15 +102,7 @@ getNodesPostnodes <- function(tree, nodes='all') {
   sapply(nodes, getNodePostnodes, tree=tree)
 }
 
-#' @name getSubtree
-#' @title 
-#' @description 
-#' @details 
-#' @param
-#' @seealso
-#' @export
-#' @examples
-
+# @name getSubtree
 getSubtree <- function(tree, node) {
   pstnds <- getNodePostnodes(tree, node)
   ndlst <- tree@nodelist[c(node, pstnds)]

@@ -66,9 +66,7 @@
 #' extant(tree)
 #' # Because all nodes are lists with metadata we can readily
 #' #  get specific information on nodes of interest
-#' node <- tree[['n2']]
-#' node$pd
-#' node$children  # etc ....
+#' print(tree[['n2']])
 
 .checkTreeMan <- function(object) {
   .check <- function(node) {
