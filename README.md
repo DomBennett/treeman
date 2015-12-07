@@ -1,4 +1,5 @@
 # treeman
+[![Build Status](https://travis-ci.org/DomBennett/treeman.svg)](https://travis-ci.org/DomBennett/treeman)
 
 An R package for manipulating phylogentic trees using a simple phylogenetic S4 class structure.
 
