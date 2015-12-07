@@ -16,7 +16,7 @@
 #'    \item \code{postnode}: IDs of the connecting nodes
 #'    \item \code{children}: descending tip IDs
 #'    \item \code{pd}: phylogenetic diversity represented by node
-#'    \item \code{predist}: prenode distance (distance to root if rooted or
+#'    \item \code{predist}: prenode distance(distance to root if rooted or
 #'    most distal tip if unrooted)
 #' }
 #' These data slots are updated whenever a node is modified, added or removed.
@@ -35,7 +35,7 @@
 #'   \item \code{plytms()}: is polytomous T/F
 #'   \item \code{extant()}: return extant tips
 #'   \item \code{extinct()}: return extinct tips
-#'   \item \code{setTol()}: set tolerance (default 1e-8)
+#'   \item \code{setTol()}: set tolerance(default 1e-8)
 #' }
 #' 
 #' See below in 'Examples' for these methods in use.
@@ -43,9 +43,9 @@
 #' \code{\link{randTree}}
 #' @exportClass TreeMan
 #' @examples
-#' library (treeman)
+#' library(treeman)
 #' # Generate random tree
-#' tree <- randTree (10)
+#' tree <- randTree(10)
 #' # Print to get basic stats
 #' print(tree)
 #' # Currently available methods
@@ -61,16 +61,43 @@
 #' plytms(tree)  # is polytomous?
 #' extant(tree)  # return all extant tip IDs
 #' extinct(tree)  # return all extinct tip IDs
-#' tree <- setTol (tree, 10)  # reset tolerance, default 1e-8
+#' tree <- setTol(tree, 10)  # reset tolerance, default 1e-8
 #' # now tol is higher more tips will be classed as extant
-#' extant (tree)
+#' extant(tree)
 #' # Because all nodes are lists with metadata we can readily
 #' #  get specific information on nodes of interest
 #' node <- tree[['n2']]
 #' node$pd
 #' node$children  # etc ....
-# TODO: create validity check
-setClass ('TreeMan', representation=representation (
+
+.checkTreeMan <- function(object) {
+  .check <- function(node) {
+    test_1 <- node$id %in% nodes
+    test_2 <- is.null(node$prenode) || (node$prenode %in% nodes)
+    test_3 <- is.null(node$prenode) || all(node$postnode %in% nodes)
+    if(test_1 & test_2 & test_3) {
+      return(TRUE)
+    }
+    FALSE
+  }
+  nodes <- names(object@nodelist)
+  node_checks <- unlist(lapply(object@nodelist, .check))
+  if(!all(node_checks)) {
+    msg <- 'These nodes are invalid:\n'
+    bad <- which(!node_checks)
+    for(i in bad[-length(bad)]) {
+      msg <- paste0(msg, nodes[i], ', ')
+    }
+    msg <- paste0(msg, nodes[bad[length(bad)]], '\n\n')
+    msg <- paste0(msg, 'They may be pointing to non-existent nodes in tree 
+or their ID may not be a named element in `@nodelist`')
+    cat(msg)
+    return(FALSE)
+  }
+  TRUE
+}
+
+setClass('TreeMan', representation=representation(
   nodelist='list',       # list of Node objects
   nodes='vector',        # vector of Node ids that are internal nodes
   tips='vector',         # vector of Node ids that are tips
@@ -83,193 +110,200 @@ setClass ('TreeMan', representation=representation (
   plytms='logical',      # logical, is tree bifurcating
   tol='numeric',         # numeric of tolerance for determining extant
   root='character'),     # character of Node id of root
-  prototype=prototype (tol=1e-8))
+  prototype=prototype(tol=1e-8), validity=.checkTreeMan)
 
 # Manip methods
-setMethod ('[[', c ('TreeMan', 'character', 'missing'),
+setMethod('[[', c('TreeMan', 'character', 'missing'),
            function(x, i, j, ...) {
+             if(!i %in% names(x@nodelist)) {
+               stop(paste0(i, ' not in tree'))
+             }
              .newNode(x, i)
            })
-setGeneric ("tips<-", signature=c("x"),
-            function (x, value) {
+setGeneric("tips<-", signature=c("x"),
+            function(x, value) {
               standardGeneric("tips<-")
             })
-setReplaceMethod ("tips", "TreeMan",
-                  function (x, value) {
-                    if (any (duplicated (value))) {
-                      stop ('Tip names must be unique')
+setReplaceMethod("tips", "TreeMan",
+                  function(x, value) {
+                    if(any(duplicated(value))) {
+                      stop('Tip names must be unique')
                     }
                     old_tips <- x@tips
-                    n <- length (old_tips)
-                    if (n != length (value)) {
-                      stop ('Incorrect number of replacement tips')
+                    n <- length(old_tips)
+                    if(n != length(value)) {
+                      stop('Incorrect number of replacement tips')
                     }
-                    mis <- match (old_tips, names (x@nodelist))
-                    for (i in 1:n) {
+                    mis <- match(old_tips, names(x@nodelist))
+                    for(i in 1:n) {
                       x@nodelist[[old_tips[i]]]$id <- value[i]
                     }
-                    names (x@nodelist)[mis] <- value
-                    .update (x)
+                    names(x@nodelist)[mis] <- value
+                    .update(x)
                   })
-setGeneric ("nodes<-", signature=c("x"),
-            function (x, value) {
+setGeneric("nodes<-", signature=c("x"),
+            function(x, value) {
               standardGeneric("nodes<-")
             })
-setReplaceMethod ("nodes", "TreeMan",
-                  function (x, value) {
-                    if (any (duplicated (value))) {
-                      stop ('Node names must be unique')
+setReplaceMethod("nodes", "TreeMan",
+                  function(x, value) {
+                    if(any(duplicated(value))) {
+                      stop('Node names must be unique')
                     }
                     old_nodes <- x@nodes
-                    n <- length (old_nodes)
-                    if (n != length (value)) {
-                      stop ('Incorrect number of replacement nodes')
-                    }
-                    mis <- match (old_nodes, names (x@nodelist))
-                    for (i in 1:n) {
+                    n <- length(old_nodes)
+                    mis <- match(old_nodes, names(x@nodelist))
+                    for(i in 1:n) {
                       x@nodelist[[old_nodes[i]]]$id <- value[i]
+                      if(x@root == old_nodes[i]) {
+                        x@root <- value[i]
+                      }
                     }
-                    names (x@nodelist)[mis] <- value
-                    .update (x)
+                    names(x@nodelist)[mis] <- value
+                    .update(x)
                   })
-setGeneric ('.update', signature=c('x'),
+setGeneric('.update', signature=c('x'),
             function(x) {
-              genericFunction ('.update')
+              genericFunction('.update')
             })
-setMethod ('.update', 'TreeMan',
-           function (x) {
-             with_pstndes <- sapply (x@nodelist,
-                                     function (x) length (x$postnode) == 0)
-             x@tips <- names (with_pstndes)[with_pstndes]
-             x@nodes <- names (with_pstndes)[!with_pstndes]
-             x@brnchlngth <- all (sapply (x@nodelist, function (x) length (x$span) > 0))
-             if (x@brnchlngth) {
-               if (length (x@root) > 0) {
-                 x@age <- max (sapply (x@nodelist, function (x) x$predist))
-                 extant_is <- unlist (sapply (x@tips, function (i) {
-                   (x@age - x@nodelist[[i]]$predist) <= x@tol}))
-                 x@extant <- names (extant_is)[extant_is]
+setMethod('.update', 'TreeMan',
+           function(x) {
+             with_pstndes <- sapply(x@nodelist,
+                                     function(x) length(x$postnode) == 0)
+             x@tips <- names(with_pstndes)[with_pstndes]
+             x@nodes <- names(with_pstndes)[!with_pstndes]
+             x@brnchlngth <- all(sapply(x@nodelist, function(x) length(x$span) > 0))
+             if(x@brnchlngth) {
+               if(length(x@root) > 0) {
+                 x@age <- max(sapply(x@nodelist, function(x) x$predist))
+                 extant_is <- unlist(sapply(x@tips, function(i) {
+                  (x@age - x@nodelist[[i]]$predist) <= x@tol}))
+                 x@extant <- names(extant_is)[extant_is]
                  x@extinct <- x@tips[!x@tips %in% x@extant]
-                 x@ultrmtrc <- all (x@tips %in% extant (x))
+                 x@ultrmtrc <- all(x@tips %in% extant(x))
                }
                x@pd <- x@nodelist[[x@root]]$pd
+             } else {
+               x@age <- x@pd <- numeric()
+               x@extant <- x@extinct <- vector()
+               x@ultrmtrc <- logical()
              }
-             x@plytms <- any (sapply (x@nodelist, function (x) length (x$postnode) > 2))
-             initialize (x)
+             x@plytms <- any(sapply(x@nodelist, function(x) length(x$postnode) > 2))
+             initialize(x)
            })
 
 # Accessor method
-setGeneric ('setTol', signature=c('x', 'n'),
+setGeneric('setTol', signature=c('x', 'n'),
             function(x, n) {
-              genericFunction ('setTol')
+              genericFunction('setTol')
             })
-setMethod ('setTol', c ('TreeMan', 'numeric'),
+setMethod('setTol', c('TreeMan', 'numeric'),
            function(x, n){
              x@tol <- n
-             .update (x)
+             .update(x)
            })
 
-# Info methods (user friendly)
-setGeneric ('tips', signature=c('x'),
+# Info methods(user friendly)
+setGeneric('tips', signature=c('x'),
             function(x) {
-              genericFunction ('tips')
+              genericFunction('tips')
             })
-setMethod ('tips', 'TreeMan',
+setMethod('tips', 'TreeMan',
            function(x){
              x@tips
            })
-setGeneric ('nodes', signature=c('x'),
+setGeneric('nodes', signature=c('x'),
             function(x) {
-              genericFunction ('nodes')
+              genericFunction('nodes')
             })
-setMethod ('nodes', 'TreeMan',
+setMethod('nodes', 'TreeMan',
            function(x){
              x@nodes
            })
-setGeneric ('nTips', signature=c('x'),
+setGeneric('nTips', signature=c('x'),
             function(x) {
-              genericFunction ('nTips')
+              genericFunction('nTips')
             })
-setMethod ('nTips', 'TreeMan',
+setMethod('nTips', 'TreeMan',
            function(x){
-             length (x@tips)
+             length(x@tips)
            })
-setGeneric ('plytms', signature=c('x'),
+setGeneric('plytms', signature=c('x'),
             function(x) {
-              genericFunction ('plytms')
+              genericFunction('plytms')
             }) 
-setMethod ('plytms', 'TreeMan',
+setMethod('plytms', 'TreeMan',
            function(x) {
              x@plytms
            })
-setGeneric ('ultrmtrc', signature=c('x'),
+setGeneric('ultrmtrc', signature=c('x'),
             function(x) {
-              genericFunction ('ultrmtrc')
+              genericFunction('ultrmtrc')
             }) 
-setMethod ('ultrmtrc', 'TreeMan',
+setMethod('ultrmtrc', 'TreeMan',
            function(x) {
              x@ultrmtrc
            })
-setGeneric ('extant', signature=c('x'),
+setGeneric('extant', signature=c('x'),
             function(x) {
-              genericFunction ('extant')
+              genericFunction('extant')
             }) 
-setMethod ('extant', 'TreeMan',
+setMethod('extant', 'TreeMan',
            function(x) {
-             if (length (x@extant) == 0) {
-               return (NULL)
+             if(length(x@extant) == 0) {
+               return(NULL)
              }
              x@extant
            })
-setGeneric ('extinct', signature=c('x'),
+setGeneric('extinct', signature=c('x'),
             function(x) {
-              genericFunction ('extinct')
+              genericFunction('extinct')
             }) 
-setMethod ('extinct', 'TreeMan',
+setMethod('extinct', 'TreeMan',
            function(x) {
-             if (length (x@extinct) == 0) {
-               return (NULL)
+             if(length(x@extinct) == 0) {
+               return(NULL)
              }
              x@extinct
            })
-setGeneric ('nNodes', signature=c('x'),
+setGeneric('nNodes', signature=c('x'),
             function(x) {
-              genericFunction ('nNodes')
+              genericFunction('nNodes')
             })
-setMethod ('nNodes', 'TreeMan',
+setMethod('nNodes', 'TreeMan',
            function(x){
-             length (x@nodes)
+             length(x@nodes)
            })
-setGeneric ('rootNode', signature=c('x'),
+setGeneric('rootNode', signature=c('x'),
             function(x) {
-              genericFunction ('rootNode')
+              genericFunction('rootNode')
             })
-setMethod ('rootNode', 'TreeMan',
+setMethod('rootNode', 'TreeMan',
            function(x) {
-             if (length (x@root) == 0) {
-               return (NA)
+             if(length(x@root) == 0) {
+               return(NA)
              }
              x@root
            })
-setGeneric ('age', signature=c('x'),
+setGeneric('age', signature=c('x'),
             function(x) {
-              genericFunction ('age')
+              genericFunction('age')
             })
-setMethod ('age', 'TreeMan',
+setMethod('age', 'TreeMan',
            function(x){
-             if (length (x@age) == 0) {
-               return (NA)
+             if(length(x@age) == 0) {
+               return(NA)
              }
              x@age
            })
-setGeneric ('pd', signature=c('x'),
+setGeneric('pd', signature=c('x'),
             function(x) {
-              genericFunction ('pd')
+              genericFunction('pd')
             })
-setMethod ('pd', 'TreeMan',
+setMethod('pd', 'TreeMan',
            function(x){
-             if (length (x@pd) == 0) {
-               return (NA)
+             if(length(x@pd) == 0) {
+               return(NA)
              }
              x@pd
            })
