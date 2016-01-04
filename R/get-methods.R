@@ -58,6 +58,19 @@ getParent <- function(tree, nodes) {
   rf[mn_rnk]
 }
 
+# @name getPath
+getPath <- function(tree, node_1, node_2) {
+  # find parent between two nodes
+  # get all prenodes to parent
+  # return vector of prenodes from node_1 to node_2
+  prenodes_1 <- getNodePrenodes(tree, node_1)
+  prenodes_2 <- getNodePrenodes(tree, node_2)
+  parent <- prenodes_1[which(prenodes_1 %in% prenodes_2)[1]]
+  path_1 <- c(node_1 ,prenodes_1[!prenodes_1 %in% prenodes_2])
+  path_2 <- c(prenodes_2[!prenodes_2 %in% prenodes_1], node_2)
+  c(path_1, parent, path_2)
+}
+
 # @name get_Prenodes
 getNodePrenodes <- function(tree, node) {
   .get <- function(nd, prnds) {
