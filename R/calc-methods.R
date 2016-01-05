@@ -1,25 +1,29 @@
-# TODO: calc evolutionary distinctness, calc imbalance, calc tree dists
+# TODO: calc imbalance, calc tree dists
 
-calcPhyDiv <- function(tree, nodes) {
-  #TODO
-  # 1. Get parent
-  # 2. Get postnodes
-  # 3. sum the branch lengths of the postnodes
+calcPhyDiv <- function(tree, tips) {
+  prnds <- unlist(getNodesPrenodes(tree, tips))
+  counts <- table(prnds)
+  prnds <- names(counts)[counts < length(tips)]
+  spans <- unlist(lapply(tree@nodelist[c(tips, prnds)],
+                         function(x) x$span))
+  sum(spans)
 }
 
-calcFairProp <- function(tree, tips='all') {
+calcFairProp <- function(tree, tips) {
   .share <- function(node) {
     span <- tree@nodelist[[node]]$span
-    nchildren <- length(getNodeChildren(tree, node))
-    span/nchildren
+    children <- getNodeChildren(tree, node)
+    if(!is.null(children)) {
+      n <- length(children)
+    } else {
+      n <- 1
+    }
+    span/n
   }
-  .calc <- function(node) {
-    prnds <- getNodePrenodes(tree, node)
-    shares <- unlist(sapply(prnds, .share))
+  .calc <- function(tip) {
+    nodes <- c(tip, getNodePrenodes(tree, tip))
+    shares <- unlist(sapply(nodes, .share))
     sum(shares)
-  }
-  if(tips == 'all') {
-    tips <- tree@tips
   }
   sapply(tips, .calc)
 }
