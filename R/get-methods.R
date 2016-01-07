@@ -29,9 +29,9 @@ getNodesAge <- function(tree, nodes='all') {
 }
 
 getEdgeAge <- function(tree, edge) {
-  age_1 <- getNodeAge(tree, tree@nodelist[[edge]]$prenode)
-  age_2 <- getNodeAge(tree, edge)
-  data.frame(edge, age_1, age_2)
+  max <- getNodeAge(tree, tree@nodelist[[edge]]$prenode)
+  min <- getNodeAge(tree, edge)
+  data.frame(edge, max, min)
 }
 
 getEdgesAge <- function(tree, edges='all') {
@@ -39,11 +39,11 @@ getEdgesAge <- function(tree, edges='all') {
     edges <- c(tree@nodes, tree@tips)
     edges <- edges[which(edges != tree@root)]
   }
-  age_1s <- sapply(edges, function(tree, edge) {
+  maxs <- sapply(edges, function(tree, edge) {
     getNodeAge(tree, tree@nodelist[[edge]]$prenode)
   }, tree=tree)
-  age_2s <- sapply(edges, getNodeAge, tree=tree)
-  data.frame(edge=edges, age_1=age_1s, age_2=age_2s, row.names=NULL)
+  mins <- sapply(edges, getNodeAge, tree=tree)
+  data.frame(edge=edges, max=maxs, min=mins, row.names=NULL)
 }
 
 # @name getParent
