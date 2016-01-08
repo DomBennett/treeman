@@ -23,7 +23,7 @@ addTip <- function(tree, id, sister, start, end,
   node$prenode <- sister$prenode
   node$postnode <- node$children <- c(tip$id, sister$id)
   tip$pd <- 0
-  tip$predist <- sister$predist + tip$span
+  tip$predist <- node$predist + tip$span
   tip$prenode <- node$id
   tree@nodelist[[tip$id]] <- tip
   tree@nodelist[[node$id]] <- node
