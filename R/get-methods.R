@@ -104,8 +104,6 @@ getNodesLineage <- function(tree, nodes) {
   sapply(nodes, getNodeLineage, tree=tree)
 }
 
-getNodesLineage(tree, tips(tree))
-
 # @name get_Postnodes
 getNodePostnodes <- function(tree, node) {
   .get <- function(nds, pstnds) {
