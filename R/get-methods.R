@@ -91,6 +91,21 @@ getNodesPrenodes <- function(tree, nodes='all') {
   sapply(nodes, getNodePrenodes, tree=tree)
 }
 
+# @name get_Lineage
+getNodeLineage <- function(tree, node) {
+  prnds <- getNodePrenodes(tree, node)
+  lineage <- c(tree@nodelist[[node]]$taxonym,
+               sapply(prnds, function(n) tree@nodelist[[n]]$taxonym))
+  lineage <- lineage[length(lineage):1]
+  unique(lineage)
+}
+
+getNodesLineage <- function(tree, nodes) {
+  sapply(nodes, getNodeLineage, tree=tree)
+}
+
+getNodesLineage(tree, tips(tree))
+
 # @name get_Postnodes
 getNodePostnodes <- function(tree, node) {
   .get <- function(nds, pstnds) {
