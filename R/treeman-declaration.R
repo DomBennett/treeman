@@ -103,9 +103,7 @@ valid_node_slots <- c('id', 'taxonym', 'span', 'prenode',
       msg <- paste0(msg, nodes[i], ', ')
     }
     msg <- paste0(msg, nodes[bad[length(bad)]], '\n\n')
-    msg <- paste0(msg, 'They may be pointing to non-existent nodes in tree, 
- their ID may not be a named element in `@nodelist` or they may have missing essential
- node elements.')
+    msg <- paste0(msg, 'They may be pointing to non-existent nodes in tree, their ID may not be a named element in `@nodelist` or they may have missing essential node elements.')
     cat(msg)
     return(FALSE)
   }
