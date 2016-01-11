@@ -3,20 +3,43 @@ library(treeman)
 library(testthat)
 
 # TEST FUNCTIONS
+randomLineage <- function(n, tree) {
+  # add random monophyletic taxonyms to tree
+  addLname <- function(node, tree) {
+    tree@nodelist[[node]]$taxonym <- lname
+    pnodes <- tree@nodelist[[node]]$postnode
+    if(!is.null(pnodes)) {
+      for(pnode in pnodes) {
+        tree <- addLname(pnode, tree)
+      }
+    }
+    tree
+  }
+  nodes <- tree@nodes
+  nodes <- nodes[nodes != tree@root]
+  lname <- paste0('l', 1)
+  tree <- addLname(tree@root, tree)
+  for(i in 2:(n-1)) {
+    lname <- paste0('l', i)
+    node <- sample(nodes, 1)
+    tree <- addLname(node, tree)
+  }
+  tree
+}
 randomTips <- function(n, tree) {
-  # generate random tips for pinning
+  # generate random tips with lineages for pinning
   lineages <- ends <- tip_ids <- rep(NA, n)
   nodes <- names(tree@nodelist)
   nodes <- nodes[nodes != 'n1']
   for (i in 1:n) {
     random_node <- sample(nodes, 1)
-    lineages[i] <- list(c(getNodePrenodes(tree, random_node), random_node))
-                        ends[i] <- runif(max=tree@age, min=0, n=1)
-                        tip_ids[i] <- paste0('new_', i)
+    l <- c(getNodeLineage(tree, random_node),
+           paste0('new_l', i))
+    lineages[i] <- list(l)
+    ends[i] <- runif(max=tree@age, min=0, n=1)
+    tip_ids[i] <- paste0('new_', i)
   }
-  lineages <<- lineages
-  ends <<- ends
-  tip_ids <<- tip_ids
+  list("l"=lineages, "e"=ends, "t"=tip_ids)
 }
 
 # RUNNING
@@ -36,6 +59,7 @@ test_that('addTip() works', {
   tree <- addTip(tree, id='new_tip', sister=sister, start=start, end=end)
   #viz(tree)
   # test if successful
+  expect_that(validObject(tree), is_true())
   expect_that(tree@plytms, is_false())
   expect_that(tree@age, equals(age_before))
   expect_that(nTips(tree), equals(ntips_before + 1))
@@ -43,17 +67,16 @@ test_that('addTip() works', {
 })
 
 test_that('pinTip() and pinTips() work', {
-  tree <- randTree(5)
+  tree <- randTree(10)
+  tree <- randomLineage(5, tree)
   pd_before <- tree@pd
   age_before <- tree@age
-  lineages <- ends <- tip_ids <- NULL
-  randomTips(2, tree)
-  tree <- pinTips(tree, tip_ids, lineages, ends)
-  test_that(nTips(tree), equals(20))
-  test_that(pd_before, is_less_than(tree@pd))
-  test_that(age_before, equals(tree@age))
+  rdata <- randomTips(2, tree)
+  tree <- pinTips(tree, tip_ids=rdata[["t"]],
+                  lineages=rdata[["l"]],
+                  ends=rdata[["e"]])
+  expect_that(validObject(tree), is_true())
+  expect_that(nTips(tree), equals(12))
+  expect_that(pd_before, is_less_than(tree@pd))
+  expect_that(age_before, equals(tree@age))
 })
-
-viz(tree)
-tree_1 <- pinTip(tree, tip_id=tip_ids[1], lineage=lineages[[1]],
-                 end=ends[1])
