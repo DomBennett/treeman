@@ -11,6 +11,7 @@
 #' Each node within the \code{TreeMan} \code{nodelist} contains the following data slots:
 #' \itemize{
 #'    \item \code{id}: character string for the node ID
+#'    \item \code{taxonym}: name of taxonomic clade (optional)
 #'    \item \code{span}: length of the preceding branch
 #'    \item \code{prenode}: ID of the preceding node
 #'    \item \code{postnode}: IDs of the connecting nodes
@@ -68,8 +69,23 @@
 #' #  get specific information on nodes of interest
 #' print(tree[['n2']])
 
+essential_node_slots <- c('id')
+valid_node_slots <- c('id', 'taxonym', 'span', 'prenode',
+                      'postnode', 'children', 'predist', 'pd')
+
 .checkTreeMan <- function(object) {
   .check <- function(node) {
+    if(!all(essential_node_slots %in% names(node))) {
+      return(FALSE)
+    }
+    if(!all(names(node) %in% valid_node_slots)) {
+      invlds <- names(node)[!names(node) %in% valid_node_slots]
+      invlds <- paste(invlds, collapse="`, `")
+      invlds <- paste0('[`', invlds, '`]')
+      warning(paste0('Node [', node$id,
+                     '] contains the following invalid node slots:\n',
+                     invlds))
+    }
     test_1 <- node$id %in% nodes
     test_2 <- is.null(node$prenode) || (node$prenode %in% nodes)
     test_3 <- is.null(node$prenode) || all(node$postnode %in% nodes)
@@ -87,8 +103,9 @@
       msg <- paste0(msg, nodes[i], ', ')
     }
     msg <- paste0(msg, nodes[bad[length(bad)]], '\n\n')
-    msg <- paste0(msg, 'They may be pointing to non-existent nodes in tree 
-or their ID may not be a named element in `@nodelist`')
+    msg <- paste0(msg, 'They may be pointing to non-existent nodes in tree, 
+ their ID may not be a named element in `@nodelist` or they may have missing essential
+ node elements.')
     cat(msg)
     return(FALSE)
   }
