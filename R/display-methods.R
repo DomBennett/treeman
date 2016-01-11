@@ -74,8 +74,11 @@ setMethod ('viz', 'TreeMan',
              pnts <- data.frame (node=tree@root, x=0, y=tree@pd, stringsAsFactors=FALSE)
              root_node <- tree@nodelist[[tree@root]]
              pnts <- get_pnts (root_node, y=tree@pd, pnts=pnts)
-             # add 20% to min y limit for node label
-             y_lmts <- c (min(pnts$y) - (min(pnts$y)*.2), max(pnts$y))
+             # add 10% to min y limit for node label
+             min_y <- abs(min(pnts$y))
+             min_y <- min_y + (min_y*.1)
+             min_y <- ifelse(min(pnts$y) > 0, min_y, -1*min_y)
+             y_lmts <- c (min_y, max(pnts$y))
              plot.default (x=pnts$x, y=pnts$y, col='black', pch=19, yaxt='n', ylab='',
                            xlab='', bty='n', ylim=y_lmts)
              if(taxonyms) {
