@@ -45,12 +45,12 @@ setMethod ('print', c('x'='TreeMan'),
              }
              cat (msg)
            })
-setGeneric ("viz", signature=c("tree"),
-            function (tree) {
+setGeneric ("viz", signature=c("tree", "taxonyms"),
+            function (tree, taxonyms=FALSE) {
               standardGeneric("viz")
             })
 setMethod ('viz', 'TreeMan',
-           function(tree){
+           function(tree, taxonyms){
              get_pnts <- function (node, y, pnts) {
                pstnds <- node$postnode
                low_y_diff <- -node$pd/2
@@ -74,11 +74,17 @@ setMethod ('viz', 'TreeMan',
              pnts <- data.frame (node=tree@root, x=0, y=tree@pd, stringsAsFactors=FALSE)
              root_node <- tree@nodelist[[tree@root]]
              pnts <- get_pnts (root_node, y=tree@pd, pnts=pnts)
-             # add 10% to min y limit for node label
-             y_lmts <- c (min(pnts$y) + (min(pnts$y)*.1), max(pnts$y))
+             # add 20% to min y limit for node label
+             y_lmts <- c (min(pnts$y) - (min(pnts$y)*.2), max(pnts$y))
              plot.default (x=pnts$x, y=pnts$y, col='black', pch=19, yaxt='n', ylab='',
                            xlab='', bty='n', ylim=y_lmts)
-             text (x=pnts$x, y=pnts$y, labels=pnts$node, pos=1)
+             if(taxonyms) {
+               text (x=pnts$x, y=pnts$y,
+                     labels=sapply(pnts$node, function(n) tree@nodelist[[n]]$taxonym),
+                     pos=1)
+             } else {
+               text (x=pnts$x, y=pnts$y, labels=pnts$node, pos=1)
+             }
              # draw lines
              for (i in 2:nrow (pnts)) {
                prenode <- tree@nodelist[[pnts$node[i]]]$prenode
