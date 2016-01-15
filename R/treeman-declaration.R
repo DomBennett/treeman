@@ -133,6 +133,24 @@ setMethod('[[', c('TreeMan', 'character', 'missing'),
              }
              .newNode(x, i)
            })
+.rename <- function(x, old, nw) {
+  .run <-function(nd) {
+    .rplc <- function(slt) {
+      if(any(nd[[slt]] %in% old)) {
+        mtchs <- match(nd[[slt]], old)
+        nd[[slt]] <- nw[mtchs]
+      }
+      nd
+    }
+    nd <- .rplc("id")
+    nd <- .rplc("postnode")
+    nd <- .rplc("prenode")
+    nd <- .rplc("children")
+    nd
+  }
+  x@nodelist <- lapply(x@nodelist, .run)
+  x
+}
 setGeneric("tips<-", signature=c("x"),
             function(x, value) {
               standardGeneric("tips<-")
@@ -147,12 +165,10 @@ setReplaceMethod("tips", "TreeMan",
                     if(n != length(value)) {
                       stop('Incorrect number of replacement tips')
                     }
+                    x <- .rename(x, old_tips, value)
                     mis <- match(old_tips, names(x@nodelist))
-                    for(i in 1:n) {
-                      x@nodelist[[old_tips[i]]]$id <- value[i]
-                    }
                     names(x@nodelist)[mis] <- value
-                    .update(x)
+                    x <- treeman:::.update(x)
                   })
 setGeneric("nodes<-", signature=c("x"),
             function(x, value) {
@@ -164,14 +180,11 @@ setReplaceMethod("nodes", "TreeMan",
                       stop('Node names must be unique')
                     }
                     old_nodes <- x@nodes
-                    n <- length(old_nodes)
+                    x <- .rename(x, old_nodes, value)
+                    x@root <- value[x@root == old_nodes]
+                    x@root == old_nodes[i]
+                    x@root <- value[i]
                     mis <- match(old_nodes, names(x@nodelist))
-                    for(i in 1:n) {
-                      x@nodelist[[old_nodes[i]]]$id <- value[i]
-                      if(x@root == old_nodes[i]) {
-                        x@root <- value[i]
-                      }
-                    }
                     names(x@nodelist)[mis] <- value
                     .update(x)
                   })
@@ -181,10 +194,10 @@ setGeneric('.update', signature=c('x'),
             })
 setMethod('.update', 'TreeMan',
            function(x) {
-             with_pstndes <- sapply(x@nodelist,
+             wo_pstndes <- sapply(x@nodelist,
                                      function(x) length(x$postnode) == 0)
-             x@tips <- names(with_pstndes)[with_pstndes]
-             x@nodes <- names(with_pstndes)[!with_pstndes]
+             x@tips <- names(wo_pstndes)[wo_pstndes]
+             x@nodes <- names(wo_pstndes)[!wo_pstndes]
              x@brnchlngth <- all(sapply(x@nodelist, function(x) length(x$span) > 0))
              if(x@brnchlngth) {
                if(length(x@root) > 0) {
@@ -199,7 +212,7 @@ setMethod('.update', 'TreeMan',
              } else {
                x@age <- x@pd <- numeric()
                x@extant <- x@extinct <- vector()
-               x@ultrmtrc <- logical()
+               x@ultrmtrc <- FALSE
              }
              x@plytms <- any(sapply(x@nodelist, function(x) length(x$postnode) > 2))
              initialize(x)
