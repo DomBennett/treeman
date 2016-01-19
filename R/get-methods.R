@@ -59,15 +59,12 @@ getParent <- function(tree, nodes) {
 }
 
 # @name getPath
-getPath <- function(tree, node_1, node_2) {
-  # find parent between two nodes
-  # get all prenodes to parent
-  # return vector of prenodes from node_1 to node_2
-  prenodes_1 <- getNodePrenodes(tree, node_1)
-  prenodes_2 <- getNodePrenodes(tree, node_2)
+getPath <- function(tree, from, to) {
+  prenodes_1 <- getNodePrenodes(tree, from)
+  prenodes_2 <- getNodePrenodes(tree, to)
   parent <- prenodes_1[which(prenodes_1 %in% prenodes_2)[1]]
-  path_1 <- c(node_1 ,prenodes_1[!prenodes_1 %in% prenodes_2])
-  path_2 <- c(prenodes_2[!prenodes_2 %in% prenodes_1], node_2)
+  path_1 <- c(from ,prenodes_1[!prenodes_1 %in% prenodes_2])
+  path_2 <- c(prenodes_2[!prenodes_2 %in% prenodes_1], to)
   c(path_1, parent, path_2)
 }
 
@@ -83,21 +80,22 @@ getNodePrenodes <- function(tree, node) {
   .get(node, NULL)
 }
 
-getNodesPrenodes <- function(tree, nodes='all') {
-  if(nodes[1] == 'all') {
-    nodes <- c(tree@nodes, tree@tips)
-    nodes <- nodes[which(nodes != tree@root)]
-  }
-  sapply(nodes, getNodePrenodes, tree=tree)
+getNodesPrenodes <- function(tree, nodes) {
+  sapply(nodes, getNodePrenodes, tree=tree, simplify=FALSE)
 }
 
 # @name get_Lineage
 getNodeLineage <- function(tree, node) {
   prnds <- getNodePrenodes(tree, node)
-  lineage <- c(tree@nodelist[[node]]$taxonym,
-               sapply(prnds, function(n) tree@nodelist[[n]]$taxonym))
-  lineage <- lineage[length(lineage):1]
-  unique(lineage)
+  lineage <- sapply(prnds, function(n) tree@nodelist[[n]]$taxonym)
+  if(length(lineage) > 0) {
+    lineage <- c(tree@nodelist[[node]]$taxonym, lineage)
+    lineage <- lineage[length(lineage):1]
+    lineage <- unique(lineage)
+  } else {
+    lineage <- NULL
+  }
+  lineage
 }
 
 getNodesLineage <- function(tree, nodes) {
@@ -120,11 +118,7 @@ getNodePostnodes <- function(tree, node) {
   .get(nds=node, pstnds=NULL)
 }
 
-getNodesPostnodes <- function(tree, nodes='all') {
-  if(nodes[1] == 'all') {
-    nodes <- c(tree@nodes, tree@tips)
-    nodes <- nodes[which(nodes != tree@root)]
-  }
+getNodesPostnodes <- function(tree, nodes) {
   sapply(nodes, getNodePostnodes, tree=tree)
 }
 
@@ -140,5 +134,5 @@ getSubtree <- function(tree, node) {
   ndlst[[node]]$prenode <- NULL
   ndlst[[node]]$span <- 0
   new_tree <- new('TreeMan', nodelist=ndlst, root=node)
-  treeman:::.update(new_tree)
+  .update(new_tree)
 }
