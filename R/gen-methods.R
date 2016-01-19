@@ -40,6 +40,7 @@ randTree <- function (n) {
         if (nl == 1) {
           ntips <<- ntips + 1
           new_id <- paste0 ('t', ntips)
+          children <- c (new_id, children)
         } else {
           nnodes <<- nnodes + 1
           new_id <- paste0 ('n', nnodes)
@@ -53,7 +54,6 @@ randTree <- function (n) {
         children <- c (children, nodelist[[new_id]]$children)
         pd <- pd + new_span + nodelist[[new_id]]$pd
       }
-      children <- c (postnode, children)
     }
     nodelist[[id]]$children <- children
     nodelist[[id]]$postnode <- postnode
