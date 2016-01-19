@@ -19,31 +19,35 @@ setGeneric ('print')
 setMethod ('print', c('x'='TreeMan'),
            function(x){
              msg <- 'Tree (TreeMan Object):\n'
-             msg <- paste0 (msg, '  -- [', length (x@tips), '] tips\n')
-             msg <- paste0 (msg, '  -- [', length (x@nodes), '] internal nodes\n')
+             msg <- paste0(msg, '  + [', length(x@tips), '] tips\n')
+             msg <- paste0(msg, '  + [', length(x@nodes), '] internal nodes\n')
              if (x@plytms) {
-               msg <- paste0 (msg, '  -- Polytomous\n')
+               msg <- paste0(msg, '  + Polytomous\n')
              } else {
-               msg <- paste0 (msg, '  -- Binary\n')
+               msg <- paste0(msg, '  + Binary\n')
              }
-             if (is.na (rootNode (x))) {
-               if (is.na (age (x))) {
-                 msg <- paste0 (msg, '  -- Unrooted and without branch lengths\n')
+             if(is.na(rootNode(x))) {
+               if(spns(x)) {
+                 msg <- paste0(msg, '  + Unrooted and without node spans\n')
                } else {
-                 msg <- paste0 (msg, '  -- Unrooted, with branch lengths\n')
-                 msg <- paste0 (msg, '  -- PD [', signif (x@pd, 3), ']\n')
+                 msg <- paste0(msg, '  + Unrooted, with node spans\n')
+                 msg <- paste0(msg, '  + PD [', signif(x@pd, 3), ']\n')
                }
              } else {
-               msg <- paste0 (msg, '  -- Age [', signif (x@age, 3), ']\n')
-               msg <- paste0 (msg, '  -- PD [', signif (x@pd, 3), ']\n')
-               if (x@ultrmtrc) {
-                 msg <- paste0 (msg, '  -- Ultrametric (all tips are extant)\n')
+               if(spns(x)) {
+                 msg <- paste0(msg, '  + Age [', signif(x@age, 3), ']\n')
+                 msg <- paste0(msg, '  + PD [', signif(x@pd, 3), ']\n')
+                 if(x@ultrmtrc) {
+                   msg <- paste0(msg, '  + Ultrametric (all tips are extant)\n')
+                 } else {
+                   msg <- paste0(msg, '  + Not ultrametric (with extinct tips)\n')
+                 }
                } else {
-                 msg <- paste0 (msg, '  -- Not ultrametric (with extinct tips)\n')
+                 msg <- paste0(msg, '  + Without node spans\n')
                }
-               msg <- paste0 (msg, '  -- Root node is ["', x@root, '"]\n')
+               msg <- paste0(msg, '  + Root node is ["', x@root, '"]\n')
              }
-             cat (msg)
+             cat(msg)
            })
 setGeneric ("viz", signature=c("tree", "taxonyms"),
             function (tree, taxonyms=FALSE) {
@@ -68,6 +72,16 @@ setMethod ('viz', 'TreeMan',
                  counter <- counter + 1
                }
                pnts
+             }
+             if(!tree@spns) {
+               # TODO: switch to setNodesSpan
+               for(i in 1:length(tree@nodelist)) {
+                 tree@nodelist[[i]]$span <- 1
+                 tree@nodelist[[i]]$pd <- length(tree@nodelist[[i]]$children)
+                 prnds <- getNodePrenodes(tree, tree@nodelist[[i]]$id)
+                 tree@nodelist[[i]]$predist <- length(prnds)
+               }
+               tree@pd <- length(tree@nodelist) - 1
              }
              # start with root node
              # TODO: handle unrooted tree
