@@ -69,6 +69,8 @@
 #' #  get specific information on nodes of interest
 #' print(tree[['n2']])
 
+#TODO: modify this to allow user-defined Node slot
+#TODO: check for missing children or no pd
 essential_node_slots <- c('id')
 valid_node_slots <- c('id', 'taxonym', 'span', 'prenode',
                       'postnode', 'children', 'predist', 'pd')
@@ -118,7 +120,7 @@ setClass('TreeMan', representation=representation(
   pd='numeric',          # numeric of total branch length of tree
   extant='vector',       # vector of Node ids of all tips with 0 age
   extinct='vector',      # vector of Node ids of all tips with age > 0
-  brnchlngth='logical',  # logical, do nodes have span
+  spns='logical',        # logical, do nodes have span
   ultrmtrc='logical',    # logical, do all tips end at 0
   plytms='logical',      # logical, is tree bifurcating
   tol='numeric',         # numeric of tolerance for determining extant
@@ -151,6 +153,7 @@ setMethod('[[', c('TreeMan', 'character', 'missing'),
   x@nodelist <- lapply(x@nodelist, .run)
   x
 }
+#TODO: move this to set-methods
 setGeneric("tips<-", signature=c("x"),
             function(x, value) {
               standardGeneric("tips<-")
@@ -168,7 +171,7 @@ setReplaceMethod("tips", "TreeMan",
                     x <- .rename(x, old_tips, value)
                     mis <- match(old_tips, names(x@nodelist))
                     names(x@nodelist)[mis] <- value
-                    x <- treeman:::.update(x)
+                    x <- .update(x)
                   })
 setGeneric("nodes<-", signature=c("x"),
             function(x, value) {
@@ -182,8 +185,6 @@ setReplaceMethod("nodes", "TreeMan",
                     old_nodes <- x@nodes
                     x <- .rename(x, old_nodes, value)
                     x@root <- value[x@root == old_nodes]
-                    x@root == old_nodes[i]
-                    x@root <- value[i]
                     mis <- match(old_nodes, names(x@nodelist))
                     names(x@nodelist)[mis] <- value
                     .update(x)
@@ -192,16 +193,18 @@ setGeneric('.update', signature=c('x'),
             function(x) {
               genericFunction('.update')
             })
+
 setMethod('.update', 'TreeMan',
            function(x) {
              wo_pstndes <- sapply(x@nodelist,
                                      function(x) length(x$postnode) == 0)
              x@tips <- names(wo_pstndes)[wo_pstndes]
              x@nodes <- names(wo_pstndes)[!wo_pstndes]
-             x@brnchlngth <- all(sapply(x@nodelist, function(x) length(x$span) > 0))
-             if(x@brnchlngth) {
-               if(length(x@root) > 0) {
-                 x@age <- max(sapply(x@nodelist, function(x) x$predist))
+             wspn <- names(x@nodelist)[names(x@nodelist) != x@root]
+             x@spns <- all(sapply(x@nodelist[wspn], function(n) !is.null(n$span)))
+             if(x@spns) {
+               if(!is.null(x@root)) {
+                 x@age <- max(sapply(x@nodelist[wspn], function(x) x$predist))
                  extant_is <- unlist(sapply(x@tips, function(i) {
                   (x@age - x@nodelist[[i]]$predist) <= x@tol}))
                  x@extant <- names(extant_is)[extant_is]
@@ -212,7 +215,7 @@ setMethod('.update', 'TreeMan',
              } else {
                x@age <- x@pd <- numeric()
                x@extant <- x@extinct <- vector()
-               x@ultrmtrc <- FALSE
+               x@ultrmtrc <- logical()
              }
              x@plytms <- any(sapply(x@nodelist, function(x) length(x$postnode) > 2))
              initialize(x)
@@ -262,6 +265,14 @@ setMethod('plytms', 'TreeMan',
            function(x) {
              x@plytms
            })
+setGeneric('spns', signature=c('x'),
+           function(x) {
+             genericFunction('spns')
+           }) 
+setMethod('spns', 'TreeMan',
+          function(x) {
+            x@spns
+          })
 setGeneric('ultrmtrc', signature=c('x'),
             function(x) {
               genericFunction('ultrmtrc')
