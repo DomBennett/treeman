@@ -1,6 +1,11 @@
 .newNode <- function(tree, node) {
   node <- tree@nodelist[[node]]
-  new('Node', id=node$id, span=node$span, prenode=as.character(node$prenode),
+  if(is.null(node$span) | !spns(tree)) {
+    span <- numeric()
+  } else {
+    span <- node$span
+  }
+  new('Node', id=node$id, span=span, prenode=as.character(node$prenode),
      postnode=as.character(node$postnode), children=as.character(node$children),
      pd=node$pd, predist=node$predist, tree_age=tree@age, root=tree@root == node$id,
      tip=length(node$postnode) == 0)
@@ -37,22 +42,24 @@ setMethod ('print', c('x'='Node'),
              } else {
                msg <- paste0('Node (internal node):\n')
              }
-             msg <- paste0(msg, '-- ID: [`', x@id, '`]\n')
+             msg <- paste0(msg, '  + ID: [`', x@id, '`]\n')
              if(!x@root) {
-               msg <- paste0(msg, '-- prenode: [`', x@prenode, '`]\n')
+               msg <- paste0(msg, '  + prenode: [`', x@prenode, '`]\n')
              }
              if(!x@tip) {
-               msg <- paste0(msg, '-- postnode: [`', paste0(x@postnode, collapse='`, `'), '`]\n')
-               msg <- paste0(msg, '-- nChildren: [', length(x@children), ']\n')
+               msg <- paste0(msg, '  + postnode: [`', paste0(x@postnode, collapse='`, `'), '`]\n')
+               msg <- paste0(msg, '  + nChildren: [', length(x@children), ']\n')
              }
-             if(!x@root) {
-               msg <- paste0(msg, '-- span: [', signif(x@span, 2), ']\n')
+             if(length(x@span) > 0) {
+               if(!x@root) {
+                 msg <- paste0(msg, '  + span: [', signif(x@span, 2), ']\n')
+               }
+               if(is.numeric(x@tree_age)) {
+                 msg <- paste0(msg, '  + age: [', signif(x@tree_age - x@predist, 2), ']\n')
+               } else {
+                 msg <- paste0(msg, '  + predist: [', signif(x@predist, 2), ']\n') 
+               }
+               msg <- paste0(msg, '  + PD: [', signif(x@pd, 2), ']\n')
              }
-             if(is.numeric(x@tree_age)) {
-               msg <- paste0(msg, '-- age: [', signif(x@tree_age - x@predist, 2), ']\n')
-             } else {
-               msg <- paste0(msg, '-- predist: [', signif(x@predist, 2), ']\n') 
-             }
-             msg <- paste0(msg, '-- PD: [', signif(x@pd, 2), ']\n')
              cat (msg)
            })
