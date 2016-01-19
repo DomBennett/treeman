@@ -12,15 +12,13 @@ readTree <- function(file=NULL, tree_string=NULL) {
   cuts <- c(cuts[1], cuts[2:length(cuts)] - cuts[1:(length(cuts)-1)])
   rdrenv <- .getRdrEnv(trstr)
   sapply(cuts, .mkNdLst, rdrenv=rdrenv)
-  # TODO handle trees without branch lengths
   # TODO merge these into a single function to make faster
   .addRoot(rdrenv)
   .addChildren(rdrenv)
   .addPredist(rdrenv)
   .addPD(rdrenv)
   tree <- new('TreeMan', nodelist=rdrenv$nodelist, root=rdrenv$root)
-  tree <- .update(tree)
-  tree
+  .update(tree)
 }
 
 # addPD
@@ -65,6 +63,7 @@ readTree <- function(file=NULL, tree_string=NULL) {
   root_i <- which(unlist(lapply(rdrenv$nodelist, function(n) n$prenode == "root")))
   if(length(root_i) > 0) {
     rdrenv$nodelist[[root_i]]$prenode <- NULL
+    rdrenv$nodelist[[root_i]]$span <- 0
     rdrenv$root <- names(rdrenv$nodelist)[root_i]
   } else {
     rdrenv$root <- character()
@@ -76,8 +75,8 @@ readTree <- function(file=NULL, tree_string=NULL) {
 .addPredist <- function(rdrenv) {
   calc <- function(nd, d) {
     nd <- rdrenv$nodelist[[nd]]
-    d <- nd$span + d
     if(!is.null(nd$prenode)) {
+      d <- nd$span + d
       d <- calc(nd$prenode, d)
     }
     d
@@ -112,7 +111,7 @@ readTree <- function(file=NULL, tree_string=NULL) {
   if(length(ndstr) > 1) {
     nd$span <- as.numeric(ndstr[2])
   } else {
-    nd$span <- 0
+    nd$span <- NULL
   }
   if(length(ndstr) == 0 || ndstr[1] == "") {
     nd$id <- paste0("n", nints)
