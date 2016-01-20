@@ -1,57 +1,60 @@
 # TODO: sort documentation
+
+# @name get_Name
+getNodeName <- function(tree, name, id) {
+  tree@nodelist[[id]][[name]]
+}
+
+getNodesName <- function(tree, name, ids) {
+  .get <- function(i) {
+    getNodeName(tree, name, ids[i])
+  }
+  sapply(1:length(ids), .get)
+}
+
 # @name get_Children
 
-getNodeChildren <- function(tree, node) {
-  node <- tree@nodelist[[node]]
+getNodeChildren <- function(tree, id) {
+  node <- tree@nodelist[[id]]
   node$children
 }
 
-getNodesChildren <- function(tree, nodes='all') {
-  if(nodes[1] == 'all') {
-    nodes <- tree@nodes
-  }
-  sapply(nodes, getNodeChildren, tree=tree)
+getNodesChildren <- function(tree, ids) {
+  sapply(ids, getNodeChildren, tree=tree)
 }
 
 # @name get_Age
 #TODO: how to effectively handle unrooted trees, age has no meaning
-getNodeAge <- function(tree, node) {
-  node <- tree@nodelist[[node]]
+getNodeAge <- function(tree, id) {
+  node <- tree@nodelist[[id]]
   tree@age - node$predist
 }
 
-getNodesAge <- function(tree, nodes='all') {
-  if(nodes[1] == 'all') {
-    nodes <- c(tree@nodes, tree@tips)
-  }
-  ages <- sapply(nodes, getNodeAge, tree=tree)
-  data.frame(node=nodes, age=ages, row.names=NULL)
+getNodesAge <- function(tree, ids) {
+  ages <- sapply(ids, getNodeAge, tree=tree)
+  data.frame(node=ids, age=ages, row.names=NULL)
 }
 
-getEdgeAge <- function(tree, edge) {
-  max <- getNodeAge(tree, tree@nodelist[[edge]]$prenode)
-  min <- getNodeAge(tree, edge)
-  data.frame(edge, max, min)
+getEdgeAge <- function(tree, id) {
+  max <- getNodeAge(tree, tree@nodelist[[id]]$pre)
+  min <- getNodeAge(tree, id)
+  data.frame(edge=id, max, min)
 }
 
-getEdgesAge <- function(tree, edges='all') {
-  if(edges[1] == 'all') {
-    edges <- c(tree@nodes, tree@tips)
-    edges <- edges[which(edges != tree@root)]
-  }
-  maxs <- sapply(edges, function(tree, edge) {
-    getNodeAge(tree, tree@nodelist[[edge]]$prenode)
+getEdgesAge <- function(tree, ids) {
+  maxs <- sapply(ids, function(tree, id) {
+    getNodeAge(tree, tree@nodelist[[id]]$pre)
   }, tree=tree)
-  mins <- sapply(edges, getNodeAge, tree=tree)
-  data.frame(edge=edges, max=maxs, min=mins, row.names=NULL)
+  mins <- sapply(ids, getNodeAge, tree=tree)
+  data.frame(edge=ids, max=maxs, min=mins, row.names=NULL)
 }
 
 # @name getParent
-getParent <- function(tree, nodes) {
-  prnds <- getNodesPrenodes(tree, nodes)
-  rf <- prnds[[1]]
+getParent <- function(tree, ids) {
+  prids <- getNodesPre(tree, ids)
+  rf <- prids[[1]]
   mn_rnk <- 0
-  for(n in prnds[-1]) {
+  for(n in prids[-1]) {
     rnk <- min(match(n, rf), na.rm=TRUE)
     if(rnk > mn_rnk) mn_rnk <- rnk
   }
@@ -60,36 +63,36 @@ getParent <- function(tree, nodes) {
 
 # @name getPath
 getPath <- function(tree, from, to) {
-  prenodes_1 <- getNodePrenodes(tree, from)
-  prenodes_2 <- getNodePrenodes(tree, to)
-  parent <- prenodes_1[which(prenodes_1 %in% prenodes_2)[1]]
-  path_1 <- c(from ,prenodes_1[!prenodes_1 %in% prenodes_2])
-  path_2 <- c(prenodes_2[!prenodes_2 %in% prenodes_1], to)
+  pre_1 <- getNodePre(tree, from)
+  pre_2 <- getNodePre(tree, to)
+  parent <- pre_1[which(pre_1 %in% pre_2)[1]]
+  path_1 <- c(from ,pre_1[!pre_1 %in% pre_2])
+  path_2 <- c(pre_2[!pre_2 %in% pre_1], to)
   c(path_1, parent, path_2)
 }
 
-# @name get_Prenodes
-getNodePrenodes <- function(tree, node) {
-  .get <- function(nd, prnds) {
-    prnd <- tree@nodelist[[nd]]$prenode
-    if(!is.null(prnd)) {
-      prnds <- c(prnd, .get(prnd, prnds))
+# @name get_Pre
+getNodePre <- function(tree, id) {
+  .get <- function(nd, prids) {
+    prid <- tree@nodelist[[nd]]$pre
+    if(!is.null(prid)) {
+      prids <- c(prid, .get(prid, prids))
     }
-    prnds
+    prids
   }
-  .get(node, NULL)
+  .get(id, NULL)
 }
 
-getNodesPrenodes <- function(tree, nodes) {
-  sapply(nodes, getNodePrenodes, tree=tree, simplify=FALSE)
+getNodesPre <- function(tree, ids) {
+  sapply(ids, getNodePre, tree=tree, simplify=FALSE)
 }
 
 # @name get_Lineage
-getNodeLineage <- function(tree, node) {
-  prnds <- getNodePrenodes(tree, node)
-  lineage <- sapply(prnds, function(n) tree@nodelist[[n]]$taxonym)
+getNodeLineage <- function(tree, id) {
+  prids <- getNodePre(tree, id)
+  lineage <- sapply(prids, function(n) tree@nodelist[[n]]$taxonym)
   if(length(lineage) > 0) {
-    lineage <- c(tree@nodelist[[node]]$taxonym, lineage)
+    lineage <- c(tree@nodelist[[id]]$taxonym, lineage)
     lineage <- lineage[length(lineage):1]
     lineage <- unique(lineage)
   } else {
@@ -98,41 +101,41 @@ getNodeLineage <- function(tree, node) {
   lineage
 }
 
-getNodesLineage <- function(tree, nodes) {
-  sapply(nodes, getNodeLineage, tree=tree)
+getNodesLineage <- function(tree, ids) {
+  sapply(ids, getNodeLineage, tree=tree)
 }
 
-# @name get_Postnodes
-getNodePostnodes <- function(tree, node) {
-  .get <- function(nds, pstnds) {
+# @name get_Post
+getNodePost <- function(tree, id) {
+  .get <- function(nds, pstids) {
     new_nds <- c()
     for(nd in nds) {
-      new_nds <- c(new_nds, tree@nodelist[[nd]]$postnode)
+      new_nds <- c(new_nds, tree@nodelist[[nd]]$post)
     }
-    pstnds <- c(pstnds, new_nds)
+    pstids <- c(pstids, new_nds)
     if(length(new_nds) > 0) {
-      pstnds <- .get(nds=new_nds, pstnds=pstnds)
+      pstids <- .get(nds=new_nds, pstids=pstids)
     }
-    pstnds
+    pstids
   }
-  .get(nds=node, pstnds=NULL)
+  .get(nds=node, pstids=NULL)
 }
 
-getNodesPostnodes <- function(tree, nodes) {
-  sapply(nodes, getNodePostnodes, tree=tree)
+getNodesPost <- function(tree, ids) {
+  sapply(ids, getNodePost, tree=tree)
 }
 
 # @name getSubtree
-getSubtree <- function(tree, node) {
-  pstnds <- getNodePostnodes(tree, node)
-  ndlst <- tree@nodelist[c(node, pstnds)]
-  nd_prdst <- ndlst[[node]]$predist
+getSubtree <- function(tree, id) {
+  pstids <- getNodePost(tree, id)
+  ndlst <- tree@nodelist[c(id, pstids)]
+  nd_prdst <- ndlst[[id]]$predist
   ndlst <- lapply(ndlst, function(x) {
     x$predist <- x$predist - nd_prdst
     x
   })
-  ndlst[[node]]$prenode <- NULL
-  ndlst[[node]]$span <- 0
-  new_tree <- new('TreeMan', nodelist=ndlst, root=node)
+  ndlst[[id]]$pre <- NULL
+  ndlst[[id]]$span <- 0
+  new_tree <- new('TreeMan', nodelist=ndlst, root=id)
   .update(new_tree)
 }
