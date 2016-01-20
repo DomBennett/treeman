@@ -1,6 +1,6 @@
 # TODO: calc imbalance, calc tree dists
 
-calcPhyDiv <- function(tree, tips) {
+calcPhyDv <- function(tree, tips) {
   prnds <- unlist(getNodesPrenodes(tree, tips))
   counts <- table(prnds)
   prnds <- names(counts)[counts < length(tips)]
@@ -9,7 +9,7 @@ calcPhyDiv <- function(tree, tips) {
   sum(spans)
 }
 
-calcFairProp <- function(tree, tips) {
+calcFrPrp <- function(tree, tips) {
   .share <- function(node) {
     span <- tree@nodelist[[node]]$span
     children <- getNodeChildren(tree, node)
@@ -29,12 +29,13 @@ calcFairProp <- function(tree, tips) {
 }
 
 calcDstMtrx <- function(tree) {
+  nodes <- names(tree@nodelist)
   cmbs <- expand.grid(nodes, nodes, stringsAsFactors=FALSE)
   .getDist <- function(cmb) {
     if(cmb[1] == cmb[2]) {
       return(0)
     }
-    path <- getPath(tree, node_1=cmb[1], node_2=cmb[2])
+    path <- getPath(tree, from=cmb[1], to=cmb[2])
     path_spans <- unlist(lapply(tree@nodelist[path], function(x) x$span))
     sum(path_spans)
   }
