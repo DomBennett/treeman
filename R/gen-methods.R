@@ -13,13 +13,13 @@
 #' tree <- randTree(5)
 
 randTree <- function (n) {
-  .node <- function (n_left, id, span, prenode, predist, nodelist) {
-    postnode <- children <- c ()
+  .node <- function (n_left, id, span, pre, predist, nodelist) {
+    post <- children <- c ()
     pd <- 0
     node <- list ('id'=id,
                   'span'=span,
-                  'prenode'=prenode,
-                  'postnode'=postnode,
+                  'pre'=pre,
+                  'post'=post,
                   'children'=children,
                   'pd'=pd,
                   'predist'=predist)
@@ -45,18 +45,18 @@ randTree <- function (n) {
           nnodes <<- nnodes + 1
           new_id <- paste0 ('n', nnodes)
         }
-        postnode <- c (postnode, new_id)
+        post <- c (post, new_id)
         new_span <- runif (min=0, max=1, n=1)
-        new_prenode <- id
+        new_pre <- id
         new_predist <- predist + new_span
         nodelist <- .node (nl, new_id, new_span,
-                           new_prenode, new_predist, nodelist)
+                           new_pre, new_predist, nodelist)
         children <- c (children, nodelist[[new_id]]$children)
         pd <- pd + new_span + nodelist[[new_id]]$pd
       }
     }
     nodelist[[id]]$children <- children
-    nodelist[[id]]$postnode <- postnode
+    nodelist[[id]]$post <- post
     nodelist[[id]]$pd <- pd
     nodelist
   }
@@ -71,9 +71,9 @@ randTree <- function (n) {
   # generate root node
   id <- paste0 ('n', 1)
   predist <- span <- 0
-  prenode <- c ()
+  pre <- c ()
   # gen nodelist
-  nodelist <- .node (n_left, id, span, prenode, predist, nodelist)
+  nodelist <- .node (n_left, id, span, pre, predist, nodelist)
   # init new tree object
   tree <- new ('TreeMan', nodelist=nodelist, root='n1')
   .update (tree)

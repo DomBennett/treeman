@@ -47,9 +47,9 @@ context('Testing \'manip-methods\'')
 test_that('addTip() works', {
   # random tree + basic stats
   tree <- randTree(10)
-  pd_before <- tree@pd
-  age_before <- tree@age
-  ntips_before <- nTips(tree)
+  pd_before <- tree['pd']
+  age_before <- tree['age']
+  ntips_before <- tree['ntips']
   # add random tip
   sister <- sample(tree@tips, 1)
   sister_age <- getNodeAge(tree, sister)
@@ -60,23 +60,23 @@ test_that('addTip() works', {
   #viz(tree)
   # test if successful
   expect_that(validObject(tree), is_true())
-  expect_that(tree@plytms, is_false())
-  expect_that(tree@age, equals(age_before))
-  expect_that(nTips(tree), equals(ntips_before + 1))
-  expect_that(tree@pd, equals(pd_before + (start-end)))
+  expect_that(tree['ply'], is_false())
+  expect_that(tree['age'], equals(age_before))
+  expect_that(tree['ntips'], equals(ntips_before + 1))
+  expect_that(tree['pd'], equals(pd_before + (start-end)))
 })
 
 test_that('pinTip() and pinTips() work', {
   tree <- randTree(10)
   tree <- randomLineage(5, tree)
-  pd_before <- tree@pd
-  age_before <- tree@age
+  pd_before <- tree['pd']
+  age_before <- tree['age']
   rdata <- randomTips(2, tree)
   tree <- pinTips(tree, tip_ids=rdata[["t"]],
                   lineages=rdata[["l"]],
                   ends=rdata[["e"]])
   expect_that(validObject(tree), is_true())
-  expect_that(nTips(tree), equals(12))
-  expect_that(pd_before, is_less_than(tree@pd))
-  expect_that(age_before, equals(tree@age))
+  expect_that(tree['ntips'], equals(12))
+  expect_that(pd_before, is_less_than(tree['pd']))
+  expect_that(age_before, equals(tree['age']))
 })

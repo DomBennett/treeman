@@ -1,18 +1,18 @@
 # TODO: calc imbalance, calc tree dists
 
-calcPhyDv <- function(tree, tips) {
-  prnds <- unlist(getNodesPrenodes(tree, tips))
-  counts <- table(prnds)
-  prnds <- names(counts)[counts < length(tips)]
-  spans <- unlist(lapply(tree@nodelist[c(tips, prnds)],
+calcPhyDv <- function(tree, ids) {
+  prids <- unlist(getNodesPre(tree, ids))
+  counts <- table(prids)
+  prids <- names(counts)[counts < length(ids)]
+  spans <- unlist(lapply(tree@nodelist[c(ids, prids)],
                          function(x) x$span))
   sum(spans)
 }
 
-calcFrPrp <- function(tree, tips) {
-  .share <- function(node) {
-    span <- tree@nodelist[[node]]$span
-    children <- getNodeChildren(tree, node)
+calcFrPrp <- function(tree, ids) {
+  .share <- function(id) {
+    span <- tree@nodelist[[id]]$span
+    children <- getNodeChildren(tree, id)
     if(!is.null(children)) {
       n <- length(children)
     } else {
@@ -21,16 +21,15 @@ calcFrPrp <- function(tree, tips) {
     span/n
   }
   .calc <- function(tip) {
-    nodes <- c(tip, getNodePrenodes(tree, tip))
-    shares <- unlist(sapply(nodes, .share))
+    ids <- c(tip, getNodePre(tree, tip))
+    shares <- unlist(sapply(ids, .share))
     sum(shares)
   }
-  sapply(tips, .calc)
+  sapply(ids, .calc)
 }
 
-calcDstMtrx <- function(tree) {
-  nodes <- names(tree@nodelist)
-  cmbs <- expand.grid(nodes, nodes, stringsAsFactors=FALSE)
+calcDstMtrx <- function(tree, ids) {
+  cmbs <- expand.grid(ids, ids, stringsAsFactors=FALSE)
   .getDist <- function(cmb) {
     if(cmb[1] == cmb[2]) {
       return(0)
@@ -40,7 +39,7 @@ calcDstMtrx <- function(tree) {
     sum(path_spans)
   }
   res <- apply(cmbs, 1, .getDist)
-  res <- matrix(res, ncol=length(nodes))
-  colnames(res) <- rownames(res) <- nodes
+  res <- matrix(res, ncol=length(ids))
+  colnames(res) <- rownames(res) <- ids
   res
 }

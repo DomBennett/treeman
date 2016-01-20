@@ -22,13 +22,13 @@ test_that('calcPhyDv() works', {
 })
 test_that('calcFrPrp() works', {
   tree <- randTree(10)
-  ed_values <- calcFrPrp(tree, tips(tree))
-  expect_that(sum(ed_values), equals(pd(tree)))
+  ed_values <- calcFrPrp(tree, tree['tips'])
+  expect_that(sum(ed_values), equals(tree['pd']))
 })
 test_that('calcDstMtrx() works', {
   tree <- randTree(10)
   dmtrx <- calcDstMtrx(tree)
-  rndnd <- sample(c(nodes(tree), tips(tree)), 1)
+  rndnd <- sample(c(tree['nodes'], tree['tips']), 1)
   expect_that(dmtrx[rndnd, rndnd], equals(0))
-  expect_that(sum(dmtrx['n1', ] == age(tree)), is_more_than(0))
+  expect_that(sum(dmtrx['n1', ] == tree['age']), is_more_than(0))
 })
