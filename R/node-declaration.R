@@ -1,19 +1,20 @@
 .newNode <- function(tree, node) {
   node <- tree@nodelist[[node]]
-  if(is.null(node$span) | !tree@wspn) {
+  if(is.null(node[['span']]) | !tree@wspn) {
     span <- numeric()
   } else {
-    span <- node$span
+    span <- node[['span']]
   }
   if(length(tree@age) > 0) {
-    age <- tree@age - node$predist
+    age <- tree@age - node[['predist']]
   } else {
     age <- numeric()
   }
-  new('Node', id=node$id, span=span, pre=as.character(node$pre),
-     post=as.character(node$post), children=as.character(node$children),
-     nchildren=length(as.character(node$children)), pd=node$pd, predist=node$predist,
-     root=tree@root == node$id, age=age, tip=length(node$post) == 0)
+  new('Node', id=node[['id']], span=span, pre=as.character(node[['pre']]),
+     post=as.character(node[['post']]), children=as.character(node[['children']]),
+     nchildren=length(as.character(node[['children']])), pd=node[['pd']],
+     predist=node[['predist']], root=tree@root == node[['id']],
+     age=age, tip=length(node[['post']]) == 0)
 }
 
 setClass ('Node', representation=representation (

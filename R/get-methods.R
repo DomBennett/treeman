@@ -16,7 +16,7 @@ getNodesName <- function(tree, name, ids) {
 
 getNodeChildren <- function(tree, id) {
   node <- tree@nodelist[[id]]
-  node$children
+  node[['children']]
 }
 
 getNodesChildren <- function(tree, ids) {
@@ -27,7 +27,7 @@ getNodesChildren <- function(tree, ids) {
 #TODO: how to effectively handle unrooted trees, age has no meaning
 getNodeAge <- function(tree, id) {
   node <- tree@nodelist[[id]]
-  tree@age - node$predist
+  tree@age - node[['predist']]
 }
 
 getNodesAge <- function(tree, ids) {
@@ -36,14 +36,14 @@ getNodesAge <- function(tree, ids) {
 }
 
 getEdgeAge <- function(tree, id) {
-  max <- getNodeAge(tree, tree@nodelist[[id]]$pre)
+  max <- getNodeAge(tree, tree@nodelist[[id]][['pre']])
   min <- getNodeAge(tree, id)
   data.frame(edge=id, max, min)
 }
 
 getEdgesAge <- function(tree, ids) {
   maxs <- sapply(ids, function(tree, id) {
-    getNodeAge(tree, tree@nodelist[[id]]$pre)
+    getNodeAge(tree, tree@nodelist[[id]][['pre']])
   }, tree=tree)
   mins <- sapply(ids, getNodeAge, tree=tree)
   data.frame(edge=ids, max=maxs, min=mins, row.names=NULL)
@@ -74,7 +74,7 @@ getPath <- function(tree, from, to) {
 # @name get_Pre
 getNodePre <- function(tree, id) {
   .get <- function(nd, prids) {
-    prid <- tree@nodelist[[nd]]$pre
+    prid <- tree@nodelist[[nd]][['pre']]
     if(!is.null(prid)) {
       prids <- c(prid, .get(prid, prids))
     }
@@ -90,9 +90,9 @@ getNodesPre <- function(tree, ids) {
 # @name get_Lineage
 getNodeLineage <- function(tree, id) {
   prids <- getNodePre(tree, id)
-  lineage <- sapply(prids, function(n) tree@nodelist[[n]]$taxonym)
+  lineage <- sapply(prids, function(n) tree@nodelist[[n]][['taxonym']])
   if(length(lineage) > 0) {
-    lineage <- c(tree@nodelist[[id]]$taxonym, lineage)
+    lineage <- c(tree@nodelist[[id]][['taxonym']], lineage)
     lineage <- lineage[length(lineage):1]
     lineage <- unique(lineage)
   } else {
@@ -110,7 +110,7 @@ getNodePost <- function(tree, id) {
   .get <- function(nds, pstids) {
     new_nds <- c()
     for(nd in nds) {
-      new_nds <- c(new_nds, tree@nodelist[[nd]]$post)
+      new_nds <- c(new_nds, tree@nodelist[[nd]][['post']])
     }
     pstids <- c(pstids, new_nds)
     if(length(new_nds) > 0) {
@@ -118,7 +118,7 @@ getNodePost <- function(tree, id) {
     }
     pstids
   }
-  .get(nds=node, pstids=NULL)
+  .get(nds=id, pstids=NULL)
 }
 
 getNodesPost <- function(tree, ids) {
@@ -129,13 +129,13 @@ getNodesPost <- function(tree, ids) {
 getSubtree <- function(tree, id) {
   pstids <- getNodePost(tree, id)
   ndlst <- tree@nodelist[c(id, pstids)]
-  nd_prdst <- ndlst[[id]]$predist
+  nd_prdst <- ndlst[[id]][['predist']]
   ndlst <- lapply(ndlst, function(x) {
-    x$predist <- x$predist - nd_prdst
+    x[['predist']] <- x[['predist']] - nd_prdst
     x
   })
-  ndlst[[id]]$pre <- NULL
-  ndlst[[id]]$span <- 0
+  ndlst[[id]][['pre']] <- NULL
+  ndlst[[id]][['span']] <- 0
   new_tree <- new('TreeMan', nodelist=ndlst, root=id)
   .update(new_tree)
 }

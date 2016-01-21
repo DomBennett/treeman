@@ -5,13 +5,13 @@ calcPhyDv <- function(tree, ids) {
   counts <- table(prids)
   prids <- names(counts)[counts < length(ids)]
   spans <- unlist(lapply(tree@nodelist[c(ids, prids)],
-                         function(x) x$span))
+                         function(n) n[['span']]))
   sum(spans)
 }
 
 calcFrPrp <- function(tree, ids) {
   .share <- function(id) {
-    span <- tree@nodelist[[id]]$span
+    span <- tree@nodelist[[id]][['span']]
     children <- getNodeChildren(tree, id)
     if(!is.null(children)) {
       n <- length(children)
@@ -35,7 +35,7 @@ calcDstMtrx <- function(tree, ids) {
       return(0)
     }
     path <- getPath(tree, from=cmb[1], to=cmb[2])
-    path_spans <- unlist(lapply(tree@nodelist[path], function(x) x$span))
+    path_spans <- unlist(lapply(tree@nodelist[path], function(n) n[['span']]))
     sum(path_spans)
   }
   res <- apply(cmbs, 1, .getDist)

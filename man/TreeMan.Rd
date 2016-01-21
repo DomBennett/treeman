@@ -25,11 +25,11 @@ Each node within the \code{TreeMan} \code{nodelist} contains the following data 
    \item \code{id}: character string for the node ID
    \item \code{taxonym}: name of taxonomic clade (optional)
    \item \code{span}: length of the preceding branch
-   \item \code{prenode}: ID of the preceding node
-   \item \code{postnode}: IDs of the connecting nodes
+   \item \code{pre}: ID of the preceding node
+   \item \code{post}: IDs of the connecting nodes
    \item \code{children}: descending tip IDs
    \item \code{pd}: phylogenetic diversity represented by node
-   \item \code{predist}: prenode distance(distance to root if rooted or
+   \item \code{predist}: pre distance(distance to root if rooted or
    most distal tip if unrooted)
 }
 These data slots are updated whenever a node is modified, added or removed.

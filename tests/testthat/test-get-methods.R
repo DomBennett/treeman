@@ -23,27 +23,27 @@ test_that('get_Age() works', {
 })
 test_that("getParent() works", {
   tree <- readTree(tree_string="(((A,B),(C,D)),(E,F));")
-  prnt <- getParent(tree, nodes=c("A", "C"))
+  prnt <- getParent(tree, ids=c("A", "C"))
   expect_true(prnt == "n2")
 })
 test_that("getPath() works", {
   tree <- randTree(10)
   pth <- getPath(tree, from="t1", to="t10")
-  prnt <- getParent(tree, nodes=c('t1', "t10"))
+  prnt <- getParent(tree, ids=c('t1', "t10"))
   expect_true(prnt %in% pth)
 })
-test_that("get_Prenodes() works", {
+test_that("get_Pre() works", {
   tree <- randTree(10)
-  prnds <- getNodesPrenodes(tree, tree['nodes'])
-  expect_that(prnds[[1]], is_null())
-  lst_nds <- unlist(lapply(prnds[-1], function(n) n[length(n)]))
+  prids <- getNodesPre(tree, tree['nodes'])
+  expect_that(prids[[1]], is_null())
+  lst_nds <- unlist(lapply(prids[-1], function(n) n[length(n)]))
   expect_true(all(lst_nds == "n1"))
 })
-test_that("get_Postnodes() works", {
+test_that("get_Post() works", {
   tree <- randTree(10)
-  pstnds <- getNodesPostnodes(tree, tree['nodes'])
-  expect_true(all(pstnds[['n1']] %in% c(tree['nodes'], tree['tips'])))
-  expect_that(pstnds[['t1']], is_null())
+  pstids <- getNodesPost(tree, tree['nodes'])
+  expect_true(all(pstids[['n1']] %in% c(tree['nodes'], tree['tips'])))
+  expect_that(pstids[['t1']], is_null())
 })
 test_that("get_Lineage() works", {
   # TODO: redo with setNodes

@@ -4,54 +4,54 @@ addTip <- function(tree, id, sister, start, end,
                    parent_id=paste0("p_", id),
                    tip_taxonym=NULL, parent_taxonym=NULL) {
   updatePre <- function(node) {
-    node$children <- c(node$children, tip$id)
-    node$pd <- node$pd + tip$span
+    node[['children']] <- c(node[['children']], tip[['id']])
+    node[['pd']] <- node[['pd']] + tip[['span']]
     node
   }
   tip <- list('id'=id)
   if(!is.null(tip_taxonym)) {
-    tip$taxonym <- tip_taxonym
+    tip[['taxonym']] <- tip_taxonym
   }
   node <- list('id'=parent_id)
   if(!is.null(parent_taxonym)) {
-    node$taxonym <- parent_taxonym
+    node[['taxonym']] <- parent_taxonym
   }
-  tip$span <- start - end
+  tip[['span']] <- start - end
   age <- getNodeAge(tree, sister)
   new_sister <- sister <- tree@nodelist[[sister]]
-  new_parent <- tree@nodelist[[sister$pre]]
-  new_parent$post <- new_parent$post[!new_parent$post %in% sister$id]
-  new_parent$post <- c(new_parent$post, node$id)
-  new_sister$span <- start - age
-  new_sister$pre <- node$id
-  node$span <- sister$span - new_sister$span
-  node$pd <- new_sister$span + tip$span
-  node$predist <- sister$predist - new_sister$span
-  node$pre <- sister$pre
-  node$post <- node$children <- c(tip$id, sister$id)
-  tip$pd <- 0
-  tip$predist <- node$predist + tip$span
-  tip$pre <- node$id
-  tree@nodelist[[tip$id]] <- tip
-  tree@nodelist[[node$id]] <- node
-  tree@nodelist[[new_sister$id]] <- new_sister
-  tree@nodelist[[new_parent$id]] <- new_parent
-  pres <- getNodePre(tree, node$id)
+  new_parent <- tree@nodelist[[sister[['pre']]]]
+  new_parent[['post']] <- new_parent[['post']][!new_parent[['post']] %in% sister[['id']]]
+  new_parent[['post']] <- c(new_parent[['post']], node[['id']])
+  new_sister[['span']] <- start - age
+  new_sister[['pre']] <- node[['id']]
+  node[['span']] <- sister[['span']] - new_sister[['span']]
+  node[['pd']] <- new_sister[['span']] + tip[['span']]
+  node[['predist']] <- sister[['predist']] - new_sister[['span']]
+  node[['pre']] <- sister[['pre']]
+  node[['post']] <- node[['children']] <- c(tip[['id']], sister[['id']])
+  tip[['pd']] <- 0
+  tip[['predist']] <- node[['predist']] + tip[['span']]
+  tip[['pre']] <- node[['id']]
+  tree@nodelist[[tip[['id']]]] <- tip
+  tree@nodelist[[node[['id']]]] <- node
+  tree@nodelist[[new_sister[['id']]]] <- new_sister
+  tree@nodelist[[new_parent[['id']]]] <- new_parent
+  pres <- getNodePre(tree, node[['id']])
   tree@nodelist[pres] <- lapply(tree@nodelist[pres],
                                     updatePre)
   .update(tree)
 }
 #TODO: add doc on pinning tips
 pinTip <- function(tree, tip_id, lineage, end) {
-  taxonyms <- unlist(lapply(tree@nodelist, function(n) n$taxonym))
+  taxonyms <- unlist(lapply(tree@nodelist, function(n) n[['taxonym']]))
   for(i in length(lineage):1) {
     edges <- names(taxonyms)[which(taxonyms == lineage[i])]
     if(length(edges) == 0) {
       next
     }
-    edges <- c(edges, unlist(sapply(edges, function(n) tree@nodelist[[n]]$posts)))
+    edges <- c(edges, unlist(sapply(edges, function(n) tree@nodelist[[n]][['post']])))
     edges <- edges[edges != tree@root]
-    rngs <- getEdgesAge(tree, edges=edges)
+    rngs <- getEdgesAge(tree, ids=edges)
     bool <- rngs[ ,'max'] > end
     if(any(bool)) {
       rngs <- rngs[bool, ]

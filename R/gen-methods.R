@@ -51,13 +51,13 @@ randTree <- function (n) {
         new_predist <- predist + new_span
         nodelist <- .node (nl, new_id, new_span,
                            new_pre, new_predist, nodelist)
-        children <- c (children, nodelist[[new_id]]$children)
-        pd <- pd + new_span + nodelist[[new_id]]$pd
+        children <- c (children, nodelist[[new_id]][['children']])
+        pd <- pd + new_span + nodelist[[new_id]][['pd']]
       }
     }
-    nodelist[[id]]$children <- children
-    nodelist[[id]]$post <- post
-    nodelist[[id]]$pd <- pd
+    nodelist[[id]][['children']] <- children
+    nodelist[[id]][['post']] <- post
+    nodelist[[id]][['pd']] <- pd
     nodelist
   }
   if (n < 2) {

@@ -10,7 +10,7 @@ context('Testing \'TreeMan Class\'')
 test_that('vaildObject() works', {
   res <- validObject(tree)
   expect_that(res, is_true())
-  tree@nodelist[['n2']]$id <- 'oh oh.... invalid ID'
+  tree@nodelist[['n2']][['id']] <- 'oh oh.... invalid ID'
   expect_error(validObject(tree))
 })
 test_that('[[ works', {

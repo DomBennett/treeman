@@ -56,30 +56,30 @@ setGeneric ("viz", signature=c("tree", "taxonyms"),
 setMethod ('viz', 'TreeMan',
            function(tree, taxonyms){
              get_pnts <- function (node, y, pnts) {
-               pstnds <- node$postnode
-               low_y_diff <- -node$pd/2
-               high_y_diff <- node$pd/2
+               pstids <- node[['post']]
+               low_y_diff <- -node[['pd']]/2
+               high_y_diff <- node[['pd']]/2
                y_diffs <- seq(from=low_y_diff, to=high_y_diff,
-                              length.out=length(pstnds))
+                              length.out=length(pstids))
                counter <- 1
-               for (pstnd in pstnds) {
-                 pstnd <- tree@nodelist[[pstnd]]
-                 pstnd_x <- pstnd$predist
+               for (pstid in pstids) {
+                 pstnd <- tree@nodelist[[pstid]]
+                 pstnd_x <- pstnd[['predist']]
                  pstnd_y <- y + y_diffs[counter]
-                 pnts <- rbind (pnts, data.frame (node=pstnd$id,
+                 pnts <- rbind (pnts, data.frame (node=pstid,
                                                   x=pstnd_x, y=pstnd_y))
                  pnts <- get_pnts (pstnd, pstnd_y, pnts)
                  counter <- counter + 1
                }
                pnts
              }
-             if(!tree@spns) {
+             if(!tree@wspn) {
                # TODO: switch to setNodesSpan
                for(i in 1:length(tree@nodelist)) {
-                 tree@nodelist[[i]]$span <- 1
-                 tree@nodelist[[i]]$pd <- length(tree@nodelist[[i]]$children)
-                 prnds <- getNodePrenodes(tree, tree@nodelist[[i]]$id)
-                 tree@nodelist[[i]]$predist <- length(prnds)
+                 tree@nodelist[[i]][['span']] <- 1
+                 tree@nodelist[[i]][['pd']] <- length(tree@nodelist[[i]][['children']])
+                 prids <- getNodePre(tree, tree@nodelist[[i]][['id']])
+                 tree@nodelist[[i]][['predist']] <- length(prids)
                }
                tree@pd <- length(tree@nodelist) - 1
              }
@@ -97,14 +97,14 @@ setMethod ('viz', 'TreeMan',
                            xlab='', bty='n', ylim=y_lmts)
              if(taxonyms) {
                text (x=pnts$x, y=pnts$y,
-                     labels=sapply(pnts$node, function(n) tree@nodelist[[n]]$taxonym),
+                     labels=sapply(pnts$node, function(n) tree@nodelist[[n]][['taxonym']]),
                      pos=1)
              } else {
                text (x=pnts$x, y=pnts$y, labels=pnts$node, pos=1)
              }
              # draw lines
              for (i in 2:nrow (pnts)) {
-               prenode <- tree@nodelist[[pnts$node[i]]]$prenode
+               prenode <- tree@nodelist[[pnts$node[i]]][['pre']]
                ind <- c (i, which (pnts$node == prenode))
                lines (x=pnts$x[ind], y=pnts$y[ind])
              }

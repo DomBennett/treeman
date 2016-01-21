@@ -6,8 +6,8 @@ library(testthat)
 randomLineage <- function(n, tree) {
   # add random monophyletic taxonyms to tree
   addLname <- function(node, tree) {
-    tree@nodelist[[node]]$taxonym <- lname
-    pnodes <- tree@nodelist[[node]]$postnode
+    tree@nodelist[[node]][['taxonym']] <- lname
+    pnodes <- tree@nodelist[[node]][['post']]
     if(!is.null(pnodes)) {
       for(pnode in pnodes) {
         tree <- addLname(pnode, tree)
@@ -53,7 +53,7 @@ test_that('addTip() works', {
   # add random tip
   sister <- sample(tree@tips, 1)
   sister_age <- getNodeAge(tree, sister)
-  parent_age <- getNodeAge(tree, tree@nodelist[[sister]]$prenode)
+  parent_age <- getNodeAge(tree, tree@nodelist[[sister]][['pre']])
   start <- runif(min=sister_age, max=parent_age, n=1)
   end <- runif(min=0, max=start, n=1)
   tree <- addTip(tree, id='new_tip', sister=sister, start=start, end=end)

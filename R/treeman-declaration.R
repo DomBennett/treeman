@@ -1,3 +1,5 @@
+#TODO: explicitly call node elements with [['']], change post --> pst, change predist --> pdst
+
 #' @name TreeMan
 #' @title TreeMan Class
 #' @description S4 Class for representing phylogenetic trees as a list of nodes.
@@ -87,13 +89,13 @@ valid_node_slots <- c('id', 'taxonym', 'span', 'pre',
       invlds <- names(node)[!names(node) %in% valid_node_slots]
       invlds <- paste(invlds, collapse="`, `")
       invlds <- paste0('[`', invlds, '`]')
-      warning(paste0('Node [', node$id,
+      warning(paste0('Node [', node[['id']],
                      '] contains the following invalid node slots:\n',
                      invlds))
     }
-    test_1 <- node$id %in% nodes
-    test_2 <- is.null(node$pre) || (node$pre %in% nodes)
-    test_3 <- is.null(node$pre) || all(node$post %in% nodes)
+    test_1 <- node[['id']] %in% nodes
+    test_2 <- is.null(node[['pre']]) || (node[['pre']] %in% nodes)
+    test_3 <- is.null(node[['pre']]) || all(node[['post']] %in% nodes)
     if(test_1 & test_2 & test_3) {
       return(TRUE)
     }
@@ -141,29 +143,29 @@ setGeneric('.update', signature=c('x'),
 setMethod('.update', 'TreeMan',
            function(x) {
              wo_pstndes <- sapply(x@nodelist,
-                                     function(x) length(x$post) == 0)
+                                     function(n) length(n[['post']]) == 0)
              x@tips <- names(wo_pstndes)[wo_pstndes]
              x@ntips <- length(x@tips)
              x@nodes <- names(wo_pstndes)[!wo_pstndes]
              x@nnodes <- length(x@nodes)
              wspn <- names(x@nodelist)[names(x@nodelist) != x@root]
-             x@wspn <- all(sapply(x@nodelist[wspn], function(n) !is.null(n$span)))
+             x@wspn <- all(sapply(x@nodelist[wspn], function(n) !is.null(n[['span']])))
              if(x@wspn) {
                if(!is.null(x@root)) {
-                 x@age <- max(sapply(x@nodelist[wspn], function(x) x$predist))
+                 x@age <- max(sapply(x@nodelist[wspn], function(x) x[['predist']]))
                  extant_is <- unlist(sapply(x@tips, function(i) {
-                  (x@age - x@nodelist[[i]]$predist) <= x@tol}))
+                  (x@age - x@nodelist[[i]][['predist']]) <= x@tol}))
                  x@ext <- names(extant_is)[extant_is]
                  x@exc <- x@tips[!x@tips %in% x@ext]
                  x@ultr <- all(x@tips %in% x@ext)
                }
-               x@pd <- x@nodelist[[x@root]]$pd
+               x@pd <- x@nodelist[[x@root]][['pd']]
              } else {
                x@age <- x@pd <- numeric()
                x@ext <- x@ext <- vector()
                x@ultr <- logical()
              }
-             x@ply <- any(sapply(x@nodelist, function(n) length(n$post) > 2))
+             x@ply <- any(sapply(x@nodelist, function(n) length(n[['post']]) > 2))
              initialize(x)
            })
 
