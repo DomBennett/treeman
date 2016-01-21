@@ -4,6 +4,10 @@ library(testthat)
 
 # RUNNING
 context('Testing \'Node Class\'')
+test_that('.newNode works', {
+  node <- treeman:::.newNode(randTree(10), 'n1')
+  expect_that(class(node)[[1]], equals('Node'))
+})
 test_that('Node works (rooted + with spns)', {
   tree <- randTree(10)
   nid <- names(tree@nodelist)[sample(1:10, 1)]
