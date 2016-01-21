@@ -1,7 +1,7 @@
 # TODO: calc imbalance, calc tree dists
 
 calcPhyDv <- function(tree, ids) {
-  prids <- unlist(getNodesPre(tree, ids))
+  prids <- unlist(getNodesPrid(tree, ids))
   counts <- table(prids)
   prids <- names(counts)[counts < length(ids)]
   spans <- unlist(lapply(tree@nodelist[c(ids, prids)],
@@ -21,7 +21,7 @@ calcFrPrp <- function(tree, ids) {
     span/n
   }
   .calc <- function(tip) {
-    ids <- c(tip, getNodePre(tree, tip))
+    ids <- c(tip, getNodePrid(tree, tip))
     shares <- unlist(sapply(ids, .share))
     sum(shares)
   }

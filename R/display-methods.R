@@ -56,7 +56,7 @@ setGeneric ("viz", signature=c("tree", "taxonyms"),
 setMethod ('viz', 'TreeMan',
            function(tree, taxonyms){
              get_pnts <- function (node, y, pnts) {
-               pstids <- node[['post']]
+               pstids <- node[['ptid']]
                low_y_diff <- -node[['pd']]/2
                high_y_diff <- node[['pd']]/2
                y_diffs <- seq(from=low_y_diff, to=high_y_diff,
@@ -64,7 +64,7 @@ setMethod ('viz', 'TreeMan',
                counter <- 1
                for (pstid in pstids) {
                  pstnd <- tree@nodelist[[pstid]]
-                 pstnd_x <- pstnd[['predist']]
+                 pstnd_x <- pstnd[['prdst']]
                  pstnd_y <- y + y_diffs[counter]
                  pnts <- rbind (pnts, data.frame (node=pstid,
                                                   x=pstnd_x, y=pstnd_y))
@@ -78,8 +78,8 @@ setMethod ('viz', 'TreeMan',
                for(i in 1:length(tree@nodelist)) {
                  tree@nodelist[[i]][['span']] <- 1
                  tree@nodelist[[i]][['pd']] <- length(tree@nodelist[[i]][['children']])
-                 prids <- getNodePre(tree, tree@nodelist[[i]][['id']])
-                 tree@nodelist[[i]][['predist']] <- length(prids)
+                 prids <- getNodePrid(tree, tree@nodelist[[i]][['id']])
+                 tree@nodelist[[i]][['prdst']] <- length(prids)
                }
                tree@pd <- length(tree@nodelist) - 1
              }
@@ -104,7 +104,7 @@ setMethod ('viz', 'TreeMan',
              }
              # draw lines
              for (i in 2:nrow (pnts)) {
-               prenode <- tree@nodelist[[pnts$node[i]]][['pre']]
+               prenode <- tree@nodelist[[pnts$node[i]]][['prid']]
                ind <- c (i, which (pnts$node == prenode))
                lines (x=pnts$x[ind], y=pnts$y[ind])
              }

@@ -18,11 +18,11 @@ randTree <- function (n) {
     pd <- 0
     node <- list ('id'=id,
                   'span'=span,
-                  'pre'=pre,
-                  'post'=post,
+                  'prid'=pre,
+                  'ptid'=post,
                   'children'=children,
                   'pd'=pd,
-                  'predist'=predist)
+                  'prdst'=predist)
     nodelist[[id]] <- node
     # if there are enough ns left to have children
     n_left <- n_left - 1
@@ -56,7 +56,7 @@ randTree <- function (n) {
       }
     }
     nodelist[[id]][['children']] <- children
-    nodelist[[id]][['post']] <- post
+    nodelist[[id]][['ptid']] <- post
     nodelist[[id]][['pd']] <- pd
     nodelist
   }

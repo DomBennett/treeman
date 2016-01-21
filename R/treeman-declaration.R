@@ -77,8 +77,8 @@
 #TODO: modify this to allow user-defined Node slot
 #TODO: check for missing children or no pd
 essential_node_slots <- c('id')
-valid_node_slots <- c('id', 'taxonym', 'span', 'pre',
-                      'post', 'children', 'predist', 'pd')
+valid_node_slots <- c('id', 'taxonym', 'span', 'prid',
+                      'ptid', 'children', 'prdst', 'pd')
 
 .checkTreeMan <- function(object) {
   .check <- function(node) {
@@ -94,8 +94,8 @@ valid_node_slots <- c('id', 'taxonym', 'span', 'pre',
                      invlds))
     }
     test_1 <- node[['id']] %in% nodes
-    test_2 <- is.null(node[['pre']]) || (node[['pre']] %in% nodes)
-    test_3 <- is.null(node[['pre']]) || all(node[['post']] %in% nodes)
+    test_2 <- is.null(node[['prid']]) || (node[['prid']] %in% nodes)
+    test_3 <- is.null(node[['prid']]) || all(node[['ptid']] %in% nodes)
     if(test_1 & test_2 & test_3) {
       return(TRUE)
     }
@@ -143,7 +143,7 @@ setGeneric('.update', signature=c('x'),
 setMethod('.update', 'TreeMan',
            function(x) {
              wo_pstndes <- sapply(x@nodelist,
-                                     function(n) length(n[['post']]) == 0)
+                                     function(n) length(n[['ptid']]) == 0)
              x@tips <- names(wo_pstndes)[wo_pstndes]
              x@ntips <- length(x@tips)
              x@nodes <- names(wo_pstndes)[!wo_pstndes]
@@ -152,9 +152,9 @@ setMethod('.update', 'TreeMan',
              x@wspn <- all(sapply(x@nodelist[wspn], function(n) !is.null(n[['span']])))
              if(x@wspn) {
                if(!is.null(x@root)) {
-                 x@age <- max(sapply(x@nodelist[wspn], function(x) x[['predist']]))
+                 x@age <- max(sapply(x@nodelist[wspn], function(x) x[['prdst']]))
                  extant_is <- unlist(sapply(x@tips, function(i) {
-                  (x@age - x@nodelist[[i]][['predist']]) <= x@tol}))
+                  (x@age - x@nodelist[[i]][['prdst']]) <= x@tol}))
                  x@ext <- names(extant_is)[extant_is]
                  x@exc <- x@tips[!x@tips %in% x@ext]
                  x@ultr <- all(x@tips %in% x@ext)
@@ -165,7 +165,7 @@ setMethod('.update', 'TreeMan',
                x@ext <- x@ext <- vector()
                x@ultr <- logical()
              }
-             x@ply <- any(sapply(x@nodelist, function(n) length(n[['post']]) > 2))
+             x@ply <- any(sapply(x@nodelist, function(n) length(n[['ptid']]) > 2))
              initialize(x)
            })
 

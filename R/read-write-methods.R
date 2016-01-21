@@ -28,12 +28,12 @@ readTree <- function(file=NULL, tree_string=NULL) {
     NULL
   }
   add <- function(prndid, rdrenv, ndid=prndid) {
-    if(!is.null(rdrenv$nodelist[[prndid]][['post']])) {
+    if(!is.null(rdrenv$nodelist[[prndid]][['ptid']])) {
       rdrenv$nodelist[[prndid]][['pd']] <- rdrenv$nodelist[[prndid]][['pd']] +
         rdrenv$nodelist[[ndid]][['span']]
     }
-    if(!is.null(rdrenv$nodelist[[prndid]][['pre']])) {
-      add(rdrenv$nodelist[[prndid]][['pre']], rdrenv, ndid)
+    if(!is.null(rdrenv$nodelist[[prndid]][['prid']])) {
+      add(rdrenv$nodelist[[prndid]][['prid']], rdrenv, ndid)
     }
     NULL
   }
@@ -45,24 +45,24 @@ readTree <- function(file=NULL, tree_string=NULL) {
 # add children
 .addChildren <- function(rdrenv) {
   add <- function(ndid, rdrenv, tpid=ndid) {
-    if(!is.null(rdrenv$nodelist[[ndid]][['post']])) {
+    if(!is.null(rdrenv$nodelist[[ndid]][['ptid']])) {
       rdrenv$nodelist[[ndid]][['children']] <- c(tpid, rdrenv$nodelist[[ndid]][['children']])
     }
-    if(!is.null(rdrenv$nodelist[[ndid]][['pre']])) {
-      add(rdrenv$nodelist[[ndid]][['pre']], rdrenv, tpid)
+    if(!is.null(rdrenv$nodelist[[ndid]][['prid']])) {
+      add(rdrenv$nodelist[[ndid]][['prid']], rdrenv, tpid)
     }
     NULL
   }
-  tips <- sapply(rdrenv$nodelist, function(n) length(n[['post']]) == 0)
+  tips <- sapply(rdrenv$nodelist, function(n) length(n[['ptid']]) == 0)
   tips <- names(tips)[tips]
   sapply(tips, add, rdrenv=rdrenv)
   NULL
 }
 
 .addRoot <- function(rdrenv) {
-  root_i <- which(unlist(lapply(rdrenv$nodelist, function(n) n[['pre']] == "root")))
+  root_i <- which(unlist(lapply(rdrenv$nodelist, function(n) n[['prid']] == "root")))
   if(length(root_i) > 0) {
-    rdrenv$nodelist[[root_i]][['pre']] <- NULL
+    rdrenv$nodelist[[root_i]][['prid']] <- NULL
     rdrenv$nodelist[[root_i]][['span']] <- 0
     rdrenv$root <- names(rdrenv$nodelist)[root_i]
   } else {
@@ -75,14 +75,14 @@ readTree <- function(file=NULL, tree_string=NULL) {
 .addPredist <- function(rdrenv) {
   calc <- function(nd, d) {
     nd <- rdrenv$nodelist[[nd]]
-    if(!is.null(nd[['pre']])) {
+    if(!is.null(nd[['prid']])) {
       d <- nd[['span']] + d
-      d <- calc(nd[['pre']], d)
+      d <- calc(nd[['prid']], d)
     }
     d
   }
   assgn <- function(i) {
-    rdrenv$nodelist[[i]][['predist']] <- ds[[i]]
+    rdrenv$nodelist[[i]][['prdst']] <- ds[[i]]
     NULL
   }
   ds <- sapply(names(rdrenv$nodelist), calc, d=0)
@@ -135,19 +135,19 @@ readTree <- function(file=NULL, tree_string=NULL) {
       # TODO: utilise nd$id, e.g. node labels are taxonym or support
       nd$id <- rdrenv$prnds[[rdrenv$i]][['id']]
       rdrenv$prnds[[rdrenv$i]][['span']] <- nd[['span']]
-      rdrenv$prnds[[rdrenv$i]][['pre']] <-
+      rdrenv$prnds[[rdrenv$i]][['prid']] <-
         rdrenv$prnds[[rdrenv$i-1]][['id']]
       rdrenv$nodelist[[nd[['id']]]] <- rdrenv$prnds[[rdrenv$i]]
       rdrenv$prnds <- rdrenv$prnds[-rdrenv$i]
       rdrenv$i <- rdrenv$i - 1
       rdrenv$nxt_is_intrnl <- FALSE
     } else {
-      nd[['pre']] <- rdrenv$prnds[[rdrenv$i]][['id']]
+      nd[['prid']] <- rdrenv$prnds[[rdrenv$i]][['id']]
       rdrenv$nodelist[[nd[['id']]]] <- nd
     }
     if(length(rdrenv$prnds) > 0) {
-      rdrenv$prnds[[rdrenv$i]][['post']] <-
-        c(rdrenv$prnds[[rdrenv$i]][['post']], nd[['id']])
+      rdrenv$prnds[[rdrenv$i]][['ptid']] <-
+        c(rdrenv$prnds[[rdrenv$i]][['ptid']], nd[['id']])
     }
     if(grepl("\\)$", ndstr)) {
       rdrenv$nxt_is_intrnl <- TRUE

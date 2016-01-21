@@ -32,16 +32,16 @@ test_that("getPath() works", {
   prnt <- getParent(tree, ids=c('t1', "t10"))
   expect_true(prnt %in% pth)
 })
-test_that("get_Pre() works", {
+test_that("get_Prid() works", {
   tree <- randTree(10)
-  prids <- getNodesPre(tree, tree['nodes'])
+  prids <- getNodesPrid(tree, tree['nodes'])
   expect_that(prids[[1]], is_null())
   lst_nds <- unlist(lapply(prids[-1], function(n) n[length(n)]))
   expect_true(all(lst_nds == "n1"))
 })
-test_that("get_Post() works", {
+test_that("get_Ptid() works", {
   tree <- randTree(10)
-  pstids <- getNodesPost(tree, tree['nodes'])
+  pstids <- getNodesPtid(tree, tree['nodes'])
   expect_true(all(pstids[['n1']] %in% c(tree['nodes'], tree['tips'])))
   expect_that(pstids[['t1']], is_null())
 })

@@ -6,26 +6,26 @@
     span <- node[['span']]
   }
   if(length(tree@age) > 0) {
-    age <- tree@age - node[['predist']]
+    age <- tree@age - node[['prdst']]
   } else {
     age <- numeric()
   }
-  new('Node', id=node[['id']], span=span, pre=as.character(node[['pre']]),
-     post=as.character(node[['post']]), children=as.character(node[['children']]),
+  new('Node', id=node[['id']], span=span, prid=as.character(node[['prid']]),
+     ptid=as.character(node[['ptid']]), children=as.character(node[['children']]),
      nchildren=length(as.character(node[['children']])), pd=node[['pd']],
-     predist=node[['predist']], root=tree@root == node[['id']],
-     age=age, tip=length(node[['post']]) == 0)
+     prdst=node[['prdst']], root=tree@root == node[['id']],
+     age=age, tip=length(node[['ptid']]) == 0)
 }
 
 setClass ('Node', representation=representation (
   id='character',        # unique ID for node in tree@nodelist
   span='numeric',        # length of preceding branch
-  pre='character',       # parent node ID
-  post='vector',         # child node IDs
+  prid='character',      # parent node ID
+  ptid='vector',         # child node IDs
   children='vector',     # descending tip IDs
   nchildren='numeric',   # number of descending tips
   pd='numeric',          # total branch length represented by node
-  predist='numeric',     # total branch length of connected pres
+  prdst='numeric',       # total branch length of connected pres
   age='numeric',         # age of node in tree
   root='logical',        # T/F root node?
   tip='logical')         # T/F tip node?
@@ -51,10 +51,10 @@ setMethod ('print', c('x'='Node'),
              }
              msg <- paste0(msg, '  + ID: \"', x@id, '\"\n')
              if(!x@root) {
-               msg <- paste0(msg, '  + pre: \"', x@pre, '\"\n')
+               msg <- paste0(msg, '  + preid: \"', x@prid, '\"\n')
              }
              if(!x@tip) {
-               msg <- paste0(msg, '  + post: \"', paste0(x@post, collapse='\", \"'), '\"\n')
+               msg <- paste0(msg, '  + postid: \"', paste0(x@ptid, collapse='\", \"'), '\"\n')
                msg <- paste0(msg, '  + nchildren: ', length(x@children), '\n')
              }
              if(length(x@span) > 0) {
@@ -64,7 +64,7 @@ setMethod ('print', c('x'='Node'),
                if(length(x@age) > 0) {
                  msg <- paste0(msg, '  + age: ', signif(x@age, 2), '\n')
                } else {
-                 msg <- paste0(msg, '  + predist: ', signif(x@predist, 2), '\n') 
+                 msg <- paste0(msg, '  + predist: ', signif(x@prdst, 2), '\n') 
                }
                msg <- paste0(msg, '  + pd: ', signif(x@pd, 2), '\n')
              }
