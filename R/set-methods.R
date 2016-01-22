@@ -8,7 +8,10 @@ setPD <- function(tree, val) {
 }
 
 setAge <- function(tree, val) {
-  # PASS
+  spans <- getNodesSlot(tree, ids=tree@all, name="span")
+  spans <- spans/(tree@age/val)
+  tree <- setNodesSpan(tree, ids=tree@all, vals=spans)
+  tree
 }
 
 setNodeSpan <- function(tree, id, val) {
@@ -16,6 +19,7 @@ setNodeSpan <- function(tree, id, val) {
 }
 
 # If vals=NULL, all node spans are set to NULL
+# TODO: separate setNodeSpan and setNodesSpan, more efficient
 setNodesSpan <- function(tree, ids, vals) {
   .run <- function(i) {
     tree <<- .setNodeSpan(tree, id=ids[i], val=vals[i])
@@ -35,21 +39,30 @@ setNodesSpan <- function(tree, ids, vals) {
 }
 
 .setNodeSpan <- function(tree, id, val) {
-  .pd <- function(prid) {
+  .pd <- function(prid, tree) {
     tree@nodelist[[prid]][['pd']] <- tree@nodelist[[prid]][['pd']] -
       pspn + val
     if(!is.null(tree@nodelist[[prid]][['prid']])) {
-      tree <- .pd(tree@nodelist[[prid]][['prid']])
+      tree <- .pd(tree@nodelist[[prid]][['prid']], tree)
+    }
+    tree
+  }
+  .prdst <- function(ptid, tree) {
+    tree@nodelist[[ptid]][['prdst']] <- tree@nodelist[[ptid]][['prdst']] -
+      pspn + val
+    if(!is.null(tree@nodelist[[ptid]][['ptid']])) {
+      for(ptid in tree@nodelist[[ptid]][['ptid']]) {
+        tree <- .prdst(ptid, tree)
+      }
     }
     tree
   }
   pspn <- tree@nodelist[[id]][['span']]
   tree@nodelist[[id]][['span']] <- val
   if(!is.null(tree@nodelist[[id]][['prid']])) {
-    tree <- .pd(tree@nodelist[[id]][['prid']])
+    tree <- .pd(tree@nodelist[[id]][['prid']], tree)
   }
-  tree@nodelist[[id]][['prdst']] <- tree@nodelist[[id]][['prdst']] -
-    pspn + val
+  tree <- .prdst(id, tree)
   tree
 }
 

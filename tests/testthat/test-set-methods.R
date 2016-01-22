@@ -34,6 +34,10 @@ test_that('setPD() works', {
   tree <- setPD(tree, val=1)
   expect_that(tree['pd'], equals(1))
 })
+test_that('setAge() works', {
+  tree <- setAge(tree, val=1)
+  expect_that(tree['age'], equals(1))
+})
 test_that('setTol() works', {
   before <- length(tree@ext)
   tree <- setTol(tree, tol=tree['age'])
