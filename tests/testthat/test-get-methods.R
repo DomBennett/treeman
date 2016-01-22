@@ -4,9 +4,9 @@ library(testthat)
 
 # RUNNING
 context('Testing \'get-methods\'')
-test_that('get_Name () works', {
+test_that('get_Slot () works', {
   tree <- randTree(10)
-  node_spans <- getNodesName(tree, name="span",
+  node_spans <- getNodesSlot(tree, name="span",
                              ids=c(tree['nodes'], tree['tips']))
   expect_that(sum(node_spans), equals(tree['pd']))
 })

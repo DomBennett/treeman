@@ -1,13 +1,13 @@
 # TODO: sort documentation
 
 # @name get_Name
-getNodeName <- function(tree, name, id) {
+getNodeSlot <- function(tree, name, id) {
   tree@nodelist[[id]][[name]]
 }
 
-getNodesName <- function(tree, name, ids) {
+getNodesSlot <- function(tree, name, ids) {
   .get <- function(i) {
-    getNodeName(tree, name, ids[i])
+    getNodeSlot(tree, name, ids[i])
   }
   sapply(1:length(ids), .get)
 }
