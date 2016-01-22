@@ -123,6 +123,8 @@ setClass('TreeMan', representation=representation(
   nnodes='numeric',      # numeric of number of internal nodes in tree
   tips='vector',         # vector of Node ids that are tips
   ntips='numeric',       # numeric of number of internal nodes in tree
+  all='vector',          # vector of all Node ids
+  nall='numeric',        # numeric of number of all nodes in tree
   age='numeric',         # numeric of max root to tip distance
   pd='numeric',          # numeric of total branch length of tree
   ext='vector',          # vector of Node ids of all tips with 0 age
@@ -144,10 +146,12 @@ setMethod('.update', 'TreeMan',
            function(x) {
              wo_pstndes <- sapply(x@nodelist,
                                      function(n) length(n[['ptid']]) == 0)
-             x@tips <- names(wo_pstndes)[wo_pstndes]
+             x@tips <- sort(names(wo_pstndes)[wo_pstndes])
              x@ntips <- length(x@tips)
-             x@nodes <- names(wo_pstndes)[!wo_pstndes]
+             x@nodes <- sort(names(wo_pstndes)[!wo_pstndes])
              x@nnodes <- length(x@nodes)
+             x@all <- c(x@tips, x@nodes)
+             x@nall <- length(x@all)
              wspn <- names(x@nodelist)[names(x@nodelist) != x@root]
              x@wspn <- all(sapply(x@nodelist[wspn], function(n) !is.null(n[['span']])))
              if(x@wspn) {

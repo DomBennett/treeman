@@ -27,7 +27,7 @@ test_that('calcFrPrp() works', {
 })
 test_that('calcDstMtrx() works', {
   tree <- randTree(10)
-  ids <- c(tree['nodes'], tree['tips'])
+  ids <- tree['all']
   dmtrx <- calcDstMtrx(tree, ids)
   rndnd <- sample(ids, 1)
   expect_that(dmtrx[rndnd, rndnd], equals(0))

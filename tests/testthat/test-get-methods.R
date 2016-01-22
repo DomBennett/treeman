@@ -7,7 +7,7 @@ context('Testing \'get-methods\'')
 test_that('get_Slot () works', {
   tree <- randTree(10)
   node_spans <- getNodesSlot(tree, name="span",
-                             ids=c(tree['nodes'], tree['tips']))
+                             ids=tree['all'])
   expect_that(sum(node_spans), equals(tree['pd']))
 })
 test_that('get_Children() works', {
@@ -42,7 +42,7 @@ test_that("get_Prid() works", {
 test_that("get_Ptid() works", {
   tree <- randTree(10)
   pstids <- getNodesPtid(tree, tree['nodes'])
-  expect_true(all(pstids[['n1']] %in% c(tree['nodes'], tree['tips'])))
+  expect_true(all(pstids[['n1']] %in% tree['all']))
   expect_that(pstids[['t1']], is_null())
 })
 test_that("get_Lineage() works", {
