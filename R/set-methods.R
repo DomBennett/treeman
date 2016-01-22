@@ -1,4 +1,15 @@
-# #TODO: set_Span, set_Taxonym, setRoot, setAge, setPD
+# #TODO: set_Taxonym, setRoot, setAge, setPD
+
+setPD <- function(tree, val) {
+  spans <- getNodesSlot(tree, ids=tree@all, name="span")
+  spans <- spans/(tree@pd/val)
+  tree <- setNodesSpan(tree, ids=tree@all, vals=spans)
+  tree
+}
+
+setAge <- function(tree, val) {
+  # PASS
+}
 
 setNodeSpan <- function(tree, id, val) {
   .update(.setNodeSpan(tree, id, val))

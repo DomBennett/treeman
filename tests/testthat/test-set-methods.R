@@ -30,6 +30,10 @@ test_that('set_Span() works', {
   tree <- setNodesSpan(tree, ids=ids, vals=NULL)
   expect_false(tree['wspn'])
 })
+test_that('setPD() works', {
+  tree <- setPD(tree, val=1)
+  expect_that(tree['pd'], equals(1))
+})
 test_that('setTol() works', {
   before <- length(tree@ext)
   tree <- setTol(tree, tol=tree['age'])
