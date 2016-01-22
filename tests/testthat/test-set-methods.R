@@ -16,6 +16,20 @@ test_that('set_ID() works', {
   tree <- setNodeID(tree, id='new_id_1', val='t1')
   expect_error(tree[['new_id_1']])
 })
+test_that('set_Span() works', {
+  before <- tree['pd']
+  val <- tree[['t1']]['span']/2
+  tree <- setNodeSpan(tree, id='t1', val=val)
+  expect_that(tree['pd'] + val, equals(before))
+  before <- tree['pd']
+  ids <- c(tree['tips'], tree['nodes'])
+  vals <- getNodesSlot(tree, name='span', ids=ids)
+  vals <- vals/2
+  tree <- setNodesSpan(tree, ids=ids, vals=vals)
+  expect_that(tree['pd']*2, equals(before))
+  tree <- setNodesSpan(tree, ids=ids, vals=NULL)
+  expect_false(tree['wspn'])
+})
 test_that('setTol() works', {
   before <- length(tree@ext)
   tree <- setTol(tree, tol=tree['age'])

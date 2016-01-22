@@ -1,4 +1,46 @@
-# #TODO: set_Span, set_Taxonym, setTol
+# #TODO: set_Span, set_Taxonym, setRoot, setAge, setPD
+
+setNodeSpan <- function(tree, id, val) {
+  .update(.setNodeSpan(tree, id, val))
+}
+
+# If vals=NULL, all node spans are set to NULL
+setNodesSpan <- function(tree, ids, vals) {
+  .run <- function(i) {
+    tree <<- .setNodeSpan(tree, id=ids[i], val=vals[i])
+    NULL
+  }
+  .nullify <- function(id) {
+    tree@nodelist[[id]][['span']] <<- NULL
+    tree@nodelist[[id]][['pd']] <<- NULL
+    tree@nodelist[[id]][['prdst']] <<- NULL
+  }
+  if(is.null(vals)) {
+    sapply(names(tree@nodelist), .nullify)
+  } else {
+    sapply(1:length(ids), .run)
+  }
+  .update(tree)
+}
+
+.setNodeSpan <- function(tree, id, val) {
+  .pd <- function(prid) {
+    tree@nodelist[[prid]][['pd']] <- tree@nodelist[[prid]][['pd']] -
+      pspn + val
+    if(!is.null(tree@nodelist[[prid]][['prid']])) {
+      tree <- .pd(tree@nodelist[[prid]][['prid']])
+    }
+    tree
+  }
+  pspn <- tree@nodelist[[id]][['span']]
+  tree@nodelist[[id]][['span']] <- val
+  if(!is.null(tree@nodelist[[id]][['prid']])) {
+    tree <- .pd(tree@nodelist[[id]][['prid']])
+  }
+  tree@nodelist[[id]][['prdst']] <- tree@nodelist[[id]][['prdst']] -
+    pspn + val
+  tree
+}
 
 setGeneric('setTol', signature=c('tree', 'tol'),
            function(tree, tol) {
@@ -9,11 +51,6 @@ setMethod('setTol', c('TreeMan', 'numeric'),
             tree@tol <- tol
             .update(tree)
           })
-
-# setRoot
-# setAge
-# setPD
-# setNodeTaxonym
 
 setNodeID <- function(tree, id, val) {
   setNodesID(tree, id, val)
@@ -52,14 +89,14 @@ setNodesID <- function(tree, ids, vals) {
 }
 
 
-setNodeOther <- function(tree, id, value) {
-  tree@nodelist[[id]]['other'] <- value
+setNodeOther <- function(tree, id, val) {
+  tree@nodelist[[id]]['other'] <- val
   tree
 }
 
-setNodesOther <- function(tree, ids, values) {
+setNodesOther <- function(tree, ids, vals) {
   .set <- function(i) {
-    tree <<- setNode(tree, ids[i], values[i])
+    tree <<- setNode(tree, ids[i], vals[i])
     NULL
   }
   sapply(1:length(ids), .set)
