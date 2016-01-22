@@ -1,9 +1,11 @@
 .newNode <- function(tree, node) {
   node <- tree@nodelist[[node]]
   if(is.null(node[['span']]) | !tree@wspn) {
-    span <- numeric()
+    span <- pd <- prdst <- numeric()
   } else {
     span <- node[['span']]
+    pd <- node[['pd']]
+    prdst <- node[['prdst']]
   }
   if(length(tree@age) > 0) {
     age <- tree@age - node[['prdst']]
@@ -12,8 +14,8 @@
   }
   new('Node', id=node[['id']], span=span, prid=as.character(node[['prid']]),
      ptid=as.character(node[['ptid']]), children=as.character(node[['children']]),
-     nchildren=length(as.character(node[['children']])), pd=node[['pd']],
-     prdst=node[['prdst']], root=tree@root == node[['id']],
+     nchildren=length(as.character(node[['children']])), pd=pd,
+     prdst=prdst, root=tree@root == node[['id']],
      age=age, tip=length(node[['ptid']]) == 0)
 }
 

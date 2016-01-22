@@ -15,12 +15,9 @@ test_that('Node works (rooted + with spns)', {
 })
 test_that('Node works (rooted + w/o spns)', {
   tree <- randTree(10)
-  ids <- c( tree['tips'], tree['nodes'])
-  #tree <- setNodes(tree, ids=ids, name='span', values=NULL)
-  #TODO: remove branch lengths
+  tree <- setNodesSpan(tree, ids=NULL, vals=NULL)
   nid <- names(tree@nodelist)[sample(1:10, 1)]
   node <- tree[[nid]]
-  str(node)
 })
 test_that('Node works (unrooted  + w/o spns))', {
   tree <- randTree(10)
