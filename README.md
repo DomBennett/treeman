@@ -39,3 +39,5 @@ In development
 **Author**
 
 D.J. Bennett
+
+I welcome pull requests!
