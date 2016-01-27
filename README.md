@@ -5,14 +5,15 @@
 
 The `treeman` R package provides a `list` based class for encoding phylogenetic trees in R, making manipulating phylogenetic trees easier to code and more efficient to run.
 
-*Design features*
+**Design features**
 
 * Lightweight (few dependencies)
 * Fast (vectorised or recursive)
 * Tested
 * Simple and intuitive
 
-*Quick guide*
+**Quick guide**
+
 ```{R}
 # install
 library(devtools)
@@ -27,11 +28,14 @@ tree["tips"]  # extract key stats
 
 For more details check out the [wiki](https://github.com/DomBennett/treeman/wiki).
 
-*Licence*
+**Licence**
+
 GPL-2
 
-*Status*
+**Status**
+
 In development
 
-*Author*
+**Author**
+
 D.J. Bennett
