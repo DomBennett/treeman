@@ -1,4 +1,38 @@
-# TODO: calc imbalance, calc tree dists
+# TODO: calc imbalance
+
+calcDstBLD <- function(tree_1, tree_2, nrmlsd=FALSE) {
+  n1 <- tree_1@nodes[!tree_1@nodes == tree_1@root]
+  n2 <- tree_2@nodes[!tree_2@nodes == tree_2@root]
+  c1 <- getNodesChildren(tree_1, n1)
+  c2 <- getNodesChildren(tree_2, n2)
+  s1 <- getNodesSlot(tree_1, name="span", ids=n1)
+  s2 <- getNodesSlot(tree_2, name="span", ids=n2)
+  d1 <- s2[match(c1, c2)]
+  d1[which(is.na(d1))] <- 0
+  d1 <- s1 - d1
+  d2 <- s1[match(c2, c1)]
+  d2[which(is.na(d2))] <- 0
+  d2 <- s2 - d2
+  d <- sqrt(sum(c(d1^2, d2^2)))
+  if(nrmlsd) {
+    max_d <- sqrt(sum(c(s1^2, s2^2)))
+    d <- d/max_d
+  }
+  d
+}
+
+calcDstRF <- function(tree_1, tree_2, nrmlsd=FALSE) {
+  n1 <- tree_1@nodes[!tree_1@nodes == tree_1@root]
+  n2 <- tree_2@nodes[!tree_2@nodes == tree_2@root]
+  c1 <- getNodesChildren(tree_1, n1)
+  c2 <- getNodesChildren(tree_2, n2)
+  d <- sum(!c1 %in% c2) + sum(!c2 %in% c1)
+  if(nrmlsd) {
+    max_d <- (length(n1) + length(n2))
+    d <- d/max_d
+  }
+  d
+}
 
 calcPhyDv <- function(tree, ids) {
   prids <- unlist(getNodesPrid(tree, ids))

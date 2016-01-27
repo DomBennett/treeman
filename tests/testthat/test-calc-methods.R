@@ -4,6 +4,22 @@ library(testthat)
 
 # RUNNING
 context('Testing \'calc-methods\'')
+test_that('calcDstBLD() works', {
+  tree_1 <- readTree(tree_string="((t1:1.0,t2:1.0):1.0,t3:1.0);")
+  tree_2 <- readTree(tree_string="((t3:1.0,t2:1.0):1.0,t1:1.0);")
+  d <- calcDstBLD(tree_1, tree_2, TRUE)
+  expect_that(d, equals(1))
+  d <- calcDstBLD(tree_1, tree_1, TRUE)
+  expect_that(d, equals(0))
+})
+test_that('calcDstRF() works', {
+  tree_1 <- readTree(tree_string="((t1,t2),t3);")
+  tree_2 <- readTree(tree_string="((t3,t2),t1);")
+  d <- calcDstRF(tree_1, tree_2, TRUE)
+  expect_that(d, equals(1))
+  d <- calcDstRF(tree_1, tree_1, TRUE)
+  expect_that(d, equals(0))
+})
 test_that('calcPhyDv() works', {
   tree <- randTree(10)
   tips <- sample(tree['tips'], 3)
