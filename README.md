@@ -15,7 +15,7 @@ The `treeman` R package provides a `list` based class for encoding phylogenetic 
 **Quick guide**
 
 ```{R}
-# install
+# install development copy
 library(devtools)
 install_github('dombennett/treeman')
 # working with the TreeMan class
