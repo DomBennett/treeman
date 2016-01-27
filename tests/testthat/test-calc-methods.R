@@ -4,6 +4,11 @@ library(testthat)
 
 # RUNNING
 context('Testing \'calc-methods\'')
+test_that('calcOvrlp() works', {
+  tree <- readTree(tree_string="((t1:1.0,t2:1.0):1.0,t3:1.0);")
+  ovrlp <- calcOvrlp(tree, ids_1=tree['tips'], ids_2=c('t3'), nrmlsd=TRUE)
+  expect_that(ovrlp, equals(1/4))
+})
 test_that('calcDstBLD() works', {
   tree_1 <- readTree(tree_string="((t1:1.0,t2:1.0):1.0,t3:1.0);")
   tree_2 <- readTree(tree_string="((t3:1.0,t2:1.0):1.0,t1:1.0);")

@@ -1,5 +1,19 @@
 # TODO: calc imbalance
 
+calcOvrlp <- function(tree, ids_1, ids_2, nrmlsd=FALSE) {
+  spans <- getNodesSlot(tree, name='span', tree@all)
+  names(spans) <- tree@all
+  ids_1 <- c(unique(unlist(getNodesPrid(tree, ids_1))),
+             ids_1)
+  ids_2 <- c(unique(unlist(getNodesPrid(tree, ids_2))),
+             ids_2)
+  ovrlp <- sum(spans[ids_2[ids_2 %in% ids_1]])
+  if(nrmlsd) {
+    ovrlp <- ovrlp/tree@pd
+  }
+  ovrlp
+}
+
 calcDstBLD <- function(tree_1, tree_2, nrmlsd=FALSE) {
   n1 <- tree_1@nodes[!tree_1@nodes == tree_1@root]
   n2 <- tree_2@nodes[!tree_2@nodes == tree_2@root]
