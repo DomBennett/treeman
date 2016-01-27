@@ -1,4 +1,4 @@
-# TODO: calc imbalance
+# TODO: calc imbalance, calcDstTrp
 
 calcOvrlp <- function(tree, ids_1, ids_2, nrmlsd=FALSE) {
   spans <- getNodesSlot(tree, name='span', tree@all)

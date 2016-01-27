@@ -79,4 +79,26 @@ randTree <- function (n) {
   .update (tree)
 }
 
-#TODO balancedTree
+#@name blncdTree
+# blncdTree <- function(n) {
+#   mkNd <- function(id, prid, ptid, pd) {
+#     node <- list ('id'=id,
+#                   'span'=1,
+#                   'prid'=pre,
+#                   'ptid'=post,
+#                   'children'=children,
+#                   'pd'=pd,
+#                   'prdst'=prdst)
+#     node
+#   }
+#   prdst <- n/2
+#   is <- seq(from=2, to=n, by=2)
+#   cntr <- 0
+#   nodelist <- list()
+#   for(i in is) {
+#     id <- paste0()
+#     nodelist <- mkNd
+#   }
+#   
+#   
+# }

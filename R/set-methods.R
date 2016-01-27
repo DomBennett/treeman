@@ -1,4 +1,4 @@
-# #TODO: set_Taxonym, setRoot, setAge, setPD
+# #TODO: set_Taxonym, setRoot
 
 setPD <- function(tree, val) {
   spans <- getNodesSlot(tree, ids=tree@all, name="span")

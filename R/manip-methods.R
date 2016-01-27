@@ -1,4 +1,4 @@
-# TODO: addTips, removeTip, mergeTree, collapseNode
+# TODO: addTips, removeTip, mergeTree, collapseNode, removeNode
 # TODO: add doc for adding and removing tips
 addTip <- function(tree, id, sister, start, end,
                    parent_id=paste0("p_", id),
