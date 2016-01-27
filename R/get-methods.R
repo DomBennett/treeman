@@ -20,7 +20,7 @@ getNodeChildren <- function(tree, id) {
 }
 
 getNodesChildren <- function(tree, ids) {
-  sapply(ids, getNodeChildren, tree=tree)
+  sapply(ids, getNodeChildren, tree=tree, simplify=FALSE)
 }
 
 # @name get_Age
@@ -90,7 +90,8 @@ getNodesPrid <- function(tree, ids) {
 # @name get_Lineage
 getNodeLineage <- function(tree, id) {
   prids <- getNodePrid(tree, id)
-  lineage <- sapply(prids, function(n) tree@nodelist[[n]][['taxonym']])
+  lineage <- sapply(prids, function(n) tree@nodelist[[n]][['taxonym']],
+                    simplify=FALSE)
   if(length(lineage) > 0) {
     lineage <- c(tree@nodelist[[id]][['taxonym']], lineage)
     lineage <- lineage[length(lineage):1]
@@ -102,7 +103,7 @@ getNodeLineage <- function(tree, id) {
 }
 
 getNodesLineage <- function(tree, ids) {
-  sapply(ids, getNodeLineage, tree=tree)
+  sapply(ids, getNodeLineage, tree=tree, simplify=FALSE)
 }
 
 # @name get_Post
