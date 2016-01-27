@@ -53,7 +53,7 @@ treeman_res <- treemanBuilder(start_tree, max_size, sample_size)
 
 # PLOT
 res <- data.frame("Tree_size"=seq(2, max_size, sample_size),
-                  "Timing"=c(phylo_res, treeman_res),
+                  "Timing(s)"=c(phylo_res, treeman_res),
                   "Build_method"=rep(c('Phylo', "TreeMan"), each=max_size/sample_size))
 save(res, file=file.path(getwd(), "compare_results.Rd"))
 p <- ggplot (res, aes(y=Timing, x=Tree_size, colour=Build_method)) + geom_line(size=4)
