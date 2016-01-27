@@ -38,6 +38,4 @@ In development
 
 **Author**
 
-D.J. Bennett
-
-I welcome pull requests!
+D.J. Bennett (*but I welcome pull requests!*)
