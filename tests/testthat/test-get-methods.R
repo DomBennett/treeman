@@ -4,7 +4,15 @@ library(testthat)
 
 # RUNNING
 context('Testing \'get-methods\'')
-test_that('get_Slot () works', {
+test_that('getOutgroup() works', {
+  tree <- randTree(10)
+  rnd_nd <- sample(tree['nodes'][tree['nodes'] != tree['root']], 1)
+  ingrp <- getNodeChildren(tree, rnd_nd)
+  outgrp <- sample(tree['tips'][!tree['tips'] %in% ingrp], 1)
+  res <- getOutgroup(tree, ids=c(ingrp, outgrp))
+  expect_that(res, equals(outgrp))
+})
+test_that('get_Slot() works', {
   tree <- randTree(10)
   node_spans <- getNodesSlot(tree, name="span",
                              ids=tree['all'])

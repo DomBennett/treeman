@@ -1,5 +1,25 @@
 # TODO: sort documentation
 
+getOutgroup <- function(tree, ids) {
+  .cntr <- function(id) {
+    children <- tree@nodelist[[id]][['children']]
+    sum(ids %in% children)
+  }
+  prnt <- getParent(tree, ids)
+  ptids <- tree@nodelist[[prnt]][['ptid']]
+  cnts <- sapply(ptids, .cntr)
+  outnd <- names(cnts)[which.min(cnts)]
+  children <- tree@nodelist[[outnd]][['children']]
+  if(length(children) == 0) {
+    return(outnd)
+  }
+  outgroup <- ids[ids %in% children]
+  if(length(outgroup) > 1) {
+    return(NULL)
+  }
+  outgroup
+}
+
 # @name get_Name
 getNodeSlot <- function(tree, name, id) {
   tree@nodelist[[id]][[name]]
