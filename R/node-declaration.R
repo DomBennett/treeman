@@ -53,10 +53,10 @@ setMethod ('print', c('x'='Node'),
              }
              msg <- paste0(msg, '  + ID: \"', x@id, '\"\n')
              if(!x@root) {
-               msg <- paste0(msg, '  + preid: \"', x@prid, '\"\n')
+               msg <- paste0(msg, '  + prid: \"', x@prid, '\"\n')
              }
              if(!x@tip) {
-               msg <- paste0(msg, '  + postid: \"', paste0(x@ptid, collapse='\", \"'), '\"\n')
+               msg <- paste0(msg, '  + ptid: \"', paste0(x@ptid, collapse='\", \"'), '\"\n')
                msg <- paste0(msg, '  + nchildren: ', length(x@children), '\n')
              }
              if(length(x@span) > 0) {
