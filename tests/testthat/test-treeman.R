@@ -24,8 +24,3 @@ test_that('[ works', {
   expect_that(tree['nnodes'], equals(99))
   expect_that(tree['age'], equals(tree@age))
 })
-test_that('.update() works', {
-  tree@nodelist[['t1']][['span']] <- NULL
-  tree <- treeman:::.update(tree)
-  expect_false(tree@wspn)
-})

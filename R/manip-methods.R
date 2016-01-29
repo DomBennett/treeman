@@ -1,5 +1,6 @@
 # TODO: addTips, removeTip, mergeTree, collapseNode, removeNode
 # TODO: add doc for adding and removing tips
+
 addTip <- function(tree, id, sister, start, end,
                    parent_id=paste0("p_", id),
                    tip_taxonym=NULL, parent_taxonym=NULL) {
@@ -39,9 +40,8 @@ addTip <- function(tree, id, sister, start, end,
   pres <- getNodePrid(tree, node[['id']])
   tree@nodelist[pres] <- lapply(tree@nodelist[pres],
                                     updatePre)
-  .update(tree)
+  .updateSlots(tree)
 }
-#TODO: add doc on pinning tips
 pinTip <- function(tree, tip_id, lineage, end) {
   taxonyms <- unlist(lapply(tree@nodelist, function(n) n[['taxonym']]))
   for(i in length(lineage):1) {
@@ -72,7 +72,6 @@ pinTip <- function(tree, tip_id, lineage, end) {
   }
   tree
 }
-
 pinTips <- function(tree, tip_ids, lineages, ends) {
   .pin <- function(i) {
     tree <- pinTip(tree, tip_ids[i], lineages[[i]], ends[i])

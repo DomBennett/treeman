@@ -158,5 +158,5 @@ getSubtree <- function(tree, id) {
   ndlst[[id]][['prid']] <- NULL
   ndlst[[id]][['span']] <- 0
   new_tree <- new('TreeMan', nodelist=ndlst, root=id)
-  .update(new_tree)
+  .updateSlots(new_tree)
 }

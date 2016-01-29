@@ -18,7 +18,7 @@ readTree <- function(file=NULL, tree_string=NULL) {
   .addPredist(rdrenv)
   .addPD(rdrenv)
   tree <- new('TreeMan', nodelist=rdrenv$nodelist, root=rdrenv$root)
-  .update(tree)
+  .updateSlots(tree)
 }
 
 # addPD

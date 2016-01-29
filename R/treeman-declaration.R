@@ -134,43 +134,6 @@ setClass('TreeMan', representation=representation(
   root='character'),     # character of Node id of root, if no root then empty character
   prototype=prototype(tol=1e-8), validity=.checkTreeMan)
 
-# Updater
-setGeneric('.update', signature=c('x'),
-            function(x) {
-              genericFunction('.update')
-            })
-
-setMethod('.update', 'TreeMan',
-           function(x) {
-             wo_pstndes <- sapply(x@nodelist,
-                                     function(n) length(n[['ptid']]) == 0)
-             x@tips <- sort(names(wo_pstndes)[wo_pstndes])
-             x@ntips <- length(x@tips)
-             x@nodes <- sort(names(wo_pstndes)[!wo_pstndes])
-             x@nnodes <- length(x@nodes)
-             x@all <- c(x@tips, x@nodes)
-             x@nall <- length(x@all)
-             wspn <- names(x@nodelist)[names(x@nodelist) != x@root]
-             x@wspn <- all(sapply(x@nodelist[wspn], function(n) !is.null(n[['span']])))
-             if(x@wspn) {
-               if(!is.null(x@root)) {
-                 x@age <- max(sapply(x@nodelist[wspn], function(x) x[['prdst']]))
-                 extant_is <- unlist(sapply(x@tips, function(i) {
-                  (x@age - x@nodelist[[i]][['prdst']]) <= x@tol}))
-                 x@ext <- names(extant_is)[extant_is]
-                 x@exc <- x@tips[!x@tips %in% x@ext]
-                 x@ultr <- all(x@tips %in% x@ext)
-               }
-               x@pd <- x@nodelist[[x@root]][['pd']]
-             } else {
-               x@age <- x@pd <- numeric()
-               x@ext <- x@ext <- vector()
-               x@ultr <- logical()
-             }
-             x@ply <- any(sapply(x@nodelist, function(n) length(n[['ptid']]) > 2))
-             initialize(x)
-           })
-
 # Accessor methods
 setMethod('[[', c('TreeMan', 'character'),
           function(x, i) {

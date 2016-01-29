@@ -15,7 +15,7 @@ setAge <- function(tree, val) {
 }
 
 setNodeSpan <- function(tree, id, val) {
-  .update(.setNodeSpan(tree, id, val))
+  .updateSlots(.setNodeSpan(tree, id, val))
 }
 
 # If vals=NULL, all node spans are set to NULL
@@ -35,7 +35,7 @@ setNodesSpan <- function(tree, ids, vals) {
   } else {
     sapply(1:length(ids), .run)
   }
-  .update(tree)
+  .updateSlots(tree)
 }
 
 .setNodeSpan <- function(tree, id, val) {
@@ -66,15 +66,10 @@ setNodesSpan <- function(tree, ids, vals) {
   tree
 }
 
-setGeneric('setTol', signature=c('tree', 'tol'),
-           function(tree, tol) {
-             genericFunction('setTol')
-           })
-setMethod('setTol', c('TreeMan', 'numeric'),
-          function(tree, tol){
-            tree@tol <- tol
-            .update(tree)
-          })
+setTol <- function(tree, tol) {
+  tree@tol <- tol
+  .updateSlots(tree)
+}
 
 setNodeID <- function(tree, id, val) {
   setNodesID(tree, id, val)
