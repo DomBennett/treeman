@@ -1,5 +1,3 @@
-#TODO: explicitly call node elements with [['']], change post --> pst, change predist --> pdst
-
 #' @name TreeMan
 #' @title TreeMan Class
 #' @description S4 Class for representing phylogenetic trees as a list of nodes.
