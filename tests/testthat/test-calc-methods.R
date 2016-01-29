@@ -4,6 +4,11 @@ library(testthat)
 
 # RUNNING
 context('Testing \'calc-methods\'')
+test_that('calc_Blnc() works', {
+  tree <- readTree(tree_string="((t1:1.0,t2:1.0):1.0,(t3:1.0,t4:1.0):1.0);")
+  bstats <- calcNodesBlnc(tree, tree['nodes'])
+  expect_that(sum(bstats), equals(0))
+})
 test_that('calcDstTrp() works', {
   tree_1 <- randTree(10)
   tree_2 <- randTree(10)

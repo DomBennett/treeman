@@ -1,4 +1,16 @@
-# TODO: calc imbalance
+calcNodeBlnc <- function(tree, id) {
+  ntot <- length(getNodeChildren(tree, id))
+  ptid <- tree@nodelist[[id]][['ptid']][1]
+  nprt <- length(getNodeChildren(tree, ptid))
+  if(nprt == 0) {
+    nprt <- 1
+  }
+  abs((ntot/2) - nprt)
+}
+
+calcNodesBlnc <- function(tree, ids) {
+  sapply(ids, calcNodeBlnc, tree=tree)
+}
 
 calcDstTrp <- function(tree_1, tree_2, nrmlsd=FALSE) {
   .count <- function(i) {
