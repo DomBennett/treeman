@@ -1,1 +1,85 @@
-# TODO: multi TreeMan object
+.checkTreeMen <- function(object) {
+  .check <- function(i, invlds) {
+    if(class(object@treelist[[i]])[1] != "TreeMan") {
+      invlds <<- c(i, invlds)
+    }
+    NULL
+  }
+  invlds <- NULL
+  sapply(1:length(object@treelist), .check, invlds=invlds)
+  if(length(invlds) > 0) {
+    for(i in invlds) {
+      cat("[", i, "] in treelist is not a TreeMan object\n", sep="")
+    }
+    return(FALSE)
+  }
+  TRUE
+}
+
+setClass('TreeMen', representation=representation(
+  treelist='list',       # list of TreeMan objects
+  ntips='numeric',       # sum of tips per tree
+  ntrees='numeric'),     # number of trees in object
+  validity=.checkTreeMen)
+
+# concatenate methods
+.cManToMan <- function(treeman_1, treeman_2) {
+  treelist <- c(list(treeman_1), list(treeman_2))
+  ntips <- sum(c(treeman_1@ntips, treeman_1@ntips))
+  ntrees <- 2
+  new("TreeMen", treelist=treelist, ntips=ntips, ntrees=ntrees)
+}
+
+.cMenToMen <- function(treemen_1, treemen_2) {
+  treelist <- c(treemen_1@treelist, treemen_2@treelist)
+  treemen_1@treelist <- treelist
+  treemen_1@ntips <- treemen_1@ntips + treemen_2@ntips
+  treemen_1@ntrees <- treemen_1@ntrees + treemen_2@ntrees
+  treemen_1
+}
+
+.cMenToMan <- function(treemen, treeman) {
+  treelist <- c(treemen@treelist, treeman)
+  treemen@treelist <- treelist
+  treemen@ntips <- treeman@ntips + treemen@ntips
+  treemen@ntrees <- treemen@ntrees + 1
+  treemen
+}
+
+.cMenToAny <- function(treemen, treeobj) {
+  if(class(treeobj)[1] == "TreeMan") {
+    treemen <- .cMenToMan(treemen, treeobj)
+  } else if (class(treeobj)[1] == "TreeMen") {
+    treemen <- .cMenToMen(treemen, treeobj)
+  }
+  treemen
+}
+
+.cTreeObjs <- function(treemen, treeobj, ...) {
+  if(nargs() > 2) {
+    treemen <- .cMenToAny(treemen, treeobj)
+    treemen <- .cTreeObjs(treemen, ...)
+  } else {
+    treemen <- .cMenToAny(treemen, treeobj)
+  }
+  treemen
+}
+setGeneric("cTrees", signature=c("x"),
+           function(x, ...) {
+             standardGeneric("cTrees")
+           })
+setMethod("cTrees", c("TreeMan"),
+          function(x, y, ...) {
+            if(is(y, "TreeMan")) {
+              x <- .cManToMan(x, y)
+            } else {
+              x <- .cManToMen(x, y)
+            }
+            x <- .cTreeObjs(x, ...)
+            x
+            })
+setMethod('cTrees', c('TreeMen'),
+          function(x, ...) {
+            x <- .cTreeObjs(x, ...)
+            x
+          })

@@ -1,12 +1,36 @@
-# TreeMan display methods
+# TreeMen display methods
+setMethod('as.character', c('x'='TreeMen'),
+          function(x) {
+            paste0('TreeMen Object of [', x@ntrees,'] trees')
+          })
+setMethod('show', 'TreeMen',
+          function(object){
+            cat(as.character(object))
+          })
+setMethod('str', c('object'='TreeMen'),
+          function(object, max.level=2L, ...) {
+            if(is.na(max.level)) {
+              stop('max.level must be numeric')
+            }
+            str@default(object, max.level=max.level, ...)
+          })
+setMethod('print', c('x'='TreeMen'),
+          function(x){
+            msg <- 'Trees (TreeMen Object):\n'
+            msg <- paste0(msg, '  + ', x@ntrees, ' trees\n')
+            msg <- paste0(msg, '  + ', x@ntips, ' tips\n')
+            cat(msg)
+          })
 
+
+# TreeMan display methods
 setMethod('as.character', c('x'='TreeMan'),
            function(x) {
              paste0('TreeMan Object of [', length(x@tips),'] tips')
            })
 setMethod('show', 'TreeMan',
            function(object){
-             print(object)
+             print(as.character(object))
            })
 setMethod('str', c('object'='TreeMan'),
            function(object, max.level=2L, ...) {
