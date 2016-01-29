@@ -83,3 +83,19 @@ setMethod('cTrees', c('TreeMen'),
             x <- .cTreeObjs(x, ...)
             x
           })
+
+# Accessor methods
+setMethod('[[', c('TreeMen', 'ANY'),
+          function(x, i) {
+            if(!i %in% 1:length(x@treelist)) {
+              stop(paste0(i, ' not in tree'))
+            }
+            x@treelist[[i]]
+          })
+setMethod('[', c('TreeMen', 'character'),
+          function(x, i) {
+            if(!i %in% slotNames(x)) {
+              stop(paste0(i, '  not in tree'))
+            }
+            slot(x, i)
+          })
