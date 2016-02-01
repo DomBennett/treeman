@@ -25,11 +25,14 @@ getNodeSlot <- function(tree, name, id) {
   tree@nodelist[[id]][[name]]
 }
 
-getNodesSlot <- function(tree, name, ids) {
+getNodesSlot <- function(tree, name, ids, ...) {
   .get <- function(i) {
     getNodeSlot(tree, name, ids[i])
   }
-  sapply(1:length(ids), .get)
+  l_data <- data.frame(i=1:length(ids), stringsAsFactors=FALSE)
+  res <- mdply(.data=l_data, .fun=.get, ...)
+  colnames(res) <- c('id', name)
+  res
 }
 
 # @name get_Children
@@ -39,34 +42,39 @@ getNodeChildren <- function(tree, id) {
   node[['children']]
 }
 
-getNodesChildren <- function(tree, ids) {
-  sapply(ids, getNodeChildren, tree=tree, simplify=FALSE)
+getNodesChildren <- function(tree, ids, ...) {
+  l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
+  res <- mlply(.data=l_data, .fun=getNodeChildren, tree=tree, ...)
+  names(res) <- ids
+  res[1:length(res)]
 }
 
 # @name get_Age
 #TODO: how to effectively handle unrooted trees, age has no meaning
 getNodeAge <- function(tree, id) {
   node <- tree@nodelist[[id]]
-  tree@age - node[['prdst']]
+  age <- tree@age - node[['prdst']]
+  age
 }
 
-getNodesAge <- function(tree, ids) {
-  ages <- sapply(ids, getNodeAge, tree=tree)
-  data.frame(node=ids, age=ages, row.names=NULL)
+getNodesAge <- function(tree, ids, ...) {
+  l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
+  res <- mdply(.data=l_data, .fun=getNodeAge, tree=tree, ...)
+  colnames(res) <- c('id', 'age')
+  res
 }
 
-getEdgeAge <- function(tree, id) {
-  max <- getNodeAge(tree, tree@nodelist[[id]][['prid']])
-  min <- getNodeAge(tree, id)
-  data.frame(edge=id, max, min)
+getSpanAge <- function(tree, id) {
+  start <- getNodeAge(tree, tree@nodelist[[id]][['prid']])
+  end <- getNodeAge(tree, id)
+  data.frame(span=id, start, end)
 }
 
-getEdgesAge <- function(tree, ids) {
-  maxs <- sapply(ids, function(tree, id) {
-    getNodeAge(tree, tree@nodelist[[id]][['prid']])
-  }, tree=tree)
-  mins <- sapply(ids, getNodeAge, tree=tree)
-  data.frame(edge=ids, max=maxs, min=mins, row.names=NULL)
+getSpansAge <- function(tree, ids, ...) {
+  l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
+  res <- mdply(.data=l_data, .fun=getSpanAge, tree=tree, ...)
+  res <- res[ ,colnames(res) != 'id']
+  res
 }
 
 # @name getParent
@@ -92,10 +100,12 @@ getPath <- function(tree, from, to) {
 }
 
 # @name get_Pre
-getNodePrid <- function(tree, id) {
-  .get <- function(nd, prids) {
-    prid <- tree@nodelist[[nd]][['prid']]
-    if(!is.null(prid)) {
+# recursive, stops whenever prid is NULL
+.getNodePrid <- function(tree, id,
+                         stopfnc=function(prid){is.null(prid)}) {
+  .get <- function(id, prids) {
+    prid <- tree@nodelist[[id]][['prid']]
+    if(!stopfnc(prid)) {
       prids <- c(prid, .get(prid, prids))
     }
     prids
@@ -103,8 +113,15 @@ getNodePrid <- function(tree, id) {
   .get(id, NULL)
 }
 
-getNodesPrid <- function(tree, ids) {
-  sapply(ids, getNodePrid, tree=tree, simplify=FALSE)
+getNodePrid <- function(tree, id) {
+  .getNodePrid(tree, id)
+}
+
+getNodesPrid <- function(tree, ids, ...) {
+  l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
+  res <- mlply(.data=l_data, .fun=.getNodePrid, tree=tree, ...)
+  names(res) <- ids
+  res[1:length(res)]
 }
 
 # @name get_Lineage
@@ -122,28 +139,33 @@ getNodeLineage <- function(tree, id) {
   lineage
 }
 
-getNodesLineage <- function(tree, ids) {
-  sapply(ids, getNodeLineage, tree=tree, simplify=FALSE)
+getNodesLineage <- function(tree, ids, ...) {
+  l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
+  mlply(.data=l_data, .fun=getNodeLineage, tree=tree, ...)
 }
 
-# @name get_Post
+# @name get_Ptid
+# reduce dependence on the recursive, by getting prenodes
 getNodePtid <- function(tree, id) {
-  .get <- function(nds, pstids) {
-    new_nds <- c()
-    for(nd in nds) {
-      new_nds <- c(new_nds, tree@nodelist[[nd]][['ptid']])
+  .get <- function(id, tree) {
+    stopfnc <- function(prid) {
+      prid %in% pstids
     }
-    pstids <- c(pstids, new_nds)
-    if(length(new_nds) > 0) {
-      pstids <- .get(nds=new_nds, pstids=pstids)
-    }
-    pstids
+    pstids <<- c(pstids, .getNodePrid(tree, id, stopfnc))
+    NULL
   }
-  .get(nds=id, pstids=NULL)
+  pstids <- id
+  l_data <- data.frame(id=tree@nodelist[[id]][['children']],
+                       stringsAsFactors=FALSE)
+  m_ply(.data=l_data, .fun=.get, tree=tree)
+  pstids
 }
 
-getNodesPtid <- function(tree, ids) {
-  sapply(ids, getNodePtid, tree=tree)
+getNodesPtid <- function(tree, ids, ...) {
+  l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
+  res <- mlply(.data=l_data, .fun=getNodePtid, tree=tree, ...)
+  names(res) <- ids
+  res[1:length(res)]
 }
 
 # @name getSubtree

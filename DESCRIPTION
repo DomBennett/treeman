@@ -7,5 +7,5 @@ Author: D.J. Bennett
 Maintainer: D.J. Bennett <dominic.john.bennett@gmail.com>
 Description: S4 class and methods for efficient phylogenetic tree manipulation for simulating evolution, running phylogenetic statistics and plotting.
 License: GPL-2
-Depends: R (>= 3.1.2), methods
+Depends: R (>= 3.1.2), methods, plyr
 Suggests: testthat

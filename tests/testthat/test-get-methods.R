@@ -15,7 +15,7 @@ test_that('getOutgroup() works', {
 test_that('get_Slot() works', {
   tree <- randTree(10)
   node_spans <- getNodesSlot(tree, name="span",
-                             ids=tree['all'])
+                             ids=tree['all'])[ ,2]
   expect_that(sum(node_spans), equals(tree['pd']))
 })
 test_that('get_Children() works', {
@@ -26,8 +26,19 @@ test_that('get_Children() works', {
 test_that('get_Age() works', {
   tree <- randTree(10)
   root_age <- tree['age']
-  nd_ages <- getNodesAge(tree, tree['nodes'])[,2]
+  nd_ages <- getNodesAge(tree, tree['nodes'])[,'age']
   expect_true(all(nd_ages <= root_age))
+})
+test_that('getSpanAge() works', {
+  tree <- randTree(10)
+  tip_age <- getSpanAge(tree, sample(tree['tips'], 1))
+  expect_that(tip_age['start'], is_more_than(tip_age['end']))
+})
+test_that('getSpansAge() works', {
+  tree <- randTree(10)
+  tip_ages <- getSpansAge(tree, tree['tips'])
+  res <- all(tip_ages[ ,'start'] > tip_ages[ ,'end'])
+  expect_true(res)
 })
 test_that("getParent() works", {
   tree <- readTree(tree_string="(((A,B),(C,D)),(E,F));")

@@ -1,2 +1,3 @@
-import (methods)
+import(methods)
+import(plyr)
 exportPattern("^[[:alpha:]]+")
