@@ -31,8 +31,7 @@ getNodesSlot <- function(tree, name, ids, ...) {
   }
   l_data <- data.frame(i=1:length(ids), stringsAsFactors=FALSE)
   res <- mdply(.data=l_data, .fun=.get, ...)
-  colnames(res) <- c('id', name)
-  res
+  res[ ,2]
 }
 
 # @name get_Children
@@ -60,8 +59,7 @@ getNodeAge <- function(tree, id) {
 getNodesAge <- function(tree, ids, ...) {
   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
   res <- mdply(.data=l_data, .fun=getNodeAge, tree=tree, ...)
-  colnames(res) <- c('id', 'age')
-  res
+  res[ ,2]
 }
 
 getSpanAge <- function(tree, id) {
@@ -94,32 +92,65 @@ getPath <- function(tree, from, to) {
   pre_1 <- getNodePrid(tree, from)
   pre_2 <- getNodePrid(tree, to)
   parent <- pre_1[which(pre_1 %in% pre_2)[1]]
-  path_1 <- c(from ,pre_1[!pre_1 %in% pre_2])
-  path_2 <- c(pre_2[!pre_2 %in% pre_1], to)
+  path_1 <- pre_1[!pre_1 %in% pre_2]
+  path_2 <- pre_2[!pre_2 %in% pre_1]
+  path_2 <- path_2[length(path_2):1]
   c(path_1, parent, path_2)
 }
 
-# @name get_Pre
-# recursive, stops whenever prid is NULL
-.getNodePrid <- function(tree, id,
-                         stopfnc=function(prid){is.null(prid)}) {
-  .get <- function(id, prids) {
-    prid <- tree@nodelist[[id]][['prid']]
-    if(!stopfnc(prid)) {
-      prids <- c(prid, .get(prid, prids))
+# @name get_Prid
+# return from id to stop_id(s) (usually root)
+getNodePrid <- function(tree, id, stop_id=tree@root) {
+  .get <- function(res_env) {
+    res_env$id <- tree@nodelist[[res_env$id]][['prid']]
+    res_env$prids <- c(res_env$prids, res_env$id)
+    if(!res_env$id %in% stop_id) {
+      .get(res_env)
     }
-    prids
   }
-  .get(id, NULL)
-}
-
-getNodePrid <- function(tree, id) {
-  .getNodePrid(tree, id)
+  if(id %in% stop_id) {
+    return(id)
+  }
+  res_env <- new.env()
+  res_env$prids <- NULL
+  res_env$id <- id
+  # avoid infinite recursion
+  finish <- try(stop(), silent=TRUE)
+  while(is(finish, 'try-error')) {
+    finish <- try(expr={
+      .get(res_env)
+    }, silent=TRUE)
+  }
+  c(id, res_env$prids)
 }
 
 getNodesPrid <- function(tree, ids, ...) {
   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
-  res <- mlply(.data=l_data, .fun=.getNodePrid, tree=tree, ...)
+  res <- mlply(.data=l_data, .fun=getNodePrid, tree=tree, ...)
+  names(res) <- ids
+  res[1:length(res)]
+}
+
+# @name get_Ptid
+# reduce dependence on the recursive, by getting prenodes
+# tip ids to id
+getNodePtid <- function(tree, id) {
+  .get <- function(id, tree) {
+    tmp <- getNodePrid(tree, id, stop_id=pstids)
+    tmp <- tmp[-length(tmp)]
+    pstids <<- c(tmp, pstids)
+    NULL
+  }
+  pstids <- id
+  l_data <- data.frame(id=tree@nodelist[[id]][['children']],
+                       stringsAsFactors=FALSE)
+  m_ply(.data=l_data, .fun=.get, tree=tree)
+  pstids
+}
+
+getNodesPtid <- function(tree, ids, ...) {
+  l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
+  res <- mlply(.data=l_data, .fun=getNodePtid, tree=tree, ...)
   names(res) <- ids
   res[1:length(res)]
 }
@@ -144,39 +175,16 @@ getNodesLineage <- function(tree, ids, ...) {
   mlply(.data=l_data, .fun=getNodeLineage, tree=tree, ...)
 }
 
-# @name get_Ptid
-# reduce dependence on the recursive, by getting prenodes
-getNodePtid <- function(tree, id) {
-  .get <- function(id, tree) {
-    stopfnc <- function(prid) {
-      prid %in% pstids
-    }
-    pstids <<- c(pstids, .getNodePrid(tree, id, stopfnc))
-    NULL
-  }
-  pstids <- id
-  l_data <- data.frame(id=tree@nodelist[[id]][['children']],
-                       stringsAsFactors=FALSE)
-  m_ply(.data=l_data, .fun=.get, tree=tree)
-  pstids
-}
-
-getNodesPtid <- function(tree, ids, ...) {
-  l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
-  res <- mlply(.data=l_data, .fun=getNodePtid, tree=tree, ...)
-  names(res) <- ids
-  res[1:length(res)]
-}
-
 # @name getSubtree
 getSubtree <- function(tree, id) {
+  .prdst <- function(nd) {
+    nd[['prdst']] <- nd[['prdst']] - nd_prdst
+    nd
+  }
   pstids <- getNodePtid(tree, id)
-  ndlst <- tree@nodelist[c(id, pstids)]
+  ndlst <- tree@nodelist[pstids]
   nd_prdst <- ndlst[[id]][['prdst']]
-  ndlst <- lapply(ndlst, function(x) {
-    x[['prdst']] <- x[['prdst']] - nd_prdst
-    x
-  })
+  ndlst <- llply(.data=ndlst, .fun=.prdst)
   ndlst[[id]][['prid']] <- NULL
   ndlst[[id]][['span']] <- 0
   new_tree <- new('TreeMan', nodelist=ndlst, root=id)

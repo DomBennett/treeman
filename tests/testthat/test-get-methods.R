@@ -15,7 +15,7 @@ test_that('getOutgroup() works', {
 test_that('get_Slot() works', {
   tree <- randTree(10)
   node_spans <- getNodesSlot(tree, name="span",
-                             ids=tree['all'])[ ,2]
+                             ids=tree['all'])
   expect_that(sum(node_spans), equals(tree['pd']))
 })
 test_that('get_Children() works', {
@@ -26,7 +26,7 @@ test_that('get_Children() works', {
 test_that('get_Age() works', {
   tree <- randTree(10)
   root_age <- tree['age']
-  nd_ages <- getNodesAge(tree, tree['nodes'])[,'age']
+  nd_ages <- getNodesAge(tree, tree['nodes'])
   expect_true(all(nd_ages <= root_age))
 })
 test_that('getSpanAge() works', {
@@ -50,12 +50,15 @@ test_that("getPath() works", {
   pth <- getPath(tree, from="t1", to="t10")
   prnt <- getParent(tree, ids=c('t1', "t10"))
   expect_true(prnt %in% pth)
+  expect_that(pth[1], equals('t1'))
+  expect_that(pth[length(pth)], equals('t10'))
 })
 test_that("get_Prid() works", {
   tree <- randTree(10)
+  prid <- getNodePrid(tree, id='n1')
+  expect_that(prid, equals('n1'))
   prids <- getNodesPrid(tree, tree['nodes'])
-  expect_that(prids[[1]], is_null())
-  lst_nds <- unlist(lapply(prids[-1], function(n) n[length(n)]))
+  lst_nds <- unlist(lapply(prids, function(n) n[length(n)]))
   expect_true(all(lst_nds == "n1"))
 })
 test_that("get_Ptid() works", {
