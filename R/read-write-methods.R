@@ -1,11 +1,11 @@
 # TODO: write Newick
 
 # TODO: readTree doc
-readTree <- function(file=NULL, tree_string=NULL) {
+readTree <- function(file=NULL, text=NULL) {
   if(!is.null(file)) {
     trstr <- scan(file, what="raw", quiet=TRUE)
   } else {
-    trstr <- tree_string
+    trstr <- text
   }
   #trstr <- sub(";", "", trstr)
   cuts <- gregexpr("(\\(|\\)|,|;)", trstr)[[1]]
