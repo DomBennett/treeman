@@ -1,43 +1,45 @@
 calcNodeBlnc <- function(tree, id) {
-  ntot <- length(getNodeChildren(tree, id))
+  ntot <- length(tree@nodelist[[id]][['children']])
   ptid <- tree@nodelist[[id]][['ptid']][1]
-  nprt <- length(getNodeChildren(tree, ptid))
+  nprt <- length(tree@nodelist[[ptid]][['children']])
   if(nprt == 0) {
     nprt <- 1
   }
   abs((ntot/2) - nprt)
 }
 
-calcNodesBlnc <- function(tree, ids) {
-  sapply(ids, calcNodeBlnc, tree=tree)
+calcNodesBlnc <- function(tree, ids, ...) {
+  l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
+  mdply(.data=l_data, .fun=calcNodeBlnc, tree=tree, ...)[ ,2]
 }
 
-calcDstTrp <- function(tree_1, tree_2, nrmlsd=FALSE) {
+calcDstTrp <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
   .count <- function(i) {
     o1 <- getOutgroup(tree_1, cmbs[ ,i])
     o2 <- getOutgroup(tree_2, cmbs[ ,i])
     if (length(o1) != length(o2) || o1 != o2) {
-      cntr <<- cntr + 1
+      cntr <- 1
+    } else {
+      cntr <- 0
     }
-    NULL
+    cntr
   }
   shrd <- tree_1@tips[tree_1@tips %in% tree_2@tips]
   cmbs <- combn(shrd, 3)
-  cntr <- 0
-  sapply(1:ncol(cmbs), .count)
+  l_data <- data.frame(i=1:ncol(cmbs), stringsAsFactors=FALSE)
+  res <- mdply(.data=l_data, .count, ...)
+  cntr <- sum(res[ ,2])
   if (nrmlsd) {
     cntr <- cntr/ncol(cmbs)
   }
   cntr
 }
 
-calcOvrlp <- function(tree, ids_1, ids_2, nrmlsd=FALSE) {
+calcOvrlp <- function(tree, ids_1, ids_2, nrmlsd=FALSE, ...) {
   spans <- getNodesSlot(tree, name='span', tree@all)
   names(spans) <- tree@all
-  ids_1 <- c(unique(unlist(getNodesPrid(tree, ids_1))),
-             ids_1)
-  ids_2 <- c(unique(unlist(getNodesPrid(tree, ids_2))),
-             ids_2)
+  ids_1 <- unique(unlist(getNodesPrid(tree, ids_1, ...)))
+  ids_2 <- unique(unlist(getNodesPrid(tree, ids_2, ...)))
   ovrlp <- sum(spans[ids_2[ids_2 %in% ids_1]])
   if(nrmlsd) {
     ovrlp <- ovrlp/tree@pd
@@ -45,13 +47,13 @@ calcOvrlp <- function(tree, ids_1, ids_2, nrmlsd=FALSE) {
   ovrlp
 }
 
-calcDstBLD <- function(tree_1, tree_2, nrmlsd=FALSE) {
+calcDstBLD <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
   n1 <- tree_1@nodes[!tree_1@nodes == tree_1@root]
   n2 <- tree_2@nodes[!tree_2@nodes == tree_2@root]
-  c1 <- getNodesChildren(tree_1, n1)
-  c2 <- getNodesChildren(tree_2, n2)
-  s1 <- getNodesSlot(tree_1, name="span", ids=n1)
-  s2 <- getNodesSlot(tree_2, name="span", ids=n2)
+  c1 <- getNodesChildren(tree_1, n1, ...)
+  c2 <- getNodesChildren(tree_2, n2, ...)
+  s1 <- getNodesSlot(tree_1, name="span", ids=n1, ...)
+  s2 <- getNodesSlot(tree_2, name="span", ids=n2, ...)
   d1 <- s2[match(c1, c2)]
   d1[which(is.na(d1))] <- 0
   d1 <- s1 - d1
@@ -66,11 +68,11 @@ calcDstBLD <- function(tree_1, tree_2, nrmlsd=FALSE) {
   d
 }
 
-calcDstRF <- function(tree_1, tree_2, nrmlsd=FALSE) {
+calcDstRF <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
   n1 <- tree_1@nodes[!tree_1@nodes == tree_1@root]
   n2 <- tree_2@nodes[!tree_2@nodes == tree_2@root]
-  c1 <- getNodesChildren(tree_1, n1)
-  c2 <- getNodesChildren(tree_2, n2)
+  c1 <- getNodesChildren(tree_1, n1, ...)
+  c2 <- getNodesChildren(tree_2, n2, ...)
   d <- sum(!c1 %in% c2) + sum(!c2 %in% c1)
   if(nrmlsd) {
     max_d <- (length(n1) + length(n2))
@@ -79,16 +81,15 @@ calcDstRF <- function(tree_1, tree_2, nrmlsd=FALSE) {
   d
 }
 
-calcPhyDv <- function(tree, ids) {
+calcPhyDv <- function(tree, ids, ...) {
   prids <- unlist(getNodesPrid(tree, ids))
   counts <- table(prids)
   prids <- names(counts)[counts < length(ids)]
-  spans <- unlist(lapply(tree@nodelist[c(ids, prids)],
-                         function(n) n[['span']]))
+  spans <- getNodesSlot(tree, name="span", ids=prids, ...)
   sum(spans)
 }
 
-calcFrPrp <- function(tree, ids) {
+calcFrPrp <- function(tree, ids, ...) {
   .share <- function(id) {
     span <- tree@nodelist[[id]][['span']]
     children <- getNodeChildren(tree, id)
@@ -99,16 +100,17 @@ calcFrPrp <- function(tree, ids) {
     }
     span/n
   }
-  .calc <- function(tip) {
-    ids <- c(tip, getNodePrid(tree, tip))
-    shares <- unlist(sapply(ids, .share))
+  .calc <- function(tid) {
+    ids <- getNodePrid(tree, tid)
+    l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
+    shares <- mdply(.data=l_data, .fun=.share)[ ,2]
     sum(shares)
   }
-  sapply(ids, .calc)
+  l_data <- data.frame(tid=ids, stringsAsFactors=FALSE)
+  mdply(.data=l_data, .fun=.calc, ...)[ ,2]
 }
 
 calcDstMtrx <- function(tree, ids) {
-  cmbs <- expand.grid(ids, ids, stringsAsFactors=FALSE)
   .getDist <- function(cmb) {
     if(cmb[1] == cmb[2]) {
       return(0)
@@ -117,6 +119,7 @@ calcDstMtrx <- function(tree, ids) {
     path_spans <- unlist(lapply(tree@nodelist[path], function(n) n[['span']]))
     sum(path_spans)
   }
+  cmbs <- expand.grid(ids, ids, stringsAsFactors=FALSE)
   res <- apply(cmbs, 1, .getDist)
   res <- matrix(res, ncol=length(ids))
   colnames(res) <- rownames(res) <- ids
