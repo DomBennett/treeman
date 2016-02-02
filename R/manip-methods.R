@@ -51,15 +51,15 @@ pinTip <- function(tree, tip_id, lineage, end) {
     }
     edges <- c(edges, unlist(sapply(edges, function(n) tree@nodelist[[n]][['ptid']])))
     edges <- edges[edges != tree@root]
-    rngs <- getEdgesAge(tree, ids=edges)
-    bool <- rngs[ ,'max'] > end
+    rngs <- getSpansAge(tree, ids=edges)
+    bool <- rngs[ ,'start'] > end
     if(any(bool)) {
       rngs <- rngs[bool, ]
-      rngs[rngs[ ,'min'] <= end, "min"] <- end
-      prbs <- rngs$max - rngs$min
-      e <- as.vector(sample(rngs$edge, prob=prbs, size=1))
-      e_i <- which(rngs$edge == e)
-      start <- runif(min=rngs$min[e_i], max=rngs$max[e_i], n=1)
+      rngs[rngs[ ,'end'] <= end, "end"] <- end
+      prbs <- rngs$start - rngs$end
+      e <- as.vector(sample(rngs$span, prob=prbs, size=1))
+      e_i <- which(rngs$span == e)
+      start <- runif(min=rngs$end[e_i], max=rngs$start[e_i], n=1)
       if(i != length(lineage)) {
         tip_taxonym <- lineage[i+1]
       } else {
