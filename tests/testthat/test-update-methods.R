@@ -37,7 +37,7 @@ test_that('.globalUpdateChildren() works', {
   for(i in 1:length(ndlst)) {
     ndlst[[i]][['children']] <- NULL
   }
-  ndlst <- treeman:::.globalUpdateChildren(ndlst, tids=tree['tips'], rid=tree['root'])
+  ndlst <- treeman:::.globalUpdateChildren(ndlst)
   tree@nodelist <- ndlst
   new_children <- getNodesChildren(tree, tree['nodes'])
   res <- rep(NA, length(children))
@@ -98,9 +98,7 @@ test_that('.globalUpdateAll() works', {
     ndlst[[i]][['prdst']] <- ndlst[[i]][['pd']] <-
       ndlst[[i]][['children']] <- NULL
   }
-  nids <- tree['nodes'][tree['nodes'] != tree['root']]
-  new_ndlst <- treeman:::.globalUpdateAll(ndlst=ndlst, tids=tree['tips'],
-                                nids=nids, rid=tree['root'])
+  new_ndlst <- treeman:::.globalUpdateAll(ndlst=ndlst)
   tree <- new('TreeMan', nodelist=new_ndlst, root=tree['root'])
   tree <- treeman:::.updateSlots(tree)
   expect_that(tree['ntips'], equals(10))

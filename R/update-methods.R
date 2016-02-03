@@ -11,7 +11,6 @@
   }
   tree_env[['id']] <- nid
   nd_span <- tree_env[['ndlst']][[nid]][['span']]
-  finish <- try(stop(), silent=TRUE)
   while(TRUE) {
     err <- try(expr={
       .add(tree_env)
@@ -124,9 +123,14 @@
   NULL
 }
 
-.globalUpdateAll <- function(ndlst, tids, nids, rid, ...) {
+.globalUpdateAll <- function(ndlst, ...) {
   tree_env <- new.env()
   tree_env$ndlst <- ndlst
+  wo_pstnds <- sapply(ndlst, function(n) length(n[['ptid']]) == 0)
+  wo_prnds <- sapply(ndlst, function(n) length(n[['prid']]) == 0)
+  nids <- names(ndlst)[(!wo_pstnds) & (!wo_prnds)]
+  tids <- names(ndlst)[wo_pstnds]
+  rid <- names(ndlst)[wo_prnds]
   l_data <- data.frame(tid=tids, stringsAsFactors=FALSE)
   m_ply(.data=l_data, .fun=.updateTip, tree_env=tree_env, rid=rid, ...)
   l_data <- data.frame(nid=nids, stringsAsFactors=FALSE)
@@ -196,6 +200,10 @@
   # add children to all nodes in tree
   tree_env <- new.env()
   tree_env$ndlst <- ndlst
+  wo_pstnds <- sapply(ndlst, function(n) length(n[['ptid']]) == 0)
+  w_prnds <- sapply(ndlst, function(n) length(n[['prid']]) == 0)
+  tids <- names(ndlst)[wo_pstnds]
+  rid <- names(ndlst)[w_prnds]
   l_data <- data.frame(tid=tids, stringsAsFactors=FALSE)
   m_ply(.data=l_data, .fun=.updateChildren, tree_env=tree_env, rid=rid, ...)
   tree_env$ndlst

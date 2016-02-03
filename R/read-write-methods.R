@@ -11,87 +11,22 @@ readTree <- function(file=NULL, text=NULL) {
   cuts <- gregexpr("(\\(|\\)|,|;)", trstr)[[1]]
   cuts <- c(cuts[1], cuts[2:length(cuts)] - cuts[1:(length(cuts)-1)])
   rdrenv <- .getRdrEnv(trstr)
-  sapply(cuts, .mkNdLst, rdrenv=rdrenv)
-  # TODO merge these into a single function to make faster
+  l_data <- data.frame(end_pos=cuts, stringsAsFactors=FALSE)
+  m_ply(cuts, .mkNdLst, rdrenv=rdrenv)
   .addRoot(rdrenv)
-  .addChildren(rdrenv)
-  .addPredist(rdrenv)
-  .addPD(rdrenv)
-  tree <- new('TreeMan', nodelist=rdrenv$nodelist, root=rdrenv$root)
-  .updateSlots(tree)
-}
-
-# addPD
-.addPD <- function(rdrenv) {
-  assgn <- function(i) {
-    rdrenv$nodelist[[i]][['pd']] <- 0
-    NULL
-  }
-  add <- function(prndid, rdrenv, ndid=prndid) {
-    if(!is.null(rdrenv$nodelist[[prndid]][['ptid']])) {
-      rdrenv$nodelist[[prndid]][['pd']] <- rdrenv$nodelist[[prndid]][['pd']] +
-        rdrenv$nodelist[[ndid]][['span']]
-    }
-    if(!is.null(rdrenv$nodelist[[prndid]][['prid']])) {
-      add(rdrenv$nodelist[[prndid]][['prid']], rdrenv, ndid)
-    }
-    NULL
-  }
-  sapply(1:length(rdrenv$nodelist), assgn)
-  sapply(names(rdrenv$nodelist), add, rdrenv=rdrenv)
-  NULL
-}
-
-# add children
-.addChildren <- function(rdrenv) {
-  add <- function(ndid, rdrenv, tpid=ndid) {
-    if(!is.null(rdrenv$nodelist[[ndid]][['ptid']])) {
-      rdrenv$nodelist[[ndid]][['children']] <- c(tpid, rdrenv$nodelist[[ndid]][['children']])
-    }
-    if(!is.null(rdrenv$nodelist[[ndid]][['prid']])) {
-      add(rdrenv$nodelist[[ndid]][['prid']], rdrenv, tpid)
-    }
-    NULL
-  }
-  tips <- sapply(rdrenv$nodelist, function(n) length(n[['ptid']]) == 0)
-  tips <- names(tips)[tips]
-  sapply(tips, add, rdrenv=rdrenv)
-  NULL
-}
-
-.addRoot <- function(rdrenv) {
-  root_i <- which(unlist(lapply(rdrenv$nodelist, function(n) n[['prid']] == "root")))
-  if(length(root_i) > 0) {
-    rdrenv$nodelist[[root_i]][['prid']] <- NULL
-    rdrenv$nodelist[[root_i]][['span']] <- 0
-    rdrenv$root <- names(rdrenv$nodelist)[root_i]
+  if(length(rdrenv[['root']]) == 0) {
+    ndlst <- .globalUpdateChildren(rdrenv[['nodelist']])
   } else {
-    rdrenv$root <- character()
+    ndlst <- .globalUpdateAll(rdrenv[['nodelist']])
   }
-  NULL
-}
-
-# add predists
-.addPredist <- function(rdrenv) {
-  calc <- function(nd, d) {
-    nd <- rdrenv$nodelist[[nd]]
-    if(!is.null(nd[['prid']])) {
-      d <- nd[['span']] + d
-      d <- calc(nd[['prid']], d)
-    }
-    d
-  }
-  assgn <- function(i) {
-    rdrenv$nodelist[[i]][['prdst']] <- ds[[i]]
-    NULL
-  }
-  ds <- sapply(names(rdrenv$nodelist), calc, d=0)
-  sapply(1:length(ds), assgn)
+  tree <- new('TreeMan', nodelist=ndlst, root=rdrenv[['root']])
+  .updateSlots(tree)
 }
 
 # set-up reader env
 .getRdrEnv <- function(trstr) {
   rdrenv <- new.env()
+  rdrenv$wspn <- grepl(':', trstr)
   rdrenv$trstr <- trstr
   rdrenv$nodelist <- list()
   rdrenv$prnds <- list()
@@ -104,19 +39,26 @@ readTree <- function(file=NULL, text=NULL) {
 }
 
 # extract ID and span from ndstr
-.getIDandSpan <- function(ndstr, nints) {
-  nd <- list()
+.getIDandSpan <- function(ndstr, nints, wspn) {
+  nd <- .mkNd(id='', wspn)
   ndstr <- gsub("(\\(|\\)|\\;|,)", "", ndstr)
   ndstr <- strsplit(ndstr, ":")[[1]]
   if(length(ndstr) > 1) {
     nd[['span']] <- as.numeric(ndstr[2])
-  } else {
-    nd[['span']] <- NULL
   }
   if(length(ndstr) == 0 || ndstr[1] == "") {
     nd[['id']] <- paste0("n", nints)
   } else {
     nd[['id']] <- ndstr[1]
+  }
+  nd
+}
+
+.mkNd <- function(id, wspn) {
+  nd <- list()
+  nd[['id']] <- id
+  if(wspn) {
+    nd[['span']] <- nd[['prdst']] <- nd[['pd']] <- 0
   }
   nd
 }
@@ -127,10 +69,10 @@ readTree <- function(file=NULL, text=NULL) {
   if(grepl("^\\(", ndstr)) {
     rdrenv$cntr <- rdrenv$cntr + 1
     rdrenv$i <- rdrenv$i + 1
-    rdrenv$prnds[[rdrenv$i]] <- list()
-    rdrenv$prnds[[rdrenv$i]][['id']] <- paste0("n", rdrenv$cntr)
+    rdrenv$prnds[[rdrenv$i]] <- .mkNd(id=paste0("n", rdrenv$cntr),
+                                      wspn=rdrenv$wspn)
   } else {
-    nd <- .getIDandSpan(ndstr, rdrenv$cntr)
+    nd <- .getIDandSpan(ndstr, rdrenv$cntr, rdrenv$wspn)
     if(rdrenv$nxt_is_intrnl) {
       # TODO: utilise nd$id, e.g. node labels are taxonym or support
       nd$id <- rdrenv$prnds[[rdrenv$i]][['id']]
@@ -154,5 +96,17 @@ readTree <- function(file=NULL, text=NULL) {
     }
   }
   rdrenv$trstr <- substr(rdrenv$trstr, end_pos+1, nchar(rdrenv$trstr))
+  NULL
+}
+
+.addRoot <- function(rdrenv) {
+  root_i <- which(unlist(lapply(rdrenv$nodelist, function(n) n[['prid']] == "root")))
+  if(length(root_i) > 0) {
+    rdrenv$nodelist[[root_i]][['prid']] <- NULL
+    rdrenv$nodelist[[root_i]][['span']] <- 0
+    rdrenv$root <- names(rdrenv$nodelist)[root_i]
+  } else {
+    rdrenv$root <- character()
+  }
   NULL
 }
