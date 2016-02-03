@@ -1,50 +1,124 @@
-.updateNodes <- function(tree_env, nid, rid) {
+.dwndateNode <- function(tree_env, nid, rid) {
   .add <- function(tree_env) {
-    id <- ndlst[[tree_env[['id']]]][['prid']]
+    id <- tree_env[['ndlst']][[tree_env[['id']]]][['prid']]
     span <- tree_env[['ndlst']][[id]][['span']]
-    tree_env[['prdst']] <- tree_env[['prdst']] + span
-    pd <- tree_env[['ndlst']][[id]][['pd']] + nd_span
+    pd <- tree_env[['ndlst']][[id]][['pd']] - nd_span
     tree_env[['ndlst']][[id]][['pd']] <- pd
-    if(tree_env[['id']] != rid) {
+    if(id != rid) {
       tree_env[['id']] <- id
       .add(tree_env)
     }
   }
-  tree_env[['id']] <- tree_env[['ndlst']][[nid]][['prid']]
-  tip_span <- tree_env[['ndlst']][[nid]][['span']]
-  tree_env[['prdst']] <- nd_span
+  tree_env[['id']] <- nid
+  nd_span <- tree_env[['ndlst']][[nid]][['span']]
   finish <- try(stop(), silent=TRUE)
-  while(is(finish, 'try-error')) {
-    finish <- try(expr={
+  while(TRUE) {
+    err <- try(expr={
       .add(tree_env)
     }, silent=TRUE)
+    err <- attr(err, 'condition')
+    if(is.null(err)) {
+      break
+    }
+    if(!grepl('infinite recursion', err)) {
+      stop(err)
+    }
+  }
+  NULL
+}
+
+.updateNode <- function(tree_env, nid, rid) {
+  .add <- function(tree_env) {
+    id <- tree_env[['ndlst']][[tree_env[['id']]]][['prid']]
+    span <- tree_env[['ndlst']][[id]][['span']]
+    tree_env[['prdst']] <- tree_env[['prdst']] + span
+    pd <- tree_env[['ndlst']][[id]][['pd']] + nd_span
+    tree_env[['ndlst']][[id]][['pd']] <- pd
+    if(id != rid) {
+      tree_env[['id']] <- id
+      .add(tree_env)
+    }
+  }
+  tree_env[['id']] <- nid
+  nd_span <- tree_env[['ndlst']][[nid]][['span']]
+  tree_env[['prdst']] <- nd_span
+  finish <- try(stop(), silent=TRUE)
+  while(TRUE) {
+    err <- try(expr={
+      .add(tree_env)
+    }, silent=TRUE)
+    err <- attr(err, 'condition')
+    if(is.null(err)) {
+      break
+    }
+    if(!grepl('infinite recursion', err)) {
+      stop(err)
+    }
   }
   tree_env[['ndlst']][[nid]][['prdst']] <- tree_env[['prdst']]
   NULL
 }
 
-.updateTips <- function(tree_env, tid, rid) {
+.dwndateTip <- function(tree_env, tid, rid) {
   .add <- function(tree_env) {
-    id <- ndlst[[tree_env[['id']]]][['prid']]
+    id <- tree_env[['ndlst']][[tree_env[['id']]]][['prid']]
+    kids <- tree_env[['ndlst']][[id]][['children']]
+    kids <- kids[kids != tid]
+    tree_env[['ndlst']][[id]][['children']] <- kids
+    span <- tree_env[['ndlst']][[id]][['span']]
+    pd <- tree_env[['ndlst']][[id]][['pd']] - tp_span
+    tree_env[['ndlst']][[id]][['pd']] <- pd
+    if(id != rid) {
+      tree_env[['id']] <- id
+      .add(tree_env)
+    }
+  }
+  tree_env[['id']] <- tid
+  tp_span <- tree_env[['ndlst']][[tid]][['span']]
+  tree_env[['prdst']] <- tp_span
+  while(TRUE) {
+    err <- try(expr={
+      .add(tree_env)
+    }, silent=TRUE)
+    err <- attr(err, 'condition')
+    if(is.null(err)) {
+      break
+    }
+    if(!grepl('infinite recursion', err)) {
+      stop(err)
+    }
+  }
+  NULL
+}
+
+.updateTip <- function(tree_env, tid, rid) {
+  .add <- function(tree_env) {
+    id <- tree_env[['ndlst']][[tree_env[['id']]]][['prid']]
     kids <- c(tree_env[['ndlst']][[id]][['children']], tid)
     tree_env[['ndlst']][[id]][['children']] <- kids
     span <- tree_env[['ndlst']][[id]][['span']]
     tree_env[['prdst']] <- tree_env[['prdst']] + span
     pd <- tree_env[['ndlst']][[id]][['pd']] + tp_span
     tree_env[['ndlst']][[id]][['pd']] <- pd
-    if(tree_env[['id']] != rid) {
+    if(id != rid) {
       tree_env[['id']] <- id
       .add(tree_env)
     }
   }
-  tree_env[['id']] <- tree_env[['ndlst']][[tid]][['prid']]
+  tree_env[['id']] <- tid
   tp_span <- tree_env[['ndlst']][[tid]][['span']]
   tree_env[['prdst']] <- tp_span
-  finish <- try(stop(), silent=TRUE)
-  while(is(finish, 'try-error')) {
-    finish <- try(expr={
+  while(TRUE) {
+    err <- try(expr={
       .add(tree_env)
     }, silent=TRUE)
+    err <- attr(err, 'condition')
+    if(is.null(err)) {
+      break
+    }
+    if(!grepl('infinite recursion', err)) {
+      stop(err)
+    }
   }
   tree_env[['ndlst']][[tid]][['prdst']] <- tree_env[['prdst']]
   NULL
@@ -54,9 +128,9 @@
   tree_env <- new.env()
   tree_env$ndlst <- ndlst
   l_data <- data.frame(tid=tids, stringsAsFactors=FALSE)
-  m_ply(.data=l_data, .fun=.updateTips, tree_env=tree_env, rid=rid, ...)
+  m_ply(.data=l_data, .fun=.updateTip, tree_env=tree_env, rid=rid, ...)
   l_data <- data.frame(nid=nids, stringsAsFactors=FALSE)
-  m_ply(.data=l_data, .fun=.updateNodes, tree_env=tree_env, rid=rid, ...)
+  m_ply(.data=l_data, .fun=.updateNode, tree_env=tree_env, rid=rid, ...)
   tree_env$ndlst
 }
 
@@ -68,6 +142,14 @@
   tree_env$ndlst
 }
 
+.localDwndateTip <- function(ndlst, tid, rid) {
+  # update all node slots for a tip
+  tree_env <- new.env()
+  tree_env$ndlst <- ndlst
+  .dwndateTip(tree_env, tid, rid)
+  tree_env$ndlst
+}
+
 .localUpdateNode <- function(ndlst, nid, rid) {
   # update all node slots for an internal node
   tree_env <- new.env()
@@ -76,22 +158,36 @@
   tree_env$ndlst
 }
 
+.localDwndateNode <- function(ndlst, nid, rid) {
+  # update all node slots for a tip
+  tree_env <- new.env()
+  tree_env$ndlst <- ndlst
+  .dwndateNode(tree_env, nid, rid)
+  tree_env$ndlst
+}
+
 .updateChildren <- function(tree_env, tid, rid) {
   .add <- function(tree_env) {
     id <- tree_env[['ndlst']][[tree_env[['id']]]][['prid']]
     kids <- c(tree_env[['ndlst']][[id]][['children']], tid)
     tree_env[['ndlst']][[id]][['children']] <- kids
-    if(tree_env[['id']] != rid) {
+    if(id != rid) {
       tree_env[['id']] <- id
       .add(tree_env)
     }
   }
-  tree_env[['id']] <- tree_env[['ndlst']][[tid]][['prid']]
-  finish <- try(stop(), silent=TRUE)
-  while(is(finish, 'try-error')) {
-    finish <- try(expr={
+  tree_env[['id']] <- tid
+  while(TRUE) {
+    err <- try(expr={
       .add(tree_env)
     }, silent=TRUE)
+    err <- attr(err, 'condition')
+    if(is.null(err)) {
+      break
+    }
+    if(!grepl('infinite recursion', err)) {
+      stop(err)
+    }
   }
   NULL
 }
