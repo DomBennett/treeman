@@ -1,6 +1,7 @@
 # TODO: write Newick
 
 # TODO: readTree doc
+# TODO: still seems slow, must be a neater solution for speeding this up still
 readTree <- function(file=NULL, text=NULL) {
   if(!is.null(file)) {
     trstr <- scan(file, what="raw", quiet=TRUE)

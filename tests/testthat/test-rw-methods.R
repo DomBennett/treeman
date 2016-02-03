@@ -17,13 +17,3 @@ test_that('readTree([w/o spans]) works', {
   expect_that(tree['ntips'], equals(4))
   expect_false(tree['wspn'])
 })
-
-library(doMC)
-library(foreach)
-registerDoMC(cores=4)
-tree <- readTree(file='/Users/djb208/Coding/Project-karenina/0_data/bininda_mammalia.tre')
-eds <- calcFrPrp(tree, ids=tree['tips'], .parallel=TRUE)
-length(eds)
-sum(eds) == tree['pd']
-summary(tree)
-tree[['n45']]
