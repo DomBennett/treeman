@@ -107,6 +107,7 @@ getNodePrid <- function(tree, id, stop_id=tree@root) {
     if(!res_env$id %in% stop_id) {
       .get(res_env)
     }
+    NULL
   }
   if(id %in% stop_id) {
     return(id)
@@ -114,12 +115,17 @@ getNodePrid <- function(tree, id, stop_id=tree@root) {
   res_env <- new.env()
   res_env$prids <- NULL
   res_env$id <- id
-  # avoid infinite recursion
-  finish <- try(stop(), silent=TRUE)
-  while(is(finish, 'try-error')) {
-    finish <- try(expr={
+  while(TRUE) {
+    err <- try(expr={
       .get(res_env)
     }, silent=TRUE)
+    err <- attr(err, 'condition')
+    if(is.null(err)) {
+      break
+    }
+    if(!grepl('infinite recursion', err)) {
+      stop(err)
+    }
   }
   c(id, res_env$prids)
 }
