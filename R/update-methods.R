@@ -41,7 +41,6 @@
   tree_env[['id']] <- nid
   nd_span <- tree_env[['ndlst']][[nid]][['span']]
   tree_env[['prdst']] <- nd_span
-  finish <- try(stop(), silent=TRUE)
   while(TRUE) {
     err <- try(expr={
       .add(tree_env)
