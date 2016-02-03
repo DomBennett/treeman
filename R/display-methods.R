@@ -5,7 +5,13 @@ setMethod('as.character', c('x'='TreeMen'),
           })
 setMethod('show', 'TreeMen',
           function(object){
-            cat(as.character(object))
+            msg <- as.character(object)
+            cat(msg)
+          })
+setMethod('print', c('x'='TreeMen'),
+          function(x){
+            msg <- as.character(x)
+            print(msg)
           })
 setMethod('str', c('object'='TreeMen'),
           function(object, max.level=2L, ...) {
@@ -14,11 +20,15 @@ setMethod('str', c('object'='TreeMen'),
             }
             str@default(object, max.level=max.level, ...)
           })
-setMethod('print', c('x'='TreeMen'),
-          function(x){
+setGeneric("summary", signature=c("tree"),
+           function(tree) {
+             standardGeneric("summary")
+           })
+setMethod('summary', c('tree'='TreeMen'),
+          function(tree){
             msg <- 'Trees (TreeMen Object):\n'
-            msg <- paste0(msg, '  + ', x@ntrees, ' trees\n')
-            msg <- paste0(msg, '  + ', x@ntips, ' tips\n')
+            msg <- paste0(msg, '  + ', tree@ntrees, ' trees\n')
+            msg <- paste0(msg, '  + ', tree@ntips, ' tips\n')
             cat(msg)
           })
 
@@ -30,8 +40,14 @@ setMethod('as.character', c('x'='TreeMan'),
            })
 setMethod('show', 'TreeMan',
            function(object){
-             print(as.character(object))
+             msg <- as.character(object)
+             cat(msg)
            })
+setMethod('print', c('x'='TreeMen'),
+          function(x){
+            msg <- as.character(x)
+            print(msg)
+          })
 setMethod('str', c('object'='TreeMan'),
            function(object, max.level=2L, ...) {
              if(is.na(max.level)) {
@@ -39,29 +55,32 @@ setMethod('str', c('object'='TreeMan'),
              }
              str@default(object, max.level=max.level, ...)
            })
-setGeneric('print')
-setMethod('print', c('x'='TreeMan'),
-           function(x){
+setGeneric("summary", signature=c("tree"),
+           function(tree) {
+             standardGeneric("summary")
+           })
+setMethod('summary', c('tree'='TreeMan'),
+           function(tree){
              msg <- 'Tree (TreeMan Object):\n'
-             msg <- paste0(msg, '  + ', x@ntips, ' tips\n')
-             msg <- paste0(msg, '  + ', x@nnodes, ' internal nodes\n')
-             if(x@ply) {
+             msg <- paste0(msg, '  + ', tree@ntips, ' tips\n')
+             msg <- paste0(msg, '  + ', tree@nnodes, ' internal nodes\n')
+             if(tree@ply) {
                msg <- paste0(msg, '  + Polytomous\n')
              } else {
                msg <- paste0(msg, '  + Binary\n')
              }
-             if(is.na(x@root)) {
-               if(x@wspn) {
+             if(is.na(tree@root)) {
+               if(tree@wspn) {
                  msg <- paste0(msg, '  + Unrooted and without node spans\n')
                } else {
                  msg <- paste0(msg, '  + Unrooted, with node spans\n')
-                 msg <- paste0(msg, '  + PD ', signif(x@pd, 3), '\n')
+                 msg <- paste0(msg, '  + PD ', signif(tree@pd, 3), '\n')
                }
              } else {
-               if(x@wspn) {
-                 msg <- paste0(msg, '  + Age ', signif(x@age, 3), '\n')
-                 msg <- paste0(msg, '  + PD ', signif(x@pd, 3), '\n')
-                 if(x@ultr) {
+               if(tree@wspn) {
+                 msg <- paste0(msg, '  + Age ', signif(tree@age, 3), '\n')
+                 msg <- paste0(msg, '  + PD ', signif(tree@pd, 3), '\n')
+                 if(tree@ultr) {
                    msg <- paste0(msg, '  + Ultrametric (all tips are extant)\n')
                  } else {
                    msg <- paste0(msg, '  + Not ultrametric (with extinct tips)\n')
@@ -69,7 +88,7 @@ setMethod('print', c('x'='TreeMan'),
                } else {
                  msg <- paste0(msg, '  + Without node spans\n')
                }
-               msg <- paste0(msg, '  + Root node is \"', x@root, '\"\n')
+               msg <- paste0(msg, '  + Root node is \"', tree@root, '\"\n')
              }
              cat(msg)
            })
