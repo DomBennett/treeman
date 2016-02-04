@@ -28,7 +28,7 @@ phyloBuilder <- function (start_tree, max_size, sample_size) {
 
 treemanBuilder <- function (start_tree, max_size, sample_size) {
   require(treeman)
-  tree <- readTree(tree_string=start_tree)
+  tree <- readTree(text=start_tree)
   start <- tree['age']
   repeats <- max_size/sample_size
   timings <- rep(NA, repeats)
@@ -37,8 +37,8 @@ treemanBuilder <- function (start_tree, max_size, sample_size) {
       for(j in 1:sample_size) {
         start <- start/2
         id <- paste0('t', tree['ntips']+1)
-        tree <- addTip(tree=tree, id=id, sister='t1',
-                       start=start, end=0)
+        tree <- treeman:::addTip(tree=tree, id=id, sister='t1',
+                                 start=start, end=0)
       }})[3]
   }
   timings
@@ -53,7 +53,7 @@ treeman_res <- treemanBuilder(start_tree, max_size, sample_size)
 
 # PLOT
 res <- data.frame("Tree_size"=seq(2, max_size, sample_size),
-                  "Timing(s)"=c(phylo_res, treeman_res),
+                  "Timing"=c(phylo_res, treeman_res),
                   "Build_method"=rep(c('Phylo', "TreeMan"), each=max_size/sample_size))
 save(res, file=file.path(getwd(), "compare_results.Rd"))
 p <- ggplot (res, aes(y=Timing, x=Tree_size, colour=Build_method)) + geom_line(size=4)
