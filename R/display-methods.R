@@ -8,11 +8,6 @@ setMethod('show', 'TreeMen',
             msg <- as.character(object)
             cat(msg)
           })
-setMethod('print', c('x'='TreeMen'),
-          function(x){
-            msg <- as.character(x)
-            print(msg)
-          })
 setMethod('str', c('object'='TreeMen'),
           function(object, max.level=2L, ...) {
             if(is.na(max.level)) {
@@ -20,15 +15,11 @@ setMethod('str', c('object'='TreeMen'),
             }
             str@default(object, max.level=max.level, ...)
           })
-setGeneric("summary", signature=c("tree"),
-           function(tree) {
-             standardGeneric("summary")
-           })
-setMethod('summary', c('tree'='TreeMen'),
-          function(tree){
+setMethod('print', c('x'='TreeMen'),
+          function(x){
             msg <- 'Trees (TreeMen Object):\n'
-            msg <- paste0(msg, '  + ', tree@ntrees, ' trees\n')
-            msg <- paste0(msg, '  + ', tree@ntips, ' tips\n')
+            msg <- paste0(msg, '  + ', x@ntrees, ' trees\n')
+            msg <- paste0(msg, '  + ', x@ntips, ' tips\n')
             cat(msg)
           })
 
@@ -43,11 +34,6 @@ setMethod('show', 'TreeMan',
              msg <- as.character(object)
              cat(msg)
            })
-setMethod('print', c('x'='TreeMen'),
-          function(x){
-            msg <- as.character(x)
-            print(msg)
-          })
 setMethod('str', c('object'='TreeMan'),
            function(object, max.level=2L, ...) {
              if(is.na(max.level)) {
@@ -55,32 +41,28 @@ setMethod('str', c('object'='TreeMan'),
              }
              str@default(object, max.level=max.level, ...)
            })
-setGeneric("summary", signature=c("tree"),
-           function(tree) {
-             standardGeneric("summary")
-           })
-setMethod('summary', c('tree'='TreeMan'),
-           function(tree){
+setMethod('print', c('x'='TreeMan'),
+           function(x){
              msg <- 'Tree (TreeMan Object):\n'
-             msg <- paste0(msg, '  + ', tree@ntips, ' tips\n')
-             msg <- paste0(msg, '  + ', tree@nnodes, ' internal nodes\n')
-             if(tree@ply) {
+             msg <- paste0(msg, '  + ', x@ntips, ' tips\n')
+             msg <- paste0(msg, '  + ', x@nnodes, ' internal nodes\n')
+             if(x@ply) {
                msg <- paste0(msg, '  + Polytomous\n')
              } else {
                msg <- paste0(msg, '  + Binary\n')
              }
-             if(is.na(tree@root)) {
-               if(tree@wspn) {
+             if(is.na(x@root)) {
+               if(x@wspn) {
                  msg <- paste0(msg, '  + Unrooted and without node spans\n')
                } else {
                  msg <- paste0(msg, '  + Unrooted, with node spans\n')
-                 msg <- paste0(msg, '  + PD ', signif(tree@pd, 3), '\n')
+                 msg <- paste0(msg, '  + PD ', signif(x@pd, 3), '\n')
                }
              } else {
-               if(tree@wspn) {
-                 msg <- paste0(msg, '  + Age ', signif(tree@age, 3), '\n')
-                 msg <- paste0(msg, '  + PD ', signif(tree@pd, 3), '\n')
-                 if(tree@ultr) {
+               if(x@wspn) {
+                 msg <- paste0(msg, '  + Age ', signif(x@age, 3), '\n')
+                 msg <- paste0(msg, '  + PD ', signif(x@pd, 3), '\n')
+                 if(x@ultr) {
                    msg <- paste0(msg, '  + Ultrametric (all tips are extant)\n')
                  } else {
                    msg <- paste0(msg, '  + Not ultrametric (with extinct tips)\n')
@@ -88,7 +70,7 @@ setMethod('summary', c('tree'='TreeMan'),
                } else {
                  msg <- paste0(msg, '  + Without node spans\n')
                }
-               msg <- paste0(msg, '  + Root node is \"', tree@root, '\"\n')
+               msg <- paste0(msg, '  + Root node is \"', x@root, '\"\n')
              }
              cat(msg)
            })
