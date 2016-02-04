@@ -75,7 +75,7 @@ setNodeID <- function(tree, id, val) {
   setNodesID(tree, id, val)
 }
 
-setNodesID <- function(tree, ids, vals) {
+setNodesID <- function(tree, ids, vals, ...) {
   .rplcS4 <- function(slt) {
     if(any(slot(tree, slt) %in% ids)) {
       mtchs <- match(slot(tree, slt), ids)
@@ -98,7 +98,7 @@ setNodesID <- function(tree, ids, vals) {
     nd <- .rplc("children")
     nd
   }
-  tree@nodelist <- lapply(tree@nodelist, .run)
+  tree@nodelist <- mlply(.data=tree@nodelist, .fun=.run, ...)
   tree@tips <- .rplcS4('tips')
   tree@nodes <- .rplcS4('nodes')
   tree@ext <- .rplcS4('ext')
@@ -114,9 +114,12 @@ setNodeOther <- function(tree, id, val) {
 }
 
 setNodesOther <- function(tree, ids, vals) {
-  .set <- function(i) {
-    tree <<- setNode(tree, ids[i], vals[i])
-    NULL
+  .set <- function(i, val) {
+    nd[[i]][['other']] <- val
+    nd
   }
-  sapply(1:length(ids), .set)
+  l_data <- data.frame(i=1:length(vals), val=vals,
+                       stringAsFactors=FALSE)
+  tree@nodelist <- mlply(.data=l_data, .fun=.set)
+  tree
 }
