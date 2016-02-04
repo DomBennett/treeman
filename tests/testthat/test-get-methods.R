@@ -41,7 +41,7 @@ test_that('getSpansAge() works', {
   expect_true(res)
 })
 test_that("getParent() works", {
-  tree <- readTree(tree_string="(((A,B),(C,D)),(E,F));")
+  tree <- readTree(text="(((A,B),(C,D)),(E,F));")
   prnt <- getParent(tree, ids=c("A", "C"))
   expect_true(prnt == "n2")
 })

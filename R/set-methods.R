@@ -84,7 +84,7 @@ setNodesID <- function(tree, ids, vals, ...) {
       return(slot(tree, slt))
     }
   }
-  .run <-function(nd) {
+  .run <-function(i) {
     .rplc <- function(slt) {
       if(any(nd[[slt]] %in% ids)) {
         mtchs <- match(nd[[slt]], ids)
@@ -92,13 +92,16 @@ setNodesID <- function(tree, ids, vals, ...) {
       }
       nd
     }
+    nd <- tree@nodelist[[i]]
     nd <- .rplc("id")
     nd <- .rplc("ptid")
     nd <- .rplc("prid")
     nd <- .rplc("children")
-    nd
+    tree@nodelist[[i]] <<- nd
+    NULL
   }
-  tree@nodelist <- mlply(.data=tree@nodelist, .fun=.run, ...)
+  l_data <- data.frame(i=1:length(tree@nodelist))
+  m_ply(.data=l_data, .fun=.run, ...)
   tree@tips <- .rplcS4('tips')
   tree@nodes <- .rplcS4('nodes')
   tree@ext <- .rplcS4('ext')
