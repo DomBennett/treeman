@@ -7,7 +7,7 @@ context('Testing \'get-methods\'')
 test_that('getOutgroup() works', {
   tree <- randTree(10)
   rnd_nd <- sample(tree['nodes'][tree['nodes'] != tree['root']], 1)
-  ingrp <- getNodeChildren(tree, rnd_nd)
+  ingrp <- getNodeKids(tree, rnd_nd)
   outgrp <- sample(tree['tips'][!tree['tips'] %in% ingrp], 1)
   res <- getOutgroup(tree, ids=c(ingrp, outgrp))
   expect_that(res, equals(outgrp))
@@ -18,10 +18,10 @@ test_that('get_Slot() works', {
                              ids=tree['all'])
   expect_that(sum(node_spans), equals(tree['pd']))
 })
-test_that('get_Children() works', {
+test_that('get_Kids() works', {
   tree <- randTree(10)
-  children <- getNodesChildren(tree, tree['nodes'])
-  expect_true(all(children$n1 %in% paste0("t", 1:10)))
+  kids <- getNodesKids(tree, tree['nodes'])
+  expect_true(all(kids$n1 %in% paste0("t", 1:10)))
 })
 test_that('get_Age() works', {
   tree <- randTree(10)

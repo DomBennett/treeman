@@ -16,7 +16,7 @@ readTree <- function(file=NULL, text=NULL) {
   m_ply(cuts, .mkNdLst, rdrenv=rdrenv)
   .addRoot(rdrenv)
   if(length(rdrenv[['root']]) == 0) {
-    ndlst <- .globalUpdateChildren(rdrenv[['nodelist']])
+    ndlst <- .globalUpdateKids(rdrenv[['nodelist']])
   } else {
     ndlst <- .globalUpdateAll(rdrenv[['nodelist']])
   }

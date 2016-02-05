@@ -1,7 +1,7 @@
 calcNodeBlnc <- function(tree, id) {
-  ntot <- length(tree@nodelist[[id]][['children']])
+  ntot <- length(tree@nodelist[[id]][['kids']])
   ptid <- tree@nodelist[[id]][['ptid']][1]
-  nprt <- length(tree@nodelist[[ptid]][['children']])
+  nprt <- length(tree@nodelist[[ptid]][['kids']])
   if(nprt == 0) {
     nprt <- 1
   }
@@ -50,8 +50,8 @@ calcOvrlp <- function(tree, ids_1, ids_2, nrmlsd=FALSE, ...) {
 calcDstBLD <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
   n1 <- tree_1@nodes[!tree_1@nodes == tree_1@root]
   n2 <- tree_2@nodes[!tree_2@nodes == tree_2@root]
-  c1 <- getNodesChildren(tree_1, n1, ...)
-  c2 <- getNodesChildren(tree_2, n2, ...)
+  c1 <- getNodesKids(tree_1, n1, ...)
+  c2 <- getNodesKids(tree_2, n2, ...)
   s1 <- getNodesSlot(tree_1, name="span", ids=n1, ...)
   s2 <- getNodesSlot(tree_2, name="span", ids=n2, ...)
   d1 <- s2[match(c1, c2)]
@@ -71,8 +71,8 @@ calcDstBLD <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
 calcDstRF <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
   n1 <- tree_1@nodes[!tree_1@nodes == tree_1@root]
   n2 <- tree_2@nodes[!tree_2@nodes == tree_2@root]
-  c1 <- getNodesChildren(tree_1, n1, ...)
-  c2 <- getNodesChildren(tree_2, n2, ...)
+  c1 <- getNodesKids(tree_1, n1, ...)
+  c2 <- getNodesKids(tree_2, n2, ...)
   d <- sum(!c1 %in% c2) + sum(!c2 %in% c1)
   if(nrmlsd) {
     max_d <- (length(n1) + length(n2))
@@ -92,9 +92,9 @@ calcPhyDv <- function(tree, ids, ...) {
 calcFrPrp <- function(tree, ids, ...) {
   .share <- function(id) {
     span <- tree@nodelist[[id]][['span']]
-    children <- getNodeChildren(tree, id)
-    if(!is.null(children)) {
-      n <- length(children)
+    kids <- getNodeKids(tree, id)
+    if(!is.null(kids)) {
+      n <- length(kids)
     } else {
       n <- 1
     }

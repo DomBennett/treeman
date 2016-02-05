@@ -10,40 +10,40 @@ test_that('.updateSlots() works', {
   tree <- treeman:::.updateSlots(tree)
   expect_false(tree@wspn)
 })
-test_that('.localUpdateChildren() works', {
+test_that('.localUpdateKids() works', {
   tree <- randTree(10)
-  children <- getNodesChildren(tree, tree['nodes'])
+  kids <- getNodesKids(tree, tree['nodes'])
   ndlst <- tree['nodelist']
   tid <- tree['tips'][1]
   for(i in 1:length(ndlst)) {
-    bool <- ndlst[[i]][['children']] != tid
-    ndlst[[i]][['children']] <- ndlst[[i]][['children']][bool]
+    bool <- ndlst[[i]][['kids']] != tid
+    ndlst[[i]][['kids']] <- ndlst[[i]][['kids']][bool]
   }
-  ndlst <- treeman:::.localUpdateChildren(ndlst, tid=tid,
-                                          rid=tree['root'])
+  ndlst <- treeman:::.localUpdateKids(ndlst, tid=tid,
+                                      rid=tree['root'])
   tree@nodelist <- ndlst
-  new_children <- getNodesChildren(tree, tree['nodes'])
-  res <- rep(NA, length(children))
+  new_kids <- getNodesKids(tree, tree['nodes'])
+  res <- rep(NA, length(kids))
   for(i in 1:length(res)) {
-    res[i] <- all(children[[i]] %in% new_children[[i]]) &
-      length(children[[i]]) == length(new_children[[i]])
+    res[i] <- all(kids[[i]] %in% new_kids[[i]]) &
+      length(kids[[i]]) == length(new_kids[[i]])
   }
   expect_true(all(res))
 })
-test_that('.globalUpdateChildren() works', {
+test_that('.globalUpdateKids() works', {
   tree <- randTree(10)
-  children <- getNodesChildren(tree, tree['nodes'])
+  kids <- getNodesKids(tree, tree['nodes'])
   ndlst <- tree['nodelist']
   for(i in 1:length(ndlst)) {
-    ndlst[[i]][['children']] <- NULL
+    ndlst[[i]][['kids']] <- NULL
   }
-  ndlst <- treeman:::.globalUpdateChildren(ndlst)
+  ndlst <- treeman:::.globalUpdateKids(ndlst)
   tree@nodelist <- ndlst
-  new_children <- getNodesChildren(tree, tree['nodes'])
-  res <- rep(NA, length(children))
+  new_kids <- getNodesKids(tree, tree['nodes'])
+  res <- rep(NA, length(kids))
   for(i in 1:length(res)) {
-    res[i] <- all(children[[i]] %in% new_children[[i]]) &
-      length(children[[i]]) == length(new_children[[i]])
+    res[i] <- all(kids[[i]] %in% new_kids[[i]]) &
+      length(kids[[i]]) == length(new_kids[[i]])
   }
   expect_true(all(res))
 })
@@ -64,7 +64,7 @@ test_that('.localDwndateTip() works', {
   new_ndlst <- treeman:::.localDwndateTip(ndlst, tid=tid, rid=tree['root'])
   pd_res <- kid_res <- rep(NA, length(ndlst))
   for(i in 1:length(ndlst)) {
-    kid_res[i] <- !(tid %in% new_ndlst[[i]][['children']])
+    kid_res[i] <- !(tid %in% new_ndlst[[i]][['kids']])
     pd_res[i] <- ndlst[[i]][['pd']] > new_ndlst[[i]][['pd']]
   }
   expect_true(all(kid_res))
@@ -96,7 +96,7 @@ test_that('.globalUpdateAll() works', {
   ndlst <- tree['nodelist']
   for(i in 1:length(ndlst)) {
     ndlst[[i]][['prdst']] <- ndlst[[i]][['pd']] <-
-      ndlst[[i]][['children']] <- NULL
+      ndlst[[i]][['kids']] <- NULL
   }
   new_ndlst <- treeman:::.globalUpdateAll(ndlst=ndlst)
   tree <- new('TreeMan', nodelist=new_ndlst, root=tree['root'])

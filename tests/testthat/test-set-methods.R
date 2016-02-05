@@ -12,7 +12,7 @@ test_that('set_ID() works', {
   ids <- tree['tips']
   tree <- setNodesID(tree, ids=ids, vals=vals)
   expect_true(all(tree['tips'] == vals))
-  expect_true(all(tree[['n1']]['children'] %in% vals))
+  expect_true(all(tree[['n1']]['kids'] %in% vals))
   tree <- setNodeID(tree, id='new_id_1', val='t1')
   expect_error(tree[['new_id_1']])
 })

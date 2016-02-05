@@ -15,7 +15,7 @@
 #'    \item \code{span}: length of the preceding branch
 #'    \item \code{pre}: ID of the preceding node
 #'    \item \code{post}: IDs of the connecting nodes
-#'    \item \code{children}: descending tip IDs
+#'    \item \code{kids}: descending tip IDs
 #'    \item \code{pd}: phylogenetic diversity represented by node
 #'    \item \code{predist}: pre distance(distance to root if rooted or
 #'    most distal tip if unrooted)
@@ -70,13 +70,13 @@
 #' node <- tree[['n2']]
 #' print(node)
 #' # And then use the same syntax for the tree
-#' node['age']  # .... nchildren, pd, etc.
+#' node['age']  # .... nkids, pd, etc.
 
 #TODO: modify this to allow user-defined Node slot
-#TODO: check for missing children or no pd
+#TODO: check for missing kids or no pd
 essential_node_slots <- c('id')
 valid_node_slots <- c('id', 'taxonym', 'span', 'prid',
-                      'ptid', 'children', 'prdst', 'pd')
+                      'ptid', 'kids', 'prdst', 'pd')
 
 .checkTreeMan <- function(object) {
   .check <- function(node) {

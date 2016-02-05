@@ -13,8 +13,8 @@
     age <- numeric()
   }
   new('Node', id=node[['id']], span=span, prid=as.character(node[['prid']]),
-     ptid=as.character(node[['ptid']]), children=as.character(node[['children']]),
-     nchildren=length(as.character(node[['children']])), pd=pd,
+     ptid=as.character(node[['ptid']]), kids=as.character(node[['kids']]),
+     nkids=length(as.character(node[['kids']])), pd=pd,
      prdst=prdst, root=tree@root == node[['id']],
      age=age, tip=length(node[['ptid']]) == 0)
 }
@@ -24,8 +24,8 @@ setClass ('Node', representation=representation (
   span='numeric',        # length of preceding branch
   prid='character',      # parent node ID
   ptid='vector',         # child node IDs
-  children='vector',     # descending tip IDs
-  nchildren='numeric',   # number of descending tips
+  kids='vector',     # descending tip IDs
+  nkids='numeric',   # number of descending tips
   pd='numeric',          # total branch length represented by node
   prdst='numeric',       # total branch length of connected pres
   age='numeric',         # age of node in tree
@@ -57,7 +57,7 @@ setMethod ('print', c('x'='Node'),
              }
              if(!x@tip) {
                msg <- paste0(msg, '  + ptid: \"', paste0(x@ptid, collapse='\", \"'), '\"\n')
-               msg <- paste0(msg, '  + nchildren: ', length(x@children), '\n')
+               msg <- paste0(msg, '  + nkids: ', length(x@kids), '\n')
              }
              if(length(x@span) > 0) {
                if(!x@root) {

@@ -102,7 +102,7 @@ setMethod('viz', 'TreeMan',
                # TODO: switch to setNodesSpan
                for(i in 1:length(tree@nodelist)) {
                  tree@nodelist[[i]][['span']] <- 1
-                 tree@nodelist[[i]][['pd']] <- length(tree@nodelist[[i]][['children']])
+                 tree@nodelist[[i]][['pd']] <- length(tree@nodelist[[i]][['kids']])
                  prids <- getNodePrid(tree, tree@nodelist[[i]][['id']])
                  tree@nodelist[[i]][['prdst']] <- length(prids)
                }

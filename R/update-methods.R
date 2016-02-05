@@ -60,9 +60,9 @@
 .dwndateTip <- function(tree_env, tid, rid) {
   .add <- function(tree_env) {
     id <- tree_env[['ndlst']][[tree_env[['id']]]][['prid']]
-    kids <- tree_env[['ndlst']][[id]][['children']]
+    kids <- tree_env[['ndlst']][[id]][['kids']]
     kids <- kids[kids != tid]
-    tree_env[['ndlst']][[id]][['children']] <- kids
+    tree_env[['ndlst']][[id]][['kids']] <- kids
     span <- tree_env[['ndlst']][[id]][['span']]
     pd <- tree_env[['ndlst']][[id]][['pd']] - tp_span
     tree_env[['ndlst']][[id]][['pd']] <- pd
@@ -92,8 +92,8 @@
 .updateTip <- function(tree_env, tid, rid) {
   .add <- function(tree_env) {
     id <- tree_env[['ndlst']][[tree_env[['id']]]][['prid']]
-    kids <- c(tree_env[['ndlst']][[id]][['children']], tid)
-    tree_env[['ndlst']][[id]][['children']] <- kids
+    kids <- c(tree_env[['ndlst']][[id]][['kids']], tid)
+    tree_env[['ndlst']][[id]][['kids']] <- kids
     span <- tree_env[['ndlst']][[id]][['span']]
     tree_env[['prdst']] <- tree_env[['prdst']] + span
     pd <- tree_env[['ndlst']][[id]][['pd']] + tp_span
@@ -169,11 +169,11 @@
   tree_env$ndlst
 }
 
-.updateChildren <- function(tree_env, tid, rid) {
+.updateKids <- function(tree_env, tid, rid) {
   .add <- function(tree_env) {
     id <- tree_env[['ndlst']][[tree_env[['id']]]][['prid']]
-    kids <- c(tree_env[['ndlst']][[id]][['children']], tid)
-    tree_env[['ndlst']][[id]][['children']] <- kids
+    kids <- c(tree_env[['ndlst']][[id]][['kids']], tid)
+    tree_env[['ndlst']][[id]][['kids']] <- kids
     if(id != rid) {
       tree_env[['id']] <- id
       .add(tree_env)
@@ -195,8 +195,8 @@
   NULL
 }
 
-.globalUpdateChildren <- function(ndlst, tids, rid, ...) {
-  # add children to all nodes in tree
+.globalUpdateKids <- function(ndlst, tids, rid, ...) {
+  # add kids to all nodes in tree
   tree_env <- new.env()
   tree_env$ndlst <- ndlst
   wo_pstnds <- sapply(ndlst, function(n) length(n[['ptid']]) == 0)
@@ -204,15 +204,15 @@
   tids <- names(ndlst)[wo_pstnds]
   rid <- names(ndlst)[w_prnds]
   l_data <- data.frame(tid=tids, stringsAsFactors=FALSE)
-  m_ply(.data=l_data, .fun=.updateChildren, tree_env=tree_env, rid=rid, ...)
+  m_ply(.data=l_data, .fun=.updateKids, tree_env=tree_env, rid=rid, ...)
   tree_env$ndlst
 }
 
-.localUpdateChildren <- function(ndlst, tid, rid) {
-  # run this to add just children slot for new tip
+.localUpdateKids <- function(ndlst, tid, rid) {
+  # run this to add just kids slot for new tip
   tree_env <- new.env()
   tree_env$ndlst <- ndlst
-  .updateChildren(tree_env, tid, rid)
+  .updateKids(tree_env, tid, rid)
   tree_env$ndlst
 }
 

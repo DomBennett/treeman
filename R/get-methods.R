@@ -2,18 +2,18 @@
 
 getOutgroup <- function(tree, ids) {
   .cntr <- function(id) {
-    children <- tree@nodelist[[id]][['children']]
-    sum(ids %in% children)
+    kids <- tree@nodelist[[id]][['kids']]
+    sum(ids %in% kids)
   }
   prnt <- getParent(tree, ids)
   ptids <- tree@nodelist[[prnt]][['ptid']]
   cnts <- sapply(ptids, .cntr)
   outnd <- names(cnts)[which.min(cnts)]
-  children <- tree@nodelist[[outnd]][['children']]
-  if(length(children) == 0) {
+  kids <- tree@nodelist[[outnd]][['kids']]
+  if(length(kids) == 0) {
     return(outnd)
   }
-  outgroup <- ids[ids %in% children]
+  outgroup <- ids[ids %in% kids]
   if(length(outgroup) > 1) {
     return(NULL)
   }
@@ -34,16 +34,16 @@ getNodesSlot <- function(tree, name, ids, ...) {
   res[ ,2]
 }
 
-# @name get_Children
+# @name get_kids
 
-getNodeChildren <- function(tree, id) {
+getNodeKids <- function(tree, id) {
   node <- tree@nodelist[[id]]
-  node[['children']]
+  node[['kids']]
 }
 
-getNodesChildren <- function(tree, ids, ...) {
+getNodesKids <- function(tree, ids, ...) {
   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
-  res <- mlply(.data=l_data, .fun=getNodeChildren, tree=tree, ...)
+  res <- mlply(.data=l_data, .fun=getNodeKids, tree=tree, ...)
   names(res) <- ids
   res[1:length(res)]
 }
@@ -148,7 +148,7 @@ getNodePtid <- function(tree, id) {
     NULL
   }
   pstids <- id
-  l_data <- data.frame(id=tree@nodelist[[id]][['children']],
+  l_data <- data.frame(id=tree@nodelist[[id]][['kids']],
                        stringsAsFactors=FALSE)
   m_ply(.data=l_data, .fun=.get, tree=tree)
   pstids

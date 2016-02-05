@@ -96,7 +96,7 @@ setNodesID <- function(tree, ids, vals, ...) {
     nd <- .rplc("id")
     nd <- .rplc("ptid")
     nd <- .rplc("prid")
-    nd <- .rplc("children")
+    nd <- .rplc("kids")
     tree@nodelist[[i]] <<- nd
     NULL
   }

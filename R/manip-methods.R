@@ -5,7 +5,7 @@ addTip <- function(tree, id, sister, start, end,
                    parent_id=paste0("p_", id),
                    tip_taxonym=NULL, parent_taxonym=NULL) {
   updatePre <- function(node) {
-    node[['children']] <- c(node[['children']], tip[['id']])
+    node[['kids']] <- c(node[['kids']], tip[['id']])
     node[['pd']] <- node[['pd']] + tip[['span']]
     node
   }
@@ -29,7 +29,7 @@ addTip <- function(tree, id, sister, start, end,
   node[['pd']] <- new_sister[['span']] + tip[['span']]
   node[['prdst']] <- sister[['prdst']] - new_sister[['span']]
   node[['prid']] <- sister[['prid']]
-  node[['ptid']] <- node[['children']] <- c(tip[['id']], sister[['id']])
+  node[['ptid']] <- node[['kids']] <- c(tip[['id']], sister[['id']])
   tip[['pd']] <- 0
   tip[['prdst']] <- node[['prdst']] + tip[['span']]
   tip[['prid']] <- node[['id']]
@@ -66,7 +66,7 @@ addTip2 <- function(tree, id, sister, start, end,
   node[['pd']] <- new_sister[['span']] + tip[['span']]
   node[['prdst']] <- sister[['prdst']] - new_sister[['span']]
   node[['prid']] <- sister[['prid']]
-  node[['ptid']] <- node[['children']] <- c(tip[['id']], sister[['id']])
+  node[['ptid']] <- node[['kids']] <- c(tip[['id']], sister[['id']])
   tip[['pd']] <- 0
   tip[['prdst']] <- node[['prdst']] + tip[['span']]
   tip[['prid']] <- node[['id']]
