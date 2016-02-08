@@ -63,7 +63,7 @@ getNodesAge <- function(tree, ids, ...) {
 }
 
 getSpanAge <- function(tree, id) {
-  start <- getNodeAge(tree, tree@nodelist[[id]][['prid']])
+  start <- getNodeAge(tree, tree@nodelist[[id]][['prid']][1])
   end <- getNodeAge(tree, id)
   data.frame(span=id, start, end)
 }
@@ -101,33 +101,7 @@ getPath <- function(tree, from, to) {
 # @name get_Prid
 # return from id to stop_id(s) (usually root)
 getNodePrid <- function(tree, id, stop_id=tree@root) {
-  .get <- function(res_env) {
-    res_env$id <- tree@nodelist[[res_env$id]][['prid']]
-    res_env$prids <- c(res_env$prids, res_env$id)
-    if(!res_env$id %in% stop_id) {
-      .get(res_env)
-    }
-    NULL
-  }
-  if(id %in% stop_id) {
-    return(id)
-  }
-  res_env <- new.env()
-  res_env$prids <- NULL
-  res_env$id <- id
-  while(TRUE) {
-    err <- try(expr={
-      .get(res_env)
-    }, silent=TRUE)
-    err <- attr(err, 'condition')
-    if(is.null(err)) {
-      break
-    }
-    if(!grepl('infinite recursion', err)) {
-      stop(err)
-    }
-  }
-  c(id, res_env$prids)
+  tree@nodelist[[id]][['prid']]
 }
 
 getNodesPrid <- function(tree, ids, ...) {
