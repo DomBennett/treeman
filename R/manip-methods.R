@@ -1,14 +1,8 @@
 # TODO: addTips, removeTip, mergeTree, collapseNode, removeNode
 # TODO: add doc for adding and removing tips
-
 addTip <- function(tree, id, sister, start, end,
                    parent_id=paste0("p_", id),
                    tip_taxonym=NULL, parent_taxonym=NULL) {
-  updatePre <- function(node) {
-    node[['kids']] <- c(node[['kids']], tip[['id']])
-    node[['pd']] <- node[['pd']] + tip[['span']]
-    node
-  }
   tip <- list('id'=id)
   if(!is.null(tip_taxonym)) {
     tip[['taxonym']] <- tip_taxonym
@@ -20,11 +14,11 @@ addTip <- function(tree, id, sister, start, end,
   tip[['span']] <- start - end
   age <- getNodeAge(tree, sister)
   new_sister <- sister <- tree@nodelist[[sister]]
-  new_parent <- tree@nodelist[[sister[['prid']]]]
+  new_parent <- tree@nodelist[[sister[['prid']][1]]]
   new_parent[['ptid']] <- new_parent[['ptid']][!new_parent[['ptid']] %in% sister[['id']]]
   new_parent[['ptid']] <- c(new_parent[['ptid']], node[['id']])
   new_sister[['span']] <- start - age
-  new_sister[['prid']] <- node[['id']]
+  new_sister[['prid']] <- c(node[['id']], sister[['prid']])
   node[['span']] <- sister[['span']] - new_sister[['span']]
   node[['pd']] <- new_sister[['span']] + tip[['span']]
   node[['prdst']] <- sister[['prdst']] - new_sister[['span']]
@@ -32,50 +26,13 @@ addTip <- function(tree, id, sister, start, end,
   node[['ptid']] <- node[['kids']] <- c(tip[['id']], sister[['id']])
   tip[['pd']] <- 0
   tip[['prdst']] <- node[['prdst']] + tip[['span']]
-  tip[['prid']] <- node[['id']]
+  tip[['prid']] <- new_sister[['prid']]
+  ndlst <- tree@nodelist
   tree@nodelist[[tip[['id']]]] <- tip
   tree@nodelist[[node[['id']]]] <- node
   tree@nodelist[[new_sister[['id']]]] <- new_sister
   tree@nodelist[[new_parent[['id']]]] <- new_parent
-  pres <- getNodePrid(tree, node[['id']])
-  tree@nodelist[pres] <- lapply(tree@nodelist[pres],
-                                updatePre)
-  .updateSlots(tree)
-}
-
-addTip2 <- function(tree, id, sister, start, end,
-                   parent_id=paste0("p_", id),
-                   tip_taxonym=NULL, parent_taxonym=NULL) {
-  tip <- list('id'=id)
-  if(!is.null(tip_taxonym)) {
-    tip[['taxonym']] <- tip_taxonym
-  }
-  node <- list('id'=parent_id)
-  if(!is.null(parent_taxonym)) {
-    node[['taxonym']] <- parent_taxonym
-  }
-  tip[['span']] <- start - end
-  age <- getNodeAge(tree, sister)
-  new_sister <- sister <- tree@nodelist[[sister]]
-  new_parent <- tree@nodelist[[sister[['prid']]]]
-  new_parent[['ptid']] <- new_parent[['ptid']][!new_parent[['ptid']] %in% sister[['id']]]
-  new_parent[['ptid']] <- c(new_parent[['ptid']], node[['id']])
-  new_sister[['span']] <- start - age
-  new_sister[['prid']] <- node[['id']]
-  node[['span']] <- sister[['span']] - new_sister[['span']]
-  node[['pd']] <- new_sister[['span']] + tip[['span']]
-  node[['prdst']] <- sister[['prdst']] - new_sister[['span']]
-  node[['prid']] <- sister[['prid']]
-  node[['ptid']] <- node[['kids']] <- c(tip[['id']], sister[['id']])
-  tip[['pd']] <- 0
-  tip[['prdst']] <- node[['prdst']] + tip[['span']]
-  tip[['prid']] <- node[['id']]
-  tree@nodelist[[tip[['id']]]] <- tip
-  tree@nodelist[[node[['id']]]] <- node
-  tree@nodelist[[new_sister[['id']]]] <- new_sister
-  tree@nodelist[[new_parent[['id']]]] <- new_parent
-  tree@nodelist <- .localUpdateTip(tree@nodelist, tid=id,
-                                   rid=tree@root)
+  tree@nodelist <- .updateTip(tree@nodelist, tid=id, rid=tree@root)
   .updateSlots(tree)
 }
 pinTip <- function(tree, tip_id, lineage, end) {
