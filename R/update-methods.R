@@ -1,3 +1,4 @@
+# Convert all from mlply to llply, much faster
 .dwndateNode <- function(ndlst, nid, rid) {
   .add <- function(id) {
     ndlst[[id]][['pd']] <<- ndlst[[id]][['pd']] - nd_span
@@ -36,16 +37,17 @@
 }
 
 .updateTip <- function(ndlst, tid, rid) {
-  .add <- function(id) {
-    kids <- ndlst[[id]][['kids']]
-    ndlst[[id]][['kids']] <<- c(kids, tid)
-    ndlst[[id]][['pd']] <<- ndlst[[id]][['pd']] + tp_span
-    prdst <<- ndlst[[id]][['span']] + prdst
+  .add <- function(nd) {
+    kids <- nd[['kids']]
+    nd[['kids']] <- c(kids, tid)
+    nd[['pd']] <- nd[['pd']] + tp_span
+    prdst <<- nd[['span']] + prdst
+    nd
   }
   tp_span <- ndlst[[tid]][['span']]
-  prdst <- tp_span
   prids <- ndlst[[tid]][['prid']]
-  mlply(prids, .fun=.add)
+  prdst <- tp_span
+  ndlst[prids] <- llply(ndlst[prids], .add)
   ndlst[[tid]][['prdst']] <- prdst
   ndlst
 }

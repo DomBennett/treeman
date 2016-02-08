@@ -38,8 +38,10 @@ calcDstTrp <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
 calcOvrlp <- function(tree, ids_1, ids_2, nrmlsd=FALSE, ...) {
   spans <- getNodesSlot(tree, name='span', tree@all)
   names(spans) <- tree@all
-  ids_1 <- unique(unlist(getNodesPrid(tree, ids_1, ...)))
-  ids_2 <- unique(unlist(getNodesPrid(tree, ids_2, ...)))
+  ids_1 <- c(unique(unlist(getNodesPrid(tree, ids_1, ...))),
+             ids_1)
+  ids_2 <- c(unique(unlist(getNodesPrid(tree, ids_2, ...))),
+             ids_2)
   ovrlp <- sum(spans[ids_2[ids_2 %in% ids_1]])
   if(nrmlsd) {
     ovrlp <- ovrlp/tree@pd
@@ -82,7 +84,8 @@ calcDstRF <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
 }
 
 calcPhyDv <- function(tree, ids, ...) {
-  prids <- unlist(getNodesPrid(tree, ids))
+  prids <- c(unique(unlist(getNodesPrid(tree, ids))),
+             ids)
   counts <- table(prids)
   prids <- names(counts)[counts < length(ids)]
   spans <- getNodesSlot(tree, name="span", ids=prids, ...)
@@ -101,7 +104,7 @@ calcFrPrp <- function(tree, ids, ...) {
     span/n
   }
   .calc <- function(tid) {
-    ids <- getNodePrid(tree, tid)
+    ids <- c(tid, getNodePrid(tree, tid))
     l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
     shares <- mdply(.data=l_data, .fun=.share)[ ,2]
     sum(shares)

@@ -89,8 +89,8 @@ getParent <- function(tree, ids) {
 
 # @name getPath
 getPath <- function(tree, from, to) {
-  pre_1 <- getNodePrid(tree, from)
-  pre_2 <- getNodePrid(tree, to)
+  pre_1 <- c(from, getNodePrid(tree, from))
+  pre_2 <- c(to, getNodePrid(tree, to))
   parent <- pre_1[which(pre_1 %in% pre_2)[1]]
   path_1 <- pre_1[!pre_1 %in% pre_2]
   path_2 <- pre_2[!pre_2 %in% pre_1]
@@ -115,16 +115,16 @@ getNodesPrid <- function(tree, ids, ...) {
 # reduce dependence on the recursive, by getting prenodes
 # tip ids to id
 getNodePtid <- function(tree, id) {
-  .get <- function(id, tree) {
+  .get <- function(id) {
     tmp <- getNodePrid(tree, id, stop_id=pstids)
     tmp <- tmp[-length(tmp)]
     pstids <<- c(tmp, pstids)
     NULL
   }
   pstids <- id
-  l_data <- data.frame(id=tree@nodelist[[id]][['kids']],
+  l_data <- data.frame(id=tree@nodelist[[id]][['children']],
                        stringsAsFactors=FALSE)
-  m_ply(.data=l_data, .fun=.get, tree=tree)
+  m_ply(.data=l_data, .fun=.get)
   pstids
 }
 
