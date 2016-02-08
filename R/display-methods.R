@@ -129,7 +129,7 @@ setMethod('viz', 'TreeMan',
              }
              # draw lines
              for(i in 2:nrow (pnts)) {
-               prenode <- tree@nodelist[[pnts$node[i]]][['prid']]
+               prenode <- tree@nodelist[[pnts$node[i]]][['prid']][1]
                ind <- c(i, which(pnts$node == prenode))
                lines(x=pnts$x[ind], y=pnts$y[ind])
              }
