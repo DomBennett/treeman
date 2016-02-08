@@ -12,7 +12,7 @@
   } else {
     age <- numeric()
   }
-  new('Node', id=node[['id']], span=span, prid=as.character(node[['prid']]),
+  new('Node', id=node[['id']], span=span, prid=as.character(node[['prid']][1]),
      ptid=as.character(node[['ptid']]), kids=as.character(node[['kids']]),
      nkids=length(as.character(node[['kids']])), pd=pd,
      prdst=prdst, root=tree@root == node[['id']],
@@ -24,8 +24,8 @@ setClass ('Node', representation=representation (
   span='numeric',        # length of preceding branch
   prid='character',      # parent node ID
   ptid='vector',         # child node IDs
-  kids='vector',     # descending tip IDs
-  nkids='numeric',   # number of descending tips
+  kids='vector',         # descending tip IDs
+  nkids='numeric',       # number of descending tips
   pd='numeric',          # total branch length represented by node
   prdst='numeric',       # total branch length of connected pres
   age='numeric',         # age of node in tree
