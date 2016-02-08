@@ -1,19 +1,27 @@
 # TODO: write Newick
 
 # TODO: readTree doc
-# TODO: still seems slow, must be a neater solution for speeding this up still
-readTree <- function(file=NULL, text=NULL) {
+readTree <- function(file=NULL, text=NULL, ...) {
   if(!is.null(file)) {
     trstr <- scan(file, what="raw", quiet=TRUE)
   } else {
     trstr <- text
   }
-  #trstr <- sub(";", "", trstr)
+  if(length(trstr) > 1) {
+    trees <- mlply(trstr, .fun=.readTree, ...)
+    tree <- as(trees, 'TreeMen')
+  } else {
+    tree <- .readTree(trstr)
+  }
+  tree
+}
+
+.readTree <- function(trstr) {
   cuts <- gregexpr("(\\(|\\)|,|;)", trstr)[[1]]
   cuts <- c(cuts[1], cuts[2:length(cuts)] - cuts[1:(length(cuts)-1)])
   rdrenv <- .getRdrEnv(trstr)
   l_data <- data.frame(end_pos=cuts, stringsAsFactors=FALSE)
-  m_ply(cuts, .mkNdLst, rdrenv=rdrenv)
+  m_ply(l_data, .mkNdLst, rdrenv=rdrenv)
   .addRoot(rdrenv)
   if(length(rdrenv[['root']]) == 0) {
     ndlst <- .globalUpdateKids(rdrenv[['nodelist']])
@@ -31,10 +39,8 @@ readTree <- function(file=NULL, text=NULL) {
   rdrenv$trstr <- trstr
   rdrenv$nodelist <- list()
   rdrenv$prnds <- list()
-  rdrenv$prnds[[1]] <- list()
-  rdrenv$prnds[[1]][['id']] <- "root"
   rdrenv$cntr <- 0L
-  rdrenv$i <- 1L
+  rdrenv$i <- 0L
   rdrenv$nxt_is_intrnl <- FALSE
   rdrenv
 }
@@ -64,6 +70,10 @@ readTree <- function(file=NULL, text=NULL) {
   nd
 }
 
+.getPrid <- function(prnds) {
+  unlist(lapply(prnds[length(prnds):1], function(nd) nd[['id']]))
+}
+
 # cut trstr and generate nodelist
 .mkNdLst <- function(end_pos, rdrenv) {
   ndstr <- substr(rdrenv$trstr, 1, end_pos)
@@ -77,15 +87,14 @@ readTree <- function(file=NULL, text=NULL) {
     if(rdrenv$nxt_is_intrnl) {
       # TODO: utilise nd$id, e.g. node labels are taxonym or support
       nd$id <- rdrenv$prnds[[rdrenv$i]][['id']]
-      rdrenv$prnds[[rdrenv$i]][['span']] <- nd[['span']]
-      rdrenv$prnds[[rdrenv$i]][['prid']] <-
-        rdrenv$prnds[[rdrenv$i-1]][['id']]
-      rdrenv$nodelist[[nd[['id']]]] <- rdrenv$prnds[[rdrenv$i]]
+      nd$ptid <- rdrenv$prnds[[rdrenv$i]][['ptid']]
       rdrenv$prnds <- rdrenv$prnds[-rdrenv$i]
       rdrenv$i <- rdrenv$i - 1
+      nd$prid <- .getPrid(rdrenv$prnds)
+      rdrenv$nodelist[[nd[['id']]]] <- nd
       rdrenv$nxt_is_intrnl <- FALSE
     } else {
-      nd[['prid']] <- rdrenv$prnds[[rdrenv$i]][['id']]
+      nd[['prid']] <- .getPrid(rdrenv$prnds)
       rdrenv$nodelist[[nd[['id']]]] <- nd
     }
     if(length(rdrenv$prnds) > 0) {
@@ -101,7 +110,7 @@ readTree <- function(file=NULL, text=NULL) {
 }
 
 .addRoot <- function(rdrenv) {
-  root_i <- which(unlist(lapply(rdrenv$nodelist, function(n) n[['prid']] == "root")))
+  root_i <- which(unlist(lapply(rdrenv$nodelist, function(n) length(n[['prid']]) == 0)))
   if(length(root_i) > 0) {
     rdrenv$nodelist[[root_i]][['prid']] <- NULL
     rdrenv$nodelist[[root_i]][['span']] <- 0
