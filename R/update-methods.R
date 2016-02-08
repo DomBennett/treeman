@@ -1,219 +1,108 @@
-.dwndateNode <- function(tree_env, nid, rid) {
-  .add <- function(tree_env) {
-    id <- tree_env[['ndlst']][[tree_env[['id']]]][['prid']]
-    span <- tree_env[['ndlst']][[id]][['span']]
-    pd <- tree_env[['ndlst']][[id]][['pd']] - nd_span
-    tree_env[['ndlst']][[id]][['pd']] <- pd
-    if(id != rid) {
-      tree_env[['id']] <- id
-      .add(tree_env)
-    }
+.dwndateNode <- function(ndlst, nid, rid) {
+  .add <- function(id) {
+    ndlst[[id]][['pd']] <<- ndlst[[id]][['pd']] - nd_span
   }
-  tree_env[['id']] <- nid
-  nd_span <- tree_env[['ndlst']][[nid]][['span']]
-  while(TRUE) {
-    err <- try(expr={
-      .add(tree_env)
-    }, silent=TRUE)
-    err <- attr(err, 'condition')
-    if(is.null(err)) {
-      break
-    }
-    if(!grepl('infinite recursion', err)) {
-      stop(err)
-    }
-  }
-  NULL
+  nd_span <- ndlst[[nid]][['span']]
+  prids <- ndlst[[nid]][['prid']]
+  mlply(prids, .fun=.add)
+  ndlst
 }
 
-.updateNode <- function(tree_env, nid, rid) {
-  .add <- function(tree_env) {
-    id <- tree_env[['ndlst']][[tree_env[['id']]]][['prid']]
-    span <- tree_env[['ndlst']][[id]][['span']]
-    tree_env[['prdst']] <- tree_env[['prdst']] + span
-    pd <- tree_env[['ndlst']][[id]][['pd']] + nd_span
-    tree_env[['ndlst']][[id]][['pd']] <- pd
-    if(id != rid) {
-      tree_env[['id']] <- id
-      .add(tree_env)
-    }
+.updateNode <- function(ndlst, nid, rid) {
+  .add <- function(id) {
+    ndlst[[id]][['pd']] <<- ndlst[[id]][['pd']] + nd_span
+    prdst <<- ndlst[[id]][['span']] + prdst
   }
-  tree_env[['id']] <- nid
-  nd_span <- tree_env[['ndlst']][[nid]][['span']]
-  tree_env[['prdst']] <- nd_span
-  while(TRUE) {
-    err <- try(expr={
-      .add(tree_env)
-    }, silent=TRUE)
-    err <- attr(err, 'condition')
-    if(is.null(err)) {
-      break
-    }
-    if(!grepl('infinite recursion', err)) {
-      stop(err)
-    }
-  }
-  tree_env[['ndlst']][[nid]][['prdst']] <- tree_env[['prdst']]
-  NULL
+  nd_span <- ndlst[[nid]][['span']]
+  prdst <- nd_span
+  prids <- ndlst[[nid]][['prid']]
+  mlply(prids, .fun=.add)
+  ndlst[[nid]][['prdst']] <- prdst
+  ndlst
 }
 
-.dwndateTip <- function(tree_env, tid, rid) {
-  .add <- function(tree_env) {
-    id <- tree_env[['ndlst']][[tree_env[['id']]]][['prid']]
-    kids <- tree_env[['ndlst']][[id]][['kids']]
-    kids <- kids[kids != tid]
-    tree_env[['ndlst']][[id]][['kids']] <- kids
-    span <- tree_env[['ndlst']][[id]][['span']]
-    pd <- tree_env[['ndlst']][[id]][['pd']] - tp_span
-    tree_env[['ndlst']][[id]][['pd']] <- pd
-    if(id != rid) {
-      tree_env[['id']] <- id
-      .add(tree_env)
-    }
+.dwndateTip <- function(ndlst, tid, rid) {
+  .add <- function(id) {
+    kids <- ndlst[[id]][['kids']]
+    ndlst[[id]][['kids']] <<- kids[kids != tid]
+    ndlst[[id]][['pd']] <<- ndlst[[id]][['pd']] - tp_span
   }
-  tree_env[['id']] <- tid
-  tp_span <- tree_env[['ndlst']][[tid]][['span']]
-  tree_env[['prdst']] <- tp_span
-  while(TRUE) {
-    err <- try(expr={
-      .add(tree_env)
-    }, silent=TRUE)
-    err <- attr(err, 'condition')
-    if(is.null(err)) {
-      break
-    }
-    if(!grepl('infinite recursion', err)) {
-      stop(err)
-    }
-  }
-  NULL
+  tp_span <- ndlst[[tid]][['span']]
+  prdst <- 0
+  prids <- ndlst[[tid]][['prid']]
+  mlply(prids, .fun=.add)
+  ndlst[[tid]][['prdst']] <- prdst
+  ndlst
 }
 
-.updateTip <- function(tree_env, tid, rid) {
-  .add <- function(tree_env) {
-    id <- tree_env[['ndlst']][[tree_env[['id']]]][['prid']]
-    kids <- c(tree_env[['ndlst']][[id]][['kids']], tid)
-    tree_env[['ndlst']][[id]][['kids']] <- kids
-    span <- tree_env[['ndlst']][[id]][['span']]
-    tree_env[['prdst']] <- tree_env[['prdst']] + span
-    pd <- tree_env[['ndlst']][[id]][['pd']] + tp_span
-    tree_env[['ndlst']][[id]][['pd']] <- pd
-    if(id != rid) {
-      tree_env[['id']] <- id
-      .add(tree_env)
-    }
+.updateTip <- function(ndlst, tid, rid) {
+  .add <- function(id) {
+    kids <- ndlst[[id]][['kids']]
+    ndlst[[id]][['kids']] <<- c(kids, tid)
+    ndlst[[id]][['pd']] <<- ndlst[[id]][['pd']] + tp_span
+    prdst <<- ndlst[[id]][['span']] + prdst
   }
-  tree_env[['id']] <- tid
-  tp_span <- tree_env[['ndlst']][[tid]][['span']]
-  tree_env[['prdst']] <- tp_span
-  while(TRUE) {
-    err <- try(expr={
-      .add(tree_env)
-    }, silent=TRUE)
-    err <- attr(err, 'condition')
-    if(is.null(err)) {
-      break
-    }
-    if(!grepl('infinite recursion', err)) {
-      stop(err)
-    }
-  }
-  tree_env[['ndlst']][[tid]][['prdst']] <- tree_env[['prdst']]
-  NULL
+  tp_span <- ndlst[[tid]][['span']]
+  prdst <- tp_span
+  prids <- ndlst[[tid]][['prid']]
+  mlply(prids, .fun=.add)
+  ndlst[[tid]][['prdst']] <- prdst
+  ndlst
 }
 
-.globalUpdateAll <- function(ndlst, ...) {
-  tree_env <- new.env()
-  tree_env$ndlst <- ndlst
+.globalUpdateAll <- function(ndlst) {
+  tip <- function(tid) {
+    ndlst <- .updateTip(ndlst, tid, rid)
+    ndlst <<- ndlst
+  }
+  node <- function(nid) {
+    ndlst <- .updateNode(ndlst, nid, rid)
+    ndlst <<- ndlst
+  }
   wo_pstnds <- sapply(ndlst, function(n) length(n[['ptid']]) == 0)
   wo_prnds <- sapply(ndlst, function(n) length(n[['prid']]) == 0)
   nids <- names(ndlst)[(!wo_pstnds) & (!wo_prnds)]
   tids <- names(ndlst)[wo_pstnds]
   rid <- names(ndlst)[wo_prnds]
   l_data <- data.frame(tid=tids, stringsAsFactors=FALSE)
-  m_ply(.data=l_data, .fun=.updateTip, tree_env=tree_env, rid=rid, ...)
+  m_ply(.data=l_data, .fun=tip)
   l_data <- data.frame(nid=nids, stringsAsFactors=FALSE)
-  m_ply(.data=l_data, .fun=.updateNode, tree_env=tree_env, rid=rid, ...)
-  tree_env$ndlst
+  m_ply(.data=l_data, .fun=node)
+  ndlst
 }
 
-.localUpdateTip <- function(ndlst, tid, rid) {
-  # update all node slots for a tip
-  tree_env <- new.env()
-  tree_env$ndlst <- ndlst
-  .updateTip(tree_env, tid, rid)
-  tree_env$ndlst
-}
-
-.localDwndateTip <- function(ndlst, tid, rid) {
-  # update all node slots for a tip
-  tree_env <- new.env()
-  tree_env$ndlst <- ndlst
-  .dwndateTip(tree_env, tid, rid)
-  tree_env$ndlst
-}
-
-.localUpdateNode <- function(ndlst, nid, rid) {
-  # update all node slots for an internal node
-  tree_env <- new.env()
-  tree_env$ndlst <- ndlst
-  .updateNode(tree_env, nid, rid)
-  tree_env$ndlst
-}
-
-.localDwndateNode <- function(ndlst, nid, rid) {
-  # update all node slots for a tip
-  tree_env <- new.env()
-  tree_env$ndlst <- ndlst
-  .dwndateNode(tree_env, nid, rid)
-  tree_env$ndlst
-}
-
-.updateKids <- function(tree_env, tid, rid) {
-  .add <- function(tree_env) {
-    id <- tree_env[['ndlst']][[tree_env[['id']]]][['prid']]
-    kids <- c(tree_env[['ndlst']][[id]][['kids']], tid)
-    tree_env[['ndlst']][[id]][['kids']] <- kids
-    if(id != rid) {
-      tree_env[['id']] <- id
-      .add(tree_env)
-    }
+.updateKids <- function(ndlst, tid, rid) {
+  .add <- function(id) {
+    kids <- ndlst[[id]][['kids']]
+    ndlst[[id]][['kids']] <<- c(kids, tid)
   }
-  tree_env[['id']] <- tid
-  while(TRUE) {
-    err <- try(expr={
-      .add(tree_env)
-    }, silent=TRUE)
-    err <- attr(err, 'condition')
-    if(is.null(err)) {
-      break
-    }
-    if(!grepl('infinite recursion', err)) {
-      stop(err)
-    }
-  }
-  NULL
+  prids <- ndlst[[tid]][['prid']]
+  mlply(prids, .fun=.add)
+  ndlst
 }
 
-.globalUpdateKids <- function(ndlst, tids, rid, ...) {
-  # add kids to all nodes in tree
-  tree_env <- new.env()
-  tree_env$ndlst <- ndlst
+.dwndateKids <- function(ndlst, tid, rid) {
+  .add <- function(id) {
+    kids <- ndlst[[id]][['kids']]
+    ndlst[[id]][['kids']] <<- kids[kids != tid]
+  }
+  prids <- ndlst[[tid]][['prid']]
+  mlply(prids, .fun=.add)
+  ndlst
+}
+
+.globalUpdateKids <- function(ndlst) {
+  tip <- function(tid) {
+    ndlst <- .updateKids(ndlst, tid, rid)
+    ndlst <<- ndlst
+  }
   wo_pstnds <- sapply(ndlst, function(n) length(n[['ptid']]) == 0)
   w_prnds <- sapply(ndlst, function(n) length(n[['prid']]) == 0)
   tids <- names(ndlst)[wo_pstnds]
   rid <- names(ndlst)[w_prnds]
   l_data <- data.frame(tid=tids, stringsAsFactors=FALSE)
-  m_ply(.data=l_data, .fun=.updateKids, tree_env=tree_env, rid=rid, ...)
-  tree_env$ndlst
-}
-
-.localUpdateKids <- function(ndlst, tid, rid) {
-  # run this to add just kids slot for new tip
-  tree_env <- new.env()
-  tree_env$ndlst <- ndlst
-  .updateKids(tree_env, tid, rid)
-  tree_env$ndlst
+  m_ply(.data=l_data, .fun=tip)
+  ndlst
 }
 
 .updateSlots <- function(tree) {
