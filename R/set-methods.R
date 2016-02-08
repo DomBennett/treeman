@@ -15,55 +15,35 @@ setAge <- function(tree, val) {
 }
 
 setNodeSpan <- function(tree, id, val) {
-  .updateSlots(.setNodeSpan(tree, id, val))
-}
-
-# If vals=NULL, all node spans are set to NULL
-# TODO: separate setNodeSpan and setNodesSpan, more efficient
-setNodesSpan <- function(tree, ids, vals) {
-  .run <- function(i) {
-    tree <<- .setNodeSpan(tree, id=ids[i], val=vals[i])
-    NULL
-  }
-  .nullify <- function(id) {
-    tree@nodelist[[id]][['span']] <<- NULL
-    tree@nodelist[[id]][['pd']] <<- NULL
-    tree@nodelist[[id]][['prdst']] <<- NULL
-  }
-  if(is.null(vals)) {
-    sapply(names(tree@nodelist), .nullify)
-  } else {
-    sapply(1:length(ids), .run)
-  }
+  diff <- tree@nodelist[[id]][['span']] - val
+  tree@nodelist[[id]][['span']] <- diff
+  tree@nodelist <- .updateNode(tree@nodelist, id, tree@root)
+  tree@nodelist[[id]][['span']] <- val
   .updateSlots(tree)
 }
 
-.setNodeSpan <- function(tree, id, val) {
-  .pd <- function(prid, tree) {
-    tree@nodelist[[prid]][['pd']] <- tree@nodelist[[prid]][['pd']] -
-      pspn + val
-    if(!is.null(tree@nodelist[[prid]][['prid']])) {
-      tree <- .pd(tree@nodelist[[prid]][['prid']], tree)
-    }
-    tree
+setNodesSpan <- function(tree, ids, vals, ...) {
+  .setNodeSpan <- function(id, val) {
+    diff <- ndlst[[id]][['span']] - val
+    ndlst[[id]][['span']] <- diff
+    ndlst <- .updateNode(ndlst, id, tree@root)
+    ndlst[[id]][['span']] <- val
+    ndlst <<- ndlst
   }
-  .prdst <- function(ptid, tree) {
-    tree@nodelist[[ptid]][['prdst']] <- tree@nodelist[[ptid]][['prdst']] -
-      pspn + val
-    if(!is.null(tree@nodelist[[ptid]][['ptid']])) {
-      for(ptid in tree@nodelist[[ptid]][['ptid']]) {
-        tree <- .prdst(ptid, tree)
-      }
-    }
-    tree
+  .nullify <- function(nd) {
+    nd[['span']] <- NULL
+    nd[['pd']] <- NULL
+    nd[['prdst']] <- NULL
+    nd
   }
-  pspn <- tree@nodelist[[id]][['span']]
-  tree@nodelist[[id]][['span']] <- val
-  if(!is.null(tree@nodelist[[id]][['prid']])) {
-    tree <- .pd(tree@nodelist[[id]][['prid']], tree)
+  ndlst <- tree@nodelist
+  if(is.null(vals)) {
+    ndlst <- llply(ndlst[ids], .fun=.nullify)
+  } else {
+    m_ply(ids, .fun=.setNodeSpan, val=vals, ...)
   }
-  tree <- .prdst(id, tree)
-  tree
+  tree@nodelist <- ndlst
+  .updateSlots(tree)
 }
 
 setTol <- function(tree, tol) {
