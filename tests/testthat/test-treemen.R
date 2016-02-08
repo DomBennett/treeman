@@ -50,3 +50,8 @@ test_that(".cTreeObjs() works", {
   trees <- treeman:::.cTreeObjs(trees, tree, tree, trees)
   expect_true(is(trees, "TreeMen"))
 })
+test_that("setAs() works", {
+  trees <- list(tree, tree, tree)
+  trees <- as(trees, "TreeMen")
+  expect_true(is(trees, "TreeMen"))
+})

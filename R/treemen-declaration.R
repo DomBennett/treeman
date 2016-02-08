@@ -99,3 +99,12 @@ setMethod('[', c('TreeMen', 'character'),
             }
             slot(x, i)
           })
+
+# Conversion method
+setAs(from="list", to="TreeMen", def=function(from, to) {
+  print(from)
+  print(to)
+  ntips <- sum(unlist(lapply(from, function(tree) tree@ntips)))
+  ntrees <- length(from)
+  new(to, treelist=from, ntips=ntips, ntrees=ntrees)
+  })
