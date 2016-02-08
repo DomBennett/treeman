@@ -47,7 +47,7 @@ randTree <- function (n) {
         }
         post <- c (post, new_id)
         new_span <- runif (min=0, max=1, n=1)
-        new_pre <- id
+        new_pre <- c(id, pre)
         new_predist <- predist + new_span
         nodelist <- .node (nl, new_id, new_span,
                            new_pre, new_predist, nodelist)
