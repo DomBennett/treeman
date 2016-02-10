@@ -49,7 +49,7 @@ setNodesSpan <- function(tree, ids, vals, ...) {
   }
   ndlst <- tree@nodelist
   if(is.null(vals)) {
-    ndlst <- llply(ndlst[ids], .fun=.nullify, ...)
+    ndlst <- llply(ndlst[tree@all], .fun=.nullify, ...)
   } else {
     spans <- getNodesSlot(tree, name='span', ids=tree@all)
     spans[match(ids, tree@all)] <- vals

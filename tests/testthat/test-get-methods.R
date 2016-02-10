@@ -56,13 +56,10 @@ test_that("getPath() works", {
 test_that("get_Prid() works", {
   tree <- randTree(10)
   prid <- getNodePrid(tree, id='n1')
-  expect_that(prid, equals('n1'))
+  expect_that(prid, is_null())
   prids <- getNodesPrid(tree, tree['nodes'])
   lst_nds <- unlist(lapply(prids, function(n) n[length(n)]))
   expect_true(all(lst_nds == "n1"))
-  tree@nodelist[['n2']][['prid']] <- NULL
-  expect_that(getNodesPrid(tree, tree['nodes']),
-              throws_error())
 })
 test_that("get_Ptid() works", {
   tree <- randTree(10)

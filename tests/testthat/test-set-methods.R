@@ -28,14 +28,12 @@ test_that('setNodeSpan() works', {
 })
 test_that('setNodesSpan() works', {
   tree <- randTree(10)
-  viz(tree)
   before_pd <- tree['pd']
   before_age <- tree['age']
   ids <- tree['all'][tree['all'] != tree['root']]
   vals <- getNodesSlot(tree, name='span', ids=ids)
   vals <- vals/2
   tree <- setNodesSpan(tree, ids=ids, vals=vals)
-  viz(tree)
   expect_that(tree['pd']*2, equals(before_pd))
   expect_that(tree['age']*2, equals(before_age))
   tree <- setNodesSpan(tree, ids=ids, vals=NULL)
