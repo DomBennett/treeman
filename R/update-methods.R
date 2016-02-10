@@ -1,38 +1,39 @@
 # Convert all from mlply to llply, much faster
 .dwndateNode <- function(ndlst, nid, rid) {
-  .add <- function(id) {
-    ndlst[[id]][['pd']] <<- ndlst[[id]][['pd']] - nd_span
+  .add <- function(nd) {
+    nd[['pd']] <- nd[['pd']] - nd_span
+    nd
   }
   nd_span <- ndlst[[nid]][['span']]
   prids <- ndlst[[nid]][['prid']]
-  mlply(prids, .fun=.add)
+  ndlst[prids] <- llply(ndlst[prids], .fun=.add)
   ndlst
 }
 
 .updateNode <- function(ndlst, nid, rid) {
-  .add <- function(id) {
-    ndlst[[id]][['pd']] <<- ndlst[[id]][['pd']] + nd_span
-    prdst <<- ndlst[[id]][['span']] + prdst
+  .add <- function(nd) {
+    nd[['pd']] <- nd[['pd']] + nd_span
+    prdst <<- nd[['span']] + prdst
+    nd
   }
   nd_span <- ndlst[[nid]][['span']]
   prdst <- nd_span
   prids <- ndlst[[nid]][['prid']]
-  mlply(prids, .fun=.add)
+  ndlst[prids] <- llply(ndlst[prids], .add)
   ndlst[[nid]][['prdst']] <- prdst
   ndlst
 }
 
 .dwndateTip <- function(ndlst, tid, rid) {
-  .add <- function(id) {
-    kids <- ndlst[[id]][['kids']]
-    ndlst[[id]][['kids']] <<- kids[kids != tid]
-    ndlst[[id]][['pd']] <<- ndlst[[id]][['pd']] - tp_span
+  .add <- function(nd) {
+    kids <- nd[['kids']]
+    nd[['kids']] <- kids[kids != tid]
+    nd[['pd']] <- nd[['pd']] - tp_span
+    nd
   }
   tp_span <- ndlst[[tid]][['span']]
-  prdst <- 0
   prids <- ndlst[[tid]][['prid']]
-  mlply(prids, .fun=.add)
-  ndlst[[tid]][['prdst']] <- prdst
+  ndlst[prids] <- llply(ndlst[prids], .fun=.add)
   ndlst
 }
 
@@ -74,22 +75,24 @@
 }
 
 .updateKids <- function(ndlst, tid, rid) {
-  .add <- function(id) {
-    kids <- ndlst[[id]][['kids']]
-    ndlst[[id]][['kids']] <<- c(kids, tid)
+  .add <- function(nd) {
+    kids <- nd[['kids']]
+    nd[['kids']] <- c(kids, tid)
+    nd
   }
   prids <- ndlst[[tid]][['prid']]
-  mlply(prids, .fun=.add)
+  ndlst[prids] <- llply(ndlst[prids], .fun=.add)
   ndlst
 }
 
 .dwndateKids <- function(ndlst, tid, rid) {
-  .add <- function(id) {
-    kids <- ndlst[[id]][['kids']]
-    ndlst[[id]][['kids']] <<- kids[kids != tid]
+  .add <- function(nd) {
+    kids <- nd[['kids']]
+    nd[['kids']] <- kids[kids != tid]
+    nd
   }
   prids <- ndlst[[tid]][['prid']]
-  mlply(prids, .fun=.add)
+  ndlst[prids] <- llply(ndlst[prids], .fun=.add)
   ndlst
 }
 

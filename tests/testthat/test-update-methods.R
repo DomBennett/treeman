@@ -94,13 +94,18 @@ test_that('.dwndateNode() works', {
 })
 test_that('.updateNode() works', {
   tree <- randTree(10)
+  age_before <- tree['age']
+  pd_before <- tree['pd']
+  ntips_before <- tree['ntips']
   ndlst <- tree['nodelist']
   nid <- sample(tree['nodes'][tree['nodes'] != tree['root']], 1)
   ndlst <- treeman:::.dwndateNode(ndlst, nid=nid, rid=tree['root'])
   new_ndlst <- treeman:::.updateNode(ndlst, nid=nid, rid=tree['root'])
   tree <- new('TreeMan', nodelist=new_ndlst, root=tree['root'])
   tree <- treeman:::.updateSlots(tree)
-  expect_that(tree['ntips'], equals(10))
+  expect_that(tree['ntips'], equals(ntips_before))
+  expect_that(tree['age'], equals(age_before))
+  expect_that(tree['pd'], equals(pd_before))
 })
 test_that('.globalUpdateAll() works', {
   tree <- randTree(10)
