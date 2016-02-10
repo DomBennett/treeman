@@ -1,4 +1,17 @@
 # TODO: sort documentation
+getTxnyms <- function(tree, txnyms) {
+  # get node id(s) for taxonyms
+  .get <- function(id, txnym, ...) {
+    for(t in txnyms) {
+      if(t %in% txnym) {
+        res[[t]] <<- c(res[[t]], id)
+      }
+    }
+  }
+  res <- list()
+  m_ply(tree@nodelist, .fun=.get)
+  res
+}
 
 getOutgroup <- function(tree, ids) {
   .cntr <- function(id) {
@@ -137,17 +150,13 @@ getNodesPtid <- function(tree, ids, ...) {
 
 # @name get_Lineage
 getNodeLineage <- function(tree, id) {
-  prids <- getNodePrid(tree, id)
-  lineage <- sapply(prids, function(n) tree@nodelist[[n]][['taxonym']],
-                    simplify=FALSE)
-  if(length(lineage) > 0) {
-    lineage <- c(tree@nodelist[[id]][['taxonym']], lineage)
-    lineage <- lineage[length(lineage):1]
-    lineage <- unique(lineage)
-  } else {
-    lineage <- NULL
+  .get <- function(txnym, ...) {
+    lng <<- c(txnym, lng)
   }
-  lineage
+  prids <- c(id, getNodePrid(tree, id))
+  lng <- NULL
+  m_ply(tree@nodelist[prids], .fun=.get)
+  unique(lng)
 }
 
 getNodesLineage <- function(tree, ids, ...) {

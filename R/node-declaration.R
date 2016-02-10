@@ -14,7 +14,7 @@
   }
   new('Node', id=node[['id']], span=span, prid=as.character(node[['prid']][1]),
      ptid=as.character(node[['ptid']]), kids=as.character(node[['kids']]),
-     nkids=length(as.character(node[['kids']])), pd=pd,
+     nkids=length(as.character(node[['kids']])), pd=pd, txnym=node[['txnym']],
      prdst=prdst, root=tree@root == node[['id']],
      age=age, tip=length(node[['ptid']]) == 0)
 }
@@ -26,6 +26,7 @@ setClass ('Node', representation=representation (
   ptid='vector',         # child node IDs
   kids='vector',         # descending tip IDs
   nkids='numeric',       # number of descending tips
+  txnym="vector",        # list of associated taxonyms
   pd='numeric',          # total branch length represented by node
   prdst='numeric',       # total branch length of connected pres
   age='numeric',         # age of node in tree
@@ -52,6 +53,9 @@ setMethod ('print', c('x'='Node'),
                msg <- paste0('Node (internal node):\n')
              }
              msg <- paste0(msg, '  + ID: \"', x@id, '\"\n')
+             if(!is.null(x@txnym)) {
+               msg <- paste0(msg, '  + txnym: \"', paste0(x@txnym, collapse='\", \"'), '\"\n')
+             }
              if(!x@root) {
                msg <- paste0(msg, '  + prid: \"', x@prid, '\"\n')
              }

@@ -4,6 +4,13 @@ library(testthat)
 
 # RUNNING
 context('Testing \'get-methods\'')
+test_that('getTaxonyms() works', {
+  data('mammals')
+  nid <- sample(mammals['nodes'], 1)
+  txnym <- mammals[[nid]]['txnym']
+  res <- getTxnyms(mammals, txnym)
+  expect_true(nid %in% res[[1]])
+})
 test_that('getOutgroup() works', {
   tree <- randTree(10)
   rnd_nd <- sample(tree['nodes'][tree['nodes'] != tree['root']], 1)
@@ -72,7 +79,7 @@ test_that("get_Lineage() works", {
   # TODO: redo with setNodes
   tree <- randTree(10)
   for(i in 1:length(tree@nodelist)) {
-    tree@nodelist[[i]]$taxonym <- paste0("l", sample(1:1000, 1))
+    tree@nodelist[[i]]$txnym <- paste0("l", sample(1:1000, 1))
   }
   lngs <- getNodesLineage(tree, tree['tips'])
   rnd1 <- sample(1:length(lngs), 1)
