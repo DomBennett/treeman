@@ -15,32 +15,49 @@ setAge <- function(tree, val) {
 }
 
 setNodeSpan <- function(tree, id, val) {
-  diff <- tree@nodelist[[id]][['span']] - val
+  .ptnd <- function(nd) {
+    nd[['prdst']] <- nd[['prdst']] + diff
+    nd
+  }
+  # reset node using diff
+  diff <- val - tree@nodelist[[id]][['span']]
   tree@nodelist[[id]][['span']] <- diff
   tree@nodelist <- .updateNode(tree@nodelist, id, tree@root)
+  # adjust any pstnds
+  ptids <- getNodePtid(tree, id=id)
+  ptids <- ptids[-(length(ptids))]
+  tree@nodelist[ptids] <- llply(tree@nodelist[ptids], .fun=.ptnd)
+  # update nd
   tree@nodelist[[id]][['span']] <- val
+  tree@nodelist[[id]][['prdst']] <- tree@nodelist[[id]][['prdst']] +
+    val + abs(diff)
   .updateSlots(tree)
 }
 
 setNodesSpan <- function(tree, ids, vals, ...) {
-  .setNodeSpan <- function(id, val) {
-    diff <- ndlst[[id]][['span']] - val
-    ndlst[[id]][['span']] <- diff
-    ndlst <- .updateNode(ndlst, id, tree@root)
-    ndlst[[id]][['span']] <- val
-    ndlst <<- ndlst
-  }
   .nullify <- function(nd) {
     nd[['span']] <- NULL
     nd[['pd']] <- NULL
     nd[['prdst']] <- NULL
     nd
   }
+  .reset <- function(id, span) {
+    ndlst[[id]][['span']] <- span
+    ndlst[[id]][['pd']] <- 0
+    ndlst[[id]][['prdst']] <- 0
+    ndlst[[id]]
+  }
   ndlst <- tree@nodelist
   if(is.null(vals)) {
-    ndlst <- llply(ndlst[ids], .fun=.nullify)
+    ndlst <- llply(ndlst[ids], .fun=.nullify, ...)
   } else {
-    m_ply(ids, .fun=.setNodeSpan, val=vals, ...)
+    spans <- getNodesSlot(tree, name='span', ids=tree@all)
+    spans[match(ids, tree@all)] <- vals
+    l_data <- data.frame(id=tree@all, span=spans, stringsAsFactors=FALSE)
+    ndlst <- mlply(l_data, .fun=.reset)
+    ndlst <- ndlst[1:length(ndlst)]
+    names(ndlst) <- tree@all
+    ndlst <- .globalUpdateAll(ndlst)
   }
   tree@nodelist <- ndlst
   .updateSlots(tree)
