@@ -116,13 +116,13 @@ getNodesPrid <- function(tree, ids, ...) {
 # tip ids to id
 getNodePtid <- function(tree, id) {
   .get <- function(id) {
-    tmp <- getNodePrid(tree, id, stop_id=pstids)
-    tmp <- tmp[-length(tmp)]
-    pstids <<- c(tmp, pstids)
+    tmp <- c(id, getNodePrid(tree, id, stop_id=pstids))
+    index <- seq(from=1, to=(which(tmp %in% pstids)[1]-1), by=1)
+    pstids <<- c(tmp[index], pstids)
     NULL
   }
   pstids <- id
-  l_data <- data.frame(id=tree@nodelist[[id]][['children']],
+  l_data <- data.frame(id=tree@nodelist[[id]][['kids']],
                        stringsAsFactors=FALSE)
   m_ply(.data=l_data, .fun=.get)
   pstids

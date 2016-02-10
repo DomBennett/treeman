@@ -67,7 +67,8 @@ test_that("get_Prid() works", {
 test_that("get_Ptid() works", {
   tree <- randTree(10)
   pstids <- getNodesPtid(tree, tree['nodes'])
-  expect_true(all(pstids[['n1']] %in% tree['all']))
+  n1_ptids <- tree['all'][tree['all'] != 'n1']
+  expect_true(all(n1_ptids %in% pstids[['n1']]))
   expect_that(pstids[['t1']], is_null())
 })
 test_that("get_Lineage() works", {
