@@ -1,3 +1,6 @@
 import(methods)
-import(plyr)
+importFrom(plyr, m_ply)
+importFrom(plyr, mdply)
+importFrom(plyr, mlply)
+importFrom(plyr, llply)
 exportPattern("^[[:alpha:]]+")
