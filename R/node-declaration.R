@@ -12,9 +12,14 @@
   } else {
     age <- numeric()
   }
+  if(is.null(node[['txnym']])) {
+    txnym <- vector()
+  } else {
+    txnym <- node[['txnym']]
+  }
   new('Node', id=node[['id']], span=span, prid=as.character(node[['prid']][1]),
      ptid=as.character(node[['ptid']]), kids=as.character(node[['kids']]),
-     nkids=length(as.character(node[['kids']])), pd=pd, txnym=node[['txnym']],
+     nkids=length(as.character(node[['kids']])), pd=pd, txnym=txnym,
      prdst=prdst, root=tree@root == node[['id']],
      age=age, tip=length(node[['ptid']]) == 0)
 }
@@ -53,7 +58,7 @@ setMethod ('print', c('x'='Node'),
                msg <- paste0('Node (internal node):\n')
              }
              msg <- paste0(msg, '  + ID: \"', x@id, '\"\n')
-             if(!is.null(x@txnym)) {
+             if(length(x@txnym) > 0) {
                msg <- paste0(msg, '  + txnym: \"', paste0(x@txnym, collapse='\", \"'), '\"\n')
              }
              if(!x@root) {

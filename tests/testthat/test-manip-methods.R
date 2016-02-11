@@ -6,7 +6,7 @@ library(testthat)
 randomLineage <- function(n, tree) {
   # add random monophyletic taxonyms to tree
   addLname <- function(node, tree) {
-    tree@nodelist[[node]][['taxonym']] <- lname
+    tree@nodelist[[node]][['txnym']] <- lname
     pnodes <- tree@nodelist[[node]][['ptid']]
     if(!is.null(pnodes)) {
       for(pnode in pnodes) {
@@ -72,8 +72,8 @@ test_that('pinTip() and pinTips() work', {
   pd_before <- tree['pd']
   age_before <- tree['age']
   rdata <- randomTips(2, tree)
-  tree <- pinTips(tree, tip_ids=rdata[["t"]],
-                  lineages=rdata[["l"]],
+  tree <- pinTips(tree, tids=rdata[["t"]],
+                  lngs=rdata[["l"]],
                   ends=rdata[["e"]])
   expect_that(validObject(tree), is_true())
   expect_that(tree['ntips'], equals(12))

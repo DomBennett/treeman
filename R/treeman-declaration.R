@@ -75,7 +75,7 @@
 #TODO: modify this to allow user-defined Node slot
 #TODO: check for missing kids or no pd
 essential_node_slots <- c('id')
-valid_node_slots <- c('id', 'taxonym', 'span', 'prid',
+valid_node_slots <- c('id', 'txnym', 'span', 'prid',
                       'ptid', 'kids', 'prdst', 'pd')
 
 .checkTreeMan <- function(object) {

@@ -4,7 +4,7 @@ library(testthat)
 
 # RUNNING
 context('Testing \'get-methods\'')
-test_that('getTaxonyms() works', {
+test_that('getTxnyms() works', {
   data('mammals')
   nid <- sample(mammals['nodes'], 1)
   txnym <- mammals[[nid]]['txnym']
