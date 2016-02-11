@@ -36,7 +36,7 @@ calcDstTrp <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
 }
 
 calcOvrlp <- function(tree, ids_1, ids_2, nrmlsd=FALSE, ...) {
-  spans <- getNodesSlot(tree, name='span', tree@all)
+  spans <- getNodesSlot(tree, name='span', tree@all, ...)
   names(spans) <- tree@all
   ids_1 <- c(unique(unlist(getNodesPrid(tree, ids_1, ...))),
              ids_1)
