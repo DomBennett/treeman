@@ -1,5 +1,9 @@
 # TODO: write Newick
 
+writeTree <- function(...) {
+  cat('Sorry not yet implemented!\n')
+}
+
 # TODO: readTree doc
 readTree <- function(file=NULL, text=NULL, ...) {
   if(!is.null(file)) {

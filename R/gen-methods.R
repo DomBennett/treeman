@@ -79,6 +79,14 @@ randTree <- function (n) {
   .updateSlots(tree)
 }
 
+blncdTree <- function(...) {
+  cat('This function is in progress.... \n')
+}
+
+imblncdTree <- function(...) {
+  cat('This function is in progress.... \n')
+}
+
 #@name blncdTree
 # blncdTree <- function(n) {
 #   mkNd <- function(id, prid, ptid, pd) {

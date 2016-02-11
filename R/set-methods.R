@@ -1,4 +1,15 @@
-# #TODO: set_Taxonym, setRoot
+# #TODO
+setNodeTaxonym <- function(...) {
+  cat('Sorry not yet implemented!\n')
+}
+
+setNodesTaxonym <- function(...) {
+  cat('Sorry not yet implemented!\n')
+}
+
+setRoot <- function(...) {
+  cat('Sorry not yet implemented!\n')
+}
 
 setPD <- function(tree, val) {
   spans <- getNodesSlot(tree, ids=tree@all, name="span")
