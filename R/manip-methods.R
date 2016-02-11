@@ -1,15 +1,20 @@
 # TODO: addTips, removeTip, mergeTree, collapseNode, removeNode
 # TODO: add doc for adding and removing tips
+
+rmTip <- function(...) {
+  cat('Yep... someone needs to create this function. Sorry!\n')
+}
+
 addTip <- function(tree, id, sister, start, end,
                    parent_id=paste0("p_", id),
-                   tip_taxonym=NULL, parent_taxonym=NULL) {
+                   tip_txnym=NULL, parent_txnym=NULL) {
   tip <- list('id'=id)
-  if(!is.null(tip_taxonym)) {
-    tip[['taxonym']] <- tip_taxonym
+  if(!is.null(tip_txnym)) {
+    tip[['txnym']] <- tip_txnym
   }
   node <- list('id'=parent_id)
-  if(!is.null(parent_taxonym)) {
-    node[['taxonym']] <- parent_taxonym
+  if(!is.null(parent_txnym)) {
+    node[['txnym']] <- parent_txnym
   }
   tip[['span']] <- start - end
   age <- getNodeAge(tree, sister)
@@ -32,44 +37,57 @@ addTip <- function(tree, id, sister, start, end,
   tree@nodelist[[node[['id']]]] <- node
   tree@nodelist[[new_sister[['id']]]] <- new_sister
   tree@nodelist[[new_parent[['id']]]] <- new_parent
-  tree@nodelist <- .updateTip(tree@nodelist, tid=id, rid=tree@root)
-  .updateSlots(tree)
+  tree@nodelist <- treeman:::.updateTip(tree@nodelist, tid=id, rid=tree@root)
+  treeman:::.updateSlots(tree)
 }
-pinTip <- function(tree, tip_id, lineage, end) {
-  taxonyms <- unlist(lapply(tree@nodelist, function(n) n[['taxonym']]))
-  for(i in length(lineage):1) {
-    edges <- names(taxonyms)[which(taxonyms == lineage[i])]
-    if(length(edges) == 0) {
-      next
-    }
-    edges <- c(edges, unlist(sapply(edges, function(n) tree@nodelist[[n]][['ptid']])))
-    edges <- edges[edges != tree@root]
-    rngs <- getSpansAge(tree, ids=edges)
-    bool <- rngs[ ,'start'] > end
-    if(any(bool)) {
-      rngs <- rngs[bool, ]
-      rngs[rngs[ ,'end'] <= end, "end"] <- end
-      prbs <- rngs$start - rngs$end
-      e <- as.vector(sample(rngs$span, prob=prbs, size=1))
-      e_i <- which(rngs$span == e)
-      start <- runif(min=rngs$end[e_i], max=rngs$start[e_i], n=1)
-      if(i != length(lineage)) {
-        tip_taxonym <- lineage[i+1]
-      } else {
-        tip_taxonym <- lineage[i]
-      }
-      tree <- addTip(tree, id=tip_id, sister=e, start=start, end=end,
-                     tip_taxonym=tip_taxonym, parent_taxonym=lineage[i])
-      break
-    }
-  }
-  tree
-}
-pinTips <- function(tree, tip_ids, lineages, ends) {
+
+pinTips <- function(tree, tids, lngs, ends) {
   .pin <- function(i) {
-    tree <- pinTip(tree, tip_ids[i], lineages[[i]], ends[i])
-    tree <<- tree
+    # unpack
+    tid <- tids[i]
+    lng <- lngs[[i]]
+    end <- ends[i]
+    for(j in length(lng):1) {
+      spns <- names(txnyms)[which(txnyms %in% lng[j])]
+      if(length(spns) == 0) {
+        next
+      }
+      spns <- c(spns, unlist(sapply(spns, function(n) tree@nodelist[[n]][['ptid']])))
+      spns <- spns[spns != tree@root]
+      rngs <- getSpansAge(tree, ids=spns)
+      bool <- rngs[ ,'start'] > end
+      if(any(bool)) {
+        rngs <- rngs[bool, ]
+        rngs[rngs[ ,'end'] <= end, "end"] <- end
+        prbs <- rngs$start - rngs$end
+        e <- as.vector(sample(rngs$span, prob=prbs, size=1))
+        e_i <- which(rngs$span == e)
+        start <- runif(min=rngs$end[e_i], max=rngs$start[e_i], n=1)
+        if(j != length(lng)) {
+          tip_txnym <- lng[j+1]
+        } else {
+          tip_txnym <- lng[j]
+        }
+        tree <<- addTip(tree, id=tid, sister=e, start=start, end=end,
+                       tip_txnym=tip_txnym, parent_txnym=lng[j])
+        # add to txnyms list
+        txnyms[[tid]] <<- tip_txnym
+        break
+      }
+    }
   }
-  sapply(1:length(tip_ids), .pin)
+  .getTxnyms <- function(txnym, ptid, ...) {
+    if(!exists('ptid')) {
+      # if tip node, only take first element
+      res <- txnym[1]
+    } else {
+      res <- txnym
+    }
+    res
+  }
+  txnyms <- mlply(tree@nodelist, .fun=.getTxnyms)
+  txnyms <- txnyms[1:length(txnyms)]
+  names(txnyms) <- tree@all
+  m_ply(1:length(tids), .pin)
   tree
 }
