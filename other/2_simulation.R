@@ -8,7 +8,7 @@ library(treeman)
 # PARAMETER
 # balanced tree to start
 tree_string <- "((t1:1.0,t2:1.0)1:0,(t3:1.0,t4:1.0):1.0);"
-tree <- readTree(tree_string=tree_string)
+tree <- readTree(text=tree_string)
 iterations <- 10
 b <- 2
 d <- 1
@@ -22,11 +22,11 @@ for(i in 1:iterations) {
   # add/remove based on b and d
   to_add <- sample(c(TRUE, FALSE), size=1, prob=c(b,d))
   if(to_add) {
-    sister <- sample(names(fps), prob=fps, size=1)
+    sister <- sample(ext, prob=fps, size=1)
     id <- paste0('t', tree['ntips']+1)
     tree <- addTip(tree, id=id, sister=sister, start=0, end=0)
   } else {
-    exc <- c(exc, sample(names(fps), prob=1/fps, size=1))
+    exc <- c(exc, sample(ext, prob=1/fps, size=1))
   }
   # grow tree
   ext <- tree['tips'][!tree['tips'] %in% exc]

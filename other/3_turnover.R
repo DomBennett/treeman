@@ -14,6 +14,7 @@ obs_ovrlp <- calcOvrlp(tree, c1, c2)  # determine the proportion of shared branc
 iterations <- 999
 null <- rep(NA, iterations)
 for(i in 1:iterations) {
+  print(i)
   null_tips <- sample(tree['tips'], length(c1))  # generate null distributions
   null[i] <- calcOvrlp(tree, c1, null_tips)
 }
