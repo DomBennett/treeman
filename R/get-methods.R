@@ -28,7 +28,7 @@ getTxnyms <- function(tree, txnyms, ...) {
   res
 }
 
-#' @name getOutgroup
+#' @name getOtgrp
 #' @title Get outgroup
 #' @description Return the outgroup based on a tree and a vector of IDs.
 #' @details Returns a id, character. If there are multiple possible outgroups, returns NULL.
@@ -41,8 +41,8 @@ getTxnyms <- function(tree, txnyms, ...) {
 #' library(treeman)
 #' data(mammals)
 #' # orangutan is an outgroup wrt humans and chimps
-#' getOutgroup(mammals, ids=c('Homo_sapiens', 'Pan_troglodytes', 'Pongo_pygmaeus'))
-getOutgroup <- function(tree, ids) {
+#' getOtgrp(mammals, ids=c('Homo_sapiens', 'Pan_troglodytes', 'Pongo_pygmaeus'))
+getOtgrp <- function(tree, ids) {
   .cntr <- function(id) {
     kids <- tree@nodelist[[id]][['kids']]
     sum(ids %in% kids)

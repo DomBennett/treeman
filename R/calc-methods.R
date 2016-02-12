@@ -15,8 +15,8 @@ calcNodesBlnc <- function(tree, ids, ...) {
 
 calcDstTrp <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
   .count <- function(i) {
-    o1 <- getOutgroup(tree_1, cmbs[ ,i])
-    o2 <- getOutgroup(tree_2, cmbs[ ,i])
+    o1 <- getOtgrp(tree_1, cmbs[ ,i])
+    o2 <- getOtgrp(tree_2, cmbs[ ,i])
     if (length(o1) != length(o2) || o1 != o2) {
       cntr <- 1
     } else {

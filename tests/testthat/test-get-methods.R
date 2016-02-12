@@ -11,13 +11,13 @@ test_that('getTxnyms() works', {
   res <- getTxnyms(mammals, txnym)
   expect_true(nid %in% res[[1]])
 })
-test_that('getOutgroup() works', {
+test_that('getOtgrp() works', {
   tree <- randTree(10)
   rnd_nd <- sample(tree['nodes'][tree['nodes'] != tree['root']], 1)
   ingrp <- getNodeKids(tree, rnd_nd)
-  outgrp <- sample(tree['tips'][!tree['tips'] %in% ingrp], 1)
-  res <- getOutgroup(tree, ids=c(ingrp, outgrp))
-  expect_that(res, equals(outgrp))
+  otgrp <- sample(tree['tips'][!tree['tips'] %in% ingrp], 1)
+  res <- getOtgrp(tree, ids=c(ingrp, otgrp))
+  expect_that(res, equals(otgrp))
 })
 test_that('get_Slot() works', {
   tree <- randTree(10)
