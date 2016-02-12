@@ -42,7 +42,7 @@ test_that('calcPhyDv() works', {
   tree <- randTree(10)
   tips <- sample(tree['tips'], 3)
   pd <- calcPhyDv(tree, tips)
-  parent <- getParent(tree, ids=tips)
+  parent <- getPrnt(tree, ids=tips)
   test_that(pd, is_less_than(tree@nodelist[[parent]][['pd']]))
   # add a tip with a specified length.
   sister <- sample(tips, 1)

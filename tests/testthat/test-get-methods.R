@@ -47,15 +47,15 @@ test_that('getSpansAge() works', {
   res <- all(tip_ages[ ,'start'] > tip_ages[ ,'end'])
   expect_true(res)
 })
-test_that("getParent() works", {
+test_that("getPrnt() works", {
   tree <- readTree(text="(((A,B),(C,D)),(E,F));")
-  prnt <- getParent(tree, ids=c("A", "C"))
+  prnt <- getPrnt(tree, ids=c("A", "C"))
   expect_true(prnt == "n2")
 })
 test_that("getPath() works", {
   tree <- randTree(10)
   pth <- getPath(tree, from="t1", to="t10")
-  prnt <- getParent(tree, ids=c('t1', "t10"))
+  prnt <- getPrnt(tree, ids=c('t1', "t10"))
   expect_true(prnt %in% pth)
   expect_that(pth[1], equals('t1'))
   expect_that(pth[length(pth)], equals('t10'))
@@ -70,10 +70,10 @@ test_that("get_Prid() works", {
 })
 test_that("get_Ptid() works", {
   tree <- randTree(10)
-  pstids <- getNodesPtid(tree, tree['nodes'])
+  ptids <- getNodesPtid(tree, tree['nodes'])
   n1_ptids <- tree['all'][tree['all'] != 'n1']
-  expect_true(all(n1_ptids %in% pstids[['n1']]))
-  expect_that(pstids[['t1']], is_null())
+  expect_true(all(n1_ptids %in% ptids[['n1']]))
+  expect_that(ptids[['t1']], is_null())
 })
 test_that("get_Lineage() works", {
   # TODO: redo with setNodes
