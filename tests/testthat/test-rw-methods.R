@@ -17,3 +17,15 @@ test_that('readTree([w/o spans]) works', {
   expect_that(tree['ntips'], equals(4))
   expect_false(tree['wspn'])
 })
+test_that('writeTree() works', {
+  t1 <- randTree(10)
+  writeTree(t1, 'test.tre')
+  t2 <- readTree('test.tre')
+  expect_that(t1['ntips'], equals(t2['ntips']))
+  expect_that(t1['nnodes'], equals(t2['nnodes']))
+  expect_that(t1['pd'], equals(t2['pd']))
+  expect_that(t1['age'], equals(t2['age']))
+})
+if(file.exists('test.tre')) {
+  file.remove('test.tre')
+}

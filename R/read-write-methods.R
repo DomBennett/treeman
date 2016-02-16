@@ -1,7 +1,51 @@
-# TODO: write Newick
-
-writeTree <- function(...) {
-  cat('Sorry not yet implemented!\n')
+# TODO: test this with unrooted trees, adapt for TreeMen
+writeTree <- function(tree, file) {
+  tipBytip <- function(i) {
+    ids <- c(ndlst[[prid]][['kids']], prid,
+             ndlst[[prid]][['prid']])
+    id <<- ids[!ids %in% deja_vues][1]
+    print(id)
+    deja_vues[i] <<- id
+    spn <- ndlst[[id]][['span']]
+    if(id %in% tids) {
+      dpth <- which(ndlst[[id]][['prid']] == prid) - 1
+      prid <<- ndlst[[id]][['prid']][[1]]
+      tpstr <- paste0(id, ':', spn)
+      if(dpth > 0) {
+        brckts <- paste0(rep('(', dpth), collapse='')
+        trstr <<- paste0(trstr, ',', brckts, tpstr)
+      } else {
+        trstr <<- paste0(trstr, ',', tpstr)
+      }
+    } else {
+      prid <<- ndlst[[id]][['prid']][[1]]
+      trstr <<- paste0(trstr, '):', spn)
+    }
+    NULL
+  }
+  # start with first tip
+  # loop through tree structure adding tip by tip to string
+  # unpack
+  ndlst <- tree@nodelist
+  tids <- tree@tips
+  nids <- tree@nodes
+  rid <- tree@root
+  # add first tip
+  id <- tids[1]
+  trstr <-  ''
+  deja_vues <- rep(NA, length(ndlst))
+  deja_vues[1] <- id
+  spn <- ndlst[[id]][['span']]
+  dpth <- length(ndlst[[id]][['prid']])
+  prid <- ndlst[[id]][['prid']][[1]]
+  tpstr <- paste0(id, ':', spn)
+  trstr <- paste0(rep('(', dpth), collapse='')
+  trstr <- paste0(trstr, tpstr)
+  # loop through nodes
+  m_ply(1:(length(ndlst) - 1), .fun=tipBytip)
+  trstr <- paste0(trstr, ');')
+  write.table(x=trstr, file=file, quote=FALSE, row.names=FALSE,
+              col.names=FALSE)
 }
 
 # TODO: readTree doc
