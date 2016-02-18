@@ -18,7 +18,7 @@ test_that('readTree([w/o spans]) works', {
   expect_false(tree['wspn'])
 })
 test_that('writeTree() works', {
-  t1 <- randTree(10)
+  t1 <- randTree(100)
   writeTree(t1, 'test.tre')
   t2 <- readTree('test.tre')
   expect_that(t1['ntips'], equals(t2['ntips']))

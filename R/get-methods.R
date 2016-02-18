@@ -469,10 +469,12 @@ getNodesLineage <- function(tree, ids, ...) {
 getSubtree <- function(tree, id) {
   .prdst <- function(nd) {
     nd[['prdst']] <- nd[['prdst']] - nd_prdst
+    nd[['prid']] <- nd[['prid']][nd[['prid']] %in% nids]
     nd
   }
   pstids <- getNodePtid(tree, id)
   ndlst <- tree@nodelist[pstids]
+  nids <- names(ndlst)
   nd_prdst <- ndlst[[id]][['prdst']]
   ndlst <- llply(.data=ndlst, .fun=.prdst)
   ndlst[[id]][['prid']] <- NULL

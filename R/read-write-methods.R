@@ -4,7 +4,6 @@ writeTree <- function(tree, file) {
     ids <- c(ndlst[[prid]][['kids']], prid,
              ndlst[[prid]][['prid']])
     id <<- ids[!ids %in% deja_vues][1]
-    print(id)
     deja_vues[i] <<- id
     spn <- ndlst[[id]][['span']]
     if(id %in% tids) {
@@ -42,7 +41,7 @@ writeTree <- function(tree, file) {
   trstr <- paste0(rep('(', dpth), collapse='')
   trstr <- paste0(trstr, tpstr)
   # loop through nodes
-  m_ply(1:(length(ndlst) - 1), .fun=tipBytip)
+  m_ply(2:(length(ndlst) - 1), .fun=tipBytip)
   trstr <- paste0(trstr, ');')
   write.table(x=trstr, file=file, quote=FALSE, row.names=FALSE,
               col.names=FALSE)
