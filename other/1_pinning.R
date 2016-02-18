@@ -1,7 +1,7 @@
 # Pinning mammal species to mammalian supertree using taxonomy
 
 # LIBS
-library(treemantools)  # packge with online resolution functions
+library(treemantools)  # package with online resolution functions
 
 # DATA
 data(mammals)
@@ -18,3 +18,7 @@ ids <- gsub("\\s+", "_", rslvd_mammals$search_name)
 ends <- rep(0, length(ids))  # all tips end in the present
 pinned_tree <- pinTips(tree=mammals, lngs=lngs, tids=ids, ends=ends)
 ids %in% pinned_tree['tips']
+
+# VIZ
+tree_phylo <- as(mammals, 'phylo')
+plot(tree_phylo)

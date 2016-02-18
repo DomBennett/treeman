@@ -19,6 +19,19 @@ for(i in 1:iterations) {
   null[i] <- calcOvrlp(tree, c1, null_tips)
 }
 p_value <- sum(obs_ovrlp >= null)/iterations
+
+# VIZ
+# load tree viz libraries
+library(MoreTreeTools)
+library(treemantools)
+# convert to phylo
+tree_phylo <- as(tree, 'phylo')
+# construct community matrix for community plot
+cmatrix <- matrix(rep(0, tree['ntips']*2), nrow=2)
+colnames(cmatrix) <- tree['tips']
+cmatrix[1, c1] <- 1
+cmatrix[2, c2] <- 1
+commplot(cmatrix, tree_phylo, groups=c(1,2))
 hist(null, main="", xlab="Shared Phylogenetic Diversity")
 abline(v=obs_ovrlp, col="red")
 text(x=obs_ovrlp, y=170, labels="Observed", cex=0.75, pos=4, col="red")

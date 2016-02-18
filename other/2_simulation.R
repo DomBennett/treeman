@@ -9,7 +9,7 @@ library(treeman)
 # balanced tree to start
 tree_string <- "((t1:1.0,t2:1.0)1:0,(t3:1.0,t4:1.0):1.0);"
 tree <- readTree(text=tree_string)
-iterations <- 10
+iterations <- 100
 b <- 2
 d <- 1
 exc <- NULL
@@ -32,7 +32,18 @@ for(i in 1:iterations) {
   ext <- tree['tips'][!tree['tips'] %in% exc]
   spans <- getNodesSlot(tree, name="span", ids=ext)
   tree <- setNodesSpan(tree, ids=ext, vals=spans+1)
+  if(length(ext) < 1) {
+    stop('All tips have gone extinct!')
+  }
 }
 
 # VIZ
-viz(tree)
+library(treemantools)  # convert to phylo
+library(MoreTreeTools)
+tree_phylo <- as(tree, 'phylo')
+# plot simulated tree with edges coloured by proximate diversity
+tree_phylo$edge.label <- paste0 ('edge_', 1:nrow(tree_phylo$edge))
+ed <- calcEdgeDiversity(tree_phylo, n.intervals=10)
+ed$col <- (log(ed$count) - mean(log(ed$count))) /
+  sd(log(ed$count))
+chromatophylo(tree_phylo, edge.cols=ed, legend.title='Diversity')
