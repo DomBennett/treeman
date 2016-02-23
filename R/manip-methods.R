@@ -8,6 +8,13 @@ rmTip <- function(...) {
 addTip <- function(tree, id, sister, start, end,
                    parent_id=paste0("p_", id),
                    tip_txnym=NULL, parent_txnym=NULL) {
+  .upstrm <- function(nd) {
+    # update prid for all nodes upstream of change
+    i <- which(nd[['prid']] == sister[['id']])
+    nd[['prid']] <- c(nd[['prid']][1:i], node[['id']],
+                      nd[['prid']][(i+1):length(nd[['prid']])])
+    nd
+  }
   tip <- list('id'=id)
   if(!is.null(tip_txnym)) {
     tip[['txnym']] <- tip_txnym
@@ -28,17 +35,26 @@ addTip <- function(tree, id, sister, start, end,
   node[['pd']] <- new_sister[['span']] + tip[['span']]
   node[['prdst']] <- sister[['prdst']] - new_sister[['span']]
   node[['prid']] <- sister[['prid']]
-  node[['ptid']] <- node[['kids']] <- c(tip[['id']], sister[['id']])
+  node[['ptid']] <- c(tip[['id']], sister[['id']])
+  if(is.null(sister[['kids']])) {
+    node[['kids']] <- c(tip[['id']], sister[['id']])
+  } else {
+    # sister is an internal node
+    node[['kids']] <- c(tip[['id']], sister[['kids']])
+    ptids <- getNodePtid(tree, sister[['id']])
+    ptids <- ptids[-length(ptids)]  # remove itself
+    tree@nodelist[ptids] <- llply(tree@nodelist[ptids], .fun=.upstrm)
+  }
   tip[['pd']] <- 0
   tip[['prdst']] <- node[['prdst']] + tip[['span']]
   tip[['prid']] <- new_sister[['prid']]
-  ndlst <- tree@nodelist
   tree@nodelist[[tip[['id']]]] <- tip
   tree@nodelist[[node[['id']]]] <- node
   tree@nodelist[[new_sister[['id']]]] <- new_sister
   tree@nodelist[[new_parent[['id']]]] <- new_parent
-  tree@nodelist <- treeman:::.updateTip(tree@nodelist, tid=id, rid=tree@root)
-  treeman:::.updateSlots(tree)
+  # update downstream
+  tree@nodelist <- .updateTip(tree@nodelist, tid=id, rid=tree@root)
+  .updateSlots(tree)
 }
 
 pinTips <- function(tree, tids, lngs, ends) {
@@ -76,18 +92,12 @@ pinTips <- function(tree, tids, lngs, ends) {
       }
     }
   }
-  .getTxnyms <- function(txnym, ptid, ...) {
-    if(!exists('ptid')) {
-      # if tip node, only take first element
-      res <- txnym[1]
-    } else {
-      res <- txnym
-    }
-    res
+  .getTxnyms <- function(txnym, ...) {
+    txnym
   }
   txnyms <- mlply(tree@nodelist, .fun=.getTxnyms)
   txnyms <- txnyms[1:length(txnyms)]
-  names(txnyms) <- tree@all
+  names(txnyms) <- names(tree@nodelist)
   m_ply(1:length(tids), .pin)
   tree
 }
