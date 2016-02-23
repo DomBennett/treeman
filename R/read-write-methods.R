@@ -1,5 +1,5 @@
 # TODO: test this with unrooted trees, adapt for TreeMen
-writeTree <- function(tree, file) {
+writeTree <- function(tree, file, nodeLabels=function(n){NULL}) {
   tipBytip <- function(i) {
     ids <- c(ndlst[[prid]][['kids']], prid,
              ndlst[[prid]][['prid']])
@@ -18,7 +18,8 @@ writeTree <- function(tree, file) {
       }
     } else {
       prid <<- ndlst[[id]][['prid']][[1]]
-      trstr <<- paste0(trstr, '):', spn)
+      ndlbl <- nodeLabels(ndlst[[id]])
+      trstr <<- paste0(trstr, ')', ndlbl,':', spn)
     }
     NULL
   }
