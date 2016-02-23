@@ -17,6 +17,7 @@ ext <- tree["tips"]
 
 # LOOP
 for(i in 1:iterations) {
+  cat('.... i=[', i, ']\n', sep='')
   # calculate fair proportion
   fps <- calcFrPrp(tree, ext)
   # add/remove based on b and d
@@ -38,12 +39,15 @@ for(i in 1:iterations) {
 }
 
 # VIZ
-library(treemantools)  # convert to phylo
+# Warning: re-start session after loading MoreTreeTools if re-running above treeman code
 library(MoreTreeTools)
 tree_phylo <- as(tree, 'phylo')
 # plot simulated tree with edges coloured by proximate diversity
 tree_phylo$edge.label <- paste0 ('edge_', 1:nrow(tree_phylo$edge))
-ed <- calcEdgeDiversity(tree_phylo, n.intervals=10)
+# intervals are used to calculate the colour of the branch
+# diversity is the number of descedents of a branch with an interval
+# here we ensure the interval has 20 timesteps
+ed <- calcEdgeDiversity(tree_phylo, n.intervals=round(iterations/20))
 ed$col <- (log(ed$count) - mean(log(ed$count))) /
   sd(log(ed$count))
 chromatophylo(tree_phylo, edge.cols=ed, legend.title='Diversity')
