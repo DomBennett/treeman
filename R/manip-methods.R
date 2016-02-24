@@ -5,56 +5,65 @@ rmTip <- function(...) {
   cat('Yep... someone needs to create this function. Sorry!\n')
 }
 
-addTip <- function(tree, id, sister, start, end,
-                   parent_id=paste0("p_", id),
-                   tip_txnym=NULL, parent_txnym=NULL) {
-  .upstrm <- function(nd) {
-    # update prid for all nodes upstream of change
-    i <- which(nd[['prid']] == sister[['id']])
-    nd[['prid']] <- c(nd[['prid']][1:i], node[['id']],
-                      nd[['prid']][(i+1):length(nd[['prid']])])
+addTip <- function(tree, tid, sid, start, end,
+                   pid=paste0("p_", tid)) {
+  # terminology
+  # snd, sid -- old sister node and id
+  # tnd, tid -- new tip node and id
+  # pnd, pid -- new parent node and id
+  # gpnd, gpid -- grand parent (prid of old sister)
+  updater <- function(nd) {
+    # node operation
+    i <- which(nd[['prid']] == gpid) - 1
+    mxi <- length(nd[['prid']])
+    nd[['prid']] <- c(nd[['prid']][0:i], pid, 
+                      nd[['prid']][(i+1):mxi])
     nd
   }
-  tip <- list('id'=id)
-  if(!is.null(tip_txnym)) {
-    tip[['txnym']] <- tip_txnym
-  }
-  node <- list('id'=parent_id)
-  if(!is.null(parent_txnym)) {
-    node[['txnym']] <- parent_txnym
-  }
-  tip[['span']] <- start - end
-  age <- getNodeAge(tree, sister)
-  new_sister <- sister <- tree@nodelist[[sister]]
-  new_parent <- tree@nodelist[[sister[['prid']][1]]]
-  new_parent[['ptid']] <- new_parent[['ptid']][!new_parent[['ptid']] %in% sister[['id']]]
-  new_parent[['ptid']] <- c(new_parent[['ptid']], node[['id']])
-  new_sister[['span']] <- start - age
-  new_sister[['prid']] <- c(node[['id']], sister[['prid']])
-  node[['span']] <- sister[['span']] - new_sister[['span']]
-  node[['pd']] <- new_sister[['span']] + tip[['span']]
-  node[['prdst']] <- sister[['prdst']] - new_sister[['span']]
-  node[['prid']] <- sister[['prid']]
-  node[['ptid']] <- c(tip[['id']], sister[['id']])
-  if(is.null(sister[['kids']])) {
-    node[['kids']] <- c(tip[['id']], sister[['id']])
+  # unpack
+  ndlst <- tree@nodelist
+  # get key data from tree
+  nids <- getNodePtid(tree, sid)
+  age <- getNodeAge(tree, sid)
+  # init new nodes
+  tnd <- list('id'=tid)
+  snd <- ndlst[[sid]]
+  gpid <- snd[['prid']][[1]]
+  gpnd <- ndlst[[gpid]]
+  pnd <- list('id'=pid, 'kids'=sid)
+  # update spans
+  tnd[['span']] <- start - end
+  pnd[['span']] <- snd[['span']] - (start - age)
+  snd[['span']] <- start - age
+  # update ptid
+  gpnd[['ptid']] <- gpnd[['ptid']][!gpnd[['ptid']] %in% snd[['id']]]
+  gpnd[['ptid']] <- c(gpnd[['ptid']], pnd[['id']])
+  pnd[['ptid']] <- c(tid, sid)
+  # set prid
+  tnd[['prid']] <- snd[['prid']]
+  pnd[['prid']] <- snd[['prid']]
+  # set prdst
+  pnd[['prdst']] <- snd[['prdst']] - snd[['span']]
+  tnd[['prdst']] <- pnd[['prdst']] + tnd[['span']]
+  # set kids
+  if(is.null(snd[['kids']])) {
+    pnd[['kids']] <- sid
   } else {
-    # sister is an internal node
-    node[['kids']] <- c(tip[['id']], sister[['kids']])
-    ptids <- getNodePtid(tree, sister[['id']])
-    ptids <- ptids[-length(ptids)]  # remove itself
-    tree@nodelist[ptids] <- llply(tree@nodelist[ptids], .fun=.upstrm)
+    pnd[['kids']] <- snd[['kids']]
   }
-  tip[['pd']] <- 0
-  tip[['prdst']] <- node[['prdst']] + tip[['span']]
-  tip[['prid']] <- new_sister[['prid']]
-  tree@nodelist[[tip[['id']]]] <- tip
-  tree@nodelist[[node[['id']]]] <- node
-  tree@nodelist[[new_sister[['id']]]] <- new_sister
-  tree@nodelist[[new_parent[['id']]]] <- new_parent
-  # update downstream
-  tree@nodelist <- .updateTip(tree@nodelist, tid=id, rid=tree@root)
-  .updateSlots(tree)
+  # set pd
+  pnd[['pd']] <- snd[['pd']]
+  tnd[['pd']] <- 0
+  # add to ndlst
+  ndlst[[tid]] <- tnd
+  ndlst[[pid]] <- pnd
+  ndlst[[sid]] <- snd
+  ndlst[[gpid]] <- gpnd
+  # update upstream prids from sid onwards
+  ndlst <- .updateNodesSlot(ndlst, c(tid, nids), updater)
+  # update downstream using updateTip
+  tree@nodelist <- .updateTip(ndlst, tid=tid, rid=tree@root)
+  .updateTreeSlots(tree)
 }
 
 pinTips <- function(tree, tids, lngs, ends) {
@@ -75,6 +84,7 @@ pinTips <- function(tree, tids, lngs, ends) {
       if(any(bool)) {
         rngs <- rngs[bool, ]
         rngs[rngs[ ,'end'] <= end, "end"] <- end
+        # pinning is based on branch length
         prbs <- rngs$start - rngs$end
         e <- as.vector(sample(rngs$span, prob=prbs, size=1))
         e_i <- which(rngs$span == e)
@@ -84,8 +94,11 @@ pinTips <- function(tree, tids, lngs, ends) {
         } else {
           tip_txnym <- lng[j]
         }
-        tree <<- addTip(tree, id=tid, sister=e, start=start, end=end,
-                       tip_txnym=tip_txnym, parent_txnym=lng[j])
+        pid <- paste0('p_', tid, sep='')
+        tree <<- addTip(tree, tid=tid, sid=e, start=start, end=end,
+                        pid=pid)
+        tree@nodelist[[tid]][['taxonym']] <- tip_txnym
+        tree@nodelist[[pid]][['taxonym']] <- lng[j]
         # add to txnyms list
         txnyms[[tid]] <<- tip_txnym
         break

@@ -1,4 +1,10 @@
-# Convert all from mlply to llply, much faster
+
+.updateNodesSlot <- function(ndlst, nids, updater) {
+  # update nids using updater function
+  ndlst[nids] <- llply(ndlst[nids], .fun=updater)
+  ndlst
+}
+
 .dwndateNode <- function(ndlst, nid, rid) {
   .add <- function(nd) {
     nd[['pd']] <- nd[['pd']] - nd_span
@@ -110,7 +116,7 @@
   ndlst
 }
 
-.updateSlots <- function(tree) {
+.updateTreeSlots <- function(tree) {
   wo_pstndes <- sapply(tree@nodelist,
                        function(n) length(n[['ptid']]) == 0)
   tree@tips <- sort(names(wo_pstndes)[wo_pstndes])
