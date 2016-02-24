@@ -50,7 +50,7 @@ test_that('calcPhyDv() works', {
   parent_age <- getNodeAge(tree, tree@nodelist[[sister]][['prid']][1])
   start <- runif(min=sister_age, max=parent_age, n=1)
   end <- runif(min=0, max=start, n=1)
-  tree <- addTip(tree, id='new_tip', sister=sister, start=start, end=end)
+  tree <- addTip(tree, tid='new_tip', sid=sister, start=start, end=end)
   new_pd <- calcPhyDv(tree, c(tips, 'new_tip'))
   test_that(new_pd, equals(pd + (start - end)))
 })
