@@ -77,7 +77,7 @@ readTree <- function(file=NULL, text=NULL, ...) {
     ndlst <- .globalUpdateAll(rdrenv[['nodelist']])
   }
   tree <- new('TreeMan', nodelist=ndlst, root=rdrenv[['root']])
-  .updateSlots(tree)
+  .updateTreeSlots(tree)
 }
 
 # set-up reader env

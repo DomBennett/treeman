@@ -4,10 +4,10 @@ library(testthat)
 
 # RUNNING
 context('Testing \'TreeMan Class\'')
-test_that('.updateSlots() works', {
+test_that('.updateTreeSlots() works', {
   tree <- randTree(100)
   tree@nodelist[['t1']][['span']] <- NULL
-  tree <- treeman:::.updateSlots(tree)
+  tree <- treeman:::.updateTreeSlots(tree)
   expect_false(tree@wspn)
 })
 test_that('.updateKids() works', {
@@ -65,7 +65,7 @@ test_that('.updateTip() works', {
   ndlst <- treeman:::.dwndateTip(ndlst, tid=tid, rid=tree['root'])
   new_ndlst <- treeman:::.updateTip(ndlst, tid=tid, rid=tree['root'])
   tree <- new('TreeMan', nodelist=new_ndlst, root=tree['root'])
-  tree <- treeman:::.updateSlots(tree)
+  tree <- treeman:::.updateTreeSlots(tree)
   expect_that(tree['ntips'], equals(10))
 })
 test_that('.dwndateTip() works', {
@@ -102,7 +102,7 @@ test_that('.updateNode() works', {
   ndlst <- treeman:::.dwndateNode(ndlst, nid=nid, rid=tree['root'])
   new_ndlst <- treeman:::.updateNode(ndlst, nid=nid, rid=tree['root'])
   tree <- new('TreeMan', nodelist=new_ndlst, root=tree['root'])
-  tree <- treeman:::.updateSlots(tree)
+  tree <- treeman:::.updateTreeSlots(tree)
   expect_that(tree['ntips'], equals(ntips_before))
   expect_that(tree['age'], equals(age_before))
   expect_that(tree['pd'], equals(pd_before))
@@ -116,6 +116,6 @@ test_that('.globalUpdateAll() works', {
   }
   new_ndlst <- treeman:::.globalUpdateAll(ndlst=ndlst)
   tree <- new('TreeMan', nodelist=new_ndlst, root=tree['root'])
-  tree <- treeman:::.updateSlots(tree)
+  tree <- treeman:::.updateTreeSlots(tree)
   expect_that(tree['ntips'], equals(10))
 })

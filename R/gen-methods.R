@@ -76,7 +76,7 @@ randTree <- function (n) {
   nodelist <- .node (n_left, id, span, pre, predist, nodelist)
   # init new tree object
   tree <- new ('TreeMan', nodelist=nodelist, root='n1')
-  .updateSlots(tree)
+  .updateTreeSlots(tree)
 }
 
 blncdTree <- function(...) {

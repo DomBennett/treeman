@@ -42,7 +42,7 @@ setNodeSpan <- function(tree, id, val) {
   tree@nodelist[[id]][['span']] <- val
   tree@nodelist[[id]][['prdst']] <- tree@nodelist[[id]][['prdst']] +
     val + abs(diff)
-  .updateSlots(tree)
+  .updateTreeSlots(tree)
 }
 
 setNodesSpan <- function(tree, ids, vals, ...) {
@@ -71,12 +71,12 @@ setNodesSpan <- function(tree, ids, vals, ...) {
     ndlst <- .globalUpdateAll(ndlst)
   }
   tree@nodelist <- ndlst
-  .updateSlots(tree)
+  .updateTreeSlots(tree)
 }
 
 setTol <- function(tree, tol) {
   tree@tol <- tol
-  .updateSlots(tree)
+  .updateTreeSlots(tree)
 }
 
 setNodeID <- function(tree, id, val) {
