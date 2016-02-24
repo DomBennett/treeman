@@ -46,17 +46,19 @@ randomTips <- function(n, tree) {
 context('Testing \'manip-methods\'')
 test_that('addTip() works', {
   # random tree + basic stats
-  tree <- randTree(10)
+  tree <- randTree(5)
   pd_before <- tree['pd']
   age_before <- tree['age']
   ntips_before <- tree['ntips']
   # add random tip
-  sister <- sample(tree@tips, 1)
+  sister <- sample(tree@all[tree@all != tree@root], 1)
+  sister_pd_before <- tree[[sister]]['pd']
   sister_age <- getNodeAge(tree, sister)
   parent_age <- getNodeAge(tree, tree@nodelist[[sister]][['prid']][1])
   start <- runif(min=sister_age, max=parent_age, n=1)
   end <- runif(min=0, max=start, n=1)
-  tree <- addTip(tree, id='new_tip', sister=sister, start=start, end=end)
+  tree <- addTip(tree, tid='new_tip', sid=sister, start=start, end=end,
+                 pid='new_node')
   #viz(tree)
   # test if successful
   expect_that(validObject(tree), is_true())
@@ -64,9 +66,11 @@ test_that('addTip() works', {
   expect_that(tree['age'], equals(age_before))
   expect_that(tree['ntips'], equals(ntips_before + 1))
   expect_that(tree['pd'], equals(pd_before + (start-end)))
+  expect_that(tree[['new_node']]['pd'], equals(sister_pd_before + (start - end)))
+  expect_false(any(duplicated(tree[['new_node']]['kids'])))
 })
 
-test_that('pinTip() and pinTips() work', {
+test_that('pinTips() work', {
   n_start <- 25
   n_add <- 5
   tree <- randTree(n_start)
@@ -77,11 +81,11 @@ test_that('pinTip() and pinTips() work', {
   tree <- pinTips(tree, tids=rdata[["t"]],
                   lngs=rdata[["l"]],
                   ends=rdata[["e"]])
-  writeTree(tree, file='test.tre')  # expect no error
   expect_that(validObject(tree), is_true())
   #expect_that(tree['ntips'], equals(n_start+n_add))
   expect_that(pd_before, is_less_than(tree['pd']))
-  expect_that(age_before, equals(tree['age']))
+  #expect_that(age_before, equals(tree['age']))
+  writeTree(tree, file='test.tre')  # expect no error
 })
 if(file.exists('test.tre')) {
   file.remove('test.tre')
