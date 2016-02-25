@@ -86,11 +86,13 @@ test_that('.dwndateNode() works', {
   ndlst <- tree['nodelist']
   nid <- sample(tree['nodes'][tree['nodes'] != tree['root']], 1)
   new_ndlst <- treeman:::.dwndateNode(ndlst, nid=nid, rid=tree['root'])
-  pd_res <- prdst_res <- rep(NA, length(ndlst))
+  pd_res <- kids_res <- rep(NA, length(ndlst))
   for(i in 1:length(ndlst)) {
     pd_res[i] <- ndlst[[i]][['pd']] > new_ndlst[[i]][['pd']]
+    kids_res[i] <- nid %in% ndlst[[i]][['kids']]
   }
   expect_that(sum(pd_res), is_more_than(0))
+  expect_that(all(kids_res), is_false())
 })
 test_that('.updateNode() works', {
   tree <- randTree(10)

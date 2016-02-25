@@ -8,6 +8,7 @@
 .dwndateNode <- function(ndlst, nid, rid) {
   .add <- function(nd) {
     nd[['pd']] <- nd[['pd']] - nd_span
+    nd[['kids']] <- nd[['kids']][nd[['kids']] != nid]
     nd
   }
   nd_span <- ndlst[[nid]][['span']]
