@@ -1,8 +1,41 @@
-# TODO: addTips, removeTip, mergeTree, collapseNode, removeNode
+# TODO: mergeTree, collapseNode, removeNode
 # TODO: add doc for adding and removing tips
 
-rmTip <- function(...) {
-  cat('Yep... someone needs to create this function. Sorry!\n')
+rmTip <- function(tree, tid, drp_intrnl=TRUE) {
+  updater <- function(nd) {
+    nd[['prid']] <- nd[['prid']][nd[['prid']] != tid]
+    nd[['prid']] <- nd[['prid']][nd[['prid']] != prid]
+    nd
+  }
+  # unpack
+  ndlst <- tree@nodelist
+  rid <- tree@root
+  nids <- getNodePtid(tree, getNodeSister(tree, tid))
+  # get prid
+  prid <- ndlst[[tid]][['prid']][[1]]
+  # remove tid
+  ndlst <- .dwndateNode(ndlst, nid=tid, rid=rid)
+  ndlst <- ndlst[names(ndlst) != tid]
+  ndlst[[prid]][['ptid']] <-
+    ndlst[[prid]][['ptid']][ndlst[[prid]][['ptid']] != tid]
+  # remove prnd
+  if(drp_intrnl) {
+    ptid <- ndlst[[prid]][['ptid']][[1]]
+    ndlst[[ptid]][['span']] <- ndlst[[prid]][['span']] +
+      ndlst[[ptid]][['span']]
+    if(prid != rid) {
+      gprid <- ndlst[[prid]][['prid']][[1]]
+      ndlst[[gprid]][['ptid']] <-
+        ndlst[[gprid]][['ptid']][ndlst[[gprid]][['ptid']] != prid]
+      ndlst[[gprid]][['ptid']] <- c(ndlst[[gprid]][['ptid']], ptid)
+    }
+    ndlst <- ndlst[names(ndlst) != prid]
+  } else {
+    prid <- NULL
+  }
+  ndlst <- .updateNodesSlot(ndlst, nids, updater)
+  tree@nodelist <- ndlst
+  .updateTreeSlots(tree)
 }
 
 addTip <- function(tree, tid, sid, start, end,

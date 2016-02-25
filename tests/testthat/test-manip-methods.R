@@ -69,7 +69,16 @@ test_that('addTip() works', {
   expect_that(tree[['new_node']]['pd'], equals(sister_pd_before + (start - end)))
   expect_false(any(duplicated(tree[['new_node']]['kids'])))
 })
-
+test_that('rmTips() work', {
+  tree <- randTree(10)
+  viz(tree)
+  pd_before <- tree['pd']
+  tid <- sample(tree['tips'], 1)
+  tid_spn <- getNodeSlot(tree, id=tid, name='span')
+  tree <- rmTip(tree, tid)
+  expect_that(tree['ntips'], equals(9))
+  expect_that(pd_before-tid_spn, equals(tree['pd']))
+})
 test_that('pinTips() work', {
   n_start <- 25
   n_add <- 5
