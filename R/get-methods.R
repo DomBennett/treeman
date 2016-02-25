@@ -1,3 +1,31 @@
+#' @name getNodeSister
+#' @title Get sister id
+#' @description Returns the id of the sister(s) of node id given.
+#' @details An error is raised if there is no sister (e.g. for the root).
+#'  There can be more than one sister if tree is polytomous.
+#' @param tree \code{TreeMan} object
+#' @param name slot name
+#' @param id node id
+#' @seealso
+#' \code{\link{getNodesSlot}}, 
+#' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree <- randTree(10)
+#' getNodeSlot(tree, name='span', id='t1')  # return span of t1
+getNodeSister <- function(tree, id) {
+  prid <- tree@nodelist[[id]][['prid']][[1]]
+  ptids <- tree@nodelist[[prid]][['ptid']]
+  ptids[ptids != id]
+}
+
+getNodesSister <- function(tree, ids, ...) {
+  l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
+  res <- mdply(.data=l_data, .fun=getNodeSister, tree=tree, ...)
+  res[ ,2]
+}
+
 #' @name getTxnyms
 #' @title Get node id(s) for txonyms
 #' @description Returns the node ids of nodes with given taxonyms.

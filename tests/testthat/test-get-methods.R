@@ -4,6 +4,13 @@ library(testthat)
 
 # RUNNING
 context('Testing \'get-methods\'')
+test_that('get_Sister() works', {
+  tree <- randTree(10)
+  tips <- tree['tips']
+  fwrd <- getNodesSister(tree, tips)
+  rvrse <- getNodesSister(tree, fwrd)
+  expect_that(rvrse, equals(tips))
+})
 test_that('getTxnyms() works', {
   data('mammals')
   nid <- sample(mammals['nodes'], 1)
