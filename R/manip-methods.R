@@ -95,12 +95,14 @@ pinTips <- function(tree, tids, lngs, ends) {
           tip_txnym <- lng[j]
         }
         pid <- paste0('p_', tid, sep='')
-        tree <<- addTip(tree, tid=tid, sid=e, start=start, end=end,
+        tree <- addTip(tree, tid=tid, sid=e, start=start, end=end,
                         pid=pid)
-        tree@nodelist[[tid]][['taxonym']] <- tip_txnym
-        tree@nodelist[[pid]][['taxonym']] <- lng[j]
+        tree@nodelist[[tid]][['txnym']] <- tip_txnym
+        tree@nodelist[[pid]][['txnym']] <- lng[j]
         # add to txnyms list
         txnyms[[tid]] <<- tip_txnym
+        # push out
+        tree <<- tree
         break
       }
     }

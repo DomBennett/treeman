@@ -82,9 +82,10 @@ test_that('pinTips() work', {
                   lngs=rdata[["l"]],
                   ends=rdata[["e"]])
   expect_that(validObject(tree), is_true())
-  #expect_that(tree['ntips'], equals(n_start+n_add))
+  #expect_that(tree['ntips'], equals(n_start+n_add))  # not necessarily true
   expect_that(pd_before, is_less_than(tree['pd']))
-  #expect_that(age_before, equals(tree['age']))
+  expect_that(tree[['new_1']]['txnym'], is_a('character'))
+  #expect_that(age_before, equals(tree['age']))  # not necessarily true
   writeTree(tree, file='test.tre')  # expect no error
 })
 if(file.exists('test.tre')) {
