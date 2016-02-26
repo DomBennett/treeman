@@ -28,6 +28,9 @@ rmTip <- function(tree, tid, drp_intrnl=TRUE) {
       ndlst[[gprid]][['ptid']] <-
         ndlst[[gprid]][['ptid']][ndlst[[gprid]][['ptid']] != prid]
       ndlst[[gprid]][['ptid']] <- c(ndlst[[gprid]][['ptid']], ptid)
+    } else {
+      # if prid to be dropped is root, set root to ptid
+      tree@root <- ptid
     }
     ndlst <- ndlst[names(ndlst) != prid]
   } else {
