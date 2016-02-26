@@ -138,14 +138,27 @@ setClass('TreeMan', representation=representation(
 setMethod('[[', c('TreeMan', 'character'),
           function(x, i) {
             if(!i %in% names(x@nodelist)) {
-              stop(paste0(i, ' not in tree'))
+              srch_trm <- gsub(' ', '_', i)  # usual mistake
+              pssbls <- which(agrepl(srch_trm, names(x@nodelist), ignore.case=TRUE,
+                                     max.distance=0.25))
+              pssbls <- names(x@nodelist)[pssbls]
+              if(length(pssbls) > 0 & length(pssbls) < 50) {
+                msg <- paste0("Can't find [", i, "]. Did you mean ....\n")
+                for(p in pssbls) {
+                  msg <- paste0(msg, '"', p, '"\n')
+                }
+                msg <- paste0(msg, "?\n")
+              } else {
+                msg <- paste0("Can't find [", i, "] in tree.")
+              }
+              stop(msg)
             }
             .newNode(x, i)
           })
 setMethod('[', c('TreeMan', 'character'),
           function(x, i) {
             if(!i %in% slotNames(x)) {
-              stop(paste0(i, '  not in tree'))
+              stop(paste0(i, '  not a tree slot'))
             }
             slot(x, i)
           })
