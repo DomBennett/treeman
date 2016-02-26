@@ -8,11 +8,11 @@ library(treeman)
 # balanced tree to start
 tree_string <- "((A:1.0,B:1.0):1.0,(C:1.0,D:1.0):1.0);"
 tree <- readTree(text=tree_string)
-iterations <- 1000
-burnin <- iterations*.25
-b <- 1
-d <- 0  # death for burnin
-d_true <- 1  # death after burnin
+iterations <- 200
+burnin <- 10
+d <- 1
+b <- 2  # birth for burnin
+b_true <- 1  # birth after burnin
 ext <- tree["tips"]
 
 # LOOP
@@ -22,7 +22,7 @@ for(i in 1:iterations) {
     stop('Too few tips remaining!')
   }
   if(i > burnin) {
-    d <- d_true
+    b <- b_true
   }
   cat('.... i=[', i, ']\n', sep='')
   # calculate fair proportion
@@ -34,7 +34,7 @@ for(i in 1:iterations) {
     tid <- paste0('t', i)  # new tip ID
     tree <- treeman::addTip(tree, tid=tid, sid=sid, start=0, end=0)
   } else {
-    tid <- sample(ext, prob=fps, size=1)
+    tid <- sample(ext, prob=1/fps, size=1)
     tree <- rmTip(tree, tid=tid)
   }
   # grow tree
@@ -51,8 +51,8 @@ tree_phylo <- as(tree, 'phylo')
 tree_phylo$edge.label <- paste0 ('edge_', 1:nrow(tree_phylo$edge))
 # intervals are used to calculate the colour of the branch
 # diversity is the number of descedents of a branch with an interval
-# here we ensure the interval has 20 timesteps
-ed <- calcEdgeDiversity(tree_phylo, n.intervals=round(iterations/20))
+ed <- calcEdgeDiversity(tree_phylo, n.intervals=10)
 ed$col <- (log(ed$count) - mean(log(ed$count))) /
   sd(log(ed$count))
-chromatophylo(tree_phylo, edge.cols=ed, legend.title='Diversity')
+p <- chromatophylo(tree_phylo, edge.cols=ed, legend.title='Diversity')
+print(p)
