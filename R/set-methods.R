@@ -68,7 +68,7 @@ setNodesSpan <- function(tree, ids, vals, ...) {
     ndlst <- mlply(l_data, .fun=.reset)
     ndlst <- ndlst[1:length(ndlst)]
     names(ndlst) <- tree@all
-    ndlst <- .globalUpdateAll(ndlst)
+    ndlst <- .globalUpdateAll(ndlst, just_spn_data=TRUE)
   }
   tree@nodelist <- ndlst
   .updateTreeSlots(tree)

@@ -1,4 +1,9 @@
 
+# TODO: need to rethink this, make it more logical
+# -- update tips or nodes
+# -- update upstream or downstream or all
+# -- update prdst, pd, kids or all
+
 .updateNodesSlot <- function(ndlst, nids, updater) {
   # update nids using updater function
   ndlst[nids] <- llply(ndlst[nids], .fun=updater)
@@ -60,7 +65,7 @@
   ndlst
 }
 
-.globalUpdateAll <- function(ndlst) {
+.globalUpdateAll <- function(ndlst, just_spn_data=FALSE) {
   tip <- function(tid) {
     ndlst <- .updateTip(ndlst, tid, rid)
     ndlst <<- ndlst
@@ -69,13 +74,19 @@
     ndlst <- .updateNode(ndlst, nid, rid)
     ndlst <<- ndlst
   }
-  wo_pstnds <- sapply(ndlst, function(n) length(n[['ptid']]) == 0)
   wo_prnds <- sapply(ndlst, function(n) length(n[['prid']]) == 0)
-  nids <- names(ndlst)[(!wo_pstnds) & (!wo_prnds)]
-  tids <- names(ndlst)[wo_pstnds]
-  rid <- names(ndlst)[wo_prnds]
-  l_data <- data.frame(tid=tids, stringsAsFactors=FALSE)
-  m_ply(.data=l_data, .fun=tip)
+  if(!just_spn_data) {
+    wo_pstnds <- sapply(ndlst, function(n) length(n[['ptid']]) == 0)
+    nids <- names(ndlst)[(!wo_pstnds) & (!wo_prnds)]
+    tids <- names(ndlst)[wo_pstnds]
+    rid <- names(ndlst)[wo_prnds]
+    l_data <- data.frame(tid=tids, stringsAsFactors=FALSE)
+    m_ply(.data=l_data, .fun=tip)
+  } else {
+    # just run updateNode for all nodes if just span data needs updating
+    nids <- names(ndlst)[!wo_prnds]
+    rid <- names(ndlst)[wo_prnds]
+  }
   l_data <- data.frame(nid=nids, stringsAsFactors=FALSE)
   m_ply(.data=l_data, .fun=node)
   ndlst
