@@ -1,45 +1,50 @@
 # Evolutionary Distinctness Biased Markov Model
 # Demonstrating how to simulate a tree with treeman
-# N.B. simulation may fail if all tips go extinct
 
 # LIBS
 library(treeman)
 
 # PARAMETER
 # balanced tree to start
-tree_string <- "((t1:1.0,t2:1.0)1:0,(t3:1.0,t4:1.0):1.0);"
+tree_string <- "((A:1.0,B:1.0):1.0,(C:1.0,D:1.0):1.0);"
 tree <- readTree(text=tree_string)
-iterations <- 100
-b <- 2
-d <- 1
-exc <- NULL
+iterations <- 1000
+burnin <- iterations*.25
+b <- 1
+d <- 0  # death for burnin
+d_true <- 1  # death after burnin
 ext <- tree["tips"]
 
 # LOOP
+cat('Simulating ....\n')
 for(i in 1:iterations) {
+  if(length(ext) < 3) {
+    stop('Too few tips remaining!')
+  }
+  if(i > burnin) {
+    d <- d_true
+  }
   cat('.... i=[', i, ']\n', sep='')
   # calculate fair proportion
   fps <- calcFrPrp(tree, ext)
   # add/remove based on b and d
   to_add <- sample(c(TRUE, FALSE), size=1, prob=c(b,d))
   if(to_add) {
-    sister <- sample(ext, prob=fps, size=1)
-    id <- paste0('t', tree['ntips']+1)
-    tree <- addTip(tree, id=id, sister=sister, start=0, end=0)
+    sid <- sample(ext, prob=1/fps, size=1)  # sister ID of the new tip
+    tid <- paste0('t', i)  # new tip ID
+    tree <- treeman::addTip(tree, tid=tid, sid=sid, start=0, end=0)
   } else {
-    exc <- c(exc, sample(ext, prob=1/fps, size=1))
+    tid <- sample(ext, prob=fps, size=1)
+    tree <- rmTip(tree, tid=tid)
   }
   # grow tree
-  ext <- tree['tips'][!tree['tips'] %in% exc]
+  ext <- tree['tips']
   spans <- getNodesSlot(tree, name="span", ids=ext)
   tree <- setNodesSpan(tree, ids=ext, vals=spans+1)
-  if(length(ext) < 1) {
-    stop('All tips have gone extinct!')
-  }
 }
+cat('Done.\n')
 
 # VIZ
-# Warning: re-start session after loading MoreTreeTools if re-running above treeman code
 library(MoreTreeTools)
 tree_phylo <- as(tree, 'phylo')
 # plot simulated tree with edges coloured by proximate diversity
