@@ -10,7 +10,7 @@ rmTip <- function(tree, tid, drp_intrnl=TRUE) {
   # unpack
   ndlst <- tree@nodelist
   rid <- tree@root
-  nids <- getNodePtid(tree, getNodeSister(tree, tid))
+  sids <- getNodeSister(tree, tid)
   # get prid
   prid <- ndlst[[tid]][['prid']][[1]]
   # remove tid
@@ -18,8 +18,9 @@ rmTip <- function(tree, tid, drp_intrnl=TRUE) {
   ndlst <- ndlst[names(ndlst) != tid]
   ndlst[[prid]][['ptid']] <-
     ndlst[[prid]][['ptid']][ndlst[[prid]][['ptid']] != tid]
-  # remove prnd
-  if(drp_intrnl) {
+  # remove prnd if specified and not polytomous
+  if(drp_intrnl & length(sids) == 1) {
+    nids <- unlist(getNodesPtid(tree, sids))
     ptid <- ndlst[[prid]][['ptid']][[1]]
     ndlst[[ptid]][['span']] <- ndlst[[prid]][['span']] +
       ndlst[[ptid]][['span']]
@@ -33,12 +34,12 @@ rmTip <- function(tree, tid, drp_intrnl=TRUE) {
       tree@root <- ptid
     }
     ndlst <- ndlst[names(ndlst) != prid]
+    ndlst <- .updateNodesSlot(ndlst, nids, updater)
   } else {
     prid <- NULL
   }
-  ndlst <- .updateNodesSlot(ndlst, nids, updater)
   tree@nodelist <- ndlst
-  .updateTreeSlots(tree)
+  tree <- .updateTreeSlots(tree)
 }
 
 addTip <- function(tree, tid, sid, start, end,
