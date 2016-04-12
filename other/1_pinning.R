@@ -6,9 +6,8 @@ library(treeman)
 # DATA
 data(mammals)  # example mammal tree is 'taxonomically informed', all nodes have taxonyms
 # rslvd names (i.e. with lineages) not in mammals tree generated with MoreTreeTools::taxaResolve
-# e.g.
-# getNodeLineage(mammals, 'Homo_sapiens')
-load(file.path('other', '1_pinning.RData'))
+# load pre-generated dataset from github
+load(url("https://github.com/DomBennett/treeman/raw/master/other/1_pinning.RData"))
 
 # PARAMETERS
 n <- 100  # number of missing mammal species to pin
