@@ -46,7 +46,6 @@ randomTips <- function(n, tree) {
 context('Testing \'manip-methods\'')
 test_that('addTip() works', {
   # random tree + basic stats
-  #tree <- randTree(5)
   data(mammals)
   tree <- getSubtree(mammals, "n821")
   pd_before <- tree['pd']
@@ -62,11 +61,10 @@ test_that('addTip() works', {
   tree <- addTip(tree, tid='new_tip', sid=sister, start=start, end=end,
                  pid='new_node')
   tree@nodelist[['new_node']][['span']]
-  viz(tree)
   # test if successful
-  expect_that(length(tree@nodelist[['n1']][['kids']]), equals(tree['ntips']))
+  expect_that(length(tree@nodelist[[tree['root']]][['kids']]), equals(tree['ntips']))
   expect_that(validObject(tree), is_true())
-  expect_that(tree['ply'], is_false())
+  #expect_that(tree['ply'], is_false())
   expect_that(tree['age'], equals(age_before))
   expect_that(tree['ntips'], equals(ntips_before + 1))
   expect_that(tree['pd'], equals(pd_before + (start-end)))
@@ -84,8 +82,8 @@ test_that('rmTip() work', {
   expect_that(pd_before-tid_spn, equals(tree['pd']))
 })
 test_that('pinTips() work', {
-  n_start <- 100
-  n_add <- 200
+  n_start <- 10
+  n_add <- 20
   tree <- randTree(n_start)
   tree <- randomLineage(n_start/2, tree)
   pd_before <- tree['pd']
