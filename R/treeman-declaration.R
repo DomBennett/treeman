@@ -157,8 +157,11 @@ setMethod('[[', c('TreeMan', 'character'),
           })
 setMethod('[', c('TreeMan', 'character'),
           function(x, i) {
-            if(!i %in% slotNames(x)) {
-              stop(paste0(i, '  not a tree slot'))
+            slt_nms <- slotNames(x)
+            slt_nms <- slt_nms[slt_nms != 'ndlst']
+            if(!i %in% slt_nms) {
+              slt_nms <- paste0(slt_nms, collapse=', ')
+              stop(paste0('`', i, '` not a tree slot. Available slots: ', slt_nms))
             }
             slot(x, i)
           })
