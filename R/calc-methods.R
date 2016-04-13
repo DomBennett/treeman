@@ -1,6 +1,26 @@
+#' @name calcNodeBlnc
+#' @title Calculate the balance of a node
+#' @description Returns the balance of a node.
+#' @details Balance is calculated as the absolute difference between the number of descendents 
+#' of the two bifurcating edges of a node and the expected value for a balanced tree.
+#' \code{NA} is returned if the node is polytomous.
+#' @param tree \code{TreeMan} object
+#' @param id node id
+#' @seealso
+#' \code{\link{calcNodesBlnc}}, 
+#' \url{https://github.com/DomBennett/treeman/wiki/calc-methods}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree <- randTree(10)
+#' calcNodeBlnc(tree, id=tree['root'])  # root balance
 calcNodeBlnc <- function(tree, id) {
   ntot <- length(tree@nodelist[[id]][['kids']])
-  ptid <- tree@nodelist[[id]][['ptid']][1]
+  ptids <- tree@nodelist[[id]][['ptid']]
+  if(length(ptids) > 2) {
+    return(NA)
+  }
+  ptid <- ptids[1]
   nprt <- length(tree@nodelist[[ptid]][['kids']])
   if(nprt == 0) {
     nprt <- 1
@@ -8,11 +28,51 @@ calcNodeBlnc <- function(tree, id) {
   abs((ntot/2) - nprt)
 }
 
+#' @name calcNodesBlnc
+#' @title Calculate the balances of all nodes
+#' @description Returns the absolute differences in number of descendants for bifurcating 
+#' branches of every node
+#' @details Runs \code{calcNodeBlnc()} across all node IDs. \code{NA} is returned if the
+#' node is polytomous. Parallelizable.
+#' @param tree \code{TreeMan} object
+#' @param id node id
+#' @param ... \code{plyr} arguments
+#' @seealso
+#' \code{\link{calcNodeBlnc}}, 
+#' \url{https://github.com/DomBennett/treeman/wiki/calc-methods}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree <- randTree(10)
+#' calcNodesBlnc(tree, id=tree['nodes'])
 calcNodesBlnc <- function(tree, ids, ...) {
   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
   mdply(.data=l_data, .fun=calcNodeBlnc, tree=tree, ...)[ ,2]
 }
 
+#' @name calcDstTrp
+#' @title Calculate the triplet distance between two trees
+#' @description Returns the triplet distance between two trees.
+#' @details The triplet distance is calculated as the sum of different outgroups among
+#' every triplet of tips between the two trees. Normalisation is performed by dividing
+#' the resulting number by the total number of triplets shared between the two trees.
+#' The triplet distance is calculated only for shared tips between the two trees. Parallelizable.
+#' @param tree_1 \code{TreeMan} object
+#' @param tree_2 \code{TreeMan} object
+#' @param nrmlsd Boolean, should returned value be between 0 and 1? Default, FALSE.
+#' @param ... \code{plyr} arguments
+#' @references
+#' Critchlow DE, Pearl DK, Qian C. (1996) The Triples Distance for rooted bifurcating
+#' phylogenetic trees. Systematic Biologly, 45, 323–34.
+#' @seealso
+#' \code{\link{calcDstBLD}}, \code{\link{calcDstRF}} 
+#' \url{https://github.com/DomBennett/treeman/wiki/calc-methods}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree_1 <- randTree(10)
+#' tree_2 <- randTree(10)
+#' calcDstTrp(tree_1, tree_2)
 calcDstTrp <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
   .count <- function(i) {
     o1 <- getOtgrp(tree_1, cmbs[ ,i])
@@ -35,6 +95,30 @@ calcDstTrp <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
   cntr
 }
 
+#' @name calcOvrlp
+#' @title Calculate phylogenetic overlap
+#' @description Returns the sum of branch lengths represented by ids_1 and ids_2 for a tree.
+#' @details Use this to calculate the sum of branch lengths that are represented between two
+#' communities. This measure is also known as the unique fraction. It can be used to measure
+#' concepts of phylogenetic turnover. Parallelizable.
+#' @param tree \code{TreeMan} object
+#' @param ids_1 tip ids of community 1
+#' @param ids_2 tip ids of community 2
+#' @param nrmlsd Boolean, should returned value be between 0 and 1? Default, FALSE.
+#' @param ... \code{plyr} arguments
+#' @references
+#' Lozupone, C., & Knight, R. (2005). UniFrac: a new phylogenetic method for comparing
+#' microbial communities. Applied and Environmental Microbiology, 71(12), 8228–35.
+#' @seealso
+#' \code{\link{calcPhyDv}}
+#' \url{https://github.com/DomBennett/treeman/wiki/calc-methods}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree <- randTree(10)
+#' ids_1 <- sample(tree['tips'], 5)
+#' ids_2 <- sample(tree['tips'], 5)
+#' calcOvrlp(tree, ids_1, ids_2)
 calcOvrlp <- function(tree, ids_1, ids_2, nrmlsd=FALSE, ...) {
   spans <- getNodesSlot(tree, name='span', tree@all, ...)
   names(spans) <- tree@all
@@ -49,6 +133,29 @@ calcOvrlp <- function(tree, ids_1, ids_2, nrmlsd=FALSE, ...) {
   ovrlp
 }
 
+#' @name calcDstBLD
+#' @title Calculate the BLD between two trees
+#' @description Returns the branch length distance between two trees.
+#' @details BLD is the Robinson-Foulds distance weighted by branch length. Instead of summing
+#' the differences in partitions between the two trees, the metric takes the square root
+#' of the squared difference in branch lengths. Parallelizable.
+#' @param tree_1 \code{TreeMan} object
+#' @param tree_2 \code{TreeMan} object
+#' @param nrmlsd Boolean, should returned value be between 0 and 1? Default, FALSE.
+#' @param ... \code{plyr} arguments
+#' @references
+#' Kuhner, M. K. and Felsenstein, J. (1994) Simulation comparison of phylogeny
+#' algorithms under equal and unequal evolutionary rates. Molecular Biology and
+#' Evolution, 11, 459–468.
+#' @seealso
+#' \code{\link{calcDstTrp}}, \code{\link{calcDstRF}} 
+#' \url{https://github.com/DomBennett/treeman/wiki/calc-methods}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree_1 <- randTree(10)
+#' tree_2 <- randTree(10)
+#' calcDstBLD(tree_1, tree_2)
 calcDstBLD <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
   n1 <- tree_1@nodes[!tree_1@nodes == tree_1@root]
   n2 <- tree_2@nodes[!tree_2@nodes == tree_2@root]
@@ -70,6 +177,28 @@ calcDstBLD <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
   d
 }
 
+#' @name calcDstRF
+#' @title Calculate the Robinson-Foulds distance between two trees
+#' @description Returns the Robinson-Foulds distance between two trees.
+#' @details RF distance is calculated as the sum of partitions in one tree that are
+#' not shared by the other. The maximum number of split differences is the total number
+#' of nodes in both trees (excluding the roots). Parallelizable.
+#' @param tree_1 \code{TreeMan} object
+#' @param tree_2 \code{TreeMan} object
+#' @param nrmlsd Boolean, should returned value be between 0 and 1? Default, FALSE.
+#' @param ... \code{plyr} arguments
+#' @references
+#' Robinson, D. R.; Foulds, L. R. (1981). "Comparison of phylogenetic trees".
+#' Mathematical Biosciences 53: 131–147.
+#' @seealso
+#' \code{\link{calcDstBLD}}, \code{\link{calcDstTrp}} 
+#' \url{https://github.com/DomBennett/treeman/wiki/calc-methods}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree_1 <- randTree(10)
+#' tree_2 <- randTree(10)
+#' calcDstRF(tree_1, tree_2)
 calcDstRF <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
   n1 <- tree_1@nodes[!tree_1@nodes == tree_1@root]
   n2 <- tree_2@nodes[!tree_2@nodes == tree_2@root]
@@ -83,6 +212,26 @@ calcDstRF <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
   d
 }
 
+#' @name calcPhyDv
+#' @title Calculate phylogenetic diversity
+#' @description Returns the phylogenetic diversity of a tree for the tips specified.
+#' @details Faith's phylogenetic diversity is calculated as the sum of all connected
+#' branches for specified tips in a tree. It can be used to investigate how biodviersity
+#' as measured by the phylogeny changes. Parallelizable.
+#' @param tree_1 \code{TreeMan} object
+#' @param ids tip ids
+#' @param ... \code{plyr} arguments
+#' @references
+#' Faith, D. (1992). Conservation evaluation and phylogenetic diversity.
+#'  Biological Conservation, 61, 1–10.
+#' @seealso
+#' \code{\link{calcFrPrp}}, \code{\link{calcOvrlp}}
+#' \url{https://github.com/DomBennett/treeman/wiki/calc-methods}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree <- randTree(10)
+#' calcPhyDv(tree, tree['tips'])
 calcPhyDv <- function(tree, ids, ...) {
   prids <- c(unique(unlist(getNodesPrid(tree, ids))),
              ids)
@@ -92,6 +241,26 @@ calcPhyDv <- function(tree, ids, ...) {
   sum(spans)
 }
 
+#' @name calcFrPrp
+#' @title Calculate evolutionary distinctness
+#' @description Returns the evolutationary distinctness of ids using the fair proportion metric.
+#' @details The fair proportion metric calculates the evolutionary distinctness of tips
+#' in a tree through summing the total amount of branch length each tip represents, where
+#' each branch in the tree is evenly divided between all descendants. Parallelizable.
+#' @param tree \code{TreeMan} object
+#' @param ids tip IDs
+#' @param ... \code{plyr} arguments
+#' @references
+#' Isaac, N.J.B., Turvey, S.T., Collen, B., Waterman, C. and Baillie, J.E.M. (2007). 
+#'  Mammals on the EDGE: conservation priorities based on threat and phylogeny. PLoS ONE, 2, e296.
+#' @seealso
+#' \code{\link{calcPhyDv}}
+#' \url{https://github.com/DomBennett/treeman/wiki/calc-methods}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree <- randTree(10)
+#' calcFrPrp(tree, tree['tips'])
 calcFrPrp <- function(tree, ids, ...) {
   .share <- function(id) {
     span <- tree@nodelist[[id]][['span']]
@@ -113,6 +282,27 @@ calcFrPrp <- function(tree, ids, ...) {
   mdply(.data=l_data, .fun=.calc, ...)[ ,2]
 }
 
+#' @name calcDstMtrx
+#' @title Calculate the distance matrix
+#' @description Returns a distance matrix for specified ids of a tree.
+#' @details The distance between every id in the tree is calculated by summing the
+#' lengths of the branches that connect them. This can be useful for testing the distances
+#' between trees, checking for evoltuionary isolated tips etc.
+#' @param tree \code{TreeMan} object
+#' @param ids IDs of nodes/tips
+#' @seealso
+#' \code{\link{calcDstBLD}}, \code{\link{calcDstRF}}, \code{\link{calcDstTrp}}
+#' \url{https://github.com/DomBennett/treeman/wiki/calc-methods}
+#' @export
+#' @examples
+#' # checking the distance between two trees
+#' library(treeman)
+#' tree_1 <- randTree(10)
+#' tree_2 <- randTree(10)
+#' dmat1 <- calcDstMtrx(tree_1, tree_1['tips'])
+#' dmat2 <- calcDstMtrx(tree_2, tree_2['tips'])
+#' mdl <- cor.test(x=dmat1, y=dmat2)
+#' as.numeric(1 - mdl$estimate)  # 1 - Pearson's r
 calcDstMtrx <- function(tree, ids) {
   .getDist <- function(cmb) {
     if(cmb[1] == cmb[2]) {

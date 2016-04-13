@@ -7,19 +7,35 @@
 #' @param name slot name
 #' @param id node id
 #' @seealso
-#' \code{\link{getNodesSlot}}, 
+#' \code{\link{getNodesSister}}, 
 #' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 #' @export
 #' @examples
 #' library(treeman)
 #' tree <- randTree(10)
-#' getNodeSlot(tree, name='span', id='t1')  # return span of t1
+#' getNodeSister(tree, id='t1')
 getNodeSister <- function(tree, id) {
   prid <- tree@nodelist[[id]][['prid']][[1]]
   ptids <- tree@nodelist[[prid]][['ptid']]
   ptids[ptids != id]
 }
 
+#' @name getNodesSister
+#' @title Get sister id
+#' @description Returns the ids of the sister(s) of node ids given.
+#' @details An error is raised if there is no sister (e.g. for the root).
+#'  There can be more than one sister if tree is polytomous.
+#' @param tree \code{TreeMan} object
+#' @param name slot name
+#' @param id node id
+#' @seealso
+#' \code{\link{getNodeSister}}, 
+#' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree <- randTree(10)
+#' getNodesSister(tree, ids=tree['tips'])
 getNodesSister <- function(tree, ids, ...) {
   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
   res <- mdply(.data=l_data, .fun=getNodeSister, tree=tree, ...)
@@ -149,7 +165,6 @@ getNodesSlot <- function(tree, name, ids, ...) {
 #' tree <- randTree(10)
 #' # everyone descends from root
 #' getNodeKids(tree, id=tree['root'])
-
 getNodeKids <- function(tree, id) {
   node <- tree@nodelist[[id]]
   node[['kids']]
