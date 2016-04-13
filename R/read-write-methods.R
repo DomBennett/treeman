@@ -1,5 +1,27 @@
+#' @name writeTree
+#' @title Write a Newick tree
+#' @description Creates a Newick tree from a \code{TreeMan} object.
+#' @details The \code{nodeLabels} argument can be used to add a user defined node label in
+#' the Newick tree. It should take only 1 argument, \code{n}, the node represented as a list.
+#' It should only return a single character value that can be added to a newick string.
+#' @param tree \code{TreeMan} object
+#' @param file file path
+#' @param nodeLabels node label function
+#' @seealso
+#' \code{\link{readTree}}, \code{\link{randTree}}, \url{https://en.wikipedia.org/wiki/Newick_format}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree <- randTree(10)
+#' nodeLabels <- function(n) {
+#' paste0(n[['id']], '_nodelabel')
+#' }
+#' writeTree(tree, file='example.tre', nodeLabels)
+#' file.remove('example.tre')
 # TODO: test this with unrooted trees, adapt for TreeMen
-writeTree <- function(tree, file, nodeLabels=function(n){NULL}) {
+writeTree <- function(tree, file, nodeLabels=function(n){
+  return(NULL)
+  }) {
   tipBytip <- function(i) {
     ids <- c(ndlst[[prid]][['kids']], prid,
              ndlst[[prid]][['prid']])
@@ -48,7 +70,19 @@ writeTree <- function(tree, file, nodeLabels=function(n){NULL}) {
               col.names=FALSE)
 }
 
-# TODO: readTree doc
+#' @name readTree
+#' @title Read a Newick tree
+#' @description Return a \code{TreeMan} or \code{TreeMen} object from a Newick treefile
+#' @details Read a single or multiple trees from a file, or a text string. Parallelizable.
+#' @param file file path
+#' @param text Newick character string
+#' @param ... \code{plyr} arguments
+#' @seealso
+#' \code{\link{writeTree}}, \code{\link{randTree}}, \url{https://en.wikipedia.org/wiki/Newick_format}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree <- readTree(text="((A:1.0,B:1.0):1.0,(C:1.0,D:1.0):1.0);")
 readTree <- function(file=NULL, text=NULL, ...) {
   if(!is.null(file)) {
     trstr <- scan(file, what="raw", quiet=TRUE)

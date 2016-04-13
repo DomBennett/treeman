@@ -31,6 +31,7 @@ evolution
 macroevolution
 tree simulation }
 \seealso{
+\url{https://github.com/DomBennett/treeman/wiki}
 }
 \examples{
 library(treeman)
