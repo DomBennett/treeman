@@ -9,7 +9,6 @@ The `treeman` R package provides a `list` based class for encoding phylogenetic 
 
 * Lightweight (few dependencies)
 * Fast (vectorised or recursive)
-* Tested
 * Simple and intuitive
 
 **Quick guide**
