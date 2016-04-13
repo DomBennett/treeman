@@ -16,6 +16,14 @@
   TRUE
 }
 
+#' @name TreeMen
+#' @title S4 class for multiple phylogenetic trees
+#' @slot treelist list of \code{TreeMan} objects
+#' @slot ntips sum of tips per tree
+#' @slot ntrees total number of trees
+#' @exportClass
+#' @seealso 
+#' \code{\link{cTrees}}
 setClass('TreeMen', representation=representation(
   treelist='list',       # list of TreeMan objects
   ntips='numeric',       # sum of tips per tree
@@ -64,6 +72,16 @@ setClass('TreeMen', representation=representation(
   }
   treemen
 }
+
+#' @title cTrees
+#' @description Return \code{TreeMen} of concatenated trees.
+#' @details Concatenate trees into single \code{TreeMen} object.
+#' @param x \code{TreeMan} or \code{TreeMen} objects
+#' @seealso 
+#' \code{\link{TreeMen}}, \code{\link{TreeMan}}, \code{\link{as-TreeMen}}
+#' @examples 
+#' library(treeman)
+#' trees <- cTrees(randTree(10), randTree(10))
 setGeneric("cTrees", signature=c("x"),
            function(x, ...) {
              standardGeneric("cTrees")
@@ -100,11 +118,44 @@ setMethod('[', c('TreeMen', 'character'),
             slot(x, i)
           })
 
+#' @name as-TreeMen
+#' @title Convert list to a TreeMen
+#' @description Return a \code{TreeMen} object from a list of \code{TreeMans}
+#' @seealso 
+#' \code{\link{TreeMen}}
+#' @examples 
+#' library(treeman)
+#' trees <- list('tree_1'=randTree(10), 'tree_2'=randTree(10))
+#' trees <- as(trees, 'TreeMen')
+#' @export
 # Conversion method
 setAs(from="list", to="TreeMen", def=function(from, to) {
-  print(from)
-  print(to)
   ntips <- sum(unlist(lapply(from, function(tree) tree@ntips)))
   ntrees <- length(from)
   new(to, treelist=from, ntips=ntips, ntrees=ntrees)
   })
+
+# display methods
+setMethod('as.character', c('x'='TreeMen'),
+          function(x) {
+            paste0('TreeMen Object of [', x@ntrees,'] trees')
+          })
+setMethod('show', 'TreeMen',
+          function(object){
+            msg <- as.character(object)
+            cat(msg)
+          })
+setMethod('str', c('object'='TreeMen'),
+          function(object, max.level=2L, ...) {
+            if(is.na(max.level)) {
+              stop('max.level must be numeric')
+            }
+            str@default(object, max.level=max.level, ...)
+          })
+setMethod('print', c('x'='TreeMen'),
+          function(x){
+            msg <- 'Trees (TreeMen Object):\n'
+            msg <- paste0(msg, '  + ', x@ntrees, ' trees\n')
+            msg <- paste0(msg, '  + ', x@ntips, ' tips\n')
+            cat(msg)
+          })

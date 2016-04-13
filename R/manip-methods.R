@@ -1,6 +1,21 @@
 # TODO: mergeTree, collapseNode, removeNode
 # TODO: add doc for adding and removing tips
 
+#' @name rmTip
+#' @title Remove tip from a tree
+#' @description Returns a tree with a tip ID remove
+#' @details Removes a tip in a tree. Set drp_intrnl to FALSE to convert
+#' internal nodes into new tips.
+#' @param tree \code{TreeMan} object
+#' @param tid tip ID
+#' @seealso
+#' \code{\link{addTip}}, 
+#' \url{https://github.com/DomBennett/treeman/wiki/manip-methods}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree <- randTree(10)
+#' tree <- rmTip(tree, 't1')
 rmTip <- function(tree, tid, drp_intrnl=TRUE) {
   updater <- function(nd) {
     nd[['prid']] <- nd[['prid']][nd[['prid']] != tid]
@@ -42,6 +57,31 @@ rmTip <- function(tree, tid, drp_intrnl=TRUE) {
   tree <- .updateTreeSlots(tree)
 }
 
+#' @name addTip
+#' @title Add tip to a tree
+#' @description Returns a tree with a tip ID added
+#' @details User must provide a new tip ID, the ID of a node
+#' which will become the new tip's sister, a start time point to
+#' specify when the new branch will start in time and, an end time point
+#' (0 for extant tips).
+#' @param tree \code{TreeMan} object
+#' @param tid tip ID
+#' @param sid ID of node that will become new tip's sister
+#' @param start start time
+#' @param end end time
+#' @seealso
+#' \code{\link{rmTip}}, 
+#' \url{https://github.com/DomBennett/treeman/wiki/manip-methods}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree <- randTree(10)
+#' # add a new tip to the branch preceding t1
+#' # calculate the span and find a point in that time frame for start
+#' t1_span <- getSpanAge(tree, 't1')
+#' start <- runif(max=t1_span[1, 'start'], min=t1_span[1, 'end'], n=1)
+#' end <- runif(max=start, min=0, n=1)
+#' tree <- addTip(tree, tid='t11', sid='t1', start=start, end=end)
 addTip <- function(tree, tid, sid, start, end,
                    pid=paste0("p_", tid)) {
   # terminology
@@ -103,6 +143,24 @@ addTip <- function(tree, tid, sid, start, end,
   .updateTreeSlots(tree)
 }
 
+#' @name pinTips
+#' @title Pin tips to a tree
+#' @description Returns a tree with new tips added based on given lineages and time points
+#' @details User must provide a vector of new tip IDs, a list of the ranked lineages
+#' for these IDs (in ascending order) and a vector of end time points for each new ID
+#' (0s for extant tips). The function expects the given tree to be taxonomically informed;
+#' the \code{txnym} slot for every node should have a taxonomic label. The function takes
+#' the lineage and tries to randomly add the new tip at the lowest point in the taxonomic rank
+#' before the end time point.
+#' @param tree \code{TreeMan} object
+#' @param tids new tip ids
+#' @param lngs list of vectors of the lineages of each tid
+#' @param ends end time points for each tid
+#' @seealso
+#' \url{https://github.com/DomBennett/treeman/wiki/manip-methods}
+#' @export
+#' @examples
+#' # see https://github.com/DomBennett/treeman/wiki/Pinning-tips for a detailed example
 pinTips <- function(tree, tids, lngs, ends) {
   .pin <- function(i) {
     # unpack

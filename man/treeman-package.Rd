@@ -17,7 +17,6 @@ Version: \tab 1.0\cr
 Date: \tab 2015-12-02\cr
 License: \tab GPL-2\cr
 }
-I will do this later.
 }
 \author{
 D.J. Bennett
@@ -27,12 +26,14 @@ Maintainer: D.J. Bennett <dominic.john.bennett@gmail.com>
 \references{
 No key references
 }
-phylogeny
+\keyword{ phylogeny
 evolution
 macroevolution
-tree simulation
-\keyword{ package }
+tree simulation }
 \seealso{
 }
 \examples{
+library(treeman)
+tree <- randTree(100)
+print(tree)
 }

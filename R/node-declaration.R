@@ -24,6 +24,24 @@
      age=age, tip=length(node[['ptid']]) == 0)
 }
 
+#' @name Node
+#' @title S4 class for displaying nodes
+#' @description The \code{Node} class is used to display node information.
+#' It is only generated when a user implements the \code{[[]]} on a tree.
+#' @slot id unique ID for node in tree['nodelist']
+#' @slot span length of preceding branch
+#' @slot prid parent node ID
+#' @slot ptid child node ID
+#' @slot kids descending tip IDs
+#' @slot nkids number of descending tip IDs
+#' @slot txnym list of associated taxonyms
+#' @slot pd total branch length represented by node
+#' @slot prdst total branch length of connected prids
+#' @slot age age of node in tree
+#' @slot root T/F root node?
+#' @slot tip T/F tip node?
+#' @seealso 
+#' \code{\link{cTrees}}
 setClass ('Node', representation=representation (
   id='character',        # unique ID for node in tree@nodelist
   span='numeric',        # length of preceding branch
