@@ -25,8 +25,8 @@ must not be default \code{TreeMan} names. The new value can be any data type.
 }
 \examples{
 library(treeman)
-tree <- randTree(10)
-tree <- setNodeOther(tree, 't1', '1', 'binary_val')
+#tree <- randTree(10)
+#tree <- setNodeOther(tree, 't1', '1', 'binary_val')
 }
 \seealso{
 \code{\link{setNodesOther}}

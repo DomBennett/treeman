@@ -237,6 +237,7 @@ setNodesID <- function(tree, ids, vals, ...) {
   tree
 }
 
+#TODO: get these functions working and tested
 #' @name setNodeOther
 #' @title Set a user defined slot
 #' @description Return a tree with a user defined slot for node ID.
@@ -253,8 +254,8 @@ setNodesID <- function(tree, ids, vals, ...) {
 #' @export
 #' @examples
 #' library(treeman)
-#' tree <- randTree(10)
-#' tree <- setNodeOther(tree, 't1', '1', 'binary_val')
+#' #tree <- randTree(10)
+#' #tree <- setNodeOther(tree, 't1', '1', 'binary_val')
 setNodeOther <- function(tree, id, val, slt_nm) {
   tree@nodelist[[id]][slt_nm] <- val
   tree
@@ -275,16 +276,16 @@ setNodeOther <- function(tree, id, val, slt_nm) {
 #' @export
 #' @examples
 #' library(treeman)
-#' tree <- randTree(10)
-#' vals <- sample(0:1, size=tree['nall'], replace=TRUE)
-#' tree <- setNodesOther(tree, tree['all'], vals, 'binary_val')
+#' #tree <- randTree(10)
+#' #vals <- sample(0:1, size=tree['nall'], replace=TRUE)
+#' #tree <- setNodesOther(tree, tree['all'], vals, 'binary_val')
 setNodesOther <- function(tree, ids, vals, slt_nm, ...) {
   .set <- function(i, val) {
     nd[[i]][[slt_nm]] <- val
     nd
   }
   l_data <- data.frame(i=1:length(vals), val=vals,
-                       stringAsFactors=FALSE)
+                       stringsAsFactors=FALSE)
   tree@nodelist <- mlply(.data=l_data, .fun=.set, ...)
   tree
 }

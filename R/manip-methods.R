@@ -8,6 +8,7 @@
 #' internal nodes into new tips.
 #' @param tree \code{TreeMan} object
 #' @param tid tip ID
+#' @param drp_intrnl Boolean, drop internal branches, default FALSE
 #' @seealso
 #' \code{\link{addTip}}, 
 #' \url{https://github.com/DomBennett/treeman/wiki/manip-methods}

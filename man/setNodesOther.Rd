@@ -25,9 +25,9 @@ Runs \code{setNodeOther} over multiple nodes. Parellizable.
 }
 \examples{
 library(treeman)
-tree <- randTree(10)
-vals <- sample(0:1, size=tree['nall'], replace=TRUE)
-tree <- setNodesOther(tree, tree['all'], vals, 'binary_val')
+#tree <- randTree(10)
+#vals <- sample(0:1, size=tree['nall'], replace=TRUE)
+#tree <- setNodesOther(tree, tree['all'], vals, 'binary_val')
 }
 \seealso{
 \code{\link{setNodeOther}}

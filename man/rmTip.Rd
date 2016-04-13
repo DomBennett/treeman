@@ -10,6 +10,8 @@ rmTip(tree, tid, drp_intrnl = TRUE)
 \item{tree}{\code{TreeMan} object}
 
 \item{tid}{tip ID}
+
+\item{drp_intrnl}{Boolean, drop internal branches, default FALSE}
 }
 \description{
 Returns a tree with a tip ID remove

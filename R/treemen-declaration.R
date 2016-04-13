@@ -81,7 +81,8 @@ setClass('TreeMen', representation=representation(
 #' \code{\link{TreeMen}}, \code{\link{TreeMan}}, \code{\link{as-TreeMen}}
 #' @examples 
 #' library(treeman)
-#' trees <- cTrees(randTree(10), randTree(10))
+#' trees <- cTrees(randTree(10), randTree(10), randTree(10))
+#TODO: fix this for when just two trees cTrees(tree, tree)
 setGeneric("cTrees", signature=c("x"),
            function(x, ...) {
              standardGeneric("cTrees")

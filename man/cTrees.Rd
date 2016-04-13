@@ -17,7 +17,7 @@ Concatenate trees into single \code{TreeMen} object.
 }
 \examples{
 library(treeman)
-trees <- cTrees(randTree(10), randTree(10))
+trees <- cTrees(randTree(10), randTree(10), randTree(10))
 }
 \seealso{
 \code{\link{TreeMen}}, \code{\link{TreeMan}}, \code{\link{as-TreeMen}}
