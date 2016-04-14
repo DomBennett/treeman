@@ -46,7 +46,7 @@ test_that('get_Age() works', {
 test_that('getSpnAge() works', {
   tree <- randTree(10)
   tip_age <- getSpnAge(tree, sample(tree['tips'], 1))
-  expect_that(tip_age['start'], is_more_than(tip_age['end']))
+  expect_that(tip_age[['start']], is_more_than(tip_age[['end']]))
 })
 test_that('getSpnsAge() works', {
   tree <- randTree(10)
