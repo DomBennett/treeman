@@ -1,21 +1,20 @@
-#TODO: modify this to allow user-defined Nd slot
-#TODO: check for missing kids or no pd
-essential_nd_slots <- c('id')
-valid_nd_slots <- c('id', 'txnym', 'spn', 'prid',
-                      'ptid', 'kids', 'prdst', 'pd')
-
 .checkTreeMan <- function(object) {
   .check <- function(nd) {
-    if(!all(essential_nd_slots %in% names(nd))) {
+    # must have id
+    if(!'id' %in% names(nd)) {
       return(FALSE)
     }
-    if(!all(names(nd) %in% valid_nd_slots)) {
-      invlds <- names(nd)[!names(nd) %in% valid_nd_slots]
-      invlds <- paste(invlds, collapse="`, `")
-      invlds <- paste0('[`', invlds, '`]')
-      warning(paste0('Node [', nd[['id']],
-                     '] contains the following invalid node slots:\n',
-                     invlds))
+    # must have either prid/ptid or both
+    if(!('ptid' %in% names(nd) | 'prid' %in% names(nd))){
+      return(FALSE)
+    }
+    # must have pd if spns
+    if(length(nd[['spn']]) > 0 & is.null(nd[['pd']])) {
+      return(FALSE)
+    }
+    # kids must be all unique
+    if(any(duplicated(nd[['kids']]))) {
+      return(FALSE)
     }
     test_1 <- nd[['id']] %in% nds
     test_2 <- is.null(nd[['prid']]) || (nd[['prid']] %in% nds)
@@ -34,7 +33,7 @@ valid_nd_slots <- c('id', 'txnym', 'spn', 'prid',
       msg <- paste0(msg, nds[i], ', ')
     }
     msg <- paste0(msg, nds[bad[length(bad)]], '\n\n')
-    msg <- paste0(msg, 'They may be pointing to non-existent nodes in tree, their ID may not be a named element in `@ndlst` or they may have missing essential node elements.')
+    msg <- paste0(msg, 'They may be pointing to non-existent nodes in tree, their ID may not be a named element in `@ndlst` or they may have missing expected node slots.')
     cat(msg)
     return(FALSE)
   }

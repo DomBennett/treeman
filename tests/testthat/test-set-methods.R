@@ -31,7 +31,7 @@ test_that('setNdsSpn() works', {
   before_pd <- tree['pd']
   before_age <- tree['age']
   ids <- tree['all'][tree['all'] != tree['root']]
-  vals <- getNdsSlt(tree, name='spn', ids=ids)
+  vals <- getNdsSlt(tree, slt_nm='spn', ids=ids)
   vals <- vals/2
   tree <- setNdsSpn(tree, ids=ids, vals=vals)
   expect_that(tree['pd']*2, equals(before_pd))
@@ -54,4 +54,18 @@ test_that('setTol() works', {
   before <- length(tree@ext)
   tree <- setTol(tree, tol=tree['age'])
   expect_that(before, is_less_than(length(tree@ext)))
+})
+test_that('setNdOther() works', {
+  tree <- randTree(10)
+  val <- sample(0:1, size=1)
+  tree <- setNdOther(tree, id='t1', val, 'binary_val')
+  res <- getNdSlt(tree, id='t1', slt_nm='binary_val')
+  expect_that(val, equals(res))
+})
+test_that('setNdsOther() works', {
+  tree <- randTree(10)
+  vals <- sample(0:1, size=tree['nall'], replace=TRUE)
+  tree <- setNdsOther(tree, tree['all'], vals, 'binary_val')
+  res <- getNdsSlt(tree, ids=tree['all'], slt_nm='binary_val')
+  expect_that(vals, equals(res))
 })

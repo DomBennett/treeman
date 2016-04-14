@@ -29,7 +29,7 @@ setRoot <- function(...) {
 #' tree <- setPD(tree, val=1)
 #' (tree['pd'])
 setPD <- function(tree, val) {
-  spns <- getNdsSlt(tree, ids=tree@all, name="spn")
+  spns <- getNdsSlt(tree, ids=tree@all, slt_nm="spn")
   spns <- spns/(tree@pd/val)
   tree <- setNdsSpn(tree, ids=tree@all, vals=spns)
   tree
@@ -53,7 +53,7 @@ setPD <- function(tree, val) {
 #' tree <- setAge(tree, val=1)
 #' (tree['age'])
 setAge <- function(tree, val) {
-  spns <- getNdsSlt(tree, ids=tree@all, name="spn")
+  spns <- getNdsSlt(tree, ids=tree@all, slt_nm="spn")
   spns <- spns/(tree@age/val)
   tree <- setNdsSpn(tree, ids=tree@all, vals=spns)
   tree
@@ -132,7 +132,7 @@ setNdsSpn <- function(tree, ids, vals, ...) {
   if(is.null(vals)) {
     ndlst <- plyr::llply(ndlst[tree@all], .fun=.nullify, ...)
   } else {
-    spns <- getNdsSlt(tree, name='spn', ids=tree@all)
+    spns <- getNdsSlt(tree, slt_nm='spn', ids=tree@all)
     spns[match(ids, tree@all)] <- vals
     l_data <- data.frame(id=tree@all, spn=spns, stringsAsFactors=FALSE)
     ndlst <- plyr::mlply(l_data, .fun=.reset)
@@ -256,8 +256,9 @@ setNdsID <- function(tree, ids, vals, ...) {
 #' @export
 #' @examples
 #' library(treeman)
-#' #tree <- randTree(10)
-#' #tree <- setNdOther(tree, 't1', '1', 'binary_val')
+#' tree <- randTree(10)
+#' tree <- setNdOther(tree, 't1', 1, 'binary_val')
+#' (getNdSlt(tree, id='t1', slt_nm='binary_val'))
 setNdOther <- function(tree, id, val, slt_nm) {
   tree@ndlst[[id]][slt_nm] <- val
   tree
@@ -278,16 +279,16 @@ setNdOther <- function(tree, id, val, slt_nm) {
 #' @export
 #' @examples
 #' library(treeman)
-#' #tree <- randTree(10)
-#' #vals <- sample(0:1, size=tree['nall'], replace=TRUE)
-#' #tree <- setNdsOther(tree, tree['all'], vals, 'binary_val')
+#' tree <- randTree(10)
+#' vals <- sample(0:1, size=tree['nall'], replace=TRUE)
+#' tree <- setNdsOther(tree, tree['all'], vals, 'binary_val')
+#' (getNdsSlt(tree, ids=tree['all'], slt_nm='binary_val'))
 setNdsOther <- function(tree, ids, vals, slt_nm, ...) {
-  .set <- function(i, val) {
-    nd[[i]][[slt_nm]] <- val
-    nd
+  .set <- function(id, val) {
+    tree@ndlst[[id]][[slt_nm]] <<- val
   }
-  l_data <- data.frame(i=1:length(vals), val=vals,
+  l_data <- data.frame(id=ids, val=vals,
                        stringsAsFactors=FALSE)
-  tree@ndlst <- plyr::mlply(.data=l_data, .fun=.set, ...)
+  plyr::m_ply(.data=l_data, .fun=.set)
   tree
 }

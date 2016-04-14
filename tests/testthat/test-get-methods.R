@@ -28,7 +28,7 @@ test_that('getOtgrp() works', {
 })
 test_that('get_Slt() works', {
   tree <- randTree(10)
-  nd_spns <- getNdsSlt(tree, name="spn",
+  nd_spns <- getNdsSlt(tree, slt_nm="spn",
                        ids=tree['all'])
   expect_that(sum(nd_spns), equals(tree['pd']))
 })

@@ -76,7 +76,7 @@ test_that('rmTip() work', {
   tree <- mammals
   pd_before <- tree['pd']
   tid <- sample(tree['tips'], 1)
-  tid_spn <- getNdSlt(tree, id=tid, name='spn')
+  tid_spn <- getNdSlt(tree, id=tid, slt_nm='spn')
   tree <- rmTip(tree, tid)
   expect_that(tree['ntips'], equals(mammals['ntips'] - 1))
   expect_that(pd_before-tid_spn, equals(tree['pd']))

@@ -110,7 +110,7 @@ getOtgrp <- function(tree, ids) {
 #' @description Returns the value of named slot.
 #' @details Returned object depends on name, either character, vector or numeric.
 #' @param tree \code{TreeMan} object
-#' @param name slot name
+#' @param slt_nm slot name
 #' @param id node id
 #' @seealso
 #' \code{\link{getNdsSlt}}, 
@@ -119,9 +119,9 @@ getOtgrp <- function(tree, ids) {
 #' @examples
 #' library(treeman)
 #' tree <- randTree(10)
-#' getNdSlt(tree, name='spn', id='t1')  # return span of t1
-getNdSlt <- function(tree, name, id) {
-  tree@ndlst[[id]][[name]]
+#' getNdSlt(tree, slt_nm='spn', id='t1')  # return span of t1
+getNdSlt <- function(tree, slt_nm, id) {
+  tree@ndlst[[id]][[slt_nm]]
 }
 
 #' @name getNdsSlt
@@ -129,7 +129,7 @@ getNdSlt <- function(tree, name, id) {
 #' @description Returns the value of named slot.
 #' @details Returned object depends on name, either character, vector or numeric. Parallelizable.
 #' @param tree \code{TreeMan} object
-#' @param name slot name
+#' @param slt_nm slot name
 #' @param ids vector of node ids
 #' @param ... \code{plyr} arguments
 #' @seealso
@@ -139,10 +139,10 @@ getNdSlt <- function(tree, name, id) {
 #' @examples
 #' library(treeman)
 #' tree <- randTree(10)
-#' getNdsSlt(tree, name='spn', ids=tree['tips'])  # return spans of all tips
-getNdsSlt <- function(tree, name, ids, ...) {
+#' getNdsSlt(tree, slt_nm='spn', ids=tree['tips'])  # return spans of all tips
+getNdsSlt <- function(tree, slt_nm, ids, ...) {
   .get <- function(i) {
-    getNdSlt(tree, name, ids[i])
+    getNdSlt(tree, slt_nm, ids[i])
   }
   l_data <- data.frame(i=1:length(ids), stringsAsFactors=FALSE)
   res <- plyr::mdply(.data=l_data, .fun=.get, ...)

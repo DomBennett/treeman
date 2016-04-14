@@ -120,7 +120,7 @@ calcDstTrp <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
 #' ids_2 <- sample(tree['tips'], 5)
 #' calcOvrlp(tree, ids_1, ids_2)
 calcOvrlp <- function(tree, ids_1, ids_2, nrmlsd=FALSE, ...) {
-  spns <- getNdsSlt(tree, name='spn', tree@all, ...)
+  spns <- getNdsSlt(tree, slt_nm='spn', tree@all, ...)
   names(spns) <- tree@all
   ids_1 <- c(unique(unlist(getNdsPrid(tree, ids_1, ...))),
              ids_1)
@@ -161,8 +161,8 @@ calcDstBLD <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
   n2 <- tree_2@nds[!tree_2@nds == tree_2@root]
   c1 <- getNdsKids(tree_1, n1, ...)
   c2 <- getNdsKids(tree_2, n2, ...)
-  s1 <- getNdsSlt(tree_1, name="spn", ids=n1, ...)
-  s2 <- getNdsSlt(tree_2, name="spn", ids=n2, ...)
+  s1 <- getNdsSlt(tree_1, slt_nm="spn", ids=n1, ...)
+  s2 <- getNdsSlt(tree_2, slt_nm="spn", ids=n2, ...)
   d1 <- s2[match(c1, c2)]
   d1[which(is.na(d1))] <- 0
   d1 <- s1 - d1
@@ -237,7 +237,7 @@ calcPhyDv <- function(tree, tids, ...) {
              tids)
   counts <- table(prids)
   prids <- names(counts)[counts < length(tids)]
-  spns <- getNdsSlt(tree, name="spn", ids=prids, ...)
+  spns <- getNdsSlt(tree, slt_nm="spn", ids=prids, ...)
   sum(spns)
 }
 
