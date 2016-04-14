@@ -4,7 +4,7 @@
 \alias{setNodeSpan}
 \title{Set the branch length of a specific node}
 \usage{
-setNodeSpan(tree, id, val)
+setNodeSpan(tree, id, val, ...)
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}
@@ -12,12 +12,15 @@ setNodeSpan(tree, id, val)
 \item{id}{id of node whose preceding edge is to be changed}
 
 \item{val}{new span}
+
+\item{...}{\code{plyr} arguments}
 }
 \description{
 Return a tree with the span of a node altered.
 }
 \details{
 Takes a tree, a node ID and a new value for the node's preceding branch length (span).
+Parallelizable.
 }
 \examples{
 library(treeman)

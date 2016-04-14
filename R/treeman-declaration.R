@@ -83,7 +83,6 @@ valid_node_slots <- c('id', 'txnym', 'span', 'prid',
 #' See below in 'Examples' for these methods in use.
 #' @seealso
 #' \code{\link{randTree}}, \code{\link{Node}}
-#' @exportClass
 #' @examples
 #' library(treeman)
 #' # Generate random tree
@@ -112,6 +111,7 @@ valid_node_slots <- c('id', 'txnym', 'span', 'prid',
 #' print(node)
 #' # And then use the same syntax for the tree
 #' node['age']  # .... nkids, pd, etc.
+#' @exportClass TreeMan
 setClass('TreeMan', representation=representation(
   nodelist='list',       # list of Node objects
   nodes='vector',        # vector of Node ids that are internal nodes
@@ -224,7 +224,7 @@ setGeneric("viz", signature=c("tree", "taxonyms"),
            function(tree, taxonyms=FALSE) {
              standardGeneric("viz")
            })
-#' @exportMethod 
+#' @exportMethod viz
 setMethod('viz', 'TreeMan',
           function(tree, taxonyms){
             get_pnts <- function(node, y, pnts) {

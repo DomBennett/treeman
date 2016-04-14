@@ -90,7 +90,7 @@ readTree <- function(file=NULL, text=NULL, ...) {
     trstr <- text
   }
   if(length(trstr) > 1) {
-    trees <- mlply(trstr, .fun=.readTree, ...)
+    trees <- plyr::mlply(trstr, .fun=.readTree, ...)
     tree <- as(trees, 'TreeMen')
   } else {
     tree <- .readTree(trstr)

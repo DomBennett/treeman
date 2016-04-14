@@ -40,6 +40,7 @@
 #' @slot age age of node in tree
 #' @slot root T/F root node?
 #' @slot tip T/F tip node?
+#' @exportClass Node
 #' @seealso 
 #' \code{\link{cTrees}}
 setClass ('Node', representation=representation (

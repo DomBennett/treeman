@@ -63,9 +63,11 @@ setAge <- function(tree, val) {
 #' @title Set the branch length of a specific node
 #' @description Return a tree with the span of a node altered.
 #' @details Takes a tree, a node ID and a new value for the node's preceding branch length (span).
+#' Parallelizable.
 #' @param tree \code{TreeMan} object
 #' @param id id of node whose preceding edge is to be changed
 #' @param val new span
+#' @param ... \code{plyr} arguments
 #' @seealso
 #' \code{\link{setNodesSpan}}
 #' \url{https://github.com/DomBennett/treeman/wiki/set-methods}
@@ -76,7 +78,7 @@ setAge <- function(tree, val) {
 #' viz(tree)
 #' tree <- setNodeSpan(tree, id='t1', val=100)
 #' viz(tree)
-setNodeSpan <- function(tree, id, val) {
+setNodeSpan <- function(tree, id, val, ...) {
   .ptnd <- function(nd) {
     nd[['prdst']] <- nd[['prdst']] + diff
     nd
@@ -88,7 +90,7 @@ setNodeSpan <- function(tree, id, val) {
   # adjust any pstnds
   ptids <- getNodePtid(tree, id=id)
   ptids <- ptids[-(length(ptids))]
-  tree@nodelist[ptids] <- llply(tree@nodelist[ptids], .fun=.ptnd)
+  tree@nodelist[ptids] <- plyr::llply(tree@nodelist[ptids], .fun=.ptnd, ...)
   # update nd
   tree@nodelist[[id]][['span']] <- val
   tree@nodelist[[id]][['prdst']] <- tree@nodelist[[id]][['prdst']] +
@@ -128,12 +130,12 @@ setNodesSpan <- function(tree, ids, vals, ...) {
   }
   ndlst <- tree@nodelist
   if(is.null(vals)) {
-    ndlst <- llply(ndlst[tree@all], .fun=.nullify, ...)
+    ndlst <- plyr::llply(ndlst[tree@all], .fun=.nullify, ...)
   } else {
     spans <- getNodesSlot(tree, name='span', ids=tree@all)
     spans[match(ids, tree@all)] <- vals
     l_data <- data.frame(id=tree@all, span=spans, stringsAsFactors=FALSE)
-    ndlst <- mlply(l_data, .fun=.reset)
+    ndlst <- plyr::mlply(l_data, .fun=.reset)
     ndlst <- ndlst[1:length(ndlst)]
     names(ndlst) <- tree@all
     ndlst <- .globalUpdateAll(ndlst, just_spn_data=TRUE)
@@ -228,7 +230,7 @@ setNodesID <- function(tree, ids, vals, ...) {
     NULL
   }
   l_data <- data.frame(i=1:length(tree@nodelist))
-  m_ply(.data=l_data, .fun=.run, ...)
+  plyr::m_ply(.data=l_data, .fun=.run, ...)
   tree@tips <- .rplcS4('tips')
   tree@nodes <- .rplcS4('nodes')
   tree@ext <- .rplcS4('ext')
@@ -286,6 +288,6 @@ setNodesOther <- function(tree, ids, vals, slt_nm, ...) {
   }
   l_data <- data.frame(i=1:length(vals), val=vals,
                        stringsAsFactors=FALSE)
-  tree@nodelist <- mlply(.data=l_data, .fun=.set, ...)
+  tree@nodelist <- plyr::mlply(.data=l_data, .fun=.set, ...)
   tree
 }

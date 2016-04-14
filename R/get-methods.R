@@ -38,7 +38,7 @@ getNodeSister <- function(tree, id) {
 #' getNodesSister(tree, ids=tree['tips'])
 getNodesSister <- function(tree, ids, ...) {
   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
-  res <- mdply(.data=l_data, .fun=getNodeSister, tree=tree, ...)
+  res <- plyr::mdply(.data=l_data, .fun=getNodeSister, tree=tree, ...)
   res[ ,2]
 }
 
@@ -68,7 +68,7 @@ getTxnyms <- function(tree, txnyms, ...) {
     }
   }
   res <- list()
-  m_ply(tree@nodelist, .fun=.get)
+  plyr::m_ply(tree@nodelist, .fun=.get)
   res
 }
 
@@ -146,7 +146,7 @@ getNodesSlot <- function(tree, name, ids, ...) {
     getNodeSlot(tree, name, ids[i])
   }
   l_data <- data.frame(i=1:length(ids), stringsAsFactors=FALSE)
-  res <- mdply(.data=l_data, .fun=.get, ...)
+  res <- plyr::mdply(.data=l_data, .fun=.get, ...)
   res[ ,2]
 }
 
@@ -188,7 +188,7 @@ getNodeKids <- function(tree, id) {
 
 getNodesKids <- function(tree, ids, ...) {
   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
-  res <- mlply(.data=l_data, .fun=getNodeKids, tree=tree, ...)
+  res <- plyr::mlply(.data=l_data, .fun=getNodeKids, tree=tree, ...)
   names(res) <- ids
   res[1:length(res)]
 }
@@ -238,7 +238,7 @@ getNodeAge <- function(tree, id) {
 #' getNodesAge(tree, ids=tree['nodes'])
 getNodesAge <- function(tree, ids, ...) {
   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
-  res <- mdply(.data=l_data, .fun=getNodeAge, tree=tree, ...)
+  res <- plyr::mdply(.data=l_data, .fun=getNodeAge, tree=tree, ...)
   res[ ,2]
 }
 
@@ -285,7 +285,7 @@ getSpanAge <- function(tree, id) {
 #' getSpansAge(tree, ids=ids)
 getSpansAge <- function(tree, ids, ...) {
   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
-  res <- mdply(.data=l_data, .fun=getSpanAge, tree=tree, ...)
+  res <- plyr::mdply(.data=l_data, .fun=getSpanAge, tree=tree, ...)
   res <- res[ ,colnames(res) != 'id']
   res
 }
@@ -384,7 +384,7 @@ getNodePrid <- function(tree, id) {
 #' getNodesPrid(tree, ids=tree['tips'])
 getNodesPrid <- function(tree, ids, ...) {
   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
-  res <- mlply(.data=l_data, .fun=getNodePrid, tree=tree, ...)
+  res <- plyr::mlply(.data=l_data, .fun=getNodePrid, tree=tree, ...)
   names(res) <- ids
   res[1:length(res)]
 }
@@ -418,7 +418,7 @@ getNodePtid <- function(tree, id) {
   pstids <- id
   l_data <- data.frame(id=tree@nodelist[[id]][['kids']],
                        stringsAsFactors=FALSE)
-  m_ply(.data=l_data, .fun=.get)
+  plyr::m_ply(.data=l_data, .fun=.get)
   pstids
 }
 
@@ -442,7 +442,7 @@ getNodePtid <- function(tree, id) {
 #' getNodesPtid(tree, ids=tree['nodes'])
 getNodesPtid <- function(tree, ids, ...) {
   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
-  res <- mlply(.data=l_data, .fun=getNodePtid, tree=tree, ...)
+  res <- plyr::mlply(.data=l_data, .fun=getNodePtid, tree=tree, ...)
   names(res) <- ids
   res[1:length(res)]
 }
@@ -468,7 +468,7 @@ getNodeLineage <- function(tree, id) {
   }
   prids <- c(id, getNodePrid(tree, id))
   lng <- NULL
-  m_ply(tree@nodelist[prids], .fun=.get)
+  plyr::m_ply(tree@nodelist[prids], .fun=.get)
   unique(lng)
 }
 
@@ -490,7 +490,7 @@ getNodeLineage <- function(tree, id) {
 #' getNodeLineage(mammals, id=c('Homo_sapiens', 'Gorilla_gorilla'))
 getNodesLineage <- function(tree, ids, ...) {
   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
-  mlply(.data=l_data, .fun=getNodeLineage, tree=tree, ...)
+  plyr::mlply(.data=l_data, .fun=getNodeLineage, tree=tree, ...)
 }
 
 #' @name getSubtree
@@ -519,7 +519,7 @@ getSubtree <- function(tree, id) {
   ndlst <- tree@nodelist[pstids]
   nids <- names(ndlst)
   nd_prdst <- ndlst[[id]][['prdst']]
-  ndlst <- llply(.data=ndlst, .fun=.prdst)
+  ndlst <- plyr::llply(.data=ndlst, .fun=.prdst)
   ndlst[[id]][['prid']] <- NULL
   ndlst[[id]][['span']] <- 0
   new_tree <- new('TreeMan', nodelist=ndlst, root=id)

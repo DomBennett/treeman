@@ -12,6 +12,9 @@ Depends:
     R (>= 3.2.3),
     methods,
     plyr
+Imports:
+    methods,
+    plyr
 Suggests:
     testthat
 RoxygenNote: 5.0.1

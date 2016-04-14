@@ -152,17 +152,18 @@ addTip <- function(tree, tid, sid, start, end,
 #' (0s for extant tips). The function expects the given tree to be taxonomically informed;
 #' the \code{txnym} slot for every node should have a taxonomic label. The function takes
 #' the lineage and tries to randomly add the new tip at the lowest point in the taxonomic rank
-#' before the end time point.
+#' before the end time point. Parallelizable.
 #' @param tree \code{TreeMan} object
 #' @param tids new tip ids
 #' @param lngs list of vectors of the lineages of each tid
 #' @param ends end time points for each tid
+#' @param ... \code{plyr} arguments
 #' @seealso
 #' \url{https://github.com/DomBennett/treeman/wiki/manip-methods}
 #' @export
 #' @examples
 #' # see https://github.com/DomBennett/treeman/wiki/Pinning-tips for a detailed example
-pinTips <- function(tree, tids, lngs, ends) {
+pinTips <- function(tree, tids, lngs, ends, ...) {
   .pin <- function(i) {
     # unpack
     tid <- tids[i]
@@ -206,9 +207,9 @@ pinTips <- function(tree, tids, lngs, ends) {
   .getTxnyms <- function(txnym, ...) {
     txnym
   }
-  txnyms <- mlply(tree@nodelist, .fun=.getTxnyms)
+  txnyms <- plyr::mlply(tree@nodelist, .fun=.getTxnyms)
   txnyms <- txnyms[1:length(txnyms)]
   names(txnyms) <- names(tree@nodelist)
-  m_ply(1:length(tids), .pin)
+  plyr::m_ply(1:length(tids), .pin)
   tree
 }

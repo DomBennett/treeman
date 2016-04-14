@@ -21,7 +21,7 @@
 #' @slot treelist list of \code{TreeMan} objects
 #' @slot ntips sum of tips per tree
 #' @slot ntrees total number of trees
-#' @exportClass
+#' @exportClass TreeMen
 #' @seealso 
 #' \code{\link{cTrees}}
 setClass('TreeMen', representation=representation(
@@ -83,10 +83,12 @@ setClass('TreeMen', representation=representation(
 #' library(treeman)
 #' trees <- cTrees(randTree(10), randTree(10), randTree(10))
 #TODO: fix this for when just two trees cTrees(tree, tree)
+#' @export
 setGeneric("cTrees", signature=c("x"),
            function(x, ...) {
              standardGeneric("cTrees")
            })
+#' @exportMethod cTrees
 setMethod("cTrees", c("TreeMan"),
           function(x, y, ...) {
             if(is(y, "TreeMan")) {
@@ -128,7 +130,6 @@ setMethod('[', c('TreeMen', 'character'),
 #' library(treeman)
 #' trees <- list('tree_1'=randTree(10), 'tree_2'=randTree(10))
 #' trees <- as(trees, 'TreeMen')
-#' @export
 # Conversion method
 setAs(from="list", to="TreeMen", def=function(from, to) {
   ntips <- sum(unlist(lapply(from, function(tree) tree@ntips)))

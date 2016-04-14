@@ -47,7 +47,7 @@ calcNodeBlnc <- function(tree, id) {
 #' calcNodesBlnc(tree, id=tree['nodes'])
 calcNodesBlnc <- function(tree, ids, ...) {
   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
-  mdply(.data=l_data, .fun=calcNodeBlnc, tree=tree, ...)[ ,2]
+  plyr::mdply(.data=l_data, .fun=calcNodeBlnc, tree=tree, ...)[ ,2]
 }
 
 #' @name calcDstTrp
@@ -87,7 +87,7 @@ calcDstTrp <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
   shrd <- tree_1@tips[tree_1@tips %in% tree_2@tips]
   cmbs <- combn(shrd, 3)
   l_data <- data.frame(i=1:ncol(cmbs), stringsAsFactors=FALSE)
-  res <- mdply(.data=l_data, .count, ...)
+  res <- plyr::mdply(.data=l_data, .count, ...)
   cntr <- sum(res[ ,2])
   if (nrmlsd) {
     cntr <- cntr/ncol(cmbs)
@@ -275,11 +275,11 @@ calcFrPrp <- function(tree, ids, ...) {
   .calc <- function(tid) {
     ids <- c(tid, getNodePrid(tree, tid))
     l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
-    shares <- mdply(.data=l_data, .fun=.share)[ ,2]
+    shares <- plyr::mdply(.data=l_data, .fun=.share)[ ,2]
     sum(shares)
   }
   l_data <- data.frame(tid=ids, stringsAsFactors=FALSE)
-  mdply(.data=l_data, .fun=.calc, ...)[ ,2]
+  plyr::mdply(.data=l_data, .fun=.calc, ...)[ ,2]
 }
 
 #' @name calcDstMtrx

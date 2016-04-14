@@ -6,7 +6,7 @@
 
 .updateNodesSlot <- function(ndlst, nids, updater) {
   # update nids using updater function
-  ndlst[nids] <- llply(ndlst[nids], .fun=updater)
+  ndlst[nids] <- plyr::llply(ndlst[nids], .fun=updater)
   ndlst
 }
 
@@ -18,7 +18,7 @@
   }
   nd_span <- ndlst[[nid]][['span']]
   prids <- ndlst[[nid]][['prid']]
-  ndlst[prids] <- llply(ndlst[prids], .fun=.add)
+  ndlst[prids] <- plyr::llply(ndlst[prids], .fun=.add)
   ndlst
 }
 
@@ -31,7 +31,7 @@
   nd_span <- ndlst[[nid]][['span']]
   prdst <- nd_span
   prids <- ndlst[[nid]][['prid']]
-  ndlst[prids] <- llply(ndlst[prids], .add)
+  ndlst[prids] <- plyr::llply(ndlst[prids], .add)
   ndlst[[nid]][['prdst']] <- prdst
   ndlst
 }
@@ -45,7 +45,7 @@
   }
   tp_span <- ndlst[[tid]][['span']]
   prids <- ndlst[[tid]][['prid']]
-  ndlst[prids] <- llply(ndlst[prids], .fun=.add)
+  ndlst[prids] <- plyr::llply(ndlst[prids], .fun=.add)
   ndlst
 }
 
@@ -60,7 +60,7 @@
   tp_span <- ndlst[[tid]][['span']]
   prids <- ndlst[[tid]][['prid']]
   prdst <- tp_span
-  ndlst[prids] <- llply(ndlst[prids], .add)
+  ndlst[prids] <- plyr::llply(ndlst[prids], .add)
   ndlst[[tid]][['prdst']] <- prdst
   ndlst
 }
@@ -81,14 +81,14 @@
     tids <- names(ndlst)[wo_pstnds]
     rid <- names(ndlst)[wo_prnds]
     l_data <- data.frame(tid=tids, stringsAsFactors=FALSE)
-    m_ply(.data=l_data, .fun=tip)
+    plyr::m_ply(.data=l_data, .fun=tip)
   } else {
     # just run updateNode for all nodes if just span data needs updating
     nids <- names(ndlst)[!wo_prnds]
     rid <- names(ndlst)[wo_prnds]
   }
   l_data <- data.frame(nid=nids, stringsAsFactors=FALSE)
-  m_ply(.data=l_data, .fun=node)
+  plyr::m_ply(.data=l_data, .fun=node)
   ndlst
 }
 
@@ -99,7 +99,7 @@
     nd
   }
   prids <- ndlst[[tid]][['prid']]
-  ndlst[prids] <- llply(ndlst[prids], .fun=.add)
+  ndlst[prids] <- plyr::llply(ndlst[prids], .fun=.add)
   ndlst
 }
 
@@ -110,7 +110,7 @@
     nd
   }
   prids <- ndlst[[tid]][['prid']]
-  ndlst[prids] <- llply(ndlst[prids], .fun=.add)
+  ndlst[prids] <- plyr::llply(ndlst[prids], .fun=.add)
   ndlst
 }
 
@@ -124,7 +124,7 @@
   tids <- names(ndlst)[wo_pstnds]
   rid <- names(ndlst)[w_prnds]
   l_data <- data.frame(tid=tids, stringsAsFactors=FALSE)
-  m_ply(.data=l_data, .fun=tip)
+  plyr::m_ply(.data=l_data, .fun=tip)
   ndlst
 }
 
