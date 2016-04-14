@@ -10,8 +10,6 @@ getNdSstr(tree, id)
 \item{tree}{\code{TreeMan} object}
 
 \item{id}{node id}
-
-\item{name}{slot name}
 }
 \description{
 Returns the id of the sister(s) of node id given.

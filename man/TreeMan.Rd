@@ -11,7 +11,7 @@ and removing elements in a list. Note that internal nodes and tips are
 both considered nodes. Trees can be unrooted and polytomous.
 
 
-Each node within the \code{TreeMan} \code{ndlist} contains the following data slots:
+Each node within the \code{TreeMan} \code{ndlst} contains the following data slots:
 \itemize{
    \item \code{id}: character string for the node ID
    \item \code{txnym}: name of taxonomic clade (optional)
@@ -30,7 +30,7 @@ See below in 'Examples' for these methods in use.
 \section{Slots}{
 
 \describe{
-\item{\code{ndlist}}{list of nodes}
+\item{\code{ndlst}}{list of nodes}
 
 \item{\code{nds}}{vector of node ids that are internal nodes}
 

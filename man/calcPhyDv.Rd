@@ -7,11 +7,11 @@
 calcPhyDv(tree, tids, ...)
 }
 \arguments{
+\item{tree}{\code{TreeMan} object}
+
 \item{tids}{tip ids}
 
 \item{...}{\code{plyr} arguments}
-
-\item{tree_1}{\code{TreeMan} object}
 }
 \description{
 Returns the phylogenetic diversity of a tree for the tips specified.

@@ -24,7 +24,7 @@ Returned object depends on name, either character, vector or numeric. Paralleliz
 \examples{
 library(treeman)
 tree <- randTree(10)
-getNdsSlt(tree, name='span', ids=tree['tips'])  # return spans of all tips
+getNdsSlt(tree, name='spn', ids=tree['tips'])  # return spans of all tips
 }
 \seealso{
 \code{\link{getNdSlt}}, 

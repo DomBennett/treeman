@@ -8,6 +8,8 @@ cTrees(x, ...)
 }
 \arguments{
 \item{x}{\code{TreeMan} or \code{TreeMen} objects}
+
+\item{...}{more \code{TreeMan} or \code{TreeMen} objects}
 }
 \description{
 Return \code{TreeMen} of concatenated trees.
@@ -17,7 +19,7 @@ Concatenate trees into single \code{TreeMen} object.
 }
 \examples{
 library(treeman)
-trees <- cTrees(randTree(10), randTree(10), randTree(10))
+trees <- cTrees(randTree(10), randTree(10))
 }
 \seealso{
 \code{\link{TreeMen}}, \code{\link{TreeMan}}, \code{\link{as-TreeMen}}

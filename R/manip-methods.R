@@ -70,6 +70,7 @@ rmTip <- function(tree, tid, drp_intrnl=TRUE) {
 #' @param sid ID of node that will become new tip's sister
 #' @param start start time
 #' @param end end time
+#' @param pid parent ID (default is 'p_' + tid)
 #' @seealso
 #' \code{\link{rmTip}}, 
 #' \url{https://github.com/DomBennett/treeman/wiki/manip-methods}

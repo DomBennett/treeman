@@ -9,16 +9,16 @@ getNdsSstr(tree, ids, ...)
 \arguments{
 \item{tree}{\code{TreeMan} object}
 
-\item{name}{slot name}
+\item{ids}{nd ids}
 
-\item{id}{nd id}
+\item{...}{\code{plyr} arguments}
 }
 \description{
 Returns the ids of the sister(s) of nd ids given.
 }
 \details{
 An error is raised if there is no sister (e.g. for the root).
- There can be more than one sister if tree is polytomous.
+ There can be more than one sister if tree is polytomous. Parallelizable.
 }
 \examples{
 library(treeman)

@@ -24,7 +24,7 @@ tree <- randTree(10)
 getNdKids(tree, id=tree['root'])
 }
 \seealso{
-\code{\link{getNdsKid}}, 
+\code{\link{getNdsKids}}, 
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }
 

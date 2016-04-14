@@ -22,7 +22,7 @@ Returned object depends on name, either character, vector or numeric.
 \examples{
 library(treeman)
 tree <- randTree(10)
-getNdSlt(tree, name='span', id='t1')  # return span of t1
+getNdSlt(tree, name='spn', id='t1')  # return span of t1
 }
 \seealso{
 \code{\link{getNdsSlt}}, 

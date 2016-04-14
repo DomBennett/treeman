@@ -218,7 +218,7 @@ calcDstRF <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
 #' @details Faith's phylogenetic diversity is calculated as the sum of all connected
 #' branches for specified tips in a tree. It can be used to investigate how biodviersity
 #' as measured by the phylogeny changes. Parallelizable.
-#' @param tree_1 \code{TreeMan} object
+#' @param tree \code{TreeMan} object
 #' @param tids tip ids
 #' @param ... \code{plyr} arguments
 #' @references

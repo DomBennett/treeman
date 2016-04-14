@@ -25,8 +25,8 @@ data(mammals)
 homo_ids <- getTxnyms(mammals, txnyms='Homo')
 }
 \seealso{
-\code{\link{getNdLineage}}, 
-\code{\link{getNdsLineage}}, 
+\code{\link{getNdLng}}, 
+\code{\link{getNdsLng}}, 
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }
 

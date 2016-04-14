@@ -26,8 +26,8 @@ getNdAge(mammals, id=prnt_id)
 }
 \seealso{
 \code{\link{getNdsAge}}, 
-\code{\link{getSpanAge}}, 
-\code{\link{getSpansAge}}, 
+\code{\link{getSpnAge}}, 
+\code{\link{getSpnsAge}}, 
 \code{\link{getPrnt}}, 
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }

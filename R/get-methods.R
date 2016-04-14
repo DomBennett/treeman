@@ -4,7 +4,6 @@
 #' @details An error is raised if there is no sister (e.g. for the root).
 #'  There can be more than one sister if tree is polytomous.
 #' @param tree \code{TreeMan} object
-#' @param name slot name
 #' @param id node id
 #' @seealso
 #' \code{\link{getNdsSstr}}, 
@@ -24,10 +23,10 @@ getNdSstr <- function(tree, id) {
 #' @title Get sister id
 #' @description Returns the ids of the sister(s) of nd ids given.
 #' @details An error is raised if there is no sister (e.g. for the root).
-#'  There can be more than one sister if tree is polytomous.
+#'  There can be more than one sister if tree is polytomous. Parallelizable.
 #' @param tree \code{TreeMan} object
-#' @param name slot name
-#' @param id nd id
+#' @param ids nd ids
+#' @param ... \code{plyr} arguments
 #' @seealso
 #' \code{\link{getNdSstr}}, 
 #' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
@@ -50,8 +49,8 @@ getNdsSstr <- function(tree, ids, ...) {
 #' @param txnyms vector of taxonomic names
 #' @param ... \code{plyr} arguments
 #' @seealso
-#' \code{\link{getNdLineage}}, 
-#' \code{\link{getNdsLineage}}, 
+#' \code{\link{getNdLng}}, 
+#' \code{\link{getNdsLng}}, 
 #' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 #' @export
 #' @examples
@@ -120,7 +119,7 @@ getOtgrp <- function(tree, ids) {
 #' @examples
 #' library(treeman)
 #' tree <- randTree(10)
-#' getNdSlt(tree, name='span', id='t1')  # return span of t1
+#' getNdSlt(tree, name='spn', id='t1')  # return span of t1
 getNdSlt <- function(tree, name, id) {
   tree@ndlst[[id]][[name]]
 }
@@ -140,7 +139,7 @@ getNdSlt <- function(tree, name, id) {
 #' @examples
 #' library(treeman)
 #' tree <- randTree(10)
-#' getNdsSlt(tree, name='span', ids=tree['tips'])  # return spans of all tips
+#' getNdsSlt(tree, name='spn', ids=tree['tips'])  # return spans of all tips
 getNdsSlt <- function(tree, name, ids, ...) {
   .get <- function(i) {
     getNdSlt(tree, name, ids[i])
@@ -157,7 +156,7 @@ getNdsSlt <- function(tree, name, ids, ...) {
 #' @param tree \code{TreeMan} object
 #' @param id node id
 #' @seealso
-#' \code{\link{getNdsKid}}, 
+#' \code{\link{getNdsKids}}, 
 #' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 #' @export
 #' @examples
@@ -178,7 +177,7 @@ getNdKids <- function(tree, id) {
 #' @param ids vector of node ids
 #' @param ... \code{plyr} arguments
 #' @seealso
-#' \code{\link{getNdKid}}, 
+#' \code{\link{getNdKids}}, 
 #' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 #' @export
 #' @examples
@@ -201,8 +200,8 @@ getNdsKids <- function(tree, ids, ...) {
 #' @param id node id
 #' @seealso
 #' \code{\link{getNdsAge}}, 
-#' \code{\link{getSpanAge}}, 
-#' \code{\link{getSpansAge}}, 
+#' \code{\link{getSpnAge}}, 
+#' \code{\link{getSpnsAge}}, 
 #' \code{\link{getPrnt}}, 
 #' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 #' @export
@@ -228,8 +227,8 @@ getNdAge <- function(tree, id) {
 #' @param ... \code{plyr} arguments
 #' @seealso
 #' \code{\link{getNdAge}}, 
-#' \code{\link{getSpanAge}}, 
-#' \code{\link{getSpansAge}}, 
+#' \code{\link{getSpnAge}}, 
+#' \code{\link{getSpnsAge}}, 
 #' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 #' @export
 #' @examples
@@ -332,7 +331,7 @@ getPrnt <- function(tree, ids) {
 #' # what's the phylogenetic distance from humans to gorillas?
 #' ape_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
 #' pth <- getPath(mammals, from='Homo_sapiens', to='Gorilla_gorilla')
-#' sum(getNdsSlot(mammals, ids=pth, name='span'))
+#' sum(getNdsSlt(mammals, ids=pth, name='spn'))
 getPath <- function(tree, from, to) {
   pre_1 <- c(from, getNdPrid(tree, from))
   pre_2 <- c(to, getNdPrid(tree, to))

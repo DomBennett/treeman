@@ -26,8 +26,8 @@ getNdsAge(tree, ids=tree['nds'])
 }
 \seealso{
 \code{\link{getNdAge}}, 
-\code{\link{getSpanAge}}, 
-\code{\link{getSpansAge}}, 
+\code{\link{getSpnAge}}, 
+\code{\link{getSpnsAge}}, 
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }
 

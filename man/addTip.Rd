@@ -16,6 +16,8 @@ addTip(tree, tid, sid, start, end, pid = paste0("p_", tid))
 \item{start}{start time}
 
 \item{end}{end time}
+
+\item{pid}{parent ID (default is 'p_' + tid)}
 }
 \description{
 Returns a tree with a tip ID added
