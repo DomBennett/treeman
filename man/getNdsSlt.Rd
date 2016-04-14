@@ -4,12 +4,12 @@
 \alias{getNdsSlt}
 \title{Get a node slot for multiple nodes}
 \usage{
-getNdsSlt(tree, name, ids, ...)
+getNdsSlt(tree, slt_nm, ids, ...)
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}
 
-\item{name}{slot name}
+\item{slt_nm}{slot name}
 
 \item{ids}{vector of node ids}
 
@@ -24,7 +24,7 @@ Returned object depends on name, either character, vector or numeric. Paralleliz
 \examples{
 library(treeman)
 tree <- randTree(10)
-getNdsSlt(tree, name='spn', ids=tree['tips'])  # return spans of all tips
+getNdsSlt(tree, slt_nm='spn', ids=tree['tips'])  # return spans of all tips
 }
 \seealso{
 \code{\link{getNdSlt}}, 

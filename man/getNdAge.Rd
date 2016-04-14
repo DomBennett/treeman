@@ -21,7 +21,8 @@ Returns a numeric.
 library(treeman)
 data(mammals)
 # when did apes emerge?
-prnt_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))  # get parent id for all apes
+# get parent id for all apes
+prnt_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
 getNdAge(mammals, id=prnt_id)
 }
 \seealso{

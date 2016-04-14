@@ -4,12 +4,12 @@
 \alias{getNdSlt}
 \title{Get a node slot}
 \usage{
-getNdSlt(tree, name, id)
+getNdSlt(tree, slt_nm, id)
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}
 
-\item{name}{slot name}
+\item{slt_nm}{slot name}
 
 \item{id}{node id}
 }
@@ -22,7 +22,7 @@ Returned object depends on name, either character, vector or numeric.
 \examples{
 library(treeman)
 tree <- randTree(10)
-getNdSlt(tree, name='spn', id='t1')  # return span of t1
+getNdSlt(tree, slt_nm='spn', id='t1')  # return span of t1
 }
 \seealso{
 \code{\link{getNdsSlt}}, 

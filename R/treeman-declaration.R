@@ -131,6 +131,7 @@ setClass('TreeMan', representation=representation(
   prototype=prototype(tol=1e-8), validity=.checkTreeMan)
 
 # Accessor methods
+#' @exportMethod [[
 setMethod('[[', c('TreeMan', 'character'),
           function(x, i) {
             if(!i %in% names(x@ndlst)) {
@@ -151,6 +152,7 @@ setMethod('[[', c('TreeMan', 'character'),
             }
             .newNd(x, i)
           })
+#' @exportMethod [
 setMethod('[', c('TreeMan', 'character'),
           function(x, i) {
             slt_nms <- slotNames(x)
@@ -163,15 +165,18 @@ setMethod('[', c('TreeMan', 'character'),
           })
 
 # display methods
+#' @exportMethod as.character
 setMethod('as.character', c('x'='TreeMan'),
           function(x) {
             paste0('TreeMan Object of [', length(x@tips),'] tips')
           })
+#' @exportMethod show
 setMethod('show', 'TreeMan',
           function(object){
             msg <- as.character(object)
             cat(msg)
           })
+#' @exportMethod str
 setMethod('str', c('object'='TreeMan'),
           function(object, max.level=2L, ...) {
             if(is.na(max.level)) {
@@ -179,6 +184,7 @@ setMethod('str', c('object'='TreeMan'),
             }
             str@default(object, max.level=max.level, ...)
           })
+#' @exportMethod print
 setMethod('print', c('x'='TreeMan'),
           function(x){
             msg <- 'Tree (TreeMan Object):\n'

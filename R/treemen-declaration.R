@@ -90,6 +90,7 @@ setMethod("cTrees", c("TreeMan"),
             x <- .cTreeObjs(x, ...)
             x
             })
+#' @exportMethod cTrees
 setMethod('cTrees', c('TreeMen'),
           function(x, ...) {
             x <- .cTreeObjs(x, ...)
@@ -97,6 +98,7 @@ setMethod('cTrees', c('TreeMen'),
           })
 
 # Accessor methods
+#' @exportMethod [[
 setMethod('[[', c('TreeMen', 'ANY'),
           function(x, i) {
             if(!i %in% 1:length(x@treelist)) {
@@ -104,6 +106,7 @@ setMethod('[[', c('TreeMen', 'ANY'),
             }
             x@treelist[[i]]
           })
+#' @exportMethod [
 setMethod('[', c('TreeMen', 'character'),
           function(x, i) {
             if(!i %in% slotNames(x)) {
@@ -129,15 +132,18 @@ setAs(from="list", to="TreeMen", def=function(from, to) {
   })
 
 # display methods
+#' @exportMethod as.character
 setMethod('as.character', c('x'='TreeMen'),
           function(x) {
             paste0('TreeMen Object of [', x@ntrees,'] trees')
           })
+#' @exportMethod show
 setMethod('show', 'TreeMen',
           function(object){
             msg <- as.character(object)
             cat(msg)
           })
+#' @exportMethod str
 setMethod('str', c('object'='TreeMen'),
           function(object, max.level=2L, ...) {
             if(is.na(max.level)) {
@@ -145,6 +151,7 @@ setMethod('str', c('object'='TreeMen'),
             }
             str@default(object, max.level=max.level, ...)
           })
+#' @exportMethod print
 setMethod('print', c('x'='TreeMen'),
           function(x){
             msg <- 'Trees (TreeMen Object):\n'

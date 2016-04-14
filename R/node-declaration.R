@@ -58,15 +58,17 @@ setClass ('Node', representation=representation (
   tip='logical')         # T/F tip node?
 )
 
+#' @exportMethod as.character
 setMethod ('as.character', c('x'='Node'),
            function(x) {
              x@id
            })
+#' @exportMethod show
 setMethod ('show', 'Node',
            function(object){
              print (object)
            })
-setGeneric ('print')
+#' @exportMethod print
 setMethod ('print', c('x'='Node'),
            function(x){
              if(x@root) {
@@ -100,6 +102,7 @@ setMethod ('print', c('x'='Node'),
              }
              cat (msg)
            })
+#' @exportMethod [
 setMethod('[', c('Node', 'character'),
           function(x, i) {
             if(!i %in% slotNames(x)) {
