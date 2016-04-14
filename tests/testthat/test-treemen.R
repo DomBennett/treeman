@@ -30,10 +30,6 @@ test_that("[ works", {
 test_that("[[ works", {
   expect_true(is(trees[[1]], "TreeMan"))
 })
-test_that(".cManToMan() works", {
-  trees <- treeman:::.cManToMan(tree, tree)
-  expect_true(is(trees, "TreeMen"))
-})
 test_that(".cMenToMen() works", {
   trees <- treeman:::.cMenToMen(trees, trees)
   expect_true(is(trees, "TreeMen"))
