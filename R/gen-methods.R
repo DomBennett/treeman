@@ -12,71 +12,71 @@
 #' library(treeman)
 #' tree <- randTree(5)
 
-randTree <- function (n) {
-  .node <- function (n_left, id, span, pre, predist, nodelist) {
-    post <- kids <- c ()
+randTree <- function(n) {
+  .nd <- function(n_left, id, spn, pre, predist, ndlst) {
+    post <- kids <- c()
     pd <- 0
-    node <- list ('id'=id,
-                  'span'=span,
+    nd <- list('id'=id,
+                  'spn'=spn,
                   'prid'=pre,
                   'ptid'=post,
                   'kids'=kids,
                   'pd'=pd,
                   'prdst'=predist)
-    nodelist[[id]] <- node
+    ndlst[[id]] <- nd
     # if there are enough ns left to have kids
     n_left <- n_left - 1
-    if (n_left > 1) {
+    if(n_left > 1) {
       nls <- n_left
-      if (n_left == 2) {
-        nls <- c (1, 1)
+      if(n_left == 2) {
+        nls <- c(1, 1)
       } else {
         # split must be binary
-        splits <- seq (from=1, to=((n_left)-1)/2, by=2)
-        nls[2] <- sample (splits, 1)
+        splits <- seq(from=1, to=((n_left)-1)/2, by=2)
+        nls[2] <- sample(splits, 1)
         nls[1] <- n_left - nls[2]
       }
-      for (nl in nls) {
-        if (nl == 1) {
+      for(nl in nls) {
+        if(nl == 1) {
           ntips <<- ntips + 1
-          new_id <- paste0 ('t', ntips)
-          kids <- c (new_id, kids)
+          new_id <- paste0('t', ntips)
+          kids <- c(new_id, kids)
         } else {
-          nnodes <<- nnodes + 1
-          new_id <- paste0 ('n', nnodes)
+          nnds <<- nnds + 1
+          new_id <- paste0('n', nnds)
         }
-        post <- c (post, new_id)
-        new_span <- runif (min=0, max=1, n=1)
+        post <- c(post, new_id)
+        new_spn <- runif(min=0, max=1, n=1)
         new_pre <- c(id, pre)
-        new_predist <- predist + new_span
-        nodelist <- .node (nl, new_id, new_span,
-                           new_pre, new_predist, nodelist)
-        kids <- c (kids, nodelist[[new_id]][['kids']])
-        pd <- pd + new_span + nodelist[[new_id]][['pd']]
+        new_predist <- predist + new_spn
+        ndlst <- .nd(nl, new_id, new_spn,
+                           new_pre, new_predist, ndlst)
+        kids <- c(kids, ndlst[[new_id]][['kids']])
+        pd <- pd + new_spn + ndlst[[new_id]][['pd']]
       }
     }
-    nodelist[[id]][['kids']] <- kids
-    nodelist[[id]][['ptid']] <- post
-    nodelist[[id]][['pd']] <- pd
-    nodelist
+    ndlst[[id]][['kids']] <- kids
+    ndlst[[id]][['ptid']] <- post
+    ndlst[[id]][['pd']] <- pd
+    ndlst
   }
-  if (n < 2) {
+  if(n < 2) {
     stop('`n` must be greater than 1')
   }
-  # init empty nodelist
+  # init empty ndlst
   ntips <- 0
-  nnodes <- 1
-  nodelist <- list ()
-  n_left <- (n - 1) + n
+  nnds <- 1
+  ndlst <- list()
+  n_left <-(n - 1) + n
   # generate root node
-  id <- paste0 ('n', 1)
-  predist <- span <- 0
-  pre <- c ()
+  id <- paste0('n', 1)
+  predist <- spn <- 0
+  pre <- c()
   # gen nodelist
-  nodelist <- .node (n_left, id, span, pre, predist, nodelist)
+  ndlst <- .nd(n_left, id, spn, pre, predist, ndlst)
   # init new tree object
-  tree <- new ('TreeMan', nodelist=nodelist, root='n1')
-  .updateTreeSlots(tree)
+  tree <- new('TreeMan', ndlst=ndlst, root='n1')
+  .updateTreeSlts(tree)
 }
 
 blncdTree <- function(...) {
@@ -90,22 +90,22 @@ imblncdTree <- function(...) {
 #@name blncdTree
 # blncdTree <- function(n) {
 #   mkNd <- function(id, prid, ptid, pd) {
-#     node <- list ('id'=id,
-#                   'span'=1,
+#     nd <- list('id'=id,
+#                   'spn'=1,
 #                   'prid'=pre,
 #                   'ptid'=post,
 #                   'kids'=kids,
 #                   'pd'=pd,
 #                   'prdst'=prdst)
-#     node
+#     nd
 #   }
 #   prdst <- n/2
 #   is <- seq(from=2, to=n, by=2)
 #   cntr <- 0
-#   nodelist <- list()
+#   ndlst <- list()
 #   for(i in is) {
 #     id <- paste0()
-#     nodelist <- mkNd
+#     ndlst <- mkNd
 #   }
 #   
 #   

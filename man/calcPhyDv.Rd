@@ -4,10 +4,10 @@
 \alias{calcPhyDv}
 \title{Calculate phylogenetic diversity}
 \usage{
-calcPhyDv(tree, ids, ...)
+calcPhyDv(tree, tids, ...)
 }
 \arguments{
-\item{ids}{tip ids}
+\item{tids}{tip ids}
 
 \item{...}{\code{plyr} arguments}
 

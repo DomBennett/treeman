@@ -24,22 +24,22 @@ rmTip <- function(tree, tid, drp_intrnl=TRUE) {
     nd
   }
   # unpack
-  ndlst <- tree@nodelist
+  ndlst <- tree@ndlst
   rid <- tree@root
-  sids <- getNodeSister(tree, tid)
+  sids <- getNdSstr(tree, tid)
   # get prid
   prid <- ndlst[[tid]][['prid']][[1]]
   # remove tid
-  ndlst <- .dwndateNode(ndlst, nid=tid, rid=rid)
+  ndlst <- .dwndateNd(ndlst, nid=tid, rid=rid)
   ndlst <- ndlst[names(ndlst) != tid]
   ndlst[[prid]][['ptid']] <-
     ndlst[[prid]][['ptid']][ndlst[[prid]][['ptid']] != tid]
   # remove prnd if specified and not polytomous
   if(drp_intrnl & length(sids) == 1) {
-    nids <- unlist(getNodesPtid(tree, sids))
+    nids <- unlist(getNdsPtid(tree, sids))
     ptid <- ndlst[[prid]][['ptid']][[1]]
-    ndlst[[ptid]][['span']] <- ndlst[[prid]][['span']] +
-      ndlst[[ptid]][['span']]
+    ndlst[[ptid]][['spn']] <- ndlst[[prid]][['spn']] +
+      ndlst[[ptid]][['spn']]
     if(prid != rid) {
       gprid <- ndlst[[prid]][['prid']][[1]]
       ndlst[[gprid]][['ptid']] <-
@@ -50,12 +50,12 @@ rmTip <- function(tree, tid, drp_intrnl=TRUE) {
       tree@root <- ptid
     }
     ndlst <- ndlst[names(ndlst) != prid]
-    ndlst <- .updateNodesSlot(ndlst, nids, updater)
+    ndlst <- .updateNdsSlt(ndlst, nids, updater)
   } else {
     prid <- NULL
   }
-  tree@nodelist <- ndlst
-  tree <- .updateTreeSlots(tree)
+  tree@ndlst <- ndlst
+  tree <- .updateTreeSlts(tree)
 }
 
 #' @name addTip
@@ -79,8 +79,8 @@ rmTip <- function(tree, tid, drp_intrnl=TRUE) {
 #' tree <- randTree(10)
 #' # add a new tip to the branch preceding t1
 #' # calculate the span and find a point in that time frame for start
-#' t1_span <- getSpanAge(tree, 't1')
-#' start <- runif(max=t1_span[1, 'start'], min=t1_span[1, 'end'], n=1)
+#' t1_spn <- getSpnAge(tree, 't1')
+#' start <- runif(max=t1_spn[1, 'start'], min=t1_spn[1, 'end'], n=1)
 #' end <- runif(max=start, min=0, n=1)
 #' tree <- addTip(tree, tid='t11', sid='t1', start=start, end=end)
 addTip <- function(tree, tid, sid, start, end,
@@ -99,10 +99,10 @@ addTip <- function(tree, tid, sid, start, end,
     nd
   }
   # unpack
-  ndlst <- tree@nodelist
+  ndlst <- tree@ndlst
   # get key data from tree
-  nids <- getNodePtid(tree, sid)
-  age <- getNodeAge(tree, sid)
+  nids <- getNdPtid(tree, sid)
+  age <- getNdAge(tree, sid)
   # init new nodes
   tnd <- list('id'=tid)
   snd <- ndlst[[sid]]
@@ -110,9 +110,9 @@ addTip <- function(tree, tid, sid, start, end,
   gpnd <- ndlst[[gpid]]
   pnd <- list('id'=pid, 'kids'=sid)
   # update spans
-  tnd[['span']] <- start - end
-  pnd[['span']] <- snd[['span']] - (start - age)
-  snd[['span']] <- start - age
+  tnd[['spn']] <- start - end
+  pnd[['spn']] <- snd[['spn']] - (start - age)
+  snd[['spn']] <- start - age
   # update ptid
   gpnd[['ptid']] <- gpnd[['ptid']][!gpnd[['ptid']] %in% snd[['id']]]
   gpnd[['ptid']] <- c(gpnd[['ptid']], pnd[['id']])
@@ -121,8 +121,8 @@ addTip <- function(tree, tid, sid, start, end,
   tnd[['prid']] <- snd[['prid']]
   pnd[['prid']] <- snd[['prid']]
   # set prdst
-  pnd[['prdst']] <- snd[['prdst']] - snd[['span']]
-  tnd[['prdst']] <- pnd[['prdst']] + tnd[['span']]
+  pnd[['prdst']] <- snd[['prdst']] - snd[['spn']]
+  tnd[['prdst']] <- pnd[['prdst']] + tnd[['spn']]
   # set kids
   if(is.null(snd[['kids']])) {
     pnd[['kids']] <- sid
@@ -138,10 +138,10 @@ addTip <- function(tree, tid, sid, start, end,
   ndlst[[sid]] <- snd
   ndlst[[gpid]] <- gpnd
   # update upstream prids from sid onwards
-  ndlst <- .updateNodesSlot(ndlst, c(tid, nids), updater)
+  ndlst <- .updateNdsSlt(ndlst, c(tid, nids), updater)
   # update downstream using updateTip
-  tree@nodelist <- .updateTip(ndlst, tid=tid, rid=tree@root)
-  .updateTreeSlots(tree)
+  tree@ndlst <- .updateTip(ndlst, tid=tid, rid=tree@root)
+  .updateTreeSlts(tree)
 }
 
 #' @name pinTips
@@ -174,17 +174,17 @@ pinTips <- function(tree, tids, lngs, ends, ...) {
       if(length(spns) == 0) {
         next
       }
-      spns <- c(spns, unlist(sapply(spns, function(n) tree@nodelist[[n]][['ptid']])))
+      spns <- c(spns, unlist(sapply(spns, function(n) tree@ndlst[[n]][['ptid']])))
       spns <- spns[spns != tree@root]
-      rngs <- getSpansAge(tree, ids=spns)
+      rngs <- getSpnsAge(tree, ids=spns)
       bool <- rngs[ ,'start'] > end
       if(any(bool)) {
         rngs <- rngs[bool, ]
         rngs[rngs[ ,'end'] <= end, "end"] <- end
         # pinning is based on branch length
         prbs <- rngs$start - rngs$end
-        e <- as.vector(sample(rngs$span, prob=prbs, size=1))
-        e_i <- which(rngs$span == e)
+        e <- as.vector(sample(rngs$spn, prob=prbs, size=1))
+        e_i <- which(rngs$spn == e)
         start <- runif(min=rngs$end[e_i], max=rngs$start[e_i], n=1)
         if(j != length(lng)) {
           tip_txnym <- lng[j+1]
@@ -194,8 +194,8 @@ pinTips <- function(tree, tids, lngs, ends, ...) {
         pid <- paste0('p_', tid, sep='')
         tree <- addTip(tree, tid=tid, sid=e, start=start, end=end,
                         pid=pid)
-        tree@nodelist[[tid]][['txnym']] <- tip_txnym
-        tree@nodelist[[pid]][['txnym']] <- lng[j]
+        tree@ndlst[[tid]][['txnym']] <- tip_txnym
+        tree@ndlst[[pid]][['txnym']] <- lng[j]
         # add to txnyms list
         txnyms[[tid]] <<- tip_txnym
         # push out
@@ -207,9 +207,9 @@ pinTips <- function(tree, tids, lngs, ends, ...) {
   .getTxnyms <- function(txnym, ...) {
     txnym
   }
-  txnyms <- plyr::mlply(tree@nodelist, .fun=.getTxnyms)
+  txnyms <- plyr::mlply(tree@ndlst, .fun=.getTxnyms)
   txnyms <- txnyms[1:length(txnyms)]
-  names(txnyms) <- names(tree@nodelist)
+  names(txnyms) <- names(tree@ndlst)
   plyr::m_ply(1:length(tids), .pin)
   tree
 }

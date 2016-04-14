@@ -4,30 +4,30 @@
 \alias{writeTree}
 \title{Write a Newick tree}
 \usage{
-writeTree(tree, file, nodeLabels = function(n) {     return(NULL) })
+writeTree(tree, file, ndLabels = function(nd) {     return(NULL) })
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}
 
 \item{file}{file path}
 
-\item{nodeLabels}{node label function}
+\item{ndLabels}{node label function}
 }
 \description{
 Creates a Newick tree from a \code{TreeMan} object.
 }
 \details{
-The \code{nodeLabels} argument can be used to add a user defined node label in
-the Newick tree. It should take only 1 argument, \code{n}, the node represented as a list.
+The \code{ndLabels} argument can be used to add a user defined node label in
+the Newick tree. It should take only 1 argument, \code{nd}, the node represented as a list.
 It should only return a single character value that can be added to a newick string.
 }
 \examples{
 library(treeman)
 tree <- randTree(10)
-nodeLabels <- function(n) {
-paste0(n[['id']], '_nodelabel')
+ndLabels <- function(n) {
+paste0(n[['id']], '_ndlabel')
 }
-writeTree(tree, file='example.tre', nodeLabels)
+writeTree(tree, file='example.tre', ndLabels)
 file.remove('example.tre')
 }
 \seealso{

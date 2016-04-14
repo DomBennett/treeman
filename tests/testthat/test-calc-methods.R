@@ -6,7 +6,7 @@ library(testthat)
 context('Testing \'calc-methods\'')
 test_that('calc_Blnc() works', {
   tree <- readTree(text="((t1:1.0,t2:1.0):1.0,(t3:1.0,t4:1.0):1.0);")
-  bstats <- calcNodesBlnc(tree, tree['nodes'])
+  bstats <- calcNdsBlnc(tree, tree['nds'])
   expect_that(sum(bstats), equals(0))
 })
 test_that('calcDstTrp() works', {
@@ -43,11 +43,11 @@ test_that('calcPhyDv() works', {
   tips <- sample(tree['tips'], 3)
   pd <- calcPhyDv(tree, tips)
   parent <- getPrnt(tree, ids=tips)
-  test_that(pd, is_less_than(tree@nodelist[[parent]][['pd']]))
+  test_that(pd, is_less_than(tree@ndlst[[parent]][['pd']]))
   # add a tip with a specified length.
   sister <- sample(tips, 1)
-  sister_age <- getNodeAge(tree, sister)
-  parent_age <- getNodeAge(tree, tree@nodelist[[sister]][['prid']][1])
+  sister_age <- getNdAge(tree, sister)
+  parent_age <- getNdAge(tree, tree@ndlst[[sister]][['prid']][1])
   start <- runif(min=sister_age, max=parent_age, n=1)
   end <- runif(min=0, max=start, n=1)
   tree <- addTip(tree, tid='new_tip', sid=sister, start=start, end=end)

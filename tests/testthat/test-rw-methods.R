@@ -22,7 +22,7 @@ test_that('writeTree() works', {
   writeTree(t1, 'test.tre')
   t2 <- readTree('test.tre')
   expect_that(t1['ntips'], equals(t2['ntips']))
-  expect_that(t1['nnodes'], equals(t2['nnodes']))
+  expect_that(t1['nnds'], equals(t2['nnds']))
   expect_that(t1['pd'], equals(t2['pd']))
   expect_that(t1['age'], equals(t2['age']))
 })

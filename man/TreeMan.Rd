@@ -11,11 +11,11 @@ and removing elements in a list. Note that internal nodes and tips are
 both considered nodes. Trees can be unrooted and polytomous.
 
 
-Each node within the \code{TreeMan} \code{nodelist} contains the following data slots:
+Each node within the \code{TreeMan} \code{ndlist} contains the following data slots:
 \itemize{
    \item \code{id}: character string for the node ID
    \item \code{txnym}: name of taxonomic clade (optional)
-   \item \code{span}: length of the preceding branch
+   \item \code{spn}: length of the preceding branch
    \item \code{prid}: IDs of the preceding nodes to the root
    \item \code{ptid}: IDs of the immediately connecting nodes
    \item \code{kids}: descending tip IDs
@@ -30,11 +30,11 @@ See below in 'Examples' for these methods in use.
 \section{Slots}{
 
 \describe{
-\item{\code{nodelist}}{list of nodes}
+\item{\code{ndlist}}{list of nodes}
 
-\item{\code{nodes}}{vector of node ids that are internal nodes}
+\item{\code{nds}}{vector of node ids that are internal nodes}
 
-\item{\code{nnodes}}{numeric of number of internal nodes in tree}
+\item{\code{nnds}}{numeric of number of internal nodes in tree}
 
 \item{\code{tips}}{vector of node ids that are tips}
 
@@ -48,9 +48,9 @@ See below in 'Examples' for these methods in use.
 
 \item{\code{pd}}{numeric of total branch length of tree}
 
-\item{\code{ext}}{vector of Node ids of all tips with 0 age}
+\item{\code{ext}}{vector of node ids of all tips with 0 age}
 
-\item{\code{exc}}{vector of Node ids of all tips with age > 0}
+\item{\code{exc}}{vector of node ids of all tips with age > 0}
 
 \item{\code{wspn}}{logical, do nodes have spans}
 
@@ -60,7 +60,7 @@ See below in 'Examples' for these methods in use.
 
 \item{\code{tol}}{numeric of tolerance for determining extant}
 
-\item{\code{root}}{character of Node id of root, if no root then empty character}
+\item{\code{root}}{character of node id of root, if no root then empty character}
 }}
 \examples{
 library(treeman)
@@ -70,9 +70,9 @@ tree <- randTree(10)
 print(tree)
 # Currently available methods
 tree['tips']  # return all tips IDs
-tree['nodes']  # return all internal node IDs
+tree['nds']  # return all internal node IDs
 tree['ntips']  # count all tips
-tree['nnodes']  # count all internal nodes
+tree['nnds']  # count all internal nodes
 tree['root']  # identify root node
 tree[['t1']]  # return t1 node object
 tree['pd']  # return phylogenetic diversity
@@ -86,10 +86,10 @@ tree <- setTol(tree, 10)  # reset tolerance, default 1e-8
 tree['ext']
 # Because all nodes are lists with metadata we can readily
 #  get specific information on nodes of interest
-node <- tree[['n2']]
-print(node)
+nd <- tree[['n2']]
+print(nd)
 # And then use the same syntax for the tree
-node['age']  # .... nkids, pd, etc.
+nd['age']  # .... nkids, pd, etc.
 }
 \seealso{
 \code{\link{randTree}}, \code{\link{Node}}

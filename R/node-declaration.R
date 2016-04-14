@@ -1,35 +1,35 @@
-.newNode <- function(tree, node) {
-  node <- tree@nodelist[[node]]
-  if(is.null(node[['span']]) | !tree@wspn) {
-    span <- pd <- prdst <- numeric()
+.newNd <- function(tree, nd) {
+  nd <- tree@ndlst[[nd]]
+  if(is.null(nd[['spn']]) | !tree@wspn) {
+    spn <- pd <- prdst <- numeric()
   } else {
-    span <- node[['span']]
-    pd <- node[['pd']]
-    prdst <- node[['prdst']]
+    spn <- nd[['spn']]
+    pd <- nd[['pd']]
+    prdst <- nd[['prdst']]
   }
   if(length(tree@age) > 0) {
-    age <- tree@age - node[['prdst']]
+    age <- tree@age - nd[['prdst']]
   } else {
     age <- numeric()
   }
-  if(is.null(node[['txnym']])) {
+  if(is.null(nd[['txnym']])) {
     txnym <- vector()
   } else {
-    txnym <- node[['txnym']]
+    txnym <- nd[['txnym']]
   }
-  new('Node', id=node[['id']], span=span, prid=as.character(node[['prid']][1]),
-     ptid=as.character(node[['ptid']]), kids=as.character(node[['kids']]),
-     nkids=length(as.character(node[['kids']])), pd=pd, txnym=txnym,
-     prdst=prdst, root=tree@root == node[['id']],
-     age=age, tip=length(node[['ptid']]) == 0)
+  new('Node', id=nd[['id']], spn=spn, prid=as.character(nd[['prid']][1]),
+     ptid=as.character(nd[['ptid']]), kids=as.character(nd[['kids']]),
+     nkids=length(as.character(nd[['kids']])), pd=pd, txnym=txnym,
+     prdst=prdst, root=tree@root == nd[['id']],
+     age=age, tip=length(nd[['ptid']]) == 0)
 }
 
 #' @name Node
 #' @title S4 class for displaying nodes
 #' @description The \code{Node} class is used to display node information.
 #' It is only generated when a user implements the \code{[[]]} on a tree.
-#' @slot id unique ID for node in tree['nodelist']
-#' @slot span length of preceding branch
+#' @slot id unique ID for node in tree['ndlst']
+#' @slot spn length of preceding branch
 #' @slot prid parent node ID
 #' @slot ptid child node ID
 #' @slot kids descending tip IDs
@@ -45,7 +45,7 @@
 #' \code{\link{cTrees}}
 setClass ('Node', representation=representation (
   id='character',        # unique ID for node in tree@nodelist
-  span='numeric',        # length of preceding branch
+  spn='numeric',        # length of preceding branch
   prid='character',      # parent node ID
   ptid='vector',         # child node IDs
   kids='vector',         # descending tip IDs
@@ -87,9 +87,9 @@ setMethod ('print', c('x'='Node'),
                msg <- paste0(msg, '  + ptid: \"', paste0(x@ptid, collapse='\", \"'), '\"\n')
                msg <- paste0(msg, '  + nkids: ', length(x@kids), '\n')
              }
-             if(length(x@span) > 0) {
+             if(length(x@spn) > 0) {
                if(!x@root) {
-                 msg <- paste0(msg, '  + span: ', signif(x@span, 2), '\n')
+                 msg <- paste0(msg, '  + spn: ', signif(x@spn, 2), '\n')
                }
                if(length(x@age) > 0) {
                  msg <- paste0(msg, '  + age: ', signif(x@age, 2), '\n')

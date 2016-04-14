@@ -4,16 +4,16 @@ library(testthat)
 
 # RUNNING
 context('Testing \'TreeMan Class\'')
-test_that('.updateTreeSlots() works', {
+test_that('.updateTreeSlts() works', {
   tree <- randTree(100)
-  tree@nodelist[['t1']][['span']] <- NULL
-  tree <- treeman:::.updateTreeSlots(tree)
+  tree@ndlst[['t1']][['spn']] <- NULL
+  tree <- treeman:::.updateTreeSlts(tree)
   expect_false(tree@wspn)
 })
 test_that('.updateKids() works', {
   tree <- randTree(10)
-  kids <- getNodesKids(tree, tree['nodes'])
-  ndlst <- tree['nodelist']
+  kids <- getNdsKids(tree, tree['nds'])
+  ndlst <- tree@ndlst
   tid <- sample(tree['tips'], 1)
   for(i in 1:length(ndlst)) {
     bool <- ndlst[[i]][['kids']] != tid
@@ -21,8 +21,8 @@ test_that('.updateKids() works', {
   }
   ndlst <- treeman:::.updateKids(ndlst, tid=tid,
                        rid=tree['root'])
-  tree@nodelist <- ndlst
-  new_kids <- getNodesKids(tree, tree['nodes'])
+  tree@ndlst <- ndlst
+  new_kids <- getNdsKids(tree, tree['nds'])
   res <- rep(NA, length(kids))
   for(i in 1:length(res)) {
     res[i] <- all(kids[[i]] %in% new_kids[[i]]) &
@@ -32,7 +32,7 @@ test_that('.updateKids() works', {
 })
 test_that('.dwndateKids() works', {
   tree <- randTree(10)
-  ndlst <- tree['nodelist']
+  ndlst <- tree@ndlst
   tid <- sample(tree['tips'], 1)
   ndlst <- treeman:::.dwndateKids(ndlst, tid, tree['root'])
   test_bool <- rep(NA, length(ndlst))
@@ -43,14 +43,14 @@ test_that('.dwndateKids() works', {
 })
 test_that('.globalUpdateKids() works', {
   tree <- randTree(10)
-  kids <- getNodesKids(tree, tree['nodes'])
-  ndlst <- tree['nodelist']
+  kids <- getNdsKids(tree, tree['nds'])
+  ndlst <- tree@ndlst
   for(i in 1:length(ndlst)) {
     ndlst[[i]][['kids']] <- NULL
   }
   ndlst <- treeman:::.globalUpdateKids(ndlst)
-  tree@nodelist <- ndlst
-  new_kids <- getNodesKids(tree, tree['nodes'])
+  tree@ndlst <- ndlst
+  new_kids <- getNdsKids(tree, tree['nds'])
   res <- rep(NA, length(kids))
   for(i in 1:length(res)) {
     res[i] <- all(kids[[i]] %in% new_kids[[i]]) &
@@ -60,17 +60,17 @@ test_that('.globalUpdateKids() works', {
 })
 test_that('.updateTip() works', {
   tree <- randTree(10)
-  ndlst <- tree['nodelist']
+  ndlst <- tree@ndlst
   tid <- sample(tree['tips'], 1)
   ndlst <- treeman:::.dwndateTip(ndlst, tid=tid, rid=tree['root'])
   new_ndlst <- treeman:::.updateTip(ndlst, tid=tid, rid=tree['root'])
-  tree <- new('TreeMan', nodelist=new_ndlst, root=tree['root'])
-  tree <- treeman:::.updateTreeSlots(tree)
+  tree <- new('TreeMan', ndlst=new_ndlst, root=tree['root'])
+  tree <- treeman:::.updateTreeSlts(tree)
   expect_that(tree['ntips'], equals(10))
 })
 test_that('.dwndateTip() works', {
   tree <- randTree(10)
-  ndlst <- tree['nodelist']
+  ndlst <- tree@ndlst
   tid <- sample(tree['tips'], 1)
   new_ndlst <- treeman:::.dwndateTip(ndlst, tid=tid, rid=tree['root'])
   pd_res <- kid_res <- rep(NA, length(ndlst))
@@ -81,11 +81,11 @@ test_that('.dwndateTip() works', {
   expect_true(all(kid_res))
   expect_that(sum(pd_res), is_more_than(0))
 })
-test_that('.dwndateNode() works', {
+test_that('.dwndateNd() works', {
   tree <- randTree(10)
-  ndlst <- tree['nodelist']
-  nid <- sample(tree['nodes'][tree['nodes'] != tree['root']], 1)
-  new_ndlst <- treeman:::.dwndateNode(ndlst, nid=nid, rid=tree['root'])
+  ndlst <- tree@ndlst
+  nid <- sample(tree['nds'][tree['nds'] != tree['root']], 1)
+  new_ndlst <- treeman:::.dwndateNd(ndlst, nid=nid, rid=tree['root'])
   pd_res <- kids_res <- rep(NA, length(ndlst))
   for(i in 1:length(ndlst)) {
     pd_res[i] <- ndlst[[i]][['pd']] > new_ndlst[[i]][['pd']]
@@ -94,30 +94,30 @@ test_that('.dwndateNode() works', {
   expect_that(sum(pd_res), is_more_than(0))
   expect_that(all(kids_res), is_false())
 })
-test_that('.updateNode() works', {
+test_that('.updateNd() works', {
   tree <- randTree(10)
   age_before <- tree['age']
   pd_before <- tree['pd']
   ntips_before <- tree['ntips']
-  ndlst <- tree['nodelist']
-  nid <- sample(tree['nodes'][tree['nodes'] != tree['root']], 1)
-  ndlst <- treeman:::.dwndateNode(ndlst, nid=nid, rid=tree['root'])
-  new_ndlst <- treeman:::.updateNode(ndlst, nid=nid, rid=tree['root'])
-  tree <- new('TreeMan', nodelist=new_ndlst, root=tree['root'])
-  tree <- treeman:::.updateTreeSlots(tree)
+  ndlst <- tree@ndlst
+  nid <- sample(tree['nds'][tree['nds'] != tree['root']], 1)
+  ndlst <- treeman:::.dwndateNd(ndlst, nid=nid, rid=tree['root'])
+  new_ndlst <- treeman:::.updateNd(ndlst, nid=nid, rid=tree['root'])
+  tree <- new('TreeMan', ndlst=new_ndlst, root=tree['root'])
+  tree <- treeman:::.updateTreeSlts(tree)
   expect_that(tree['ntips'], equals(ntips_before))
   expect_that(tree['age'], equals(age_before))
   expect_that(tree['pd'], equals(pd_before))
 })
 test_that('.globalUpdateAll() works', {
   tree <- randTree(10)
-  ndlst <- tree['nodelist']
+  ndlst <- tree@ndlst
   for(i in 1:length(ndlst)) {
     ndlst[[i]][['prdst']] <- ndlst[[i]][['kids']] <- NULL
     ndlst[[i]][['pd']] <- 0
   }
   new_ndlst <- treeman:::.globalUpdateAll(ndlst=ndlst)
-  tree <- new('TreeMan', nodelist=new_ndlst, root=tree['root'])
-  tree <- treeman:::.updateTreeSlots(tree)
+  tree <- new('TreeMan', ndlst=new_ndlst, root=tree['root'])
+  tree <- treeman:::.updateTreeSlts(tree)
   expect_that(tree['ntips'], equals(10))
 })

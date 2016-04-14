@@ -11,9 +11,9 @@ It is only generated when a user implements the \code{[[]]} on a tree.
 \section{Slots}{
 
 \describe{
-\item{\code{id}}{unique ID for node in tree['nodelist']}
+\item{\code{id}}{unique ID for node in tree['ndlist']}
 
-\item{\code{span}}{length of preceding branch}
+\item{\code{spn}}{length of preceding branch}
 
 \item{\code{prid}}{parent node ID}
 

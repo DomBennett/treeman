@@ -1,53 +1,53 @@
-#' @name calcNodeBlnc
+#' @name calcNdBlnc
 #' @title Calculate the balance of a node
 #' @description Returns the balance of a node.
 #' @details Balance is calculated as the absolute difference between the number of descendents 
 #' of the two bifurcating edges of a node and the expected value for a balanced tree.
-#' \code{NA} is returned if the node is polytomous.
+#' \code{NA} is returned if the node is polytomous or a tip.
 #' @param tree \code{TreeMan} object
-#' @param id node id
+#' @param nid node id
 #' @seealso
-#' \code{\link{calcNodesBlnc}}, 
+#' \code{\link{calcNdsBlnc}}, 
 #' \url{https://github.com/DomBennett/treeman/wiki/calc-methods}
 #' @export
 #' @examples
 #' library(treeman)
 #' tree <- randTree(10)
-#' calcNodeBlnc(tree, id=tree['root'])  # root balance
-calcNodeBlnc <- function(tree, id) {
-  ntot <- length(tree@nodelist[[id]][['kids']])
-  ptids <- tree@nodelist[[id]][['ptid']]
+#' calcNdBlnc(tree, nid=tree['root'])  # root balance
+calcNdBlnc <- function(tree, nid) {
+  ntot <- length(tree@ndlst[[nid]][['kids']])
+  ptids <- tree@ndlst[[nid]][['ptid']]
   if(length(ptids) > 2) {
     return(NA)
   }
   ptid <- ptids[1]
-  nprt <- length(tree@nodelist[[ptid]][['kids']])
+  nprt <- length(tree@ndlst[[ptid]][['kids']])
   if(nprt == 0) {
     nprt <- 1
   }
   abs((ntot/2) - nprt)
 }
 
-#' @name calcNodesBlnc
+#' @name calcNdsBlnc
 #' @title Calculate the balances of all nodes
 #' @description Returns the absolute differences in number of descendants for bifurcating 
 #' branches of every node
-#' @details Runs \code{calcNodeBlnc()} across all node IDs. \code{NA} is returned if the
+#' @details Runs \code{calcNdBlnc()} across all node IDs. \code{NA} is returned if the
 #' node is polytomous. Parallelizable.
 #' @param tree \code{TreeMan} object
-#' @param id node id
+#' @param nids node ids
 #' @param ... \code{plyr} arguments
 #' @seealso
-#' \code{\link{calcNodeBlnc}}, 
+#' \code{\link{calcNdBlnc}}, 
 #' \url{https://github.com/DomBennett/treeman/wiki/calc-methods}
 #' @export
 #' @examples
 #' library(treeman)
 #' tree <- randTree(10)
-#' calcNodesBlnc(tree, id=tree['nodes'])
-calcNodesBlnc <- function(tree, ids, ...) {
-  l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
-  plyr::mdply(.data=l_data, .fun=calcNodeBlnc, tree=tree, ...)[ ,2]
+#' calcNdsBlnc(tree, nids=tree['nds'])
+calcNdsBlnc <- function(tree, nids, ...) {
+  l_data <- data.frame(nid=nids, stringsAsFactors=FALSE)
+  plyr::mdply(.data=l_data, .fun=calcNdBlnc, tree=tree, ...)[ ,2]
 }
 
 #' @name calcDstTrp
@@ -120,13 +120,13 @@ calcDstTrp <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
 #' ids_2 <- sample(tree['tips'], 5)
 #' calcOvrlp(tree, ids_1, ids_2)
 calcOvrlp <- function(tree, ids_1, ids_2, nrmlsd=FALSE, ...) {
-  spans <- getNodesSlot(tree, name='span', tree@all, ...)
-  names(spans) <- tree@all
-  ids_1 <- c(unique(unlist(getNodesPrid(tree, ids_1, ...))),
+  spns <- getNdsSlt(tree, name='spn', tree@all, ...)
+  names(spns) <- tree@all
+  ids_1 <- c(unique(unlist(getNdsPrid(tree, ids_1, ...))),
              ids_1)
-  ids_2 <- c(unique(unlist(getNodesPrid(tree, ids_2, ...))),
+  ids_2 <- c(unique(unlist(getNdsPrid(tree, ids_2, ...))),
              ids_2)
-  ovrlp <- sum(spans[ids_2[ids_2 %in% ids_1]])
+  ovrlp <- sum(spns[ids_2[ids_2 %in% ids_1]])
   if(nrmlsd) {
     ovrlp <- ovrlp/tree@pd
   }
@@ -157,12 +157,12 @@ calcOvrlp <- function(tree, ids_1, ids_2, nrmlsd=FALSE, ...) {
 #' tree_2 <- randTree(10)
 #' calcDstBLD(tree_1, tree_2)
 calcDstBLD <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
-  n1 <- tree_1@nodes[!tree_1@nodes == tree_1@root]
-  n2 <- tree_2@nodes[!tree_2@nodes == tree_2@root]
-  c1 <- getNodesKids(tree_1, n1, ...)
-  c2 <- getNodesKids(tree_2, n2, ...)
-  s1 <- getNodesSlot(tree_1, name="span", ids=n1, ...)
-  s2 <- getNodesSlot(tree_2, name="span", ids=n2, ...)
+  n1 <- tree_1@nds[!tree_1@nds == tree_1@root]
+  n2 <- tree_2@nds[!tree_2@nds == tree_2@root]
+  c1 <- getNdsKids(tree_1, n1, ...)
+  c2 <- getNdsKids(tree_2, n2, ...)
+  s1 <- getNdsSlt(tree_1, name="spn", ids=n1, ...)
+  s2 <- getNdsSlt(tree_2, name="spn", ids=n2, ...)
   d1 <- s2[match(c1, c2)]
   d1[which(is.na(d1))] <- 0
   d1 <- s1 - d1
@@ -200,10 +200,10 @@ calcDstBLD <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
 #' tree_2 <- randTree(10)
 #' calcDstRF(tree_1, tree_2)
 calcDstRF <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
-  n1 <- tree_1@nodes[!tree_1@nodes == tree_1@root]
-  n2 <- tree_2@nodes[!tree_2@nodes == tree_2@root]
-  c1 <- getNodesKids(tree_1, n1, ...)
-  c2 <- getNodesKids(tree_2, n2, ...)
+  n1 <- tree_1@nds[!tree_1@nds == tree_1@root]
+  n2 <- tree_2@nds[!tree_2@nds == tree_2@root]
+  c1 <- getNdsKids(tree_1, n1, ...)
+  c2 <- getNdsKids(tree_2, n2, ...)
   d <- sum(!c1 %in% c2) + sum(!c2 %in% c1)
   if(nrmlsd) {
     max_d <- (length(n1) + length(n2))
@@ -219,7 +219,7 @@ calcDstRF <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
 #' branches for specified tips in a tree. It can be used to investigate how biodviersity
 #' as measured by the phylogeny changes. Parallelizable.
 #' @param tree_1 \code{TreeMan} object
-#' @param ids tip ids
+#' @param tids tip ids
 #' @param ... \code{plyr} arguments
 #' @references
 #' Faith, D. (1992). Conservation evaluation and phylogenetic diversity.
@@ -232,13 +232,13 @@ calcDstRF <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
 #' library(treeman)
 #' tree <- randTree(10)
 #' calcPhyDv(tree, tree['tips'])
-calcPhyDv <- function(tree, ids, ...) {
-  prids <- c(unique(unlist(getNodesPrid(tree, ids))),
-             ids)
+calcPhyDv <- function(tree, tids, ...) {
+  prids <- c(unique(unlist(getNdsPrid(tree, tids))),
+             tids)
   counts <- table(prids)
-  prids <- names(counts)[counts < length(ids)]
-  spans <- getNodesSlot(tree, name="span", ids=prids, ...)
-  sum(spans)
+  prids <- names(counts)[counts < length(tids)]
+  spns <- getNdsSlt(tree, name="spn", ids=prids, ...)
+  sum(spns)
 }
 
 #' @name calcFrPrp
@@ -248,7 +248,7 @@ calcPhyDv <- function(tree, ids, ...) {
 #' in a tree through summing the total amount of branch length each tip represents, where
 #' each branch in the tree is evenly divided between all descendants. Parallelizable.
 #' @param tree \code{TreeMan} object
-#' @param ids tip IDs
+#' @param tids tip IDs
 #' @param ... \code{plyr} arguments
 #' @references
 #' Isaac, N.J.B., Turvey, S.T., Collen, B., Waterman, C. and Baillie, J.E.M. (2007). 
@@ -261,24 +261,24 @@ calcPhyDv <- function(tree, ids, ...) {
 #' library(treeman)
 #' tree <- randTree(10)
 #' calcFrPrp(tree, tree['tips'])
-calcFrPrp <- function(tree, ids, ...) {
+calcFrPrp <- function(tree, tids, ...) {
   .share <- function(id) {
-    span <- tree@nodelist[[id]][['span']]
-    kids <- getNodeKids(tree, id)
+    spn <- tree@ndlst[[id]][['spn']]
+    kids <- getNdKids(tree, id)
     if(!is.null(kids)) {
       n <- length(kids)
     } else {
       n <- 1
     }
-    span/n
+    spn/n
   }
   .calc <- function(tid) {
-    ids <- c(tid, getNodePrid(tree, tid))
+    ids <- c(tid, getNdPrid(tree, tid))
     l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
     shares <- plyr::mdply(.data=l_data, .fun=.share)[ ,2]
     sum(shares)
   }
-  l_data <- data.frame(tid=ids, stringsAsFactors=FALSE)
+  l_data <- data.frame(tid=tids, stringsAsFactors=FALSE)
   plyr::mdply(.data=l_data, .fun=.calc, ...)[ ,2]
 }
 
@@ -309,8 +309,8 @@ calcDstMtrx <- function(tree, ids) {
       return(0)
     }
     path <- getPath(tree, from=cmb[1], to=cmb[2])
-    path_spans <- unlist(lapply(tree@nodelist[path], function(n) n[['span']]))
-    sum(path_spans)
+    path_spns <- unlist(lapply(tree@ndlst[path], function(n) n[['spn']]))
+    sum(path_spns)
   }
   cmbs <- expand.grid(ids, ids, stringsAsFactors=FALSE)
   res <- apply(cmbs, 1, .getDist)

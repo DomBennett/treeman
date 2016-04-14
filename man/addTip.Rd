@@ -31,8 +31,8 @@ library(treeman)
 tree <- randTree(10)
 # add a new tip to the branch preceding t1
 # calculate the span and find a point in that time frame for start
-t1_span <- getSpanAge(tree, 't1')
-start <- runif(max=t1_span[1, 'start'], min=t1_span[1, 'end'], n=1)
+t1_spn <- getSpnAge(tree, 't1')
+start <- runif(max=t1_spn[1, 'start'], min=t1_spn[1, 'end'], n=1)
 end <- runif(max=start, min=0, n=1)
 tree <- addTip(tree, tid='t11', sid='t1', start=start, end=end)
 }

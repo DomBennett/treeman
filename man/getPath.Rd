@@ -25,7 +25,7 @@ data(mammals)
 # what's the phylogenetic distance from humans to gorillas?
 ape_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
 pth <- getPath(mammals, from='Homo_sapiens', to='Gorilla_gorilla')
-sum(getNodesSlot(mammals, ids=pth, name='span'))
+sum(getNdsSlot(mammals, ids=pth, name='span'))
 }
 \seealso{
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}

@@ -26,7 +26,7 @@ tree <- setTol(tree, 10)
 print(tree)
 }
 \seealso{
-\code{\link{setNodesSpan}}
+\code{\link{setNdsSpn}}
 \url{https://github.com/DomBennett/treeman/wiki/set-methods}
 }
 

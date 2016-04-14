@@ -4,53 +4,53 @@ library(testthat)
 
 # RUNNING
 context('Testing \'get-methods\'')
-test_that('get_Sister() works', {
+test_that('get_Sstr() works', {
   tree <- randTree(10)
   tips <- tree['tips']
-  fwrd <- getNodesSister(tree, tips)
-  rvrse <- getNodesSister(tree, fwrd)
+  fwrd <- getNdsSstr(tree, tips)
+  rvrse <- getNdsSstr(tree, fwrd)
   expect_that(rvrse, equals(tips))
 })
 test_that('getTxnyms() works', {
   data('mammals')
-  nid <- sample(mammals['nodes'], 1)
+  nid <- sample(mammals['nds'], 1)
   txnym <- mammals[[nid]]['txnym']
   res <- getTxnyms(mammals, txnym)
   expect_true(nid %in% res[[1]])
 })
 test_that('getOtgrp() works', {
   tree <- randTree(10)
-  rnd_nd <- sample(tree['nodes'][tree['nodes'] != tree['root']], 1)
-  ingrp <- getNodeKids(tree, rnd_nd)
+  rnd_nd <- sample(tree['nds'][tree['nds'] != tree['root']], 1)
+  ingrp <- getNdKids(tree, rnd_nd)
   otgrp <- sample(tree['tips'][!tree['tips'] %in% ingrp], 1)
   res <- getOtgrp(tree, ids=c(ingrp, otgrp))
   expect_that(res, equals(otgrp))
 })
-test_that('get_Slot() works', {
+test_that('get_Slt() works', {
   tree <- randTree(10)
-  node_spans <- getNodesSlot(tree, name="span",
-                             ids=tree['all'])
-  expect_that(sum(node_spans), equals(tree['pd']))
+  nd_spns <- getNdsSlt(tree, name="spn",
+                       ids=tree['all'])
+  expect_that(sum(nd_spns), equals(tree['pd']))
 })
 test_that('get_Kids() works', {
   tree <- randTree(10)
-  kids <- getNodesKids(tree, tree['nodes'])
+  kids <- getNdsKids(tree, tree['nds'])
   expect_true(all(kids$n1 %in% paste0("t", 1:10)))
 })
 test_that('get_Age() works', {
   tree <- randTree(10)
   root_age <- tree['age']
-  nd_ages <- getNodesAge(tree, tree['nodes'])
+  nd_ages <- getNdsAge(tree, tree['nds'])
   expect_true(all(nd_ages <= root_age))
 })
-test_that('getSpanAge() works', {
+test_that('getSpnAge() works', {
   tree <- randTree(10)
-  tip_age <- getSpanAge(tree, sample(tree['tips'], 1))
+  tip_age <- getSpnAge(tree, sample(tree['tips'], 1))
   expect_that(tip_age['start'], is_more_than(tip_age['end']))
 })
-test_that('getSpansAge() works', {
+test_that('getSpnsAge() works', {
   tree <- randTree(10)
-  tip_ages <- getSpansAge(tree, tree['tips'])
+  tip_ages <- getSpnsAge(tree, tree['tips'])
   res <- all(tip_ages[ ,'start'] > tip_ages[ ,'end'])
   expect_true(res)
 })
@@ -69,26 +69,26 @@ test_that("getPath() works", {
 })
 test_that("get_Prid() works", {
   tree <- randTree(10)
-  prid <- getNodePrid(tree, id='n1')
+  prid <- getNdPrid(tree, id='n1')
   expect_that(prid, is_null())
-  prids <- getNodesPrid(tree, tree['nodes'])
+  prids <- getNdsPrid(tree, tree['nds'])
   lst_nds <- unlist(lapply(prids, function(n) n[length(n)]))
   expect_true(all(lst_nds == "n1"))
 })
 test_that("get_Ptid() works", {
   tree <- randTree(10)
-  ptids <- getNodesPtid(tree, tree['nodes'])
+  ptids <- getNdsPtid(tree, tree['nds'])
   n1_ptids <- tree['all'][tree['all'] != 'n1']
   expect_true(all(n1_ptids %in% ptids[['n1']]))
   expect_that(ptids[['t1']], is_null())
 })
-test_that("get_Lineage() works", {
-  # TODO: redo with setNodes
+test_that("get_Lng() works", {
+  # TODO: redo with setNds
   tree <- randTree(10)
-  for(i in 1:length(tree@nodelist)) {
-    tree@nodelist[[i]]$txnym <- paste0("l", sample(1:1000, 1))
+  for(i in 1:length(tree@ndlst)) {
+    tree@ndlst[[i]]$txnym <- paste0("l", sample(1:1000, 1))
   }
-  lngs <- getNodesLineage(tree, tree['tips'])
+  lngs <- getNdsLng(tree, tree['tips'])
   rnd1 <- sample(1:length(lngs), 1)
   rnd2 <- sample(1:length(lngs), 1)
   expect_that(sum(lngs[[rnd1]] %in% lngs[[rnd2]]),
@@ -98,7 +98,7 @@ test_that("getSubtree() works", {
   tree <- randTree(10)
   subtree <- getSubtree(tree, 'n2')
   expect_that(tree['ntips'], is_more_than(subtree['ntips']))
-  expect_that(tree['nnodes'], is_more_than(subtree['nnodes']))
+  expect_that(tree['nnds'], is_more_than(subtree['nnds']))
   expect_that(tree['pd'], is_more_than(subtree['pd']))
   expect_that(tree['age'], is_more_than(subtree['age']))
 })

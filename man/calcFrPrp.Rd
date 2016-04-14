@@ -4,12 +4,12 @@
 \alias{calcFrPrp}
 \title{Calculate evolutionary distinctness}
 \usage{
-calcFrPrp(tree, ids, ...)
+calcFrPrp(tree, tids, ...)
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}
 
-\item{ids}{tip IDs}
+\item{tids}{tip IDs}
 
 \item{...}{\code{plyr} arguments}
 }

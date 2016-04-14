@@ -1,25 +1,25 @@
 #' @name writeTree
 #' @title Write a Newick tree
 #' @description Creates a Newick tree from a \code{TreeMan} object.
-#' @details The \code{nodeLabels} argument can be used to add a user defined node label in
-#' the Newick tree. It should take only 1 argument, \code{n}, the node represented as a list.
+#' @details The \code{ndLabels} argument can be used to add a user defined node label in
+#' the Newick tree. It should take only 1 argument, \code{nd}, the node represented as a list.
 #' It should only return a single character value that can be added to a newick string.
 #' @param tree \code{TreeMan} object
 #' @param file file path
-#' @param nodeLabels node label function
+#' @param ndLabels node label function
 #' @seealso
 #' \code{\link{readTree}}, \code{\link{randTree}}, \url{https://en.wikipedia.org/wiki/Newick_format}
 #' @export
 #' @examples
 #' library(treeman)
 #' tree <- randTree(10)
-#' nodeLabels <- function(n) {
-#' paste0(n[['id']], '_nodelabel')
+#' ndLabels <- function(n) {
+#' paste0(n[['id']], '_ndlabel')
 #' }
-#' writeTree(tree, file='example.tre', nodeLabels)
+#' writeTree(tree, file='example.tre', ndLabels)
 #' file.remove('example.tre')
 # TODO: test this with unrooted trees, adapt for TreeMen
-writeTree <- function(tree, file, nodeLabels=function(n){
+writeTree <- function(tree, file, ndLabels=function(nd){
   return(NULL)
   }) {
   tipBytip <- function(i) {
@@ -27,7 +27,7 @@ writeTree <- function(tree, file, nodeLabels=function(n){
              ndlst[[prid]][['prid']])
     id <<- ids[!ids %in% deja_vues][1]
     deja_vues[i] <<- id
-    spn <- ndlst[[id]][['span']]
+    spn <- ndlst[[id]][['spn']]
     if(id %in% tids) {
       dpth <- which(ndlst[[id]][['prid']] == prid) - 1
       prid <<- ndlst[[id]][['prid']][[1]]
@@ -40,7 +40,7 @@ writeTree <- function(tree, file, nodeLabels=function(n){
       }
     } else {
       prid <<- ndlst[[id]][['prid']][[1]]
-      ndlbl <- nodeLabels(ndlst[[id]])
+      ndlbl <- ndLabels(ndlst[[id]])
       trstr <<- paste0(trstr, ')', ndlbl,':', spn)
     }
     NULL
@@ -48,16 +48,16 @@ writeTree <- function(tree, file, nodeLabels=function(n){
   # start with first tip
   # loop through tree structure adding tip by tip to string
   # unpack
-  ndlst <- tree@nodelist
+  ndlst <- tree@ndlst
   tids <- tree@tips
-  nids <- tree@nodes
+  nids <- tree@nds
   rid <- tree@root
   # add first tip
   id <- tids[1]
   trstr <-  ''
   deja_vues <- rep(NA, length(ndlst))
   deja_vues[1] <- id
-  spn <- ndlst[[id]][['span']]
+  spn <- ndlst[[id]][['spn']]
   dpth <- length(ndlst[[id]][['prid']])
   prid <- ndlst[[id]][['prid']][[1]]
   tpstr <- paste0(id, ':', spn)
@@ -106,12 +106,12 @@ readTree <- function(file=NULL, text=NULL, ...) {
   m_ply(l_data, .mkNdLst, rdrenv=rdrenv)
   .addRoot(rdrenv)
   if(length(rdrenv[['root']]) == 0) {
-    ndlst <- .globalUpdateKids(rdrenv[['nodelist']])
+    ndlst <- .globalUpdateKids(rdrenv[['ndlst']])
   } else {
-    ndlst <- .globalUpdateAll(rdrenv[['nodelist']])
+    ndlst <- .globalUpdateAll(rdrenv[['ndlst']])
   }
-  tree <- new('TreeMan', nodelist=ndlst, root=rdrenv[['root']])
-  .updateTreeSlots(tree)
+  tree <- new('TreeMan', ndlst=ndlst, root=rdrenv[['root']])
+  .updateTreeSlts(tree)
 }
 
 # set-up reader env
@@ -119,7 +119,7 @@ readTree <- function(file=NULL, text=NULL, ...) {
   rdrenv <- new.env()
   rdrenv$wspn <- grepl(':', trstr)
   rdrenv$trstr <- trstr
-  rdrenv$nodelist <- list()
+  rdrenv$ndlst <- list()
   rdrenv$prnds <- list()
   rdrenv$cntr <- 0L
   rdrenv$i <- 0L
@@ -128,12 +128,12 @@ readTree <- function(file=NULL, text=NULL, ...) {
 }
 
 # extract ID and span from ndstr
-.getIDandSpan <- function(ndstr, nints, wspn) {
+.getIDandSpn <- function(ndstr, nints, wspn) {
   nd <- .mkNd(id='', wspn)
   ndstr <- gsub("(\\(|\\)|\\;|,)", "", ndstr)
   ndstr <- strsplit(ndstr, ":")[[1]]
   if(length(ndstr) > 1) {
-    nd[['span']] <- as.numeric(ndstr[2])
+    nd[['spn']] <- as.numeric(ndstr[2])
   }
   if(length(ndstr) == 0 || ndstr[1] == "") {
     nd[['id']] <- paste0("n", nints)
@@ -147,7 +147,7 @@ readTree <- function(file=NULL, text=NULL, ...) {
   nd <- list()
   nd[['id']] <- id
   if(wspn) {
-    nd[['span']] <- nd[['prdst']] <- nd[['pd']] <- 0
+    nd[['spn']] <- nd[['prdst']] <- nd[['pd']] <- 0
   }
   nd
 }
@@ -165,7 +165,7 @@ readTree <- function(file=NULL, text=NULL, ...) {
     rdrenv$prnds[[rdrenv$i]] <- .mkNd(id=paste0("n", rdrenv$cntr),
                                       wspn=rdrenv$wspn)
   } else {
-    nd <- .getIDandSpan(ndstr, rdrenv$cntr, rdrenv$wspn)
+    nd <- .getIDandSpn(ndstr, rdrenv$cntr, rdrenv$wspn)
     if(rdrenv$nxt_is_intrnl) {
       # TODO: utilise nd$id, e.g. node labels are taxonym or support
       nd$id <- rdrenv$prnds[[rdrenv$i]][['id']]
@@ -173,11 +173,11 @@ readTree <- function(file=NULL, text=NULL, ...) {
       rdrenv$prnds <- rdrenv$prnds[-rdrenv$i]
       rdrenv$i <- rdrenv$i - 1
       nd$prid <- .getPrid(rdrenv$prnds)
-      rdrenv$nodelist[[nd[['id']]]] <- nd
+      rdrenv$ndlst[[nd[['id']]]] <- nd
       rdrenv$nxt_is_intrnl <- FALSE
     } else {
       nd[['prid']] <- .getPrid(rdrenv$prnds)
-      rdrenv$nodelist[[nd[['id']]]] <- nd
+      rdrenv$ndlst[[nd[['id']]]] <- nd
     }
     if(length(rdrenv$prnds) > 0) {
       rdrenv$prnds[[rdrenv$i]][['ptid']] <-
@@ -192,11 +192,11 @@ readTree <- function(file=NULL, text=NULL, ...) {
 }
 
 .addRoot <- function(rdrenv) {
-  root_i <- which(unlist(lapply(rdrenv$nodelist, function(n) length(n[['prid']]) == 0)))
+  root_i <- which(unlist(lapply(rdrenv$ndlst, function(n) length(n[['prid']]) == 0)))
   if(length(root_i) > 0) {
-    rdrenv$nodelist[[root_i]][['prid']] <- NULL
-    rdrenv$nodelist[[root_i]][['span']] <- 0
-    rdrenv$root <- names(rdrenv$nodelist)[root_i]
+    rdrenv$ndlst[[root_i]][['prid']] <- NULL
+    rdrenv$ndlst[[root_i]][['spn']] <- 0
+    rdrenv$root <- names(rdrenv$ndlst)[root_i]
   } else {
     rdrenv$root <- character()
   }

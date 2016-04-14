@@ -1,40 +1,40 @@
-#TODO: modify this to allow user-defined Node slot
+#TODO: modify this to allow user-defined Nd slot
 #TODO: check for missing kids or no pd
-essential_node_slots <- c('id')
-valid_node_slots <- c('id', 'txnym', 'span', 'prid',
+essential_nd_slots <- c('id')
+valid_nd_slots <- c('id', 'txnym', 'spn', 'prid',
                       'ptid', 'kids', 'prdst', 'pd')
 
 .checkTreeMan <- function(object) {
-  .check <- function(node) {
-    if(!all(essential_node_slots %in% names(node))) {
+  .check <- function(nd) {
+    if(!all(essential_nd_slots %in% names(nd))) {
       return(FALSE)
     }
-    if(!all(names(node) %in% valid_node_slots)) {
-      invlds <- names(node)[!names(node) %in% valid_node_slots]
+    if(!all(names(nd) %in% valid_nd_slots)) {
+      invlds <- names(nd)[!names(nd) %in% valid_nd_slots]
       invlds <- paste(invlds, collapse="`, `")
       invlds <- paste0('[`', invlds, '`]')
-      warning(paste0('Node [', node[['id']],
+      warning(paste0('Node [', nd[['id']],
                      '] contains the following invalid node slots:\n',
                      invlds))
     }
-    test_1 <- node[['id']] %in% nodes
-    test_2 <- is.null(node[['prid']]) || (node[['prid']] %in% nodes)
-    test_3 <- is.null(node[['prid']]) || all(node[['ptid']] %in% nodes)
+    test_1 <- nd[['id']] %in% nds
+    test_2 <- is.null(nd[['prid']]) || (nd[['prid']] %in% nds)
+    test_3 <- is.null(nd[['prid']]) || all(nd[['ptid']] %in% nds)
     if(test_1 & test_2 & test_3) {
       return(TRUE)
     }
     FALSE
   }
-  nodes <- names(object@nodelist)
-  node_checks <- unlist(lapply(object@nodelist, .check))
-  if(!all(node_checks)) {
+  nds <- names(object@ndlst)
+  nd_checks <- unlist(lapply(object@ndlst, .check))
+  if(!all(nd_checks)) {
     msg <- 'These nodes are invalid:\n'
-    bad <- which(!node_checks)
+    bad <- which(!nd_checks)
     for(i in bad[-length(bad)]) {
-      msg <- paste0(msg, nodes[i], ', ')
+      msg <- paste0(msg, nds[i], ', ')
     }
-    msg <- paste0(msg, nodes[bad[length(bad)]], '\n\n')
-    msg <- paste0(msg, 'They may be pointing to non-existent nodes in tree, their ID may not be a named element in `@nodelist` or they may have missing essential node elements.')
+    msg <- paste0(msg, nds[bad[length(bad)]], '\n\n')
+    msg <- paste0(msg, 'They may be pointing to non-existent nodes in tree, their ID may not be a named element in `@ndlst` or they may have missing essential node elements.')
     cat(msg)
     return(FALSE)
   }
@@ -43,22 +43,22 @@ valid_node_slots <- c('id', 'txnym', 'span', 'prid',
 
 #' @name TreeMan
 #' @title S4 class for representing phylogenetic trees as a list of nodes.
-#' @slot nodelist list of nodes
-#' @slot nodes vector of node ids that are internal nodes
-#' @slot nnodes numeric of number of internal nodes in tree
+#' @slot ndlst list of nodes
+#' @slot nds vector of node ids that are internal nodes
+#' @slot nnds numeric of number of internal nodes in tree
 #' @slot tips vector of node ids that are tips
 #' @slot ntips numeric of number of internal nodes in tree
 #' @slot all vector of all node ids
 #' @slot nall numeric of number of all nodes in tree
 #' @slot age numeric of max root to tip distance
 #' @slot pd numeric of total branch length of tree
-#' @slot ext vector of Node ids of all tips with 0 age
-#' @slot exc vector of Node ids of all tips with age > 0
+#' @slot ext vector of node ids of all tips with 0 age
+#' @slot exc vector of node ids of all tips with age > 0
 #' @slot wspn logical, do nodes have spans
 #' @slot ultr logical, do all tips end at 0
 #' @slot ply logical, is tree bifurcating
 #' @slot tol numeric of tolerance for determining extant
-#' @slot root character of Node id of root, if no root then empty character
+#' @slot root character of node id of root, if no root then empty character
 #' @details
 #' A \code{TreeMan} object holds a list of nodes. The idea of the \code{TreeMan}
 #' class is to make adding and removing nodes as similar as possible to adding
@@ -66,11 +66,11 @@ valid_node_slots <- c('id', 'txnym', 'span', 'prid',
 #' both considered nodes. Trees can be unrooted and polytomous.
 #' 
 #' 
-#' Each node within the \code{TreeMan} \code{nodelist} contains the following data slots:
+#' Each node within the \code{TreeMan} \code{ndlst} contains the following data slots:
 #' \itemize{
 #'    \item \code{id}: character string for the node ID
 #'    \item \code{txnym}: name of taxonomic clade (optional)
-#'    \item \code{span}: length of the preceding branch
+#'    \item \code{spn}: length of the preceding branch
 #'    \item \code{prid}: IDs of the preceding nodes to the root
 #'    \item \code{ptid}: IDs of the immediately connecting nodes
 #'    \item \code{kids}: descending tip IDs
@@ -91,9 +91,9 @@ valid_node_slots <- c('id', 'txnym', 'span', 'prid',
 #' print(tree)
 #' # Currently available methods
 #' tree['tips']  # return all tips IDs
-#' tree['nodes']  # return all internal node IDs
+#' tree['nds']  # return all internal node IDs
 #' tree['ntips']  # count all tips
-#' tree['nnodes']  # count all internal nodes
+#' tree['nnds']  # count all internal nodes
 #' tree['root']  # identify root node
 #' tree[['t1']]  # return t1 node object
 #' tree['pd']  # return phylogenetic diversity
@@ -107,38 +107,38 @@ valid_node_slots <- c('id', 'txnym', 'span', 'prid',
 #' tree['ext']
 #' # Because all nodes are lists with metadata we can readily
 #' #  get specific information on nodes of interest
-#' node <- tree[['n2']]
-#' print(node)
+#' nd <- tree[['n2']]
+#' print(nd)
 #' # And then use the same syntax for the tree
-#' node['age']  # .... nkids, pd, etc.
+#' nd['age']  # .... nkids, pd, etc.
 #' @exportClass TreeMan
 setClass('TreeMan', representation=representation(
-  nodelist='list',       # list of Node objects
-  nodes='vector',        # vector of Node ids that are internal nodes
-  nnodes='numeric',      # numeric of number of internal nodes in tree
-  tips='vector',         # vector of Node ids that are tips
+  ndlst='list',         # list of node lists
+  nds='vector',          # vector of node ids that are internal nodes
+  nnds='numeric',        # numeric of number of internal nodes in tree
+  tips='vector',         # vector of node ids that are tips
   ntips='numeric',       # numeric of number of internal nodes in tree
   all='vector',          # vector of all Node ids
   nall='numeric',        # numeric of number of all nodes in tree
   age='numeric',         # numeric of max root to tip distance
   pd='numeric',          # numeric of total branch length of tree
-  ext='vector',          # vector of Node ids of all tips with 0 age
-  exc='vector',          # vector of Node ids of all tips with age > 0
+  ext='vector',          # vector of node ids of all tips with 0 age
+  exc='vector',          # vector of node ids of all tips with age > 0
   wspn='logical',        # logical, do nodes have spans
   ultr='logical',        # logical, do all tips end at 0
   ply='logical',         # logical, is tree bifurcating
   tol='numeric',         # numeric of tolerance for determining extant
-  root='character'),     # character of Node id of root, if no root then empty character
+  root='character'),     # character of node id of root, if no root then empty character
   prototype=prototype(tol=1e-8), validity=.checkTreeMan)
 
 # Accessor methods
 setMethod('[[', c('TreeMan', 'character'),
           function(x, i) {
-            if(!i %in% names(x@nodelist)) {
+            if(!i %in% names(x@ndlst)) {
               srch_trm <- gsub(' ', '_', i)  # usual mistake
-              pssbls <- which(agrepl(srch_trm, names(x@nodelist), ignore.case=TRUE,
+              pssbls <- which(agrepl(srch_trm, names(x@ndlst), ignore.case=TRUE,
                                      max.distance=0.25))
-              pssbls <- names(x@nodelist)[pssbls]
+              pssbls <- names(x@ndlst)[pssbls]
               if(length(pssbls) > 0 & length(pssbls) < 50) {
                 msg <- paste0("Can't find [", i, "]. Did you mean ....\n")
                 for(p in pssbls) {
@@ -150,7 +150,7 @@ setMethod('[[', c('TreeMan', 'character'),
               }
               stop(msg)
             }
-            .newNode(x, i)
+            .newNd(x, i)
           })
 setMethod('[', c('TreeMan', 'character'),
           function(x, i) {
@@ -184,7 +184,7 @@ setMethod('print', c('x'='TreeMan'),
           function(x){
             msg <- 'Tree (TreeMan Object):\n'
             msg <- paste0(msg, '  + ', x@ntips, ' tips\n')
-            msg <- paste0(msg, '  + ', x@nnodes, ' internal nodes\n')
+            msg <- paste0(msg, '  + ', x@nnds, ' internal nodes\n')
             if(x@ply) {
               msg <- paste0(msg, '  + Polytomous\n')
             } else {
@@ -227,18 +227,18 @@ setGeneric("viz", signature=c("tree", "taxonyms"),
 #' @exportMethod viz
 setMethod('viz', 'TreeMan',
           function(tree, taxonyms){
-            get_pnts <- function(node, y, pnts) {
-              pstids <- node[['ptid']]
-              low_y_diff <- -node[['pd']]/2
-              high_y_diff <- node[['pd']]/2
+            get_pnts <- function(nd, y, pnts) {
+              pstids <- nd[['ptid']]
+              low_y_diff <- -nd[['pd']]/2
+              high_y_diff <- nd[['pd']]/2
               y_diffs <- seq(from=low_y_diff, to=high_y_diff,
                              length.out=length(pstids))
               counter <- 1
               for(pstid in pstids) {
-                pstnd <- tree@nodelist[[pstid]]
+                pstnd <- tree@ndlst[[pstid]]
                 pstnd_x <- pstnd[['prdst']]
                 pstnd_y <- y + y_diffs[counter]
-                pnts <- rbind(pnts, data.frame(node=pstid,
+                pnts <- rbind(pnts, data.frame(nd=pstid,
                                                x=pstnd_x, y=pstnd_y))
                 pnts <- get_pnts(pstnd, pstnd_y, pnts)
                 counter <- counter + 1
@@ -246,20 +246,20 @@ setMethod('viz', 'TreeMan',
               pnts
             }
             if(!tree@wspn) {
-              # TODO: switch to setNodesSpan
-              for(i in 1:length(tree@nodelist)) {
-                tree@nodelist[[i]][['span']] <- 1
-                tree@nodelist[[i]][['pd']] <- length(tree@nodelist[[i]][['kids']])
-                prids <- getNodePrid(tree, tree@nodelist[[i]][['id']])
-                tree@nodelist[[i]][['prdst']] <- length(prids)
+              # TODO: switch to setNdsspn
+              for(i in 1:length(tree@ndlst)) {
+                tree@ndlst[[i]][['spn']] <- 1
+                tree@ndlst[[i]][['pd']] <- length(tree@ndlst[[i]][['kids']])
+                prids <- getNdPrid(tree, tree@ndlst[[i]][['id']])
+                tree@ndlst[[i]][['prdst']] <- length(prids)
               }
-              tree@pd <- length(tree@nodelist) - 1
+              tree@pd <- length(tree@ndlst) - 1
             }
             # start with root node
             # TODO: handle unrooted tree
-            pnts <- data.frame(node=tree@root, x=0, y=tree@pd, stringsAsFactors=FALSE)
-            root_node <- tree@nodelist[[tree@root]]
-            pnts <- get_pnts(root_node, y=tree@pd, pnts=pnts)
+            pnts <- data.frame(nd=tree@root, x=0, y=tree@pd, stringsAsFactors=FALSE)
+            root_nd <- tree@ndlst[[tree@root]]
+            pnts <- get_pnts(root_nd, y=tree@pd, pnts=pnts)
             # add 10% to min y limit for node label
             min_y <- abs(min(pnts$y))
             min_y <- min_y + (min_y*.1)
@@ -269,15 +269,15 @@ setMethod('viz', 'TreeMan',
                          xlab='', bty='n', ylim=y_lmts)
             if(taxonyms) {
               text(x=pnts$x, y=pnts$y,
-                   labels=sapply(pnts$node, function(n) tree@nodelist[[n]][['taxonym']]),
+                   labels=sapply(pnts$nd, function(n) tree@ndlst[[n]][['taxonym']]),
                    pos=1)
             } else {
-              text(x=pnts$x, y=pnts$y, labels=pnts$node, pos=1)
+              text(x=pnts$x, y=pnts$y, labels=pnts$nd, pos=1)
             }
             # draw lines
             for(i in 2:nrow (pnts)) {
-              prenode <- tree@nodelist[[pnts$node[i]]][['prid']][1]
-              ind <- c(i, which(pnts$node == prenode))
+              prend <- tree@ndlst[[pnts$nd[i]]][['prid']][1]
+              ind <- c(i, which(pnts$nd == prend))
               lines(x=pnts$x[ind], y=pnts$y[ind])
             }
           })

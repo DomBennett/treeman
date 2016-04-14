@@ -1,9 +1,9 @@
 # #TODO
-setNodeTaxonym <- function(...) {
+setNdTxnym <- function(...) {
   cat('Sorry not yet implemented!\n')
 }
 
-setNodesTaxonym <- function(...) {
+setNdsTxnym <- function(...) {
   cat('Sorry not yet implemented!\n')
 }
 
@@ -29,9 +29,9 @@ setRoot <- function(...) {
 #' tree <- setPD(tree, val=1)
 #' (tree['pd'])
 setPD <- function(tree, val) {
-  spans <- getNodesSlot(tree, ids=tree@all, name="span")
-  spans <- spans/(tree@pd/val)
-  tree <- setNodesSpan(tree, ids=tree@all, vals=spans)
+  spns <- getNdsSlt(tree, ids=tree@all, name="spn")
+  spns <- spns/(tree@pd/val)
+  tree <- setNdsSpn(tree, ids=tree@all, vals=spns)
   tree
 }
 
@@ -53,13 +53,13 @@ setPD <- function(tree, val) {
 #' tree <- setAge(tree, val=1)
 #' (tree['age'])
 setAge <- function(tree, val) {
-  spans <- getNodesSlot(tree, ids=tree@all, name="span")
-  spans <- spans/(tree@age/val)
-  tree <- setNodesSpan(tree, ids=tree@all, vals=spans)
+  spns <- getNdsSlt(tree, ids=tree@all, name="spn")
+  spns <- spns/(tree@age/val)
+  tree <- setNdsSpn(tree, ids=tree@all, vals=spns)
   tree
 }
 
-#' @name setNodeSpan
+#' @name setNdSpn
 #' @title Set the branch length of a specific node
 #' @description Return a tree with the span of a node altered.
 #' @details Takes a tree, a node ID and a new value for the node's preceding branch length (span).
@@ -69,79 +69,79 @@ setAge <- function(tree, val) {
 #' @param val new span
 #' @param ... \code{plyr} arguments
 #' @seealso
-#' \code{\link{setNodesSpan}}
+#' \code{\link{setNdsSpn}}
 #' \url{https://github.com/DomBennett/treeman/wiki/set-methods}
 #' @export
 #' @examples
 #' library(treeman)
 #' tree <- randTree(10)
 #' viz(tree)
-#' tree <- setNodeSpan(tree, id='t1', val=100)
+#' tree <- setNdSpn(tree, id='t1', val=100)
 #' viz(tree)
-setNodeSpan <- function(tree, id, val, ...) {
+setNdSpn <- function(tree, id, val, ...) {
   .ptnd <- function(nd) {
     nd[['prdst']] <- nd[['prdst']] + diff
     nd
   }
   # reset node using diff
-  diff <- val - tree@nodelist[[id]][['span']]
-  tree@nodelist[[id]][['span']] <- diff
-  tree@nodelist <- .updateNode(tree@nodelist, id, tree@root)
+  diff <- val - tree@ndlst[[id]][['spn']]
+  tree@ndlst[[id]][['spn']] <- diff
+  tree@ndlst <- .updateNd(tree@ndlst, id, tree@root)
   # adjust any pstnds
-  ptids <- getNodePtid(tree, id=id)
+  ptids <- getNdPtid(tree, id=id)
   ptids <- ptids[-(length(ptids))]
-  tree@nodelist[ptids] <- plyr::llply(tree@nodelist[ptids], .fun=.ptnd, ...)
+  tree@ndlst[ptids] <- plyr::llply(tree@ndlst[ptids], .fun=.ptnd, ...)
   # update nd
-  tree@nodelist[[id]][['span']] <- val
-  tree@nodelist[[id]][['prdst']] <- tree@nodelist[[id]][['prdst']] +
+  tree@ndlst[[id]][['spn']] <- val
+  tree@ndlst[[id]][['prdst']] <- tree@ndlst[[id]][['prdst']] +
     val + abs(diff)
-  .updateTreeSlots(tree)
+  .updateTreeSlts(tree)
 }
 
-#' @name setNodesSpan
+#' @name setNdsSpn
 #' @title Set the branch lengths of specific nodes
 #' @description Return a tree with the span of a node altered.
-#' @details Runs \code{setNodeSpan} over multiple nodes. Parallelizable.
+#' @details Runs \code{setNdSpn} over multiple nodes. Parallelizable.
 #' @param tree \code{TreeMan} object
 #' @param ids ids of nodes whose preceding edges are to be changed
 #' @param vals new spans
 #' @param ... \code{plyr} arguments
 #' @seealso
-#' \code{\link{setNodeSpan}}
+#' \code{\link{setNdSpn}}
 #' \url{https://github.com/DomBennett/treeman/wiki/set-methods}
 #' @export
 #' @examples
 #' library(treeman)
 #' tree <- randTree(10)
 #' # make tree taxonomic
-#' tree <- setNodesSpan(tree, ids=tree['all'], vals=1)
-setNodesSpan <- function(tree, ids, vals, ...) {
+#' tree <- setNdsSpn(tree, ids=tree['all'], vals=1)
+setNdsSpn <- function(tree, ids, vals, ...) {
   .nullify <- function(nd) {
-    nd[['span']] <- NULL
+    nd[['spn']] <- NULL
     nd[['pd']] <- NULL
     nd[['prdst']] <- NULL
     nd
   }
-  .reset <- function(id, span) {
-    ndlst[[id]][['span']] <- span
+  .reset <- function(id, spn) {
+    ndlst[[id]][['spn']] <- spn
     ndlst[[id]][['pd']] <- 0
     ndlst[[id]][['prdst']] <- 0
     ndlst[[id]]
   }
-  ndlst <- tree@nodelist
+  ndlst <- tree@ndlst
   if(is.null(vals)) {
     ndlst <- plyr::llply(ndlst[tree@all], .fun=.nullify, ...)
   } else {
-    spans <- getNodesSlot(tree, name='span', ids=tree@all)
-    spans[match(ids, tree@all)] <- vals
-    l_data <- data.frame(id=tree@all, span=spans, stringsAsFactors=FALSE)
+    spns <- getNdsSlt(tree, name='spn', ids=tree@all)
+    spns[match(ids, tree@all)] <- vals
+    l_data <- data.frame(id=tree@all, spn=spns, stringsAsFactors=FALSE)
     ndlst <- plyr::mlply(l_data, .fun=.reset)
     ndlst <- ndlst[1:length(ndlst)]
     names(ndlst) <- tree@all
     ndlst <- .globalUpdateAll(ndlst, just_spn_data=TRUE)
   }
-  tree@nodelist <- ndlst
-  .updateTreeSlots(tree)
+  tree@ndlst <- ndlst
+  .updateTreeSlts(tree)
 }
 
 #' @name setTol
@@ -153,7 +153,7 @@ setNodesSpan <- function(tree, ids, vals, ...) {
 #' @param tree \code{TreeMan} object
 #' @param tol new tolerance
 #' @seealso
-#' \code{\link{setNodesSpan}}
+#' \code{\link{setNdsSpn}}
 #' \url{https://github.com/DomBennett/treeman/wiki/set-methods}
 #' @export
 #' @examples
@@ -163,10 +163,10 @@ setNodesSpan <- function(tree, ids, vals, ...) {
 #' print(tree)
 setTol <- function(tree, tol) {
   tree@tol <- tol
-  .updateTreeSlots(tree)
+  .updateTreeSlts(tree)
 }
 
-#' @name setNodeID
+#' @name setNdID
 #' @title Set the ID of a node
 #' @description Return a tree with the ID of a node altered.
 #' @details IDs cannot be changed directly for the \code{TreeMan} class. To change an
@@ -175,36 +175,36 @@ setTol <- function(tree, tol) {
 #' @param id id to be changed
 #' @param val new id
 #' @seealso
-#' \code{\link{setNodesID}}
+#' \code{\link{setNdsID}}
 #' \url{https://github.com/DomBennett/treeman/wiki/set-methods}
 #' @export
 #' @examples
 #' library(treeman)
 #' tree <- randTree(10)
-#' tree <- setNodeID(tree, 't1', 'heffalump')
-setNodeID <- function(tree, id, val) {
-  setNodesID(tree, id, val)
+#' tree <- setNdID(tree, 't1', 'heffalump')
+setNdID <- function(tree, id, val) {
+  setNdsID(tree, id, val)
 }
 
-#' @name setNodesID
+#' @name setNdsID
 #' @title Set the IDs of multiple nodes
 #' @description Return a tree with the IDs of nodes altered.
-#' @details Runs \code{setNodeID} over multiple nodes. Warning: all IDs must be unique,
+#' @details Runs \code{setNdID()} over multiple nodes. Warning: all IDs must be unique,
 #' avoid spaces in IDs. Parellizable.
 #' @param tree \code{TreeMan} object
 #' @param ids ids to be changed
 #' @param vals new ids
 #' @param ... \code{plyr} arguments
 #' @seealso
-#' \code{\link{setNodeID}}
+#' \code{\link{setNdID}}
 #' \url{https://github.com/DomBennett/treeman/wiki/set-methods}
 #' @export
 #' @examples
 #' library(treeman)
 #' tree <- randTree(10)
 #' new_ids <- paste0('heffalump_', 1:tree['ntips'])
-#' tree <- setNodesID(tree, tree['tips'], new_ids)
-setNodesID <- function(tree, ids, vals, ...) {
+#' tree <- setNdsID(tree, tree['tips'], new_ids)
+setNdsID <- function(tree, ids, vals, ...) {
   .rplcS4 <- function(slt) {
     if(any(slot(tree, slt) %in% ids)) {
       mtchs <- match(slot(tree, slt), ids)
@@ -221,18 +221,18 @@ setNodesID <- function(tree, ids, vals, ...) {
       }
       nd
     }
-    nd <- tree@nodelist[[i]]
+    nd <- tree@ndlst[[i]]
     nd <- .rplc("id")
     nd <- .rplc("ptid")
     nd <- .rplc("prid")
     nd <- .rplc("kids")
-    tree@nodelist[[i]] <<- nd
+    tree@ndlst[[i]] <<- nd
     NULL
   }
-  l_data <- data.frame(i=1:length(tree@nodelist))
+  l_data <- data.frame(i=1:length(tree@ndlst))
   plyr::m_ply(.data=l_data, .fun=.run, ...)
   tree@tips <- .rplcS4('tips')
-  tree@nodes <- .rplcS4('nodes')
+  tree@nds <- .rplcS4('nds')
   tree@ext <- .rplcS4('ext')
   tree@exc <- .rplcS4('exc')
   tree@root <- .rplcS4('root')
@@ -240,7 +240,7 @@ setNodesID <- function(tree, ids, vals, ...) {
 }
 
 #TODO: get these functions working and tested
-#' @name setNodeOther
+#' @name setNdOther
 #' @title Set a user defined slot
 #' @description Return a tree with a user defined slot for node ID.
 #' @details A user can specify new slots in a tree. Add a new slot with this function
@@ -251,43 +251,43 @@ setNodesID <- function(tree, ids, vals, ...) {
 #' @param val data for slot
 #' @param slt_nm slot name
 #' @seealso
-#' \code{\link{setNodesOther}}
+#' \code{\link{setNdsOther}}
 #' \url{https://github.com/DomBennett/treeman/wiki/set-methods}
 #' @export
 #' @examples
 #' library(treeman)
 #' #tree <- randTree(10)
-#' #tree <- setNodeOther(tree, 't1', '1', 'binary_val')
-setNodeOther <- function(tree, id, val, slt_nm) {
-  tree@nodelist[[id]][slt_nm] <- val
+#' #tree <- setNdOther(tree, 't1', '1', 'binary_val')
+setNdOther <- function(tree, id, val, slt_nm) {
+  tree@ndlst[[id]][slt_nm] <- val
   tree
 }
 
-#' @name setNodesOther
+#' @name setNdsOther
 #' @title Set a user defined slot for multiple nodes
 #' @description Return a tree with a user defined slot for node IDs.
-#' @details Runs \code{setNodeOther} over multiple nodes. Parellizable.
+#' @details Runs \code{setNdOther()} over multiple nodes. Parellizable.
 #' @param tree \code{TreeMan} object
 #' @param ids id sof the nodes
 #' @param vals data for slot
 #' @param slt_nm slot name
 #' @param ... \code{plyr} arguments
 #' @seealso
-#' \code{\link{setNodeOther}}
+#' \code{\link{setNdOther}}
 #' \url{https://github.com/DomBennett/treeman/wiki/set-methods}
 #' @export
 #' @examples
 #' library(treeman)
 #' #tree <- randTree(10)
 #' #vals <- sample(0:1, size=tree['nall'], replace=TRUE)
-#' #tree <- setNodesOther(tree, tree['all'], vals, 'binary_val')
-setNodesOther <- function(tree, ids, vals, slt_nm, ...) {
+#' #tree <- setNdsOther(tree, tree['all'], vals, 'binary_val')
+setNdsOther <- function(tree, ids, vals, slt_nm, ...) {
   .set <- function(i, val) {
     nd[[i]][[slt_nm]] <- val
     nd
   }
   l_data <- data.frame(i=1:length(vals), val=vals,
                        stringsAsFactors=FALSE)
-  tree@nodelist <- plyr::mlply(.data=l_data, .fun=.set, ...)
+  tree@ndlst <- plyr::mlply(.data=l_data, .fun=.set, ...)
   tree
 }
