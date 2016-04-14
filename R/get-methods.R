@@ -332,7 +332,7 @@ getPrnt <- function(tree, ids) {
 #' # what's the phylogenetic distance from humans to gorillas?
 #' ape_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
 #' pth <- getPath(mammals, from='Homo_sapiens', to='Gorilla_gorilla')
-#' sum(getNdsSlt(mammals, ids=pth, name='spn'))
+#' sum(getNdsSlt(mammals, ids=pth, slt_nm='spn'))
 getPath <- function(tree, from, to) {
   pre_1 <- c(from, getNdPrid(tree, from))
   pre_2 <- c(to, getNdPrid(tree, to))

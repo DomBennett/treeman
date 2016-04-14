@@ -1,6 +1,4 @@
 # TODO: mergeTree, collapseNode, removeNode
-# TODO: add doc for adding and removing tips
-
 #' @name rmTip
 #' @title Remove tip from a tree
 #' @description Returns a tree with a tip ID remove
