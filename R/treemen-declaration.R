@@ -31,13 +31,6 @@ setClass('TreeMen', representation=representation(
   validity=.checkTreeMen)
 
 # concatenate methods
-.cManToMan <- function(treeman_1, treeman_2) {
-  treelist <- c(list(treeman_1), list(treeman_2))
-  ntips <- sum(c(treeman_1@ntips, treeman_1@ntips))
-  ntrees <- 2
-  new("TreeMen", treelist=treelist, ntips=ntips, ntrees=ntrees)
-}
-
 .cMenToMen <- function(treemen_1, treemen_2) {
   treelist <- c(treemen_1@treelist, treemen_2@treelist)
   treemen_1@treelist <- treelist
@@ -77,11 +70,12 @@ setClass('TreeMen', representation=representation(
 #' @description Return \code{TreeMen} of concatenated trees.
 #' @details Concatenate trees into single \code{TreeMen} object.
 #' @param x \code{TreeMan} or \code{TreeMen} objects
+#' @param ... more \code{TreeMan} or \code{TreeMen} objects
 #' @seealso 
 #' \code{\link{TreeMen}}, \code{\link{TreeMan}}, \code{\link{as-TreeMen}}
 #' @examples 
 #' library(treeman)
-#' trees <- cTrees(randTree(10), randTree(10), randTree(10))
+#' trees <- cTrees(randTree(10), randTree(10))
 #TODO: fix this for when just two trees cTrees(tree, tree)
 #' @export
 setGeneric("cTrees", signature=c("x"),
@@ -90,12 +84,9 @@ setGeneric("cTrees", signature=c("x"),
            })
 #' @exportMethod cTrees
 setMethod("cTrees", c("TreeMan"),
-          function(x, y, ...) {
-            if(is(y, "TreeMan")) {
-              x <- .cManToMan(x, y)
-            } else {
-              x <- .cManToMen(x, y)
-            }
+          function(x, ...) {
+            x <- list(x)
+            x <- as(x, 'TreeMen')
             x <- .cTreeObjs(x, ...)
             x
             })
