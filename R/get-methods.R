@@ -209,7 +209,8 @@ getNdsKids <- function(tree, ids, ...) {
 #' library(treeman)
 #' data(mammals)
 #' # when did apes emerge?
-#' prnt_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))  # get parent id for all apes
+#' # get parent id for all apes
+#' prnt_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
 #' getNdAge(mammals, id=prnt_id)
 #TODO: how to effectively handle unrooted trees, age has no meaning
 getNdAge <- function(tree, id) {
