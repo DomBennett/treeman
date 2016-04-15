@@ -3,7 +3,7 @@
 \docType{data}
 \title{Phylogenetic tree of Mammalia}
 \description{
-  Bininda-Edmonds et al. (2007)'s Mammalian supertree augmented with taxonomic information. Here used for testing and demonstrating treeman functions.
+  Bininda-Emonds et al. (2007)'s Mammalian supertree augmented with taxonomic information. Here used for testing and demonstrating treeman functions.
 }
 \usage{
    data(mammals)
@@ -12,7 +12,7 @@
   \code{mammals} is a \code{TreeMan} object
 }
 \source{
-   Bininda-Edmonds et al. (2007) The Delayed Rise of Present-Day Mammals. Nature, 446(7135): 507-512
+   Bininda-Emonds et al. (2007) The Delayed Rise of Present-Day Mammals. Nature, 446(7135): 507-512
 }
 \examples{
 data(mammals) # load object
