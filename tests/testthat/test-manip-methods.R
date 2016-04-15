@@ -44,6 +44,11 @@ randomTips <- function(n, tree) {
 
 # RUNNING
 context('Testing \'manip-methods\'')
+# test_that('unroot() works', {
+#   tree <- randTree(10)
+#   tree <- unroot(tree)
+#   expect_that(length(tree['root']), equals(0))
+# })
 test_that('addTip() works', {
   # random tree + basic stats
   data(mammals)

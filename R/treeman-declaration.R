@@ -41,7 +41,8 @@
 }
 
 #' @name TreeMan
-#' @title S4 class for representing phylogenetic trees as a list of nodes.
+#' @title TreeMan class
+#' @description S4 class for representing phylogenetic trees as a list of nodes.
 #' @slot ndlst list of nodes
 #' @slot nds vector of node ids that are internal nodes
 #' @slot nnds numeric of number of internal nodes in tree
@@ -62,7 +63,7 @@
 #' A \code{TreeMan} object holds a list of nodes. The idea of the \code{TreeMan}
 #' class is to make adding and removing nodes as similar as possible to adding
 #' and removing elements in a list. Note that internal nodes and tips are
-#' both considered nodes. Trees can be unrooted and polytomous.
+#' both considered nodes. Trees can be unrooted and polytomous. (Cannot handle unrooted trees.)
 #' 
 #' 
 #' Each node within the \code{TreeMan} \code{ndlst} contains the following data slots:
@@ -195,8 +196,8 @@ setMethod('print', c('x'='TreeMan'),
             } else {
               msg <- paste0(msg, '  + Binary\n')
             }
-            if(is.na(x@root)) {
-              if(x@wspn) {
+            if(length(x@root) == 0) {
+              if(!x@wspn) {
                 msg <- paste0(msg, '  + Unrooted and without node spans\n')
               } else {
                 msg <- paste0(msg, '  + Unrooted, with node spans\n')

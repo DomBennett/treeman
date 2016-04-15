@@ -3,12 +3,15 @@
 \docType{class}
 \name{TreeMan}
 \alias{TreeMan}
-\title{S4 class for representing phylogenetic trees as a list of nodes.}
+\title{TreeMan class}
+\description{
+S4 class for representing phylogenetic trees as a list of nodes.
+}
 \details{
 A \code{TreeMan} object holds a list of nodes. The idea of the \code{TreeMan}
 class is to make adding and removing nodes as similar as possible to adding
 and removing elements in a list. Note that internal nodes and tips are
-both considered nodes. Trees can be unrooted and polytomous.
+both considered nodes. Trees can be unrooted and polytomous. (Cannot handle unrooted trees.)
 
 
 Each node within the \code{TreeMan} \code{ndlst} contains the following data slots:

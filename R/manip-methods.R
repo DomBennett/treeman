@@ -1,4 +1,43 @@
-# TODO: mergeTree, collapseNode, removeNode
+# TODO: mergeTree, collapseNode, removeNode, reRoot
+#TODO: doesn't make sense to have an unrooted tree in TreeMan, how would prids work?
+#' #' @name unroot
+#' #' @title Unroot a tree
+#' #' @description Returns a tree with the root removed
+#' #' @details Removes the root from a tree. This function will remove the root node and
+#' #' alter the rest of the tree by reducing \code{prid} to first parent (rather all prids to the root),
+#' #' and removing the \code{prdst}. Note, this will cause many functions (e.g. \code{getNdAge()}
+#' #' because age is meaningless for an unrooted tree) to not work. \code{treeman} aims to run efficiently
+#' #' and performs no checks to ensure trees are in the format for the given function. Note, cannot
+#' #' currently visualise unrooted trees.
+#' #' @param tree \code{TreeMan} object
+#' #' @seealso
+#' #' \code{\link{reroot}} 
+#' #' \url{https://github.com/DomBennett/treeman/wiki/manip-methods}
+#' #' @export
+#' #' @examples
+#' #' library(treeman)
+#' #' tree <- randTree(10)
+#' #' tree <- unroot(tree)
+#' unroot <- function(tree) {
+#'   ndlst <- tree@ndlst
+#'   .unroot <- function(nd) {
+#'     # remove prdst and make prid prnt
+#'     nd[['prdst']] <- NULL
+#'     nd[['prid']] <- nd[['prid']][1]
+#'     nd
+#'   }
+#'   # join ptid's of root
+#'   ptids <- ndlst[[tree@root]][['ptid']]
+#'   for(i in 1:length(ptids)) {
+#'     # random, in case of polytomies
+#'     ndlst[[ptids[i]]][['prid']] <- sample(ptids[-i], 1)
+#'   }
+#'   tree@ndlst <- llply(ndlst, .unroot)
+#'   tree@ndlst[[tree@root]] <- NULL
+#'   tree@root <- character()
+#'   .updateTreeSlts(tree)
+#' }
+
 #' @name rmTip
 #' @title Remove tip from a tree
 #' @description Returns a tree with a tip ID remove

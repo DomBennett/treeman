@@ -137,18 +137,26 @@
   tree@nnds <- length(tree@nds)
   tree@all <- c(tree@tips, tree@nds)
   tree@nall <- length(tree@all)
-  wspn <- names(tree@ndlst)[names(tree@ndlst) != tree@root]
+  if(length(tree@root) > 0) {
+    wspn <- names(tree@ndlst)[names(tree@ndlst) != tree@root]
+  } else {
+    wspn <- names(tree@ndlst)
+  }
   tree@wspn <- all(sapply(tree@ndlst[wspn], function(n) !is.null(n[['spn']])))
   if(tree@wspn) {
-    if(!is.null(tree@root)) {
+    if(length(tree@root) > 0) {
       tree@age <- max(sapply(tree@ndlst[wspn], function(n) n[['prdst']]))
       extant_is <- unlist(sapply(tree@tips, function(i) {
         (tree@age - tree@ndlst[[i]][['prdst']]) <= tree@tol}))
       tree@ext <- names(extant_is)[extant_is]
       tree@exc <- tree@tips[!tree@tips %in% tree@ext]
       tree@ultr <- all(tree@tips %in% tree@ext)
+    } else {
+      tree@ext <- tree@exc <- vector()
+      tree@ultr <- FALSE
+      tree@age <- numeric()
     }
-    tree@pd <- tree@ndlst[[tree@root]][['pd']]
+    tree@pd <- sum(sapply(tree@ndlst, function(n) n[['spn']]))
   } else {
     tree@age <- tree@pd <- numeric()
     tree@ext <- tree@ext <- vector()
