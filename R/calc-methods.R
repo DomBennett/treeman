@@ -62,8 +62,8 @@ calcNdsBlnc <- function(tree, nids, ...) {
 #' @param nrmlsd Boolean, should returned value be between 0 and 1? Default, FALSE.
 #' @param ... \code{plyr} arguments
 #' @references
-#' Critchlow DE, Pearl DK, Qian C. (1996) The Triples Distance for rooted bifurcating
-#' phylogenetic trees. Systematic Biologly, 45, 323–34.
+#' Critchlow DE, Pearl DK, Qian C. (1996) The Triples Distance for rooted bifurcating phylogenetic trees.
+#' Systematic Biology, 45, 323-34.
 #' @seealso
 #' \code{\link{calcDstBLD}}, \code{\link{calcDstRF}} 
 #' \url{https://github.com/DomBennett/treeman/wiki/calc-methods}
@@ -108,7 +108,7 @@ calcDstTrp <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
 #' @param ... \code{plyr} arguments
 #' @references
 #' Lozupone, C., & Knight, R. (2005). UniFrac: a new phylogenetic method for comparing
-#' microbial communities. Applied and Environmental Microbiology, 71(12), 8228–35.
+#' microbial communities. Applied and Environmental Microbiology, 71(12), 8228-35.
 #' @seealso
 #' \code{\link{calcPhyDv}}
 #' \url{https://github.com/DomBennett/treeman/wiki/calc-methods}
@@ -146,7 +146,7 @@ calcOvrlp <- function(tree, ids_1, ids_2, nrmlsd=FALSE, ...) {
 #' @references
 #' Kuhner, M. K. and Felsenstein, J. (1994) Simulation comparison of phylogeny
 #' algorithms under equal and unequal evolutionary rates. Molecular Biology and
-#' Evolution, 11, 459–468.
+#' Evolution, 11, 459-468.
 #' @seealso
 #' \code{\link{calcDstTrp}}, \code{\link{calcDstRF}} 
 #' \url{https://github.com/DomBennett/treeman/wiki/calc-methods}
@@ -189,7 +189,7 @@ calcDstBLD <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
 #' @param ... \code{plyr} arguments
 #' @references
 #' Robinson, D. R.; Foulds, L. R. (1981). "Comparison of phylogenetic trees".
-#' Mathematical Biosciences 53: 131–147.
+#' Mathematical Biosciences 53: 131-147.
 #' @seealso
 #' \code{\link{calcDstBLD}}, \code{\link{calcDstTrp}} 
 #' \url{https://github.com/DomBennett/treeman/wiki/calc-methods}
@@ -223,7 +223,7 @@ calcDstRF <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
 #' @param ... \code{plyr} arguments
 #' @references
 #' Faith, D. (1992). Conservation evaluation and phylogenetic diversity.
-#'  Biological Conservation, 61, 1–10.
+#'  Biological Conservation, 61, 1-10.
 #' @seealso
 #' \code{\link{calcFrPrp}}, \code{\link{calcOvrlp}}
 #' \url{https://github.com/DomBennett/treeman/wiki/calc-methods}

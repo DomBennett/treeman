@@ -10,10 +10,8 @@ Description: S4 class and methods for efficient phylogenetic tree manipulation
 License: GPL-2
 Depends:
     R (>= 3.2.3),
-    methods,
-    plyr
+    methods
 Imports:
-    methods,
     plyr
 Suggests:
     testthat

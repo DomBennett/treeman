@@ -1,3 +1,4 @@
+#' @import methods
 .checkTreeMan <- function(object) {
   .check <- function(nd) {
     # must have id
@@ -40,9 +41,14 @@
   TRUE
 }
 
-#' @name TreeMan
-#' @title TreeMan class
+#' @name TreeMan-class
+#' @title TreeMan-class
 #' @description S4 class for representing phylogenetic trees as a list of nodes.
+#' @param x \code{TreeMan} object
+#' @param i node ID or slot name
+#' @param object \code{TreeMan} object
+#' @param max.level \code{str()} maximum number of levels to show
+#' @param ... additional tree objects
 #' @slot ndlst list of nodes
 #' @slot nds vector of node ids that are internal nodes
 #' @slot nnds numeric of number of internal nodes in tree
@@ -63,7 +69,7 @@
 #' A \code{TreeMan} object holds a list of nodes. The idea of the \code{TreeMan}
 #' class is to make adding and removing nodes as similar as possible to adding
 #' and removing elements in a list. Note that internal nodes and tips are
-#' both considered nodes. Trees can be unrooted and polytomous. (Cannot handle unrooted trees.)
+#' both considered nodes. Trees can be polytomous but not unrooted.
 #' 
 #' 
 #' Each node within the \code{TreeMan} \code{ndlst} contains the following data slots:
@@ -82,7 +88,7 @@
 #' 
 #' See below in 'Examples' for these methods in use.
 #' @seealso
-#' \code{\link{randTree}}, \code{\link{Node}}
+#' \code{\link{randTree}}, \code{\link{Node-class}}, \code{\link{viz}}
 #' @examples
 #' library(treeman)
 #' # Generate random tree
@@ -132,6 +138,8 @@ setClass('TreeMan', representation=representation(
   prototype=prototype(tol=1e-8), validity=.checkTreeMan)
 
 # Accessor methods
+#' @rdname TreeMan-class
+#' @aliases TreeMan-method
 #' @exportMethod [[
 setMethod('[[', c('TreeMan', 'character'),
           function(x, i) {
@@ -153,6 +161,8 @@ setMethod('[[', c('TreeMan', 'character'),
             }
             .newNd(x, i)
           })
+#' @rdname TreeMan-class
+#' @aliases TreeMan-method
 #' @exportMethod [
 setMethod('[', c('TreeMan', 'character'),
           function(x, i) {
@@ -166,17 +176,23 @@ setMethod('[', c('TreeMan', 'character'),
           })
 
 # display methods
+#' @rdname TreeMan-class
+#' @aliases TreeMan-method
 #' @exportMethod as.character
 setMethod('as.character', c('x'='TreeMan'),
           function(x) {
             paste0('TreeMan Object of [', length(x@tips),'] tips')
           })
+#' @rdname TreeMan-class
+#' @aliases TreeMan-method
 #' @exportMethod show
 setMethod('show', 'TreeMan',
           function(object){
             msg <- as.character(object)
             cat(msg)
           })
+#' @rdname TreeMan-class
+#' @aliases TreeMan-method
 #' @exportMethod str
 setMethod('str', c('object'='TreeMan'),
           function(object, max.level=2L, ...) {
@@ -185,6 +201,8 @@ setMethod('str', c('object'='TreeMan'),
             }
             str@default(object, max.level=max.level, ...)
           })
+#' @rdname TreeMan-class
+#' @aliases TreeMan-method
 #' @exportMethod print
 setMethod('print', c('x'='TreeMan'),
           function(x){
@@ -220,16 +238,21 @@ setMethod('print', c('x'='TreeMan'),
             cat(msg)
           })
 
+#' Method viz
 #' @name viz
-#' @title Visualise a tree
-#' @param tree \code{TreeMan}
-#' @param taxonyms T/F, show the nodes with their taxonyms instead of IDs
+#' @param tree \code{TreeMan} object
+#' @param taxonyms Boolean, show taxonyms rather than IDs?
+#' @rdname TreeMan-method
 #' @description Crude plot of \code{TreeMan} objects
-#' @export
+#' @seealso 
+#' \code{\link{TreeMan-class}}
+#' @exportMethod viz
 setGeneric("viz", signature=c("tree", "taxonyms"),
            function(tree, taxonyms=FALSE) {
              standardGeneric("viz")
            })
+#' @rdname TreeMan-method
+#' @aliases viz
 #' @exportMethod viz
 setMethod('viz', 'TreeMan',
           function(tree, taxonyms){

@@ -34,7 +34,7 @@ calcOvrlp(tree, ids_1, ids_2)
 }
 \references{
 Lozupone, C., & Knight, R. (2005). UniFrac: a new phylogenetic method for comparing
-microbial communities. Applied and Environmental Microbiology, 71(12), 8228–35.
+microbial communities. Applied and Environmental Microbiology, 71(12), 8228-35.
 }
 \seealso{
 \code{\link{calcPhyDv}}

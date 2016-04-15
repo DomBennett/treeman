@@ -64,7 +64,7 @@ writeTree <- function(tree, file, ndLabels=function(nd){
   trstr <- paste0(rep('(', dpth), collapse='')
   trstr <- paste0(trstr, tpstr)
   # loop through nodes
-  m_ply(2:(length(ndlst) - 1), .fun=tipBytip)
+  plyr::m_ply(2:(length(ndlst) - 1), .fun=tipBytip)
   trstr <- paste0(trstr, ');')
   write.table(x=trstr, file=file, quote=FALSE, row.names=FALSE,
               col.names=FALSE)
@@ -103,7 +103,7 @@ readTree <- function(file=NULL, text=NULL, ...) {
   cuts <- c(cuts[1], cuts[2:length(cuts)] - cuts[1:(length(cuts)-1)])
   rdrenv <- .getRdrEnv(trstr)
   l_data <- data.frame(end_pos=cuts, stringsAsFactors=FALSE)
-  m_ply(l_data, .mkNdLst, rdrenv=rdrenv)
+  plyr::m_ply(l_data, .mkNdLst, rdrenv=rdrenv)
   .addRoot(rdrenv)
   if(length(rdrenv[['root']]) == 0) {
     ndlst <- .globalUpdateKids(rdrenv[['ndlst']])

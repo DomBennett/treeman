@@ -11,9 +11,10 @@ test_that('calc_Blnc() works', {
 })
 test_that('calcDstTrp() works', {
   tree_1 <- randTree(10)
-  tree_2 <- randTree(10)
-  res <- calcDstTrp(tree_1, tree_2, nrmlsd=TRUE)
-  expect_that(res, is_more_than(0))
+  # small chance that they will both be the same
+  # tree_2 <- randTree(10)
+  # res <- calcDstTrp(tree_1, tree_2, nrmlsd=TRUE)
+  # expect_that(res, is_more_than(0))
   res <- calcDstTrp(tree_1, tree_1, nrmlsd=TRUE)
   expect_that(res, equals(0))
 })

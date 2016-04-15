@@ -12,6 +12,6 @@ trees <- list('tree_1'=randTree(10), 'tree_2'=randTree(10))
 trees <- as(trees, 'TreeMen')
 }
 \seealso{
-\code{\link{TreeMen}}
+\code{\link{TreeMen-class}}
 }
 

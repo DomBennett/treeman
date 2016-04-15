@@ -31,7 +31,7 @@ calcDstRF(tree_1, tree_2)
 }
 \references{
 Robinson, D. R.; Foulds, L. R. (1981). "Comparison of phylogenetic trees".
-Mathematical Biosciences 53: 131–147.
+Mathematical Biosciences 53: 131-147.
 }
 \seealso{
 \code{\link{calcDstBLD}}, \code{\link{calcDstTrp}} 

@@ -6,7 +6,7 @@
 #' \code{TreeMan} tree. Tree is always rooted and bifurcating.
 #' @param n number of tips, integer, must be greater than 1
 #' @seealso
-#' \code{\link{TreeMan}}
+#' \code{\link{TreeMan-class}}
 #' @export
 #' @examples
 #' library(treeman)

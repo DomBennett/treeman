@@ -31,8 +31,8 @@ tree_2 <- randTree(10)
 calcDstTrp(tree_1, tree_2)
 }
 \references{
-Critchlow DE, Pearl DK, Qian C. (1996) The Triples Distance for rooted bifurcating
-phylogenetic trees. Systematic Biologly, 45, 323–34.
+Critchlow DE, Pearl DK, Qian C. (1996) The Triples Distance for rooted bifurcating phylogenetic trees.
+Systematic Biology, 45, 323-34.
 }
 \seealso{
 \code{\link{calcDstBLD}}, \code{\link{calcDstRF}} 

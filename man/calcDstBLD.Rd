@@ -32,7 +32,7 @@ calcDstBLD(tree_1, tree_2)
 \references{
 Kuhner, M. K. and Felsenstein, J. (1994) Simulation comparison of phylogeny
 algorithms under equal and unequal evolutionary rates. Molecular Biology and
-Evolution, 11, 459–468.
+Evolution, 11, 459-468.
 }
 \seealso{
 \code{\link{calcDstTrp}}, \code{\link{calcDstRF}} 

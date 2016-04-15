@@ -22,6 +22,6 @@ library(treeman)
 tree <- randTree(5)
 }
 \seealso{
-\code{\link{TreeMan}}
+\code{\link{TreeMan-class}}
 }
 

@@ -22,6 +22,6 @@ library(treeman)
 trees <- cTrees(randTree(10), randTree(10))
 }
 \seealso{
-\code{\link{TreeMen}}, \code{\link{TreeMan}}, \code{\link{as-TreeMen}}
+\code{\link{TreeMen-class}}, \code{\link{TreeMan-class}}, \code{\link{as-TreeMen}}
 }
 

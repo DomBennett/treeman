@@ -28,7 +28,7 @@ calcPhyDv(tree, tree['tips'])
 }
 \references{
 Faith, D. (1992). Conservation evaluation and phylogenetic diversity.
- Biological Conservation, 61, 1–10.
+ Biological Conservation, 61, 1-10.
 }
 \seealso{
 \code{\link{calcFrPrp}}, \code{\link{calcOvrlp}}

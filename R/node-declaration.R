@@ -24,9 +24,12 @@
      age=age, tip=length(nd[['ptid']]) == 0)
 }
 
-#' @name Node
-#' @title S4 class for displaying nodes
-#' @description The \code{Node} class is used to display node information.
+#' @name Node-class
+#' @param x \code{Node} object
+#' @param object \code{Node} object
+#' @param i slot name
+#' @title Node-class
+#' @description The \code{Node} is an S4 class used for displaying node information.
 #' It is only generated when a user implements the \code{[[]]} on a tree.
 #' @slot id unique ID for node in tree['ndlst']
 #' @slot spn length of preceding branch
@@ -58,16 +61,22 @@ setClass ('Node', representation=representation (
   tip='logical')         # T/F tip node?
 )
 
+#' @rdname Node-class
+#' @aliases Node-method
 #' @exportMethod as.character
 setMethod ('as.character', c('x'='Node'),
            function(x) {
              x@id
            })
+#' @rdname Node-class
+#' @aliases Node-method
 #' @exportMethod show
 setMethod ('show', 'Node',
            function(object){
              print (object)
            })
+#' @rdname Node-class
+#' @aliases Node-method
 #' @exportMethod print
 setMethod ('print', c('x'='Node'),
            function(x){
@@ -102,6 +111,8 @@ setMethod ('print', c('x'='Node'),
              }
              cat (msg)
            })
+#' @rdname Node-class
+#' @aliases Node-method
 #' @exportMethod [
 setMethod('[', c('Node', 'character'),
           function(x, i) {
