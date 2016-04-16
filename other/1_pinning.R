@@ -15,7 +15,7 @@ n <- 100  # number of missing mammal species to pin
 # PIN
 rnds <- sample(1:nrow(rslvd_mammals), n)
 rslvd_mammals <- rslvd_mammals[rnds, ]
-lngs <- mlply(rslvd_mammals, function(lineage, ...) strsplit(lineage, '\\|')[[1]])
+lngs <- plyr::mlply(rslvd_mammals, function(lineage, ...) strsplit(lineage, '\\|')[[1]])
 tids <- gsub("\\s+", "_", rslvd_mammals$search_name)  # always replace spaces with _
 ends <- rep(0, length(tids))  # all tips end in the present
 pinned_tree <- pinTips(tree=mammals, lngs=lngs, tids=tids, ends=ends)
@@ -28,7 +28,7 @@ txnym <- function(n) {
   # return taxonyms for node labels, combining any multiple entries with _
   paste0(n[['txnym']], collapse='_')
 }
-writeTree(pinned_tree, file='temp.tre', nodeLabels=txnym)
+writeTree(pinned_tree, file='temp.tre', ndLabels = txnym)
 tree_phylo <- ape::read.tree('temp.tre')
 plot(tree_phylo, show.tip.label=FALSE, edge.width=0.5, type='fan', no.margin=FALSE,
      edge.color='lightsteelblue3')
@@ -46,7 +46,7 @@ node_labels <- c('Eutheria', 'Metatheria', 'Primates',
 nds <- match(node_labels, tree_phylo$node.label)+length(tree_phylo$tip.label)
 ape::nodelabels(pch=19, node=nds, cex=0.9, col='gray40')
 ape::nodelabels(text=node_labels, node=nds, cex=0.85, adj=-0.1,
-                bg=NULL, col='gray40', frame='none', font=3)
+                bg=NULL, col='gray40', frame='none')
 if(file.exists('temp.tre')) {
   file.remove('temp.tre')
 }

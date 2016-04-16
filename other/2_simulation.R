@@ -39,8 +39,8 @@ for(i in 1:iterations) {
   }
   # grow tree
   ext <- tree['tips']
-  spans <- getNodesSlot(tree, name="span", ids=ext)
-  tree <- setNodesSpan(tree, ids=ext, vals=spans+1)
+  spns <- getNdsSlt(tree, slt_nm="spn", ids=ext)
+  tree <- setNdsSpn(tree, ids=ext, vals=spns+1)
 }
 cat('Done.\n')
 
