@@ -1,4 +1,7 @@
+# roxygen imports
 #' @import methods
+#' @importFrom graphics lines plot.default text
+#' @importFrom utils combn write.table
 .checkTreeMan <- function(object) {
   .check <- function(nd) {
     # must have id
