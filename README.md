@@ -11,12 +11,23 @@ The `treeman` R package provides a `list` based class for encoding phylogenetic 
 * Fast (vectorised or recursive)
 * Simple and intuitive
 
+**Installation**
+
+With CRAN:
+
+```{R}
+install.packages('treeman')
+```
+
+Installing the development copy via GitHub
+```{R}
+library(devtools)
+install_github('dombennett/treeman')
+```
+
 **Quick guide**
 
 ```{R}
-# install development copy
-library(devtools)
-install_github('dombennett/treeman')
 # working with the TreeMan class
 library(treeman)
 ?TreeMan  # check the documentation
@@ -33,7 +44,7 @@ GPL-2
 
 **Status**
 
-In development
+Version 1 released.
 
 **Author**
 
