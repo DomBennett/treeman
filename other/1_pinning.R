@@ -33,10 +33,13 @@ tree_phylo <- ape::read.tree('temp.tre')
 plot(tree_phylo, show.tip.label=FALSE, edge.width=0.5, type='fan', no.margin=FALSE,
      edge.color='lightsteelblue3')
 tids <- tids[tids %in% tree_phylo$tip.label]
-print_names <- sample(tids, 10, prob=1/sapply(tids, nchar))  # only plot 10, easier to see
-indx <- match(print_names, tree_phylo$tip.label)
+# only plot 10 names and only use last two elements of a names -- easier to see
+print_tids <- sample(tids, 10, prob=1/sapply(tids, nchar))
+print_names <- unlist(lapply(strsplit(print_tids, '_'),
+                             function(x) paste0(x[(length(x)-1):length(x)], collapse=' ')))
+indx <- match(print_tids, tree_phylo$tip.label)
 ape::tiplabels(pch=19, tip=indx, cex=0.9, col='black')
-ape::tiplabels(text=gsub('_', ' ', print_names),
+ape::tiplabels(text=print_names,
                tip=indx, cex=0.85, adj=c(-0.05, -0.25),
                bg=NULL, col='black', frame='none', font=3)
 # example large clades for guidance
