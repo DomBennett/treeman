@@ -9,7 +9,7 @@ Description: S4 class and methods for efficient phylogenetic tree manipulation
     for simulating evolution, running phylogenetic statistics and plotting.
 License: GPL-2
 Depends:
-    R (>= 3.2.3),
+    R (>= 3.2.4),
     methods
 Imports:
     plyr
