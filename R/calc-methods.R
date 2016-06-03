@@ -287,9 +287,10 @@ calcFrPrp <- function(tree, tids, ...) {
 #' @description Returns a distance matrix for specified ids of a tree.
 #' @details The distance between every id in the tree is calculated by summing the
 #' lengths of the branches that connect them. This can be useful for testing the distances
-#' between trees, checking for evoltuionary isolated tips etc.
+#' between trees, checking for evoltuionary isolated tips etc. Parallelizable.
 #' @param tree \code{TreeMan} object
 #' @param ids IDs of nodes/tips
+#' @param ... \code{plyr} arguments
 #' @seealso
 #' \code{\link{calcDstBLD}}, \code{\link{calcDstRF}}, \code{\link{calcDstTrp}}
 #' \url{https://github.com/DomBennett/treeman/wiki/calc-methods}
@@ -303,18 +304,19 @@ calcFrPrp <- function(tree, tids, ...) {
 #' dmat2 <- calcDstMtrx(tree_2, tree_2['tips'])
 #' mdl <- cor.test(x=dmat1, y=dmat2)
 #' as.numeric(1 - mdl$estimate)  # 1 - Pearson's r
-calcDstMtrx <- function(tree, ids) {
-  .getDist <- function(cmb) {
-    if(cmb[1] == cmb[2]) {
+calcDstMtrx <- function(tree, ids, ...) {
+  .getDist <- function(id_1, id_2) {
+    if(id_1 == id_2) {
       return(0)
     }
-    path <- getPath(tree, from=cmb[1], to=cmb[2])
+    path <- getPath(tree, from=id_1, to=id_2)
     path_spns <- unlist(lapply(tree@ndlst[path], function(n) n[['spn']]))
     sum(path_spns)
   }
   cmbs <- expand.grid(ids, ids, stringsAsFactors=FALSE)
-  res <- apply(cmbs, 1, .getDist)
-  res <- matrix(res, ncol=length(ids))
+  colnames(cmbs) <- c('id_1', 'id_2')
+  res <- plyr::mdply(.data=cmbs, .fun=.getDist, ...)
+  res <- matrix(res[ ,3], ncol=length(ids))
   colnames(res) <- rownames(res) <- ids
   res
 }

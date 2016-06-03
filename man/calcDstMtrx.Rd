@@ -4,12 +4,14 @@
 \alias{calcDstMtrx}
 \title{Calculate the distance matrix}
 \usage{
-calcDstMtrx(tree, ids)
+calcDstMtrx(tree, ids, ...)
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}
 
 \item{ids}{IDs of nodes/tips}
+
+\item{...}{\code{plyr} arguments}
 }
 \description{
 Returns a distance matrix for specified ids of a tree.
@@ -17,7 +19,7 @@ Returns a distance matrix for specified ids of a tree.
 \details{
 The distance between every id in the tree is calculated by summing the
 lengths of the branches that connect them. This can be useful for testing the distances
-between trees, checking for evoltuionary isolated tips etc.
+between trees, checking for evoltuionary isolated tips etc. Parallelizable.
 }
 \examples{
 # checking the distance between two trees
