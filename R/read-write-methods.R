@@ -79,6 +79,11 @@ writeTree <- function(tree, file, ndLabels=function(nd){
 #' @param ... \code{plyr} arguments
 #' @seealso
 #' \code{\link{writeTree}}, \code{\link{randTree}}, \url{https://en.wikipedia.org/wiki/Newick_format}
+#' @useDynLib treeman
+#' @useDynLib treeman kids
+#' @useDynLib treeman pd
+#' @useDynLib treeman prdst
+#' @useDynLib treeman prids
 #' @export
 #' @examples
 #' library(treeman)
