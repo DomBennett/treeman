@@ -3,6 +3,7 @@
 # -- update tips or nodes
 # -- update upstream or downstream or all
 # -- update prdst, pd, kids or all
+# -- update with C
 
 .updateNdsSlt <- function(ndlst, nids, updater) {
   # update nids using updater function
@@ -34,6 +35,21 @@
   ndlst[prids] <- plyr::llply(ndlst[prids], .add)
   ndlst[[nid]][['prdst']] <- prdst
   ndlst
+}
+
+.updateNd2 <- function(tree, nid) {
+  .add <- function(nd) {
+    nd[['pd']] <- nd[['pd']] + nd_spn
+    prdst <<- nd[['spn']] + prdst
+    nd
+  }
+  rid <- tree@root
+  nd_spn <- tree@ndlst[[nid]][['spn']]
+  prdst <- nd_spn
+  prids <- getNdPrids(tree, nid)
+  tree@ndlst[prids] <- plyr::llply(tree@ndlst[prids], .add)
+  tree@ndlst[[nid]][['prdst']] <- prdst
+  tree
 }
 
 .dwndateTip <- function(ndlst, tid, rid) {

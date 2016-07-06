@@ -146,7 +146,7 @@ SEXP prids(SEXP nds_, SEXP clss_, SEXP opns_)
       REAL(res)[i] = -1;
     } else {
       for(j=0;j<n; j++) {
-        if(nds[j] > cls) {
+        if(nds[j] >= cls) {
           REAL(res)[i] = nds[j];
           break;
         }

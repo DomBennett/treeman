@@ -56,8 +56,8 @@ test_that('getSpnsAge() works', {
 })
 test_that("getPrnt() works", {
   tree <- readTree(text="(((A,B),(C,D)),(E,F));")
-  prnt <- getPrnt(tree, ids=c("A", "C"))
-  expect_true(prnt == "n2")
+  prnt <- getPrnt(tree, ids=c("A", "F"))
+  expect_true(prnt == tree@root)
 })
 test_that("getPath() works", {
   tree <- randTree(10)
@@ -67,13 +67,20 @@ test_that("getPath() works", {
   expect_that(pth[1], equals('t1'))
   expect_that(pth[length(pth)], equals('t10'))
 })
-test_that("get_Prid() works", {
+test_that("get_Prids() works", {
   tree <- randTree(10)
-  prid <- getNdPrid(tree, id='n1')
+  prid <- getNdPrids(tree, id='n1')
   expect_that(prid, is_null())
-  prids <- getNdsPrid(tree, tree['nds'])
+  prids <- getNdsPrids(tree, tree['nds'])
   lst_nds <- unlist(lapply(prids, function(n) n[length(n)]))
   expect_true(all(lst_nds == "n1"))
+})
+test_that("get_Prid() works", {
+  tree <- randTree(10)
+  prid <- getNdPrid(tree, id=sample(tree['tips'], 1))
+  expect_true(prid %in% tree['nds'])
+  prids <- getNdsPrid(tree, tree['nds'])
+  expect_true(all(prids %in% tree['nds']))
 })
 test_that("get_Ptid() works", {
   tree <- randTree(10)

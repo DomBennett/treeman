@@ -86,10 +86,10 @@ setNdSpn <- function(tree, id, val, ...) {
   # reset node using diff
   diff <- val - tree@ndlst[[id]][['spn']]
   tree@ndlst[[id]][['spn']] <- diff
-  tree@ndlst <- .updateNd(tree@ndlst, id, tree@root)
+  tree <- .updateNd2(tree, id)
   # adjust any pstnds
   ptids <- getNdPtid(tree, id=id)
-  ptids <- ptids[-(length(ptids))]
+  #ptids <- ptids[-(length(ptids))]
   tree@ndlst[ptids] <- plyr::llply(tree@ndlst[ptids], .fun=.ptnd, ...)
   # update nd
   tree@ndlst[[id]][['spn']] <- val

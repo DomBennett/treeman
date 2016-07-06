@@ -47,7 +47,7 @@ randTree <- function(n) {
         }
         post <- c(post, new_id)
         new_spn <- runif(min=0, max=1, n=1)
-        new_pre <- c(id, pre)
+        new_pre <- id
         new_predist <- predist + new_spn
         ndlst <- .nd(nl, new_id, new_spn,
                            new_pre, new_predist, ndlst)
@@ -71,12 +71,12 @@ randTree <- function(n) {
   # generate root node
   id <- paste0('n', 1)
   predist <- spn <- 0
-  pre <- c()
+  pre <- NULL
   # gen nodelist
   ndlst <- .nd(n_left, id, spn, pre, predist, ndlst)
   # init new tree object
   tree <- new('TreeMan', ndlst=ndlst, root='n1')
-  .updateTreeSlts(tree)
+  treeman:::.updateTreeSlts(tree)
 }
 
 blncdTree <- function(...) {

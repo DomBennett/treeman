@@ -184,7 +184,6 @@ getNdKids <- function(tree, id) {
 #' library(treeman)
 #' tree <- randTree(10)
 #' getNdsKids(tree, id=tree['nds'])
-
 getNdsKids <- function(tree, ids, ...) {
   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
   res <- plyr::mlply(.data=l_data, .fun=getNdKids, tree=tree, ...)
@@ -306,7 +305,7 @@ getSpnsAge <- function(tree, ids, ...) {
 #' # choosing ids from the two main branches of apes allows to find the parent for all apes
 #' ape_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
 getPrnt <- function(tree, ids) {
-  prids <- getNdsPrid(tree, ids)
+  prids <- getNdsPrids(tree, ids)
   rf <- prids[[1]]
   mn_rnk <- 0
   for(n in prids[-1]) {
@@ -334,8 +333,8 @@ getPrnt <- function(tree, ids) {
 #' pth <- getPath(mammals, from='Homo_sapiens', to='Gorilla_gorilla')
 #' sum(getNdsSlt(mammals, ids=pth, slt_nm='spn'))
 getPath <- function(tree, from, to) {
-  pre_1 <- c(from, getNdPrid(tree, from))
-  pre_2 <- c(to, getNdPrid(tree, to))
+  pre_1 <- c(from, getNdPrids(tree, from))
+  pre_2 <- c(to, getNdPrids(tree, to))
   parent <- pre_1[which(pre_1 %in% pre_2)[1]]
   path_1 <- pre_1[!pre_1 %in% pre_2]
   path_2 <- pre_2[!pre_2 %in% pre_1]
@@ -344,12 +343,14 @@ getPath <- function(tree, from, to) {
 }
 
 #' @name getNdPrid
-#' @title Get pre-nodes to root
-#' @description Return node ids for connecting \code{id} to root.
-#' @details Returns a vector.
+#' @title Get pre-nodes
+#' @description Return id for directly preceding node
+#' @details Returns character.
 #' @param tree \code{TreeMan} object
 #' @param id node id
 #' @seealso
+#' \code{\link{getNdPrids}},
+#' \code{\link{getNdsPrids}},
 #' \code{\link{getNdsPrid}}, 
 #' \code{\link{getNdPtid}}, 
 #' \code{\link{getNdsPtid}}, 
@@ -358,20 +359,21 @@ getPath <- function(tree, from, to) {
 #' @examples
 #' library(treeman)
 #' tree <- randTree(10)
-#' # get all nodes to root
 #' getNdPrid(tree, id='t1')
 getNdPrid <- function(tree, id) {
   tree@ndlst[[id]][['prid']]
 }
 
 #' @name getNdsPrid
-#' @title Get pre-nodes to root for multiple nodes
-#' @description Return node ids for connecting \code{ids} to root.
+#' @title Get pre-nodes for multiple nodes
+#' @description Return node ids for preceding nodes.
 #' @details Returns a list, parallizable.
 #' @param tree \code{TreeMan} object
 #' @param ids vector of node ids
 #' @param ... \code{plyr} arguments
 #' @seealso
+#' \code{\link{getNdPrids}},
+#' \code{\link{getNdsPrids}},
 #' \code{\link{getNdPrid}}, 
 #' \code{\link{getNdPtid}}, 
 #' \code{\link{getNdsPtid}}, 
@@ -380,13 +382,80 @@ getNdPrid <- function(tree, id) {
 #' @examples
 #' library(treeman)
 #' tree <- randTree(10)
-#' # get all nodes to root
 #' getNdsPrid(tree, ids=tree['tips'])
 getNdsPrid <- function(tree, ids, ...) {
   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
-  res <- plyr::mlply(.data=l_data, .fun=getNdPrid, tree=tree, ...)
-  names(res) <- ids
-  res[1:length(res)]
+  out <- plyr::mdply(.data=l_data, .fun=getNdPrid, tree=tree, ...)
+  res <- out[ ,2]
+  names(res) <- out[ ,1]
+  res
+}
+
+#' @name getNdPrids
+#' @title Get pre-nodes to root
+#' @description Return node ids for connecting \code{id} to root.
+#' @details Returns a vector.
+#' @param tree \code{TreeMan} object
+#' @param id node id
+#' @seealso
+#' \code{\link{getNdPrid}},
+#' \code{\link{getNdsPrid}},
+#' \code{\link{getNdsPrids}}, 
+#' \code{\link{getNdPtid}}, 
+#' \code{\link{getNdsPtid}}, 
+#' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
+#' @export
+#' @useDynLib treeman getPrids
+#' @examples
+#' library(treeman)
+#' tree <- randTree(10)
+#' # get all nodes to root
+#' getNdPrids(tree, id='t1')
+getNdPrids <- function(tree, id) {
+  # find prid, get prids for all internal nodes
+  # convert to integers, send to C for the while loop
+  if(id == tree@root) {
+    return(NULL)
+  }
+  prid <- getNdPrid(tree, id=id)
+  # root is dropped by getNdsPrid, add here
+  prids <- c(tree@root, getNdsPrid(tree, ids=tree@nds))
+  nds <- names(prids)
+  nds[1] <- tree@root
+  prid <- which(nds == prid)
+  prids <- match(prids, nds)
+  res <- .Call("getPrids", PACKAGE="treeman",
+               as.integer(prid),
+               as.integer(prids))
+  nds[res]
+}
+
+#' @name getNdsPrids
+#' @title Get pre-nodes for multiple nodes
+#' @description Return node ids for connecting \code{id} to root.
+#' @details Returns a list, parallizable.
+#' @param tree \code{TreeMan} object
+#' @param ids vector of node ids
+#' @param ... \code{plyr} arguments
+#' @seealso
+#' \code{\link{getNdPrids}},
+#' \code{\link{getNdPrid}},
+#' \code{\link{getNdsPrid}}, 
+#' \code{\link{getNdPtid}}, 
+#' \code{\link{getNdsPtid}}, 
+#' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree <- randTree(10)
+#' getNdsPrids(tree, ids=tree['tips'])
+getNdsPrids <- function(tree, ids, ...) {
+  l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
+  out <- plyr::mlply(.data=l_data, .fun=getNdPrids, tree=tree, ...)
+  out <- plyr::mlply(.data=l_data, .fun=getNdPrids, tree=tree)
+  names(out) <- attr(out, 'split_labels')[,1]
+  res <- out[1:length(out)]
+  res
 }
 
 #' @name getNdPtid
@@ -409,8 +478,9 @@ getNdsPrid <- function(tree, ids, ...) {
 # reduce dependence on the recursive, by getting prenodes
 # tip ids to id
 getNdPtid <- function(tree, id) {
+  # TODO: convert to C
   .get <- function(id) {
-    tmp <- c(id, getNdPrid(tree, id))
+    tmp <- c(id, getNdPrids(tree, id))
     index <- seq(from=1, to=(which(tmp %in% pstids)[1]-1), by=1)
     pstids <<- c(tmp[index], pstids)
     NULL
@@ -419,7 +489,7 @@ getNdPtid <- function(tree, id) {
   l_data <- data.frame(id=tree@ndlst[[id]][['kids']],
                        stringsAsFactors=FALSE)
   plyr::m_ply(.data=l_data, .fun=.get)
-  pstids
+  pstids[-length(pstids)]
 }
 
 #' @name getNdsPtid
@@ -442,9 +512,10 @@ getNdPtid <- function(tree, id) {
 #' getNdsPtid(tree, ids=tree['nds'])
 getNdsPtid <- function(tree, ids, ...) {
   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
-  res <- plyr::mlply(.data=l_data, .fun=getNdPtid, tree=tree, ...)
-  names(res) <- ids
-  res[1:length(res)]
+  out <- plyr::mlply(.data=l_data, .fun=getNdPtid, tree=tree, ...)
+  names(out) <- attr(out, 'split_labels')[,1]
+  res <- out[1:length(out)]
+  res
 }
 
 #' @name getNdLng
@@ -466,7 +537,7 @@ getNdLng <- function(tree, id) {
   .get <- function(txnym, ...) {
     lng <<- c(txnym, lng)
   }
-  prids <- c(id, getNdPrid(tree, id))
+  prids <- c(id, getNdPrids(tree, id))
   lng <- NULL
   plyr::m_ply(tree@ndlst[prids], .fun=.get)
   unique(lng)
@@ -490,7 +561,10 @@ getNdLng <- function(tree, id) {
 #' getNdLng(mammals, id=c('Homo_sapiens', 'Gorilla_gorilla'))
 getNdsLng <- function(tree, ids, ...) {
   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
-  plyr::mlply(.data=l_data, .fun=getNdLng, tree=tree, ...)
+  out <- plyr::mlply(.data=l_data, .fun=getNdLng, tree=tree, ...)
+  names(out) <- attr(out, 'split_labels')[,1]
+  res <- out[1:length(out)]
+  res
 }
 
 #' @name getSubtree
@@ -512,16 +586,17 @@ getNdsLng <- function(tree, ids, ...) {
 getSubtree <- function(tree, id) {
   .prdst <- function(nd) {
     nd[['prdst']] <- nd[['prdst']] - nd_prdst
-    nd[['prid']] <- nd[['prid']][nd[['prid']] %in% nids]
     nd
   }
   pstids <- getNdPtid(tree, id)
-  ndlst <- tree@ndlst[pstids]
+  ndlst <- tree@ndlst[c(pstids, id)]
   nids <- names(ndlst)
-  nd_prdst <- ndlst[[id]][['prdst']]
-  ndlst <- plyr::llply(.data=ndlst, .fun=.prdst)
+  if(tree@wspn) {
+    nd_prdst <- ndlst[[id]][['prdst']]
+    ndlst <- plyr::llply(.data=ndlst, .fun=.prdst)
+    ndlst[[id]][['spn']] <- 0
+  }
   ndlst[[id]][['prid']] <- NULL
-  ndlst[[id]][['spn']] <- 0
   new_tree <- new('TreeMan', ndlst=ndlst, root=id)
   .updateTreeSlts(new_tree)
 }

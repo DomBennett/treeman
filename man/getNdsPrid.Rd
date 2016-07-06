@@ -2,7 +2,7 @@
 % Please edit documentation in R/get-methods.R
 \name{getNdsPrid}
 \alias{getNdsPrid}
-\title{Get pre-nodes to root for multiple nodes}
+\title{Get pre-nodes for multiple nodes}
 \usage{
 getNdsPrid(tree, ids, ...)
 }
@@ -14,7 +14,7 @@ getNdsPrid(tree, ids, ...)
 \item{...}{\code{plyr} arguments}
 }
 \description{
-Return node ids for connecting \code{ids} to root.
+Return node ids for preceding nodes.
 }
 \details{
 Returns a list, parallizable.
@@ -22,10 +22,11 @@ Returns a list, parallizable.
 \examples{
 library(treeman)
 tree <- randTree(10)
-# get all nodes to root
 getNdsPrid(tree, ids=tree['tips'])
 }
 \seealso{
+\code{\link{getNdPrids}},
+\code{\link{getNdsPrids}},
 \code{\link{getNdPrid}}, 
 \code{\link{getNdPtid}}, 
 \code{\link{getNdsPtid}}, 

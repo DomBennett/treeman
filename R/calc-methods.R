@@ -122,9 +122,9 @@ calcDstTrp <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
 calcOvrlp <- function(tree, ids_1, ids_2, nrmlsd=FALSE, ...) {
   spns <- getNdsSlt(tree, slt_nm='spn', tree@all, ...)
   names(spns) <- tree@all
-  ids_1 <- c(unique(unlist(getNdsPrid(tree, ids_1, ...))),
+  ids_1 <- c(unique(unlist(getNdsPrids(tree, ids_1, ...))),
              ids_1)
-  ids_2 <- c(unique(unlist(getNdsPrid(tree, ids_2, ...))),
+  ids_2 <- c(unique(unlist(getNdsPrids(tree, ids_2, ...))),
              ids_2)
   ovrlp <- sum(spns[ids_2[ids_2 %in% ids_1]])
   if(nrmlsd) {
@@ -233,7 +233,7 @@ calcDstRF <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
 #' tree <- randTree(10)
 #' calcPhyDv(tree, tree['tips'])
 calcPhyDv <- function(tree, tids, ...) {
-  prids <- c(unique(unlist(getNdsPrid(tree, tids))),
+  prids <- c(unique(unlist(getNdsPrids(tree, tids))),
              tids)
   counts <- table(prids)
   prids <- names(counts)[counts < length(tids)]
@@ -273,7 +273,7 @@ calcFrPrp <- function(tree, tids, ...) {
     spn/n
   }
   .calc <- function(tid) {
-    ids <- c(tid, getNdPrid(tree, tid))
+    ids <- c(tid, getNdPrids(tree, tid))
     l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
     shares <- plyr::mdply(.data=l_data, .fun=.share)[ ,2]
     sum(shares)
