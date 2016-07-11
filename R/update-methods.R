@@ -5,6 +5,98 @@
 # -- update prdst, pd, kids or all
 # -- update with C
 
+.getTreels <- function(ndlst) {
+  # Breaks a ndlst into key tree elements
+  # ids, tids (as integers), prids (as integers)
+  # this is needed for running with C
+  # get ids
+  ids <- names(ndlst)
+  # get prids
+  prids <- sapply(ndlst, function(x) x[['prid']])
+  prids <- match(prids, ids)
+  prids[is.na(prids)] <- -1
+  # get tids
+  tids <- ids[sapply(ndlst, function(x) length(x[['ptid']]) == 0)]
+  tids <- match(tids, ids)
+  # get spns
+  spns <- as.numeric(sapply(ndlst, function(x) x[['spn']]))
+  # return
+  list('ids'=ids, 'tids'=tids, 'prids'=prids, 'spns'=spns)
+}
+
+#' @useDynLib treeman
+#' @useDynLib treeman getKidsMat
+#' @useDynLib treeman getPrdstVec
+#' @useDynLib treeman getPdVec
+
+.updateNdlst <- function(treels, spn_offset=0) {
+  #### Complex function #####
+  # (re)calculate tree slots from first principles
+  # in case of any changes made or new tree to be created
+  # takes tree elements (treels) and returns ndlst
+  # assumes ids, spns, ptids and prids are correct
+  # (re)calculates: kids, prdsts and pds, where available
+  # takes spn_offset, the distance within tree
+  ###########################
+  # Internals
+  .addwospn <- function(i) {
+    nd <- vector("list", length=4)
+    names(nd) <- c('id', 'ptid', 'prid', 'kids')
+    nd[['id']] <- ids[i]
+    nd[['kids']] <- tids[kids[i, ]]
+    nd[['prid']] <- prids[i]
+    ptids <- ids[prids == ids[i]]
+    nd[['ptid']] <- ptids[!is.na(ptids)]
+    nd
+  }
+  .addwspn <- function(i) {
+    nd <- vector("list", length=7)
+    names(nd) <- c('id', 'ptid', 'prid', 'kids',
+                   'spn', 'pd', 'prdst')
+    nd[['id']] <- ids[i]
+    nd[['spn']] <- spns[i]
+    nd[['prdst']] <- prdsts[i]
+    nd[['pd']] <- pds[i]
+    nd[['kids']] <- tids[kids[i, ]]
+    nd[['prid']] <- prids[i]
+    ptids <- ids[prids == ids[i]]
+    nd[['ptid']] <- ptids[!is.na(ptids)]
+    nd
+  }
+  # unpack
+  ids <- treels[['ids']]
+  nids <- as.integer(length(ids))
+  tids <- as.integer(treels[['tids']])
+  prids <- as.integer(treels[['prids']])
+  spns <- as.numeric(treels[['spns']])
+  # get kids
+  kids <- .Call("getKidsMat", PACKAGE="treeman",
+                nids, tids, prids)
+  kids <- kids == 1
+  if(sum(spns == -1) == 1) {
+    # TODO: giving negative numbers
+    prdsts <- .Call("getPrdstVec", PACKAGE="treeman",
+                    nids, prids, spns)
+    prdsts <- prdsts + spn_offset
+    pds <- .Call("getPdVec", PACKAGE="treeman",
+                 nids, prids, spns)
+    pds <- pds + spn_offset
+  }
+  # replace -1s with NAs
+  prids[prids == -1] <- NA
+  spns[spns == -1] <- NA
+  # generate ndlst
+  tids <- ids[tids]
+  prids <- ids[prids]
+  if(sum(is.na(spns)) > 1) {
+    ndlst <- lapply(1:length(ids), .addwospn)
+  } else {
+    ndlst <- lapply(1:length(ids), .addwspn)
+  }
+  names(ndlst) <- ids
+  ndlst
+}
+
 .updateNdsSlt <- function(ndlst, nids, updater) {
   # update nids using updater function
   ndlst[nids] <- plyr::llply(ndlst[nids], .fun=updater)

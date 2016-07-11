@@ -81,10 +81,7 @@ writeTree <- function(tree, file, ndLabels=function(nd){
 #' @seealso
 #' \code{\link{writeTree}}, \code{\link{randTree}}, \url{https://en.wikipedia.org/wiki/Newick_format}
 #' @useDynLib treeman
-#' @useDynLib treeman kids
-#' @useDynLib treeman pd
-#' @useDynLib treeman prdst
-#' @useDynLib treeman prids
+#' @useDynLib treeman findPrids
 #' @export
 #' @examples
 #' library(treeman)
@@ -106,30 +103,6 @@ readTree <- function(file=NULL, text=NULL, ...) {
 
 .readTree <- function(trstr) {
   # Internals
-  .addwospn <- function(i) {
-    nd <- vector("list", length=4)
-    names(nd) <- c('id', 'ptid', 'prid', 'kids')
-    nd[['id']] <- ids[i]
-    nd[['kids']] <- tids[kids[i, ]]
-    nd[['prid']] <- prids[i]
-    ptids <- ids[prids == ids[i]]
-    nd[['ptid']] <- ptids[!is.na(ptids)]
-    nd
-  }
-  .addwspn <- function(i) {
-    nd <- vector("list", length=7)
-    names(nd) <- c('id', 'ptid', 'prid', 'kids',
-                   'spn', 'pd', 'prdst')
-    nd[['id']] <- ids[i]
-    nd[['spn']] <- spns[i]
-    nd[['prdst']] <- prdsts[i]
-    nd[['pd']] <- pds[i]
-    nd[['kids']] <- tids[kids[i, ]]
-    nd[['prid']] <- prids[i]
-    ptids <- ids[prids == ids[i]]
-    nd[['ptid']] <- ptids[!is.na(ptids)]
-    nd
-  }
   .idspn <- function(i) {
     mtdt <- substr(trstr, start=nds[i-1] + 1, stop=nds[i])
     mtdt <- gsub("(\\(|\\)|,)", "", mtdt)
@@ -161,52 +134,38 @@ readTree <- function(file=NULL, text=NULL, ...) {
   mtdt <- sapply(2:length(nds), FUN=.idspn)
   ids <- mtdt[1, ]
   spns <- as.numeric(mtdt[2, ])
+  rm(mtdt)
   nds <- nds[-1]
   # gen prids
   opns <- gregexpr("\\(", trstr)[[1]]
   clss <- gregexpr("\\)", trstr)[[1]]
-  prids <- .Call("prids", PACKAGE="treeman",
+  prids <- .Call("findPrids", PACKAGE="treeman",
                  as.integer(nds),
                  as.integer(clss),
                  as.integer(opns))
   if(sum(prids == -1) > 1) {
     stop('Invalid tree string')
   }
+  root <- which(prids == -1)
   prids <- match(prids, nds)
   tids <- which(!1:length(ids) %in% prids)
-  root <- length(prids)
-  prids <- prids
-  # generate other data
-  kids <- .Call("kids", PACKAGE="treeman",
-                as.integer(length(ids)),
-                as.integer(tids),
-                as.integer(prids[-root]))
-  kids[root, ] <- 1
-  kids <- kids == 1
-  if(sum(is.na(spns)) == 1) {
-    prdsts <- .Call("prdst", PACKAGE="treeman",
-                    as.integer(length(ids)),
-                    as.integer(prids[-root]),
-                    as.numeric(spns[-root]))
-    pds <- .Call("pd", PACKAGE="treeman",
-                 as.integer(length(ids)),
-                 as.integer(prids[-root]),
-                 as.numeric(spns[-root]))
-    pds[root] <- sum(spns[-root])
-  }
-  # generate ndlst
-  tids <- ids[tids]
-  prids <- ids[prids]
-  if(sum(is.na(spns)) > 1) {
-    ndlst <- lapply(1:length(ids), .addwospn)
+  prids[is.na(prids)] <- -1
+  spns[is.na(spns)] <- -1
+  treels <- list('ids'=ids, 'prids'=prids, 'spns'=spns,
+                 'tids'=tids)
+  rm(prids, tids, spns, ids)
+  ndlst <- .updateNdlst(treels)
+  # correct root
+  if(length(root) > 0) {
+    rid <- treels[['ids']][root]
+    if(length(ndlst[[rid]][['spn']]) > 0) {
+      ndlst[[rid]][['spn']] <- 0
+      ndlst[[rid]][['pd']] <- sum(treels[['spns']])
+    }
+    ndlst[[rid]][['prid']] <- NULL
+    tree <- new('TreeMan', ndlst=ndlst, root=rid)
   } else {
-    ndlst <- lapply(1:length(ids), .addwspn)
-    ndlst[[root]][['spn']] <- 0
+    tree <- new('TreeMan', ndlst=ndlst)
   }
-  names(ndlst) <- ids
-  root <- ids[root]
-  ndlst[[root]][['prid']] <- NULL
-  # create TreeMan object
-  tree <- new('TreeMan', ndlst=ndlst, root=root)
   .updateTreeSlts(tree)
 }
