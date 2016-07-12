@@ -20,6 +20,7 @@
   tids <- match(tids, ids)
   # get spns
   spns <- as.numeric(sapply(ndlst, function(x) x[['spn']]))
+  spns[is.na(spns)] <- 0
   # return
   list('ids'=ids, 'tids'=tids, 'prids'=prids, 'spns'=spns)
 }
@@ -73,18 +74,16 @@
   kids <- .Call("getKidsMat", PACKAGE="treeman",
                 nids, tids, prids)
   kids <- kids == 1
-  if(sum(spns == -1) == 1) {
-    # TODO: giving negative numbers
+  if(sum(spns) > 0) {
     prdsts <- .Call("getPrdstVec", PACKAGE="treeman",
                     nids, prids, spns)
     prdsts <- prdsts + spn_offset
     pds <- .Call("getPdVec", PACKAGE="treeman",
                  nids, prids, spns)
-    pds <- pds + spn_offset
   }
   # replace -1s with NAs
   prids[prids == -1] <- NA
-  spns[spns == -1] <- NA
+  spns[spns == 0] <- NA
   # generate ndlst
   tids <- ids[tids]
   prids <- ids[prids]
@@ -95,6 +94,20 @@
   }
   names(ndlst) <- ids
   ndlst
+}
+
+.updateNd <- function(tree, id) {
+  # Update nodes from changed node id
+  # get all pre-nodes
+  prids <- getNdPrids(tree, id)
+  # get all pstnds
+  ptids <- getNdPtid(tree, id)
+  # ids
+  ids <- c(prids, id, ptids)
+  # update
+  tree@ndlst[ids] <-
+    .updateNdlst(.getTreels(tree@ndlst[ids]))
+  .updateTreeSlts(tree)
 }
 
 .updateNdsSlt <- function(ndlst, nids, updater) {

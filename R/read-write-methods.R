@@ -150,7 +150,7 @@ readTree <- function(file=NULL, text=NULL, ...) {
   prids <- match(prids, nds)
   tids <- which(!1:length(ids) %in% prids)
   prids[is.na(prids)] <- -1
-  spns[is.na(spns)] <- -1
+  spns[is.na(spns)] <- 0
   treels <- list('ids'=ids, 'prids'=prids, 'spns'=spns,
                  'tids'=tids)
   rm(prids, tids, spns, ids)
