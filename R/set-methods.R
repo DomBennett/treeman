@@ -78,24 +78,9 @@ setAge <- function(tree, val) {
 #' viz(tree)
 #' tree <- setNdSpn(tree, id='t1', val=100)
 #' viz(tree)
-setNdSpn <- function(tree, id, val, ...) {
-  .ptnd <- function(nd) {
-    nd[['prdst']] <- nd[['prdst']] + diff
-    nd
-  }
-  # reset node using diff
-  diff <- val - tree@ndlst[[id]][['spn']]
-  tree@ndlst[[id]][['spn']] <- diff
-  tree <- .updateNd2(tree, id)
-  # adjust any pstnds
-  ptids <- getNdPtid(tree, id=id)
-  #ptids <- ptids[-(length(ptids))]
-  tree@ndlst[ptids] <- plyr::llply(tree@ndlst[ptids], .fun=.ptnd, ...)
-  # update nd
+setNdSpn <- function(tree, id, val) {
   tree@ndlst[[id]][['spn']] <- val
-  tree@ndlst[[id]][['prdst']] <- tree@ndlst[[id]][['prdst']] +
-    val + abs(diff)
-  .updateTreeSlts(tree)
+  .updateNd(tree, id)
 }
 
 #' @name setNdsSpn
