@@ -19,31 +19,28 @@ randTree <- function(n) {
     nd[['id']] <- ids[i]
     nd[['spn']] <- spns[i]
     nd[['prid']] <- ids[prids[i]]
-    ptids <- ids[prids == i]
-    nd[['ptid']] <- ptids[!is.na(ptids)]
+    nd[['ptid']] <- ptids[ptnds_pool == i]
     nd
   }
   if(n < 3) {
-    stop("n is too small")
+    stop("`n` is too small")
   }
   nnds <- n + (n - 1)
   prids <- rep(NA, nnds)
-  tmp_ids <- 1:nnds
-  pool <- rep(2, nnds)
-  pool[1] <- 0
+  intrnls <- seq(2, (nnds-2), 2)
+  # randomise intrnls
+  intrnls <- intrnls +
+    sample(0:1, size=length(intrnls), replace=TRUE)
+  # create prids vector
   prids[1:3] <- 1
-  for(i in seq(4, nnds, 2)) {
-    j <- sample(1:(i-1), 1, prob=pool[1:(i-1)])
-    pool[j] <- pool[j] - 1
-    prids[i] <- prids[i + 1] <- tmp_ids[j]
-  }
+  prids[4:nnds] <- rep(intrnls, each=2)
+  # random numbers for spans
   spns <- c(0, runif(nnds-1, 0, 1))
-  tids <- paste0('t', 1:n)
-  nids <- paste0('n', 1:(n-1))
   ids <- rep(NA, nnds)
-  ids[tmp_ids %in% prids] <- nids
-  sum(!tmp_ids %in% prids)
-  ids[!tmp_ids %in% prids] <- tids
+  ids[!1:nnds %in% prids] <- paste0('t', 1:n)
+  ids[1:nnds %in% prids] <- paste0('n', 1:(n-1))
+  ptnds_pool <- prids[-1]
+  ptids <- ids[-1]
   ndlst <- lapply(1:nnds, .add)
   names(ndlst) <- ids
   # init new tree object
