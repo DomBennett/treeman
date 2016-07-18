@@ -40,17 +40,17 @@ test_that('get_Kids() works', {
 test_that('get_Age() works', {
   tree <- randTree(10)
   root_age <- tree['age']
-  nd_ages <- getNdsAge(tree, tree['nds'])
+  nd_ages <- getNdsAge(tree, tree['nds'], tree_age=tree['age'])
   expect_true(all(nd_ages <= root_age))
 })
 test_that('getSpnAge() works', {
   tree <- randTree(10)
-  tip_age <- getSpnAge(tree, sample(tree['tips'], 1))
+  tip_age <- getSpnAge(tree, sample(tree['tips'], 1), tree_age=tree['age'])
   expect_that(tip_age[['start']], is_more_than(tip_age[['end']]))
 })
 test_that('getSpnsAge() works', {
   tree <- randTree(10)
-  tip_ages <- getSpnsAge(tree, tree['tips'])
+  tip_ages <- getSpnsAge(tree, tree['tips'], tree_age=tree['age'])
   res <- all(tip_ages[ ,'start'] > tip_ages[ ,'end'])
   expect_true(res)
 })
@@ -70,7 +70,7 @@ test_that("getPath() works", {
 test_that("get_Prids() works", {
   tree <- randTree(10)
   prid <- getNdPrids(tree, id='n1')
-  expect_that(prid, is_null())
+  expect_that(prid, equals('n1'))  # root nodes are recursive
   prids <- getNdsPrids(tree, tree['nds'])
   lst_nds <- unlist(lapply(prids, function(n) n[length(n)]))
   expect_true(all(lst_nds == "n1"))
