@@ -20,6 +20,7 @@ Returns the value of named slot.
 }
 \details{
 Returned object depends on name, either character, vector or numeric. Parallelizable.
+Default node slots are: id, spn, prid, ptid and txnym.
 }
 \examples{
 library(treeman)

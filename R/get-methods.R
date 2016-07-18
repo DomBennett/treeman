@@ -66,7 +66,7 @@ getTxnyms <- function(tree, txnyms, ...) {
       }
     }
   }
-  res <- list()
+  res <- vector("list", lenght=length(tree@ndlst))
   plyr::m_ply(tree@ndlst, .fun=.get)
   res
 }
@@ -105,10 +105,93 @@ getOtgrp <- function(tree, ids) {
   outgroup
 }
 
+#' @name getNdPD
+#' @title Get phylogenetic diversity of node
+#' @description Return summed value of all descending spns
+#' @details Sums the lengths of all descending branches from a node.
+#' @param tree \code{TreeMan} object
+#' @param id node id
+#' @seealso
+#' \code{\link{getNdsPD}}, 
+#' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree <- randTree(10)
+#' getNdPD(tree, id='n1')  # return PD of n1 which in this case is for the whole tree
+getNdPD <- function(tree, id) {
+  .getPD(tree@ndlst, id)
+}
+
+#' @name getNdsPD
+#' @title Get phylogenetic diversities of nodes
+#' @description Return summed value of all descending spns
+#' @details Sums the lengths of all descending branches from a node.
+#' @param tree \code{TreeMan} object
+#' @param ids vector of node ids
+#' @param ... \code{plyr} arguments
+#' @seealso
+#' \code{\link{getNdPD}},
+#' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree <- randTree(10)
+#' getNdsPD(tree, ids=tree['all'])  # return PD of all ids
+getNdsPD <- function(tree, ids, ...) {
+  l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
+  out <- plyr::mdply(.data=l_data, .fun=getNdPD, tree=tree, ...)
+  res <- out[ ,2]
+  names(res) <- out[ ,1]
+  res
+}
+
+#' @name getNdPrdst
+#' @title Get pre-distance
+#' @description Return root to tip distance (prdst) for \code{id}
+#' @details Sums the lengths of all branches from \code{id} to root.
+#' @param tree \code{TreeMan} object
+#' @param id node id
+#' @seealso
+#' \code{\link{getNdsPrdst}}, 
+#' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree <- randTree(10)
+#' getNdPrdst(tree, id='t1')  # return the distance to root from t1
+getNdPrdst <- function(tree, id) {
+  .getPrdst(tree@ndlst, id)
+}
+
+#' @name getNdsPrdst
+#' @title Get pre-distances
+#' @description Return root to tip distances (prdst) for \code{ids}
+#' @details Sums the lengths of all branches from \code{ids} to root.
+#' @param tree \code{TreeMan} object
+#' @param ids vector of node ids
+#' @param ... \code{plyr} arguments
+#' @seealso
+#' \code{\link{getNdPrdst}},
+#' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree <- randTree(10)
+#' getNdsPrdst(tree, ids=tree['tips'])  # return prdsts for all tips
+getNdsPrdst <- function(tree, ids, ...) {
+  l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
+  out <- plyr::mdply(.data=l_data, .fun=getNdPrdst, tree=tree, ...)
+  res <- out[ ,2]
+  names(res) <- out[ ,1]
+  res
+}
+
 #' @name getNdSlt
 #' @title Get a node slot
 #' @description Returns the value of named slot.
 #' @details Returned object depends on name, either character, vector or numeric.
+#' Default node slots are: id, spn, prid, ptid and txnym.
 #' @param tree \code{TreeMan} object
 #' @param slt_nm slot name
 #' @param id node id
@@ -121,13 +204,16 @@ getOtgrp <- function(tree, ids) {
 #' tree <- randTree(10)
 #' getNdSlt(tree, slt_nm='spn', id='t1')  # return span of t1
 getNdSlt <- function(tree, slt_nm, id) {
-  tree@ndlst[[id]][[slt_nm]]
+  l_data <- data.frame(i=1:length(ids), stringsAsFactors=FALSE)
+  res <- plyr::mdply(.data=l_data, .fun=getNdPD, ...)
+  res[ ,2]
 }
 
 #' @name getNdsSlt
 #' @title Get a node slot for multiple nodes
 #' @description Returns the value of named slot.
 #' @details Returned object depends on name, either character, vector or numeric. Parallelizable.
+#' Default node slots are: id, spn, prid, ptid and txnym.
 #' @param tree \code{TreeMan} object
 #' @param slt_nm slot name
 #' @param ids vector of node ids
@@ -165,8 +251,7 @@ getNdsSlt <- function(tree, slt_nm, ids, ...) {
 #' # everyone descends from root
 #' getNdKids(tree, id=tree['root'])
 getNdKids <- function(tree, id) {
-  nd <- tree@ndlst[[id]]
-  nd[['kids']]
+  names(tree@ndlst)[.getKids(tree@ndlst, id)]
 }
 
 #' @name getNdsKids
@@ -193,10 +278,11 @@ getNdsKids <- function(tree, ids, ...) {
 
 #' @name getNdAge
 #' @title Get age
-#' @description Return the root to tip distance for \code{id}.
+#' @description Return the age for \code{id}. Requires the known age of the tree to be provided.
 #' @details Returns a numeric.
 #' @param tree \code{TreeMan} object
 #' @param id node id
+#' @param tree_age numeric value of known age of tree, tree['age'] if tree is updated
 #' @seealso
 #' \code{\link{getNdsAge}}, 
 #' \code{\link{getSpnAge}}, 
@@ -210,20 +296,18 @@ getNdsKids <- function(tree, ids, ...) {
 #' # when did apes emerge?
 #' # get parent id for all apes
 #' prnt_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
-#' getNdAge(mammals, id=prnt_id)
-#TODO: how to effectively handle unrooted trees, age has no meaning
-getNdAge <- function(tree, id) {
-  nd <- tree@ndlst[[id]]
-  age <- tree@age - nd[['prdst']]
-  age
+#' getNdAge(mammals, id=prnt_id, tree_age=tree['age'])
+getNdAge <- function(tree, id, tree_age) {
+  tree_age - .getPrdst(tree@ndlst, id)
 }
 
 #' @name getNdsAge
 #' @title Get ages for multiple nodes
-#' @description Return the root to tip distances for \code{ids}.
+#' @description Return the age for \code{ids}.
 #' @details Returns a vector, parallelizable.
 #' @param tree \code{TreeMan} object
 #' @param ids vector of node ids
+#' @param tree_age numeric value of known age of tree, tree['age'] if tree is updated
 #' @param ... \code{plyr} arguments
 #' @seealso
 #' \code{\link{getNdAge}}, 
@@ -234,19 +318,23 @@ getNdAge <- function(tree, id) {
 #' @examples
 #' library(treeman)
 #' tree <- randTree(10)
-#' getNdsAge(tree, ids=tree['nds'])
-getNdsAge <- function(tree, ids, ...) {
+#' getNdsAge(tree, ids=tree['nds'], tree_age=tree['age'])
+getNdsAge <- function(tree, ids, tree_age, ...) {
   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
-  res <- plyr::mdply(.data=l_data, .fun=getNdAge, tree=tree, ...)
-  res[ ,2]
+  out <- plyr::mdply(.data=l_data, .fun=getNdAge, tree=tree,
+                     tree_age=tree_age, ...)
+  res <- out[ ,2]
+  names(res) <- out[ ,1]
+  res
 }
 
 #' @name getSpnAge
 #' @title Get age range
-#' @description Return start and end root to tip distances for \code{id}.
+#' @description Return start and end ages for \code{id} from when it first appears to when it splits
 #' @details Returns a dataframe.
 #' @param tree \code{TreeMan} object
 #' @param id node id
+#' @param tree_age numeric value of known age of tree, tree['age'] if tree is updated
 #' @seealso
 #' \code{\link{getNdAge}}, 
 #' \code{\link{getNdsAge}}, 
@@ -256,19 +344,20 @@ getNdsAge <- function(tree, ids, ...) {
 #' @examples
 #' library(treeman)
 #' data(mammals)
-#' getSpnAge(mammals, id='Homo_sapiens')
-getSpnAge <- function(tree, id) {
-  start <- getNdAge(tree, tree@ndlst[[id]][['prid']][1])
-  end <- getNdAge(tree, id)
+#' getSpnAge(mammals, id='Homo_sapiens', tree_age=tree['age'])
+getSpnAge <- function(tree, id, tree_age) {
+  start <- getNdAge(tree, tree@ndlst[[id]][['prid']][1], tree_age)
+  end <- getNdAge(tree, id, tree_age)
   data.frame(spn=id, start, end)
 }
 
 #' @name getSpnsAge
 #' @title Get age ranges for multiple nodes
-#' @description Return start and end root to tip distances for \code{ids}.
+#' @description Return start and end ages for \code{ids} from when they first appear to when they split
 #' @details Returns a dataframe, parallelizable.
 #' @param tree \code{TreeMan} object
 #' @param ids vector of node ids
+#' @param tree_age numeric value of known age of tree, tree['age'] if tree is updated
 #' @param ... \code{plyr} arguments
 #' @seealso
 #' \code{\link{getNdAge}}, 
@@ -281,10 +370,11 @@ getSpnAge <- function(tree, id) {
 #' tree <- randTree(10)
 #' # all nodes but root
 #' ids <- tree['nds'][tree['nds'] != tree['root']]
-#' getSpnsAge(tree, ids=ids)
-getSpnsAge <- function(tree, ids, ...) {
+#' getSpnsAge(tree, ids=ids, tree_age=tree['age'])
+getSpnsAge <- function(tree, ids, tree_age, ...) {
   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
-  res <- plyr::mdply(.data=l_data, .fun=getSpnAge, tree=tree, ...)
+  res <- plyr::mdply(.data=l_data, .fun=getSpnAge, tree=tree,
+                     tree_age=tree_age, ...)
   res <- res[ ,colnames(res) != 'id']
   res
 }
@@ -405,29 +495,13 @@ getNdsPrid <- function(tree, ids, ...) {
 #' \code{\link{getNdsPtid}}, 
 #' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 #' @export
-#' @useDynLib treeman getPrids
 #' @examples
 #' library(treeman)
 #' tree <- randTree(10)
 #' # get all nodes to root
 #' getNdPrids(tree, id='t1')
 getNdPrids <- function(tree, id) {
-  # find prid, get prids for all internal nodes
-  # convert to integers, send to C for the while loop
-  if(id == tree@root) {
-    return(NULL)
-  }
-  prid <- getNdPrid(tree, id=id)
-  # root is dropped by getNdsPrid, add here
-  prids <- c(tree@root, getNdsPrid(tree, ids=tree@nds))
-  nds <- names(prids)
-  nds[1] <- tree@root
-  prid <- which(nds == prid)
-  prids <- match(prids, nds)
-  res <- .Call("getPrids", PACKAGE="treeman",
-               as.integer(prid),
-               as.integer(prids))
-  nds[res]
+  names(tree@ndlst)[.getPrids(tree@ndlst, id)]
 }
 
 #' @name getNdsPrids
@@ -477,19 +551,9 @@ getNdsPrids <- function(tree, ids, ...) {
 #' getNdPtid(tree, id='n1')
 # reduce dependence on the recursive, by getting prenodes
 # tip ids to id
+# TODO: create a ptid and ptids function
 getNdPtid <- function(tree, id) {
-  # TODO: convert to C
-  .get <- function(id) {
-    tmp <- c(id, getNdPrids(tree, id))
-    index <- seq(from=1, to=(which(tmp %in% pstids)[1]-1), by=1)
-    pstids <<- c(tmp[index], pstids)
-    NULL
-  }
-  pstids <- id
-  l_data <- data.frame(id=tree@ndlst[[id]][['kids']],
-                       stringsAsFactors=FALSE)
-  plyr::m_ply(.data=l_data, .fun=.get)
-  pstids[-length(pstids)]
+  names(tree@ndlst)[.getPtids(tree@ndlst, id)]
 }
 
 #' @name getNdsPtid

@@ -7,7 +7,7 @@
 randTree(n)
 }
 \arguments{
-\item{n}{number of tips, integer, must be greater than 1}
+\item{n}{number of tips, integer, must be 3 or greater}
 }
 \description{
 Returns a random \code{TreeMan} tree with \code{n}

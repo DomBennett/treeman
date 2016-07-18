@@ -4,15 +4,17 @@
 \alias{getNdAge}
 \title{Get age}
 \usage{
-getNdAge(tree, id)
+getNdAge(tree, id, tree_age)
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}
 
 \item{id}{node id}
+
+\item{tree_age}{numeric value of known age of tree, tree['age'] if tree is updated}
 }
 \description{
-Return the root to tip distance for \code{id}.
+Return the age for \code{id}. Requires the known age of the tree to be provided.
 }
 \details{
 Returns a numeric.
@@ -23,7 +25,7 @@ data(mammals)
 # when did apes emerge?
 # get parent id for all apes
 prnt_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
-getNdAge(mammals, id=prnt_id)
+getNdAge(mammals, id=prnt_id, tree_age=tree['age'])
 }
 \seealso{
 \code{\link{getNdsAge}}, 

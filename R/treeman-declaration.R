@@ -5,32 +5,28 @@
 #' @importFrom stats runif
 .checkTreeMan <- function(object) {
   .check <- function(nd) {
-    # must have id
-    if(!'id' %in% names(nd)) {
-      return(FALSE)
-    }
+    test_id <- 'id' %in% names(nd)  # must have id
     # must have either prid/ptid or both
-    if(!('ptid' %in% names(nd) | 'prid' %in% names(nd))){
-      return(FALSE)
-    }
-    # must have pd if spns
-    if(length(nd[['spn']]) > 0 & is.null(nd[['pd']])) {
-      return(FALSE)
-    }
-    # kids must be all unique
-    if(any(duplicated(nd[['kids']]))) {
-      return(FALSE)
-    }
-    test_1 <- nd[['id']] %in% nds
-    test_2 <- is.null(nd[['prid']]) || (nd[['prid']] %in% nds)
-    test_3 <- is.null(nd[['prid']]) || all(nd[['ptid']] %in% nds)
-    if(test_1 & test_2 & test_3) {
+    test_prid_ptid <- ('ptid' %in% names(nd) | 'prid' %in% names(nd))
+    test_valid_nd <- nd[['id']] %in% nds  # nd id must be known
+    test_prid <- nd[['prid']] %in% nds  # prid and ptids must be known
+    test_ptid <- all(nd[['ptid']] %in% nds)
+    # only root is self-referential
+    test_root <- rid != nd[['id']] |
+      (rid == nd[['id']] & rid == nd[['prid']])
+    if(test_id &
+       test_prid_ptid &
+       test_valid_nd &
+       test_prid &
+       test_ptid) {
       return(TRUE)
     }
     FALSE
   }
   nds <- names(object@ndlst)
-  nd_checks <- unlist(lapply(object@ndlst, .check))
+  rid <- object@root
+  nd_checks <- sapply(object@ndlst, .check)
+  print(nd_checks)
   if(!all(nd_checks)) {
     msg <- 'These nodes are invalid:\n'
     bad <- which(!nd_checks)
@@ -38,7 +34,7 @@
       msg <- paste0(msg, nds[i], ', ')
     }
     msg <- paste0(msg, nds[bad[length(bad)]], '\n\n')
-    msg <- paste0(msg, 'They may be pointing to non-existent nodes in tree, their ID may not be a named element in `@ndlst` or they may have missing expected node slots.')
+    msg <- paste0(msg, 'Use: `checkTree()` to find out why.')
     cat(msg)
     return(FALSE)
   }
@@ -81,14 +77,9 @@
 #'    \item \code{id}: character string for the node ID
 #'    \item \code{txnym}: name of taxonomic clade (optional)
 #'    \item \code{spn}: length of the preceding branch
-#'    \item \code{prid}: IDs of the preceding nodes to the root
+#'    \item \code{prid}: ID of the immediately preceding node, NULL if root
 #'    \item \code{ptid}: IDs of the immediately connecting nodes
-#'    \item \code{kids}: descending tip IDs
-#'    \item \code{pd}: phylogenetic diversity represented by node
-#'    \item \code{prdst}: pre distance(distance to root if rooted or
-#'    most distal tip if unrooted)
 #' }
-#' These data slots are updated whenever a node is modified, added or removed.
 #' 
 #' See below in 'Examples' for these methods in use.
 #' @seealso
@@ -123,7 +114,7 @@
 #' nd['age']  # .... nkids, pd, etc.
 #' @exportClass TreeMan
 setClass('TreeMan', representation=representation(
-  ndlst='list',         # list of node lists
+  ndlst='list',          # list of node lists
   nds='vector',          # vector of node ids that are internal nodes
   nnds='numeric',        # numeric of number of internal nodes in tree
   tips='vector',         # vector of node ids that are tips
@@ -197,6 +188,14 @@ setMethod('show', 'TreeMan',
           })
 #' @rdname TreeMan-class
 #' @aliases TreeMan-method
+#' @exportMethod print
+setMethod('print', 'TreeMan',
+          function(x){
+            msg <- as.character(x)
+            print(msg)
+          })
+#' @rdname TreeMan-class
+#' @aliases TreeMan-method
 #' @exportMethod str
 setMethod('str', c('object'='TreeMan'),
           function(object, max.level=2L, ...) {
@@ -207,29 +206,29 @@ setMethod('str', c('object'='TreeMan'),
           })
 #' @rdname TreeMan-class
 #' @aliases TreeMan-method
-#' @exportMethod print
-setMethod('print', c('x'='TreeMan'),
-          function(x){
+#' @exportMethod summary
+setMethod('summary', c('object'='TreeMan'),
+          function(object){
             msg <- 'Tree (TreeMan Object):\n'
-            msg <- paste0(msg, '  + ', x@ntips, ' tips\n')
-            msg <- paste0(msg, '  + ', x@nnds, ' internal nodes\n')
-            if(x@ply) {
+            msg <- paste0(msg, '  + ', object@ntips, ' tips\n')
+            msg <- paste0(msg, '  + ', object@nnds, ' internal nodes\n')
+            if(object@ply) {
               msg <- paste0(msg, '  + Polytomous\n')
             } else {
               msg <- paste0(msg, '  + Binary\n')
             }
-            if(length(x@root) == 0) {
-              if(!x@wspn) {
+            if(length(object@root) == 0) {
+              if(!object@wspn) {
                 msg <- paste0(msg, '  + Unrooted and without node spans\n')
               } else {
                 msg <- paste0(msg, '  + Unrooted, with node spans\n')
-                msg <- paste0(msg, '  + PD ', signif(x@pd, 3), '\n')
+                msg <- paste0(msg, '  + PD ', signif(object@pd, 3), '\n')
               }
             } else {
-              if(x@wspn) {
-                msg <- paste0(msg, '  + Age ', signif(x@age, 3), '\n')
-                msg <- paste0(msg, '  + PD ', signif(x@pd, 3), '\n')
-                if(x@ultr) {
+              if(object@wspn) {
+                msg <- paste0(msg, '  + Age ', signif(object@age, 3), '\n')
+                msg <- paste0(msg, '  + PD ', signif(object@pd, 3), '\n')
+                if(object@ultr) {
                   msg <- paste0(msg, '  + Ultrametric (all tips are extant)\n')
                 } else {
                   msg <- paste0(msg, '  + Not ultrametric (with extinct tips)\n')
@@ -237,80 +236,7 @@ setMethod('print', c('x'='TreeMan'),
               } else {
                 msg <- paste0(msg, '  + Without node spans\n')
               }
-              msg <- paste0(msg, '  + Root node is \"', x@root, '\"\n')
+              msg <- paste0(msg, '  + Root node is \"', object@root, '\"\n')
             }
             cat(msg)
-          })
-
-#' Method viz
-#' @name viz
-#' @param tree \code{TreeMan} object
-#' @param taxonyms Boolean, show taxonyms rather than IDs?
-#' @rdname TreeMan-method
-#' @description Crude plot of \code{TreeMan} objects
-#' @seealso 
-#' \code{\link{TreeMan-class}}
-#' @exportMethod viz
-setGeneric("viz", signature=c("tree", "taxonyms"),
-           function(tree, taxonyms=FALSE) {
-             standardGeneric("viz")
-           })
-#' @rdname TreeMan-method
-#' @aliases viz
-#' @exportMethod viz
-setMethod('viz', 'TreeMan',
-          function(tree, taxonyms){
-            get_pnts <- function(nd, y, pnts) {
-              pstids <- nd[['ptid']]
-              low_y_diff <- -nd[['pd']]/2
-              high_y_diff <- nd[['pd']]/2
-              y_diffs <- seq(from=low_y_diff, to=high_y_diff,
-                             length.out=length(pstids))
-              counter <- 1
-              for(pstid in pstids) {
-                pstnd <- tree@ndlst[[pstid]]
-                pstnd_x <- pstnd[['prdst']]
-                pstnd_y <- y + y_diffs[counter]
-                pnts <- rbind(pnts, data.frame(nd=pstid,
-                                               x=pstnd_x, y=pstnd_y))
-                pnts <- get_pnts(pstnd, pstnd_y, pnts)
-                counter <- counter + 1
-              }
-              pnts
-            }
-            if(!tree@wspn) {
-              # TODO: switch to setNdsspn
-              for(i in 1:length(tree@ndlst)) {
-                tree@ndlst[[i]][['spn']] <- 1
-                tree@ndlst[[i]][['pd']] <- length(tree@ndlst[[i]][['kids']])
-                prids <- getNdPrid(tree, tree@ndlst[[i]][['id']])
-                tree@ndlst[[i]][['prdst']] <- length(prids)
-              }
-              tree@pd <- length(tree@ndlst) - 1
-            }
-            # start with root node
-            # TODO: handle unrooted tree
-            pnts <- data.frame(nd=tree@root, x=0, y=tree@pd, stringsAsFactors=FALSE)
-            root_nd <- tree@ndlst[[tree@root]]
-            pnts <- get_pnts(root_nd, y=tree@pd, pnts=pnts)
-            # add 10% to min y limit for node label
-            min_y <- abs(min(pnts$y))
-            min_y <- min_y + (min_y*.1)
-            min_y <- ifelse(min(pnts$y) > 0, min_y, -1*min_y)
-            y_lmts <- c(min_y, max(pnts$y))
-            plot.default(x=pnts$x, y=pnts$y, col='black', pch=19, yaxt='n', ylab='',
-                         xlab='', bty='n', ylim=y_lmts)
-            if(taxonyms) {
-              text(x=pnts$x, y=pnts$y,
-                   labels=sapply(pnts$nd, function(n) tree@ndlst[[n]][['taxonym']]),
-                   pos=1)
-            } else {
-              text(x=pnts$x, y=pnts$y, labels=pnts$nd, pos=1)
-            }
-            # draw lines
-            for(i in 2:nrow (pnts)) {
-              prend <- tree@ndlst[[pnts$nd[i]]][['prid']][1]
-              ind <- c(i, which(pnts$nd == prend))
-              lines(x=pnts$x[ind], y=pnts$y[ind])
-            }
           })

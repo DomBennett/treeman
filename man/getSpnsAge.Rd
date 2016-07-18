@@ -4,17 +4,19 @@
 \alias{getSpnsAge}
 \title{Get age ranges for multiple nodes}
 \usage{
-getSpnsAge(tree, ids, ...)
+getSpnsAge(tree, ids, tree_age, ...)
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}
 
 \item{ids}{vector of node ids}
 
+\item{tree_age}{numeric value of known age of tree, tree['age'] if tree is updated}
+
 \item{...}{\code{plyr} arguments}
 }
 \description{
-Return start and end root to tip distances for \code{ids}.
+Return start and end ages for \code{ids} from when they first appear to when they split
 }
 \details{
 Returns a dataframe, parallelizable.
@@ -24,7 +26,7 @@ library(treeman)
 tree <- randTree(10)
 # all nodes but root
 ids <- tree['nds'][tree['nds'] != tree['root']]
-getSpnsAge(tree, ids=ids)
+getSpnsAge(tree, ids=ids, tree_age=tree['age'])
 }
 \seealso{
 \code{\link{getNdAge}}, 

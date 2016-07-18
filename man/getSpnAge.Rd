@@ -4,15 +4,17 @@
 \alias{getSpnAge}
 \title{Get age range}
 \usage{
-getSpnAge(tree, id)
+getSpnAge(tree, id, tree_age)
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}
 
 \item{id}{node id}
+
+\item{tree_age}{numeric value of known age of tree, tree['age'] if tree is updated}
 }
 \description{
-Return start and end root to tip distances for \code{id}.
+Return start and end ages for \code{id} from when it first appears to when it splits
 }
 \details{
 Returns a dataframe.
@@ -20,7 +22,7 @@ Returns a dataframe.
 \examples{
 library(treeman)
 data(mammals)
-getSpnAge(mammals, id='Homo_sapiens')
+getSpnAge(mammals, id='Homo_sapiens', tree_age=tree['age'])
 }
 \seealso{
 \code{\link{getNdAge}}, 

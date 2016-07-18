@@ -28,3 +28,44 @@ SEXP getPrids(SEXP prid_, SEXP prids_)
   UNPROTECT(1);
   return res;
 }
+
+// get ptids
+SEXP getPtids(SEXP id_, SEXP prids_) {
+  int nids = length(prids_);
+  int id = asInteger(id_);
+  int* prids = INTEGER(prids_);  //vector of internal node prids
+  SEXP res;
+  PROTECT(res=allocVector(INTSXP, nids));
+  int qrys[nids+1];
+  int i;
+  // init res and qrys
+  for(i=0;i<nids; i++) {
+    INTEGER(res)[i] = 0;
+    qrys[i] = -1;
+  }
+  qrys[nids+1] = -1;
+  int qry=id;
+  int ni=0;
+  int nqrys=0;
+  while(qry != -1) {
+    // remove qry from prids
+    for(i=0;i<nids; i++) {
+      if(qry == (i + 1)) {
+        prids[i] = -1;
+      }
+    }
+    // search for qry in prids
+    for(i=0;i<nids; i++) {
+      if(qry == prids[i]) {
+        INTEGER(res)[i] = 1;
+        nqrys = nqrys + 1;
+        qrys[nqrys] = i + 1;
+      }
+    }
+    // update qry
+    ni = ni + 1;
+    qry = qrys[ni];
+  }
+  UNPROTECT(1);
+  return res;
+}

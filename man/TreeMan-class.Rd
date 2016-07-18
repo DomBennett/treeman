@@ -11,6 +11,7 @@
 \alias{print,TreeMan-method}
 \alias{show,TreeMan-method}
 \alias{str,TreeMan-method}
+\alias{summary,TreeMan-method}
 \title{TreeMan-class}
 \usage{
 \S4method{[[}{TreeMan,character}(x, i)
@@ -21,9 +22,11 @@
 
 \S4method{show}{TreeMan}(object)
 
+\S4method{print}{TreeMan}(x)
+
 \S4method{str}{TreeMan}(object, max.level = 2L, ...)
 
-\S4method{print}{TreeMan}(x)
+\S4method{summary}{TreeMan}(object)
 
 \S4method{cTrees}{TreeMan}(x, ...)
 }
@@ -53,14 +56,9 @@ Each node within the \code{TreeMan} \code{ndlst} contains the following data slo
    \item \code{id}: character string for the node ID
    \item \code{txnym}: name of taxonomic clade (optional)
    \item \code{spn}: length of the preceding branch
-   \item \code{prid}: IDs of the preceding nodes to the root
+   \item \code{prid}: ID of the immediately preceding node, NULL if root
    \item \code{ptid}: IDs of the immediately connecting nodes
-   \item \code{kids}: descending tip IDs
-   \item \code{pd}: phylogenetic diversity represented by node
-   \item \code{prdst}: pre distance(distance to root if rooted or
-   most distal tip if unrooted)
 }
-These data slots are updated whenever a node is modified, added or removed.
 
 See below in 'Examples' for these methods in use.
 }

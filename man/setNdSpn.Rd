@@ -4,7 +4,7 @@
 \alias{setNdSpn}
 \title{Set the branch length of a specific node}
 \usage{
-setNdSpn(tree, id, val, ...)
+setNdSpn(tree, id, val)
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}

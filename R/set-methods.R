@@ -80,7 +80,9 @@ setAge <- function(tree, val) {
 #' viz(tree)
 setNdSpn <- function(tree, id, val) {
   tree@ndlst[[id]][['spn']] <- val
-  .updateNd(tree, id)
+  tree <- .updateNd(tree, id)
+  viz(tree)
+  tree@ndlst
 }
 
 #' @name setNdsSpn

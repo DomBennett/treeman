@@ -4,17 +4,19 @@
 \alias{getNdsAge}
 \title{Get ages for multiple nodes}
 \usage{
-getNdsAge(tree, ids, ...)
+getNdsAge(tree, ids, tree_age, ...)
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}
 
 \item{ids}{vector of node ids}
 
+\item{tree_age}{numeric value of known age of tree, tree['age'] if tree is updated}
+
 \item{...}{\code{plyr} arguments}
 }
 \description{
-Return the root to tip distances for \code{ids}.
+Return the age for \code{ids}.
 }
 \details{
 Returns a vector, parallelizable.
@@ -22,7 +24,7 @@ Returns a vector, parallelizable.
 \examples{
 library(treeman)
 tree <- randTree(10)
-getNdsAge(tree, ids=tree['nds'])
+getNdsAge(tree, ids=tree['nds'], tree_age=tree['age'])
 }
 \seealso{
 \code{\link{getNdAge}}, 
