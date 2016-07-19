@@ -3,44 +3,6 @@
 #' @importFrom graphics lines plot.default text
 #' @importFrom utils combn write.table
 #' @importFrom stats runif
-.checkTreeMan <- function(object) {
-  .check <- function(nd) {
-    test_id <- 'id' %in% names(nd)  # must have id
-    # must have either prid/ptid or both
-    test_prid_ptid <- ('ptid' %in% names(nd) | 'prid' %in% names(nd))
-    test_valid_nd <- nd[['id']] %in% nds  # nd id must be known
-    test_prid <- nd[['prid']] %in% nds  # prid and ptids must be known
-    test_ptid <- all(nd[['ptid']] %in% nds)
-    # spns must be 0 or more
-    test_spn <- is.numeric(nd[['spn']]) && nd[['spn']] >= 0
-    # only root is self-referential
-    test_root <- rid != nd[['id']] |
-      (rid == nd[['id']] & rid == nd[['prid']])
-    if(test_id &
-       test_prid_ptid &
-       test_valid_nd &
-       test_prid &
-       test_ptid) {
-      return(TRUE)
-    }
-    FALSE
-  }
-  nds <- names(object@ndlst)
-  rid <- object@root
-  nd_checks <- sapply(object@ndlst, .check)
-  print(nd_checks)
-  if(!all(nd_checks)) {
-    msg <- 'These nodes are invalid:\n'
-    bad <- which(!nd_checks)
-    for(i in bad[-length(bad)]) {
-      msg <- paste0(msg, nds[i], ', ')
-    }
-    msg <- paste0(msg, nds[bad[length(bad)]], '\n\n')
-    cat(msg)
-    return(FALSE)
-  }
-  TRUE
-}
 
 #' @name TreeMan-class
 #' @title TreeMan-class
@@ -131,7 +93,7 @@ setClass('TreeMan', representation=representation(
   ply='logical',         # logical, is tree bifurcating
   tol='numeric',         # numeric of tolerance for determining extant
   root='character'),     # character of node id of root, if no root then empty character
-  prototype=prototype(tol=1e-8), validity=.checkTreeMan)
+  prototype=prototype(tol=1e-8), validity=checkTreeMan)
 
 # Accessor methods
 #' @rdname TreeMan-class

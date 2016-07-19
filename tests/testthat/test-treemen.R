@@ -8,11 +8,6 @@ trees <- cTrees(tree, tree, tree)
 
 # RUNNING
 context('Testing \'TreeMen Class\'')
-test_that(".checkTreeMen() works", {
-  trees@treelist[[4]] <- "this is not a tree"
-  res <- treeman:::.checkTreeMen(trees)
-  expect_false(res)
-})
 test_that("print() works", {
   print(trees)
 })

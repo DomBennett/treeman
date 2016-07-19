@@ -15,6 +15,9 @@
 #' # tree <- updateTree(tree)
 #' # summary(tree)  # new information
 updateTree <- function(tree) {
+  if(!checkTreeMan(tree)) {
+    stop('Invalid tree')
+  }
   # Update the slots for a tree
   wo_pstndes <- sapply(tree@ndlst,
                        function(n) length(n[['ptid']]) == 0)

@@ -1,21 +1,3 @@
-.checkTreeMen <- function(object) {
-  .check <- function(i, invlds) {
-    if(class(object@treelist[[i]])[1] != "TreeMan") {
-      invlds <<- c(i, invlds)
-    }
-    NULL
-  }
-  invlds <- NULL
-  sapply(1:length(object@treelist), .check, invlds=invlds)
-  if(length(invlds) > 0) {
-    for(i in invlds) {
-      cat("[", i, "] in treelist is not a TreeMan object\n", sep="")
-    }
-    return(FALSE)
-  }
-  TRUE
-}
-
 #' @name TreeMen-class
 #' @title TreeMen-class
 #' @param x \code{TreeMen} object
@@ -34,7 +16,7 @@ setClass('TreeMen', representation=representation(
   treelist='list',       # list of TreeMan objects
   ntips='numeric',       # sum of tips per tree
   ntrees='numeric'),     # number of trees in object
-  validity=.checkTreeMen)
+  validity=checkTreeMen)
 
 # concatenate methods
 .cMenToMen <- function(treemen_1, treemen_2) {
