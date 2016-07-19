@@ -1,4 +1,19 @@
-
+#' @name updateTree
+#' @title Update tree slots after manipulation
+#' @description Return tree with updated node slots.
+#' @details Tree slots in the \code{TreeMan} object are not automatically updated
+#' to make mainipulations computationally faster. To update these slots, run this function.
+#' @param tree \code{TreeMan} object
+#' @seealso
+#' \code{\link{getTreeAge}}
+#' @export
+#' @examples
+#' # library(treeman)
+#' # tree <- randTree(10)
+#' # rmTip
+#' # summary(tree)  # old information
+#' # tree <- updateTree(tree)
+#' # summary(tree)  # new information
 updateTree <- function(tree) {
   # Update the slots for a tree
   wo_pstndes <- sapply(tree@ndlst,
