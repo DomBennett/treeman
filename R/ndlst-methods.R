@@ -39,3 +39,10 @@
   ptids <- .getPtids(ndlst, id)
   sum(sapply(ndlst[ptids], function(x) x[['spn']]))
 }
+
+.getAge <- function(ndlst) {
+  tids <- sapply(ndlst, function(x) length(x[['ptid']]) == 0)
+  tids <- as.integer(which(tids))
+  tip_prdsts <- sapply(tids, .getPrdst, ndlst=ndlst)
+  max(tip_prdsts)
+}
