@@ -11,6 +11,8 @@
     test_valid_nd <- nd[['id']] %in% nds  # nd id must be known
     test_prid <- nd[['prid']] %in% nds  # prid and ptids must be known
     test_ptid <- all(nd[['ptid']] %in% nds)
+    # spns must be 0 or more
+    test_spn <- is.numeric(nd[['spn']]) && nd[['spn']] >= 0
     # only root is self-referential
     test_root <- rid != nd[['id']] |
       (rid == nd[['id']] & rid == nd[['prid']])
@@ -34,7 +36,6 @@
       msg <- paste0(msg, nds[i], ', ')
     }
     msg <- paste0(msg, nds[bad[length(bad)]], '\n\n')
-    msg <- paste0(msg, 'Use: `checkTree()` to find out why.')
     cat(msg)
     return(FALSE)
   }

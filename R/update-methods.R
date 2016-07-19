@@ -24,12 +24,7 @@ updateTree <- function(tree) {
   tree@nnds <- length(tree@nds)
   tree@all <- c(tree@tips, tree@nds)
   tree@nall <- length(tree@all)
-  if(length(tree@root) > 0) {
-    wspn <- names(tree@ndlst)[names(tree@ndlst) != tree@root]
-  } else {
-    wspn <- names(tree@ndlst)
-  }
-  tree@wspn <- all(sapply(tree@ndlst[wspn], function(n) !is.null(n[['spn']])))
+  tree@wspn <- any(sapply(tree@ndlst, function(n) n[['spn']] != 0))
   if(tree@wspn) {
     if(length(tree@root) > 0) {
       tip_prdsts <- sapply(tree@tips, .getPrdst, ndlst=tree@ndlst)
