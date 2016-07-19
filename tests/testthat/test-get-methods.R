@@ -4,6 +4,8 @@ library(testthat)
 
 # RUNNING
 context('Testing \'get-methods\'')
+# TODO: test prdsts, age
+
 test_that('get_Sstr() works', {
   tree <- randTree(10)
   tips <- tree['tips']
@@ -11,13 +13,13 @@ test_that('get_Sstr() works', {
   rvrse <- getNdsSstr(tree, fwrd)
   expect_that(rvrse, equals(tips))
 })
-test_that('getTxnyms() works', {
-  data('mammals')
-  nid <- sample(mammals['nds'], 1)
-  txnym <- mammals[[nid]]['txnym']
-  res <- getTxnyms(mammals, txnym)
-  expect_true(nid %in% res[[1]])
-})
+# test_that('getTxnyms() works', {
+#   data('mammals')
+#   nid <- sample(mammals['nds'], 1)
+#   txnym <- mammals[[nid]]['txnym']
+#   res <- getTxnyms(mammals, txnym)
+#   expect_true(nid %in% res[[1]])
+# })
 test_that('getOtgrp() works', {
   tree <- randTree(10)
   rnd_nd <- sample(tree['nds'][tree['nds'] != tree['root']], 1)

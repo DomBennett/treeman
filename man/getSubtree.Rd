@@ -15,7 +15,7 @@ getSubtree(tree, id)
 Return tree descending from \code{id}.
 }
 \details{
-Returns a \code{TreeMan}, parallelizable.
+Returns a \code{TreeMan}, parallelizable. \code{id} must be an internal node.
 }
 \examples{
 library(treeman)

@@ -1,3 +1,23 @@
+#' @name getTreeAge
+#' @title Get age of tree
+#' @description Returns age, numeric, of tree
+#' @details This can also be achieved with \code{tree['age']} but will
+#' only work if the the tree has been updated with \code{updateTree()}.
+#' For faster computation, especially within function that perform multiple
+#' tree manipulations where the whole tree doesn't need updating, use this function.
+#' @param tree \code{TreeMan} object
+#' @param id node id
+#' @seealso
+#' \code{\link{updateTree}}, 
+#' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
+#' @export
+#' @examples
+#' library(treeman)
+#' #tree <- randTree(10)
+getTreeAge <- function(tree) {
+  .getAge(tree@ndlst)
+}
+
 #' @name getNdSstr
 #' @title Get sister id
 #' @description Returns the id of the sister(s) of node id given.
@@ -87,14 +107,14 @@ getTxnyms <- function(tree, txnyms, ...) {
 #' getOtgrp(mammals, ids=c('Homo_sapiens', 'Pan_troglodytes', 'Pongo_pygmaeus'))
 getOtgrp <- function(tree, ids) {
   .cntr <- function(id) {
-    kids <- tree@ndlst[[id]][['kids']]
+    kids <- getNdKids(tree, id)
     sum(ids %in% kids)
   }
   prnt <- getPrnt(tree, ids)
   ptids <- tree@ndlst[[prnt]][['ptid']]
   cnts <- sapply(ptids, .cntr)
   outnd <- names(cnts)[which.min(cnts)]
-  kids <- tree@ndlst[[outnd]][['kids']]
+  kids <- getNdKids(tree, outnd)
   if(length(kids) == 0) {
     return(outnd)
   }
@@ -204,9 +224,7 @@ getNdsPrdst <- function(tree, ids, ...) {
 #' tree <- randTree(10)
 #' getNdSlt(tree, slt_nm='spn', id='t1')  # return span of t1
 getNdSlt <- function(tree, slt_nm, id) {
-  l_data <- data.frame(i=1:length(ids), stringsAsFactors=FALSE)
-  res <- plyr::mdply(.data=l_data, .fun=getNdPD, ...)
-  res[ ,2]
+  tree@ndlst[[id]][[slt_nm]]
 }
 
 #' @name getNdsSlt
@@ -634,7 +652,7 @@ getNdsLng <- function(tree, ids, ...) {
 #' @name getSubtree
 #' @title Get subtree
 #' @description Return tree descending from \code{id}.
-#' @details Returns a \code{TreeMan}, parallelizable.
+#' @details Returns a \code{TreeMan}, parallelizable. \code{id} must be an internal node.
 #' @param tree \code{TreeMan} object
 #' @param id node id
 #' @seealso
@@ -648,19 +666,13 @@ getNdsLng <- function(tree, ids, ...) {
 #' ape_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
 #' apes <- getSubtree(mammals, id=ape_id)
 getSubtree <- function(tree, id) {
-  .prdst <- function(nd) {
-    nd[['prdst']] <- nd[['prdst']] - nd_prdst
-    nd
+  if(!id %in% tree@nds) {
+    stop('`id` is not an internal node')
   }
-  pstids <- getNdPtid(tree, id)
-  ndlst <- tree@ndlst[c(pstids, id)]
-  nids <- names(ndlst)
-  if(tree@wspn) {
-    nd_prdst <- ndlst[[id]][['prdst']]
-    ndlst <- plyr::llply(.data=ndlst, .fun=.prdst)
-    ndlst[[id]][['spn']] <- 0
-  }
-  ndlst[[id]][['prid']] <- NULL
+  ids <- c(id, getNdPtid(tree, id))
+  ndlst <- tree@ndlst[ids]
+  ndlst[[id]][['prid']] <- id
+  ndlst[[id]][['spn']] <- 0
   new_tree <- new('TreeMan', ndlst=ndlst, root=id)
-  .updateTreeSlts(new_tree)
+  updateTree(new_tree)
 }
