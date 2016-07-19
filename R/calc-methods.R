@@ -15,13 +15,13 @@
 #' tree <- randTree(10)
 #' calcNdBlnc(tree, nid=tree['root'])  # root balance
 calcNdBlnc <- function(tree, nid) {
-  ntot <- length(tree@ndlst[[nid]][['kids']])
+  ntot <- length(getNdKids(tree, nid))
   ptids <- tree@ndlst[[nid]][['ptid']]
   if(length(ptids) > 2) {
     return(NA)
   }
   ptid <- ptids[1]
-  nprt <- length(tree@ndlst[[ptid]][['kids']])
+  nprt <- length(getNdKids(tree, ptid))
   if(nprt == 0) {
     nprt <- 1
   }
@@ -264,10 +264,8 @@ calcPhyDv <- function(tree, tids, ...) {
 calcFrPrp <- function(tree, tids, ...) {
   .share <- function(id) {
     spn <- tree@ndlst[[id]][['spn']]
-    kids <- getNdKids(tree, id)
-    if(!is.null(kids)) {
-      n <- length(kids)
-    } else {
+    n <- length(getNdKids(tree, id))
+    if(n == 0) {
       n <- 1
     }
     spn/n
