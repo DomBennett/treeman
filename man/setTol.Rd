@@ -23,7 +23,8 @@ slots.
 library(treeman)
 tree <- randTree(10)
 tree <- setTol(tree, 10)
-print(tree)
+tree <- updateTree(tree)
+(summary(tree))
 }
 \seealso{
 \code{\link{setNdsSpn}}

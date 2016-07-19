@@ -23,7 +23,8 @@ that by modiyfing every branch, while maintaining their relative lengths.
 library(treeman)
 tree <- randTree(10)
 tree <- setAge(tree, val=1)
-(tree['age'])
+tree <- updateTree(tree)
+(summary(tree))
 }
 \seealso{
 \code{\link{setPD}}

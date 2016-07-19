@@ -10,9 +10,9 @@ test_that('set_ID() works', {
   ids <- tree['tips']
   tree <- setNdsID(tree, ids=ids, vals=vals)
   expect_true(all(tree['tips'] == vals))
-  expect_true(all(tree[['n1']]['kids'] %in% vals))
+  expect_true(all(getNdKids(tree, 'n1') %in% vals))
   tree <- setNdID(tree, id='new_id_1', val='t1')
-  expect_error(tree[['new_id_1']])
+  expect_false('new_id_1' %in% tree@tips)
 })
 test_that('setNdSpn() works', {
   tree <- randTree(10)
@@ -20,11 +20,11 @@ test_that('setNdSpn() works', {
   before_pd <- tree['pd']
   ids <- tree['all'][tree['all'] != tree['root']]
   id <- sample(ids, 1)
-  before_prdst <- tree[[id]]['prdst']
-  val <- tree[[id]]['spn']/2
+  before_prdst <- getNdPrdst(tree, id)
+  val <- getNdSlt(tree, slt_nm='spn', id=id)/2
   tree <- setNdSpn(tree, id=id, val=val)
-  expect_that(tree['pd'] + val, equals(before_pd))
-  expect_that(tree[[id]]['prdst'] + val, equals(before_prdst))
+  expect_that(getNdPD(tree, tree['root']) + val, equals(before_pd))
+  expect_that(getNdPrdst(tree, id) + val, equals(before_prdst))
 })
 test_that('setNdsSpn() works', {
   tree <- randTree(10)
@@ -34,25 +34,30 @@ test_that('setNdsSpn() works', {
   vals <- getNdsSlt(tree, slt_nm='spn', ids=ids)
   vals <- vals/2
   tree <- setNdsSpn(tree, ids=ids, vals=vals)
+  tree <- updateTree(tree)
   expect_that(tree['pd']*2, equals(before_pd))
   expect_that(tree['age']*2, equals(before_age))
-  tree <- setNdsSpn(tree, ids=ids, vals=NULL)
+  tree <- setNdsSpn(tree, ids=ids, vals=0)
+  tree <- updateTree(tree)
   expect_false(tree['wspn'])
 })
 test_that('setPD() works', {
   tree <- randTree(10)
   tree <- setPD(tree, val=1)
+  tree <- updateTree(tree)
   expect_that(tree['pd'], equals(1))
 })
 test_that('setAge() works', {
   tree <- randTree(10)
   tree <- setAge(tree, val=1)
+  tree <- updateTree(tree)
   expect_that(tree['age'], equals(1))
 })
 test_that('setTol() works', {
   tree <- randTree(10)
   before <- length(tree@ext)
   tree <- setTol(tree, tol=tree['age'])
+  tree <- updateTree(tree)
   expect_that(before, is_less_than(length(tree@ext)))
 })
 test_that('setNdOther() works', {

@@ -21,6 +21,7 @@ Return a tree with the IDs of nodes altered.
 \details{
 Runs \code{setNdID()} over multiple nodes. Warning: all IDs must be unique,
 avoid spaces in IDs. Parellizable.
+No need for \code{updateTree()}.
 }
 \examples{
 library(treeman)

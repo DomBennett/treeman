@@ -27,7 +27,8 @@ setRoot <- function(...) {
 #' library(treeman)
 #' tree <- randTree(10)
 #' tree <- setPD(tree, val=1)
-#' (tree['pd'])
+#' tree <- updateTree(tree)
+#' (summary(tree))
 setPD <- function(tree, val) {
   spns <- getNdsSlt(tree, ids=tree@all, slt_nm="spn")
   spns <- spns/(tree@pd/val)
@@ -51,7 +52,8 @@ setPD <- function(tree, val) {
 #' library(treeman)
 #' tree <- randTree(10)
 #' tree <- setAge(tree, val=1)
-#' (tree['age'])
+#' tree <- updateTree(tree)
+#' (summary(tree))
 setAge <- function(tree, val) {
   spns <- getNdsSlt(tree, ids=tree@all, slt_nm="spn")
   spns <- spns/(tree@age/val)
@@ -77,17 +79,16 @@ setAge <- function(tree, val) {
 #' tree <- randTree(10)
 #' viz(tree)
 #' tree <- setNdSpn(tree, id='t1', val=100)
+#' tree <- updateTree(tree)
 #' viz(tree)
 setNdSpn <- function(tree, id, val) {
   tree@ndlst[[id]][['spn']] <- val
-  tree <- .updateNd(tree, id)
-  viz(tree)
-  tree@ndlst
+  tree
 }
 
 #' @name setNdsSpn
 #' @title Set the branch lengths of specific nodes
-#' @description Return a tree with the span of a node altered.
+#' @description Return a tree with the spans of nodes altered.
 #' @details Runs \code{setNdSpn} over multiple nodes. Parallelizable.
 #' @param tree \code{TreeMan} object
 #' @param ids ids of nodes whose preceding edges are to be changed
@@ -102,33 +103,23 @@ setNdSpn <- function(tree, id, val) {
 #' tree <- randTree(10)
 #' # make tree taxonomic
 #' tree <- setNdsSpn(tree, ids=tree['all'], vals=1)
+#' tree <- updateTree(tree)
+#' (summary(tree))
+#' # remove spns by setting all to 0
+#' tree <- setNdsSpn(tree, ids=tree['all'], vals=0)
+#' tree <- updateTree(tree)
+#' (summary(tree))
 setNdsSpn <- function(tree, ids, vals, ...) {
-  .nullify <- function(nd) {
-    nd[['spn']] <- NULL
-    nd[['pd']] <- NULL
-    nd[['prdst']] <- NULL
-    nd
-  }
   .reset <- function(id, spn) {
     ndlst[[id]][['spn']] <- spn
-    ndlst[[id]][['pd']] <- 0
-    ndlst[[id]][['prdst']] <- 0
     ndlst[[id]]
   }
-  ndlst <- tree@ndlst
-  if(is.null(vals)) {
-    ndlst <- plyr::llply(ndlst[tree@all], .fun=.nullify, ...)
-  } else {
-    spns <- getNdsSlt(tree, slt_nm='spn', ids=tree@all)
-    spns[match(ids, tree@all)] <- vals
-    l_data <- data.frame(id=tree@all, spn=spns, stringsAsFactors=FALSE)
-    ndlst <- plyr::mlply(l_data, .fun=.reset)
-    ndlst <- ndlst[1:length(ndlst)]
-    names(ndlst) <- tree@all
-    ndlst <- .globalUpdateAll(ndlst, just_spn_data=TRUE)
-  }
-  tree@ndlst <- ndlst
-  .updateTreeSlts(tree)
+  ndlst <- tree@ndlst[ids]
+  l_data <- data.frame(id=ids, spn=vals, stringsAsFactors=FALSE)
+  ndlst <- plyr::mlply(l_data, .fun=.reset, ...)
+  ndlst <- ndlst[1:length(ndlst)]
+  tree@ndlst[ids] <- ndlst
+  tree
 }
 
 #' @name setTol
@@ -147,10 +138,11 @@ setNdsSpn <- function(tree, ids, vals, ...) {
 #' library(treeman)
 #' tree <- randTree(10)
 #' tree <- setTol(tree, 10)
-#' print(tree)
+#' tree <- updateTree(tree)
+#' (summary(tree))
 setTol <- function(tree, tol) {
   tree@tol <- tol
-  .updateTreeSlts(tree)
+  tree
 }
 
 #' @name setNdID
@@ -158,6 +150,7 @@ setTol <- function(tree, tol) {
 #' @description Return a tree with the ID of a node altered.
 #' @details IDs cannot be changed directly for the \code{TreeMan} class. To change an
 #' ID use this function. Warning: all IDs must be unique, avoid spaces in IDs.
+#' No need for \code{updateTree()}.
 #' @param tree \code{TreeMan} object
 #' @param id id to be changed
 #' @param val new id
@@ -178,6 +171,7 @@ setNdID <- function(tree, id, val) {
 #' @description Return a tree with the IDs of nodes altered.
 #' @details Runs \code{setNdID()} over multiple nodes. Warning: all IDs must be unique,
 #' avoid spaces in IDs. Parellizable.
+#' No need for \code{updateTree()}.
 #' @param tree \code{TreeMan} object
 #' @param ids ids to be changed
 #' @param vals new ids
@@ -192,6 +186,7 @@ setNdID <- function(tree, id, val) {
 #' new_ids <- paste0('heffalump_', 1:tree['ntips'])
 #' tree <- setNdsID(tree, tree['tips'], new_ids)
 setNdsID <- function(tree, ids, vals, ...) {
+  # internals
   .rplcS4 <- function(slt) {
     if(any(slot(tree, slt) %in% ids)) {
       mtchs <- match(slot(tree, slt), ids)
@@ -200,24 +195,27 @@ setNdsID <- function(tree, ids, vals, ...) {
       return(slot(tree, slt))
     }
   }
-  .run <-function(i) {
+  .reset <-function(i) {
     .rplc <- function(slt) {
-      if(any(nd[[slt]] %in% ids)) {
-        mtchs <- match(nd[[slt]], ids)
-        nd[[slt]] <- vals[mtchs]
-      }
-      nd
+      res <- nd[[slt]]
+      mtchs <- match(res, ids)
+      res[which(!is.na(mtchs))] <-
+        vals[mtchs[!is.na(mtchs)]]
+      res
     }
     nd <- tree@ndlst[[i]]
-    nd <- .rplc("id")
-    nd <- .rplc("ptid")
-    nd <- .rplc("prid")
-    nd <- .rplc("kids")
-    tree@ndlst[[i]] <<- nd
-    NULL
+    nd[['id']] <- .rplc("id")
+    nd[['ptid']] <- .rplc("ptid")
+    nd[['prid']] <- .rplc("prid")
+    nd
   }
-  l_data <- data.frame(i=1:length(tree@ndlst))
-  plyr::m_ply(.data=l_data, .fun=.run, ...)
+  l_data <- data.frame(i=1:length(tree@ndlst), stringsAsFactors=FALSE)
+  ndlst <- plyr::mlply(l_data, .fun=.reset)
+  ndlst <- ndlst[1:length(ndlst)]
+  all <- names(tree@ndlst)
+  all[match(ids, all)] <- vals
+  names(ndlst) <- all
+  tree@ndlst <- ndlst
   tree@tips <- .rplcS4('tips')
   tree@nds <- .rplcS4('nds')
   tree@ext <- .rplcS4('ext')

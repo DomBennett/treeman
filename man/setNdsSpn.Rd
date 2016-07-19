@@ -16,7 +16,7 @@ setNdsSpn(tree, ids, vals, ...)
 \item{...}{\code{plyr} arguments}
 }
 \description{
-Return a tree with the span of a node altered.
+Return a tree with the spans of nodes altered.
 }
 \details{
 Runs \code{setNdSpn} over multiple nodes. Parallelizable.
@@ -26,6 +26,12 @@ library(treeman)
 tree <- randTree(10)
 # make tree taxonomic
 tree <- setNdsSpn(tree, ids=tree['all'], vals=1)
+tree <- updateTree(tree)
+(summary(tree))
+# remove spns by setting all to 0
+tree <- setNdsSpn(tree, ids=tree['all'], vals=0)
+tree <- updateTree(tree)
+(summary(tree))
 }
 \seealso{
 \code{\link{setNdSpn}}

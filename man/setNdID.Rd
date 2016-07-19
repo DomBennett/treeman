@@ -19,6 +19,7 @@ Return a tree with the ID of a node altered.
 \details{
 IDs cannot be changed directly for the \code{TreeMan} class. To change an
 ID use this function. Warning: all IDs must be unique, avoid spaces in IDs.
+No need for \code{updateTree()}.
 }
 \examples{
 library(treeman)
