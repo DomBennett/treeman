@@ -125,6 +125,15 @@ readTree <- function(file=NULL, text=NULL, ...) {
     }
     c(id, spn)
   }
+  .add <- function(i) {
+    nd <- vector("list", length=4)
+    names(nd) <- c('id', 'ptid', 'prid', 'spn')
+    nd[['id']] <- ids[i]
+    nd[['spn']] <- spns[i]
+    nd[['prid']] <- ids[prids[i]]
+    nd[['ptid']] <- ptids[ptnds_pool == i]
+    nd
+  }
   # get nodes from string
   nds <- c(1, as.integer(gregexpr("(,|\\))", trstr)[[1]]) - 1)
   if(grepl(");", trstr)) {
@@ -149,23 +158,15 @@ readTree <- function(file=NULL, text=NULL, ...) {
   root <- which(prids == -1)
   prids <- match(prids, nds)
   tids <- which(!1:length(ids) %in% prids)
-  prids[is.na(prids)] <- -1
+  prids[is.na(prids)] <- root
   spns[is.na(spns)] <- 0
-  treels <- list('ids'=ids, 'prids'=prids, 'spns'=spns,
-                 'tids'=tids)
-  rm(prids, tids, spns, ids)
-  ndlst <- .updateNdlst(treels)
-  # correct root
-  if(length(root) > 0) {
-    rid <- treels[['ids']][root]
-    if(length(ndlst[[rid]][['spn']]) > 0) {
-      ndlst[[rid]][['spn']] <- 0
-      ndlst[[rid]][['pd']] <- sum(treels[['spns']])
-    }
-    ndlst[[rid]][['prid']] <- NULL
-    tree <- new('TreeMan', ndlst=ndlst, root=rid)
-  } else {
-    tree <- new('TreeMan', ndlst=ndlst)
-  }
-  .updateTreeSlts(tree)
+  ptids <- ids[-root]
+  ptnds_pool <- prids[-root]
+  ndlst <- lapply(1:length(ids), .add)
+  names(ndlst) <- ids
+  tree <- new('TreeMan', ndlst=ndlst, root=ids[root])
+  updateTree(tree)
 }
+
+
+# TODO: develop .trmn file format
