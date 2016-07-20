@@ -1,3 +1,5 @@
+# TODO: get intrnls nodes function for faster multiple node computation
+
 #' @useDynLib treeman getPrids
 .getPrids <- function(ndlst, id) {
   prids <- sapply(ndlst, function(x) x[['prid']])
@@ -37,7 +39,12 @@
 
 .getPD <- function(ndlst, id) {
   ptids <- .getPtids(ndlst, id)
-  sum(sapply(ndlst[ptids], function(x) x[['spn']]))
+  if(length(ptids) > 0) {
+    res <- sum(sapply(ndlst[ptids], function(x) x[['spn']]))
+  } else {
+    res <- 0
+  }
+  res
 }
 
 .getAge <- function(ndlst) {
