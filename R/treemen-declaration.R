@@ -158,8 +158,16 @@ setMethod('str', c('object'='TreeMen'),
 #' @exportMethod print
 setMethod('print', c('x'='TreeMen'),
           function(x){
+            msg <- as.character(x)
+            print(msg)
+          })
+#' @rdname TreeMen-class
+#' @aliases TreeMen-method
+#' @exportMethod summary
+setMethod('summary', c('object'='TreeMen'),
+          function(object){
             msg <- 'Trees (TreeMen Object):\n'
-            msg <- paste0(msg, '  + ', x@ntrees, ' trees\n')
-            msg <- paste0(msg, '  + ', x@ntips, ' tips\n')
+            msg <- paste0(msg, '  + ', object@ntrees, ' trees\n')
+            msg <- paste0(msg, '  + ', object@ntips, ' tips\n')
             cat(msg)
           })
