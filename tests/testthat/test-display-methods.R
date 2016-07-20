@@ -17,6 +17,9 @@ test_that('str() works', {
 test_that('print() works', {
   print(randTree(10))
 })
-test_that('viz() works', {
-  print(randTree(10))
+test_that('summary() works', {
+  summary(randTree(10))
 })
+# test_that('viz() works', {
+#   print(randTree(10))
+# })
