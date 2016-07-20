@@ -1,14 +1,14 @@
-.newNd <- function(tree, nd) {
-  nd <- tree@ndlst[[nd]]
-  if(is.null(nd[['spn']]) | !tree@wspn) {
+.newNd <- function(tree, id) {
+  nd <- tree@ndlst[[id]]
+  if(!tree@wspn) {
     spn <- pd <- prdst <- numeric()
   } else {
     spn <- nd[['spn']]
-    pd <- nd[['pd']]
-    prdst <- nd[['prdst']]
+    pd <- .getPD(tree@ndlst, id)
+    prdst <- .getPrdst(tree@ndlst, id)
   }
   if(length(tree@age) > 0) {
-    age <- tree@age - nd[['prdst']]
+    age <- tree@age - prdst
   } else {
     age <- numeric()
   }
@@ -17,11 +17,12 @@
   } else {
     txnym <- nd[['txnym']]
   }
+  kids <- names(tree@ndlst)[.getKids(tree@ndlst, id)]
   new('Node', id=nd[['id']], spn=spn, prid=as.character(nd[['prid']][1]),
-     ptid=as.character(nd[['ptid']]), kids=as.character(nd[['kids']]),
-     nkids=length(as.character(nd[['kids']])), pd=pd, txnym=txnym,
-     prdst=prdst, root=tree@root == nd[['id']],
-     age=age, tip=length(nd[['ptid']]) == 0)
+     ptid=as.character(nd[['ptid']]), kids=as.character(kids),
+     nkids=length(kids), pd=pd, txnym=txnym, prdst=prdst,
+     root=tree@root == nd[['id']], age=age,
+     tip=length(nd[['ptid']]) == 0)
 }
 
 #' @name Node-class
@@ -30,7 +31,8 @@
 #' @param i slot name
 #' @title Node-class
 #' @description The \code{Node} is an S4 class used for displaying node information.
-#' It is only generated when a user implements the \code{[[]]} on a tree.
+#' It is only generated when a user implements the \code{[[]]} on a tree. Information
+#' is only accurate if tree has been updated with \code{updateTree()}.
 #' @slot id unique ID for node in tree['ndlst']
 #' @slot spn length of preceding branch
 #' @slot prid parent node ID
@@ -45,7 +47,7 @@
 #' @slot tip T/F tip node?
 #' @exportClass Node
 #' @seealso 
-#' \code{\link{cTrees}}
+#' \code{\link{TreeMan}}, \code{\link{TreeMen}}
 setClass ('Node', representation=representation (
   id='character',        # unique ID for node in tree@nodelist
   spn='numeric',        # length of preceding branch
@@ -60,56 +62,62 @@ setClass ('Node', representation=representation (
   root='logical',        # T/F root node?
   tip='logical')         # T/F tip node?
 )
-
 #' @rdname Node-class
 #' @aliases Node-method
 #' @exportMethod as.character
 setMethod ('as.character', c('x'='Node'),
            function(x) {
-             x@id
+             paste0('Node Obj. [ID=', nd@id, ']')
            })
 #' @rdname Node-class
 #' @aliases Node-method
 #' @exportMethod show
 setMethod ('show', 'Node',
            function(object){
-             print (object)
+             cat(as.character(object))
            })
 #' @rdname Node-class
 #' @aliases Node-method
 #' @exportMethod print
-setMethod ('print', c('x'='Node'),
+setMethod ('print', 'Node',
            function(x){
-             if(x@root) {
+             print(as.character(x))
+           })
+#' @rdname Node-class
+#' @aliases Node-method
+#' @exportMethod summary
+setMethod ('summary', c('object'='Node'),
+           function(object){
+             if(object@root) {
                msg <- paste0('Node (root node):\n')
-             } else if (x@tip){
+             } else if (object@tip){
                msg <- paste0('Node (tip node):\n')
              } else {
                msg <- paste0('Node (internal node):\n')
              }
-             msg <- paste0(msg, '  + ID: \"', x@id, '\"\n')
-             if(length(x@txnym) > 0) {
-               msg <- paste0(msg, '  + txnym: \"', paste0(x@txnym, collapse='\", \"'), '\"\n')
+             msg <- paste0(msg, '  + ID: \"', object@id, '\"\n')
+             if(length(object@txnym) > 0) {
+               msg <- paste0(msg, '  + txnym: \"', paste0(object@txnym, collapse='\", \"'), '\"\n')
              }
-             if(!x@root) {
-               msg <- paste0(msg, '  + prid: \"', x@prid, '\"\n')
+             if(!object@root) {
+               msg <- paste0(msg, '  + prid: \"', object@prid, '\"\n')
              }
-             if(!x@tip) {
-               msg <- paste0(msg, '  + ptid: \"', paste0(x@ptid, collapse='\", \"'), '\"\n')
-               msg <- paste0(msg, '  + nkids: ', length(x@kids), '\n')
+             if(!object@tip) {
+               msg <- paste0(msg, '  + ptid: \"', paste0(object@ptid, collapse='\", \"'), '\"\n')
+               msg <- paste0(msg, '  + nkids: ', length(object@kids), '\n')
              }
-             if(length(x@spn) > 0) {
-               if(!x@root) {
-                 msg <- paste0(msg, '  + spn: ', signif(x@spn, 2), '\n')
+             if(length(object@spn) > 0) {
+               if(!object@root) {
+                 msg <- paste0(msg, '  + spn: ', signif(object@spn, 2), '\n')
                }
-               if(length(x@age) > 0) {
-                 msg <- paste0(msg, '  + age: ', signif(x@age, 2), '\n')
+               if(length(object@age) > 0) {
+                 msg <- paste0(msg, '  + age: ', signif(object@age, 2), '\n')
                } else {
-                 msg <- paste0(msg, '  + predist: ', signif(x@prdst, 2), '\n') 
+                 msg <- paste0(msg, '  + predist: ', signif(object@prdst, 2), '\n') 
                }
-               msg <- paste0(msg, '  + pd: ', signif(x@pd, 2), '\n')
+               msg <- paste0(msg, '  + pd: ', signif(object@pd, 2), '\n')
              }
-             cat (msg)
+             cat(msg)
            })
 #' @rdname Node-class
 #' @aliases Node-method
