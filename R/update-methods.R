@@ -30,7 +30,7 @@ updateTree <- function(tree) {
   tree@wspn <- any(sapply(tree@ndlst, function(n) n[['spn']] != 0))
   if(tree@wspn) {
     if(length(tree@root) > 0) {
-      tip_prdsts <- sapply(tree@tips, .getPrdst, ndlst=tree@ndlst)
+      tip_prdsts <- getNdsPrdst(tree, tree@tips)
       tree@age <- max(tip_prdsts)
       extant_is <- (tree@age - tip_prdsts) <= tree@tol
       tree@ext <- names(extant_is)[extant_is]

@@ -5,13 +5,15 @@
 #' @details Equivalent to \code{ape}'s \code{rtree()} but returns a
 #' \code{TreeMan} tree. Tree is always rooted and bifurcating.
 #' @param n number of tips, integer, must be 3 or greater
+#' @param update T/F update tree slots after generation? Default TRUE.
+#' @param parallel T/F run in parallel? Default FALSE.
 #' @seealso
 #' \code{\link{TreeMan-class}}
 #' @export
 #' @examples
 #' library(treeman)
 #' tree <- randTree(5)
-randTree <- function(n) {
+randTree <- function(n, update=TRUE, parallel=FALSE) {
   # Return a random tree based on a broken-stick model
   .add <- function(i) {
     nd <- vector("list", length=4)
@@ -41,11 +43,16 @@ randTree <- function(n) {
   ids[1:nnds %in% prids] <- paste0('n', 1:(n-1))
   ptnds_pool <- prids[-1]
   ptids <- ids[-1]
-  ndlst <- lapply(1:nnds, .add)
+  ndlst <- plyr::mlply(.data=1:nnds, .fun=.add, .parallel=parallel)
+  attr(ndlst, "split_labels") <- 
+    attr(ndlst, "split_type") <- NULL
   names(ndlst) <- ids
   # init new tree object
   tree <- new('TreeMan', ndlst=ndlst, root='n1')
-  updateTree(tree)
+  if(update) {
+    tree <- updateTree(tree)
+  }
+  tree
 }
 
 blncdTree <- function(...) {

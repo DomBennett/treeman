@@ -15,7 +15,7 @@
 #' tree <- randTree(10)
 #' (getTreeAge(tree))
 getTreeAge <- function(tree) {
-  .getAge(tree@ndlst)
+  .getTreeAge(tree@ndlst)
 }
 
 #' @name getNdSstr
@@ -34,7 +34,7 @@ getTreeAge <- function(tree) {
 #' tree <- randTree(10)
 #' getNdSstr(tree, id='t1')
 getNdSstr <- function(tree, id) {
-  .getSstr(tree@ndlst, id)
+  .getNdSstr(tree@ndlst, id)
 }
 
 #' @name getNdsSstr
@@ -138,7 +138,7 @@ getOtgrp <- function(tree, ids) {
 #' tree <- randTree(10)
 #' getNdPD(tree, id='n1')  # return PD of n1 which in this case is for the whole tree
 getNdPD <- function(tree, id) {
-  .getPD(tree@ndlst, id)
+  .getNdPD(tree@ndlst, id)
 }
 
 #' @name getNdsPD
@@ -179,7 +179,7 @@ getNdsPD <- function(tree, ids, ...) {
 #' tree <- randTree(10)
 #' getNdPrdst(tree, id='t1')  # return the distance to root from t1
 getNdPrdst <- function(tree, id) {
-  .getPrdst(tree@ndlst, id)
+  .getNdPrdst(tree@ndlst, id)
 }
 
 #' @name getNdsPrdst
@@ -188,7 +188,6 @@ getNdPrdst <- function(tree, id) {
 #' @details Sums the lengths of all branches from \code{ids} to root.
 #' @param tree \code{TreeMan} object
 #' @param ids vector of node ids
-#' @param ... \code{plyr} arguments
 #' @seealso
 #' \code{\link{getNdPrdst}},
 #' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
@@ -197,11 +196,11 @@ getNdPrdst <- function(tree, id) {
 #' library(treeman)
 #' tree <- randTree(10)
 #' getNdsPrdst(tree, ids=tree['tips'])  # return prdsts for all tips
-getNdsPrdst <- function(tree, ids, ...) {
-  l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
-  out <- plyr::mdply(.data=l_data, .fun=getNdPrdst, tree=tree, ...)
-  res <- out[ ,2]
-  names(res) <- out[ ,1]
+getNdsPrdst <- function(tree, ids) {
+  res <- .getNdsMat(tree@ndlst, ids)
+  all <- sapply(tree@ndlst, function(x) x[['spn']])
+  res <- apply(res, 2, function(x) sum(all[x]))
+  names(res) <- ids
   res
 }
 
@@ -267,7 +266,7 @@ getNdsSlt <- function(tree, slt_nm, ids, ...) {
 #' # everyone descends from root
 #' getNdKids(tree, id=tree['root'])
 getNdKids <- function(tree, id) {
-  names(tree@ndlst)[.getKids(tree@ndlst, id)]
+  names(tree@ndlst)[.getNdKids(tree@ndlst, id)]
 }
 
 #' @name getNdsKids
@@ -286,10 +285,14 @@ getNdKids <- function(tree, id) {
 #' tree <- randTree(10)
 #' getNdsKids(tree, id=tree['nds'])
 getNdsKids <- function(tree, ids, ...) {
-  l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
-  res <- plyr::mlply(.data=l_data, .fun=getNdKids, tree=tree, ...)
+  # TODO: make parallel
+  tids <- sapply(ndlst, function(x) length(x[['ptid']]) == 0)
+  tids <- names(tids)[tids]
+  res <- .getNdsMat(tree@ndlst, tids)
+  is <- match(ids, names(ndlst))
+  res <- apply(res[is, ], 1, function(x) tids[x])
   names(res) <- ids
-  res[1:length(res)]
+  res
 }
 
 #' @name getNdAge
@@ -314,7 +317,7 @@ getNdsKids <- function(tree, ids, ...) {
 #' prnt_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
 #' getNdAge(mammals, id=prnt_id, tree_age=mammals['age'])
 getNdAge <- function(tree, id, tree_age) {
-  tree_age - .getPrdst(tree@ndlst, id)
+  tree_age - .getNdPrdst(tree@ndlst, id)
 }
 
 #' @name getNdsAge
@@ -517,7 +520,7 @@ getNdsPrid <- function(tree, ids, ...) {
 #' # get all nodes to root
 #' getNdPrids(tree, id='t1')
 getNdPrids <- function(tree, id) {
-  names(tree@ndlst)[.getPrids(tree@ndlst, id)]
+  names(tree@ndlst)[.getNdPrids(tree@ndlst, id)]
 }
 
 #' @name getNdsPrids
@@ -569,7 +572,7 @@ getNdsPrids <- function(tree, ids, ...) {
 # tip ids to id
 # TODO: create a ptid and ptids function
 getNdPtid <- function(tree, id) {
-  names(tree@ndlst)[.getPtids(tree@ndlst, id)]
+  names(tree@ndlst)[.getNdPtids(tree@ndlst, id)]
 }
 
 #' @name getNdsPtid

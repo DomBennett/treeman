@@ -1,49 +1,64 @@
-# TODO: get intrnls nodes function for faster multiple node computation
+# MULTIPLE NDS
+#' @useDynLib treeman cGetNdsMat
+.getNdsMat <- function(ndlst, qry_ids) {
+  # return matrix of 01s for ids that descend from 
+  prids <- sapply(ndlst, function(x) x[['prid']])
+  nids <- names(prids)
+  prids <- match(prids, nids)
+  tids <- match(qry_ids, nids)
+  res <- .Call("cGetNdsMat", PACKAGE="treeman",
+               as.integer(length(nids)),
+               as.integer(tids),
+               as.integer(prids))
+  res <- res > 0
+}
 
-.getSstr <- function(ndlst, id) {
+# SINGLE ND
+
+.getNdSstr <- function(ndlst, id) {
   prid <- ndlst[[id]][['prid']][[1]]
   ptids <- ndlst[[prid]][['ptid']]
   ptids[ptids != id]
 }
 
-#' @useDynLib treeman getPrids
-.getPrids <- function(ndlst, id) {
+#' @useDynLib treeman cGetNdPrids
+.getNdPrids <- function(ndlst, id) {
   prids <- sapply(ndlst, function(x) x[['prid']])
   prid <- ndlst[[id]][['prid']]
   nids <- names(prids)
   prid <- which(nids == prid)
   prids <- match(prids, nids)
-  res <- .Call("getPrids", PACKAGE="treeman",
+  res <- .Call("cGetNdPrids", PACKAGE="treeman",
                as.integer(prid),
                as.integer(prids))
   res
 }
 
-.getPrdst <- function(ndlst, id) {
+.getNdPrdst <- function(ndlst, id) {
   prids <- .getPrids(ndlst, id)
   sum(sapply(ndlst[prids], function(x) x[['spn']])) +
     ndlst[[id]][['spn']]
 }
 
-#' @useDynLib treeman getPtids
-.getPtids <- function(ndlst, id) {
+#' @useDynLib treeman cGetNdPtids
+.getNdPtids <- function(ndlst, id) {
   prids <- sapply(ndlst, function(x) x[['prid']])
   nids <- names(prids)
   id <- which(nids == id)
   prids <- match(prids, nids)
-  res <- .Call("getPtids", PACKAGE="treeman",
+  res <- .Call("cGetNdPtids", PACKAGE="treeman",
                as.integer(id),
                as.integer(prids))
   which(res > 0)
 }
 
-.getKids <- function(ndlst, id) {
+.getNdKids <- function(ndlst, id) {
   ptids <- .getPtids(ndlst, id)
   kids <- sapply(ndlst[ptids], function(x) length(x[['ptid']]) == 0)
   ptids[as.logical(kids)]
 }
 
-.getPD <- function(ndlst, id) {
+.getNdPD <- function(ndlst, id) {
   ptids <- .getPtids(ndlst, id)
   if(length(ptids) > 0) {
     res <- sum(sapply(ndlst[ptids], function(x) x[['spn']]))
@@ -53,7 +68,9 @@
   res
 }
 
-.getAge <- function(ndlst) {
+# TREE FUNCTIONS
+
+.getTreeAge <- function(ndlst) {
   tids <- sapply(ndlst, function(x) length(x[['ptid']]) == 0)
   tids <- as.integer(which(tids))
   tip_prdsts <- sapply(tids, .getPrdst, ndlst=ndlst)

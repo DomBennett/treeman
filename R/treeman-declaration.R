@@ -169,6 +169,9 @@ setMethod('str', c('object'='TreeMan'),
 #' @exportMethod summary
 setMethod('summary', c('object'='TreeMan'),
           function(object){
+            if(length(object@ply) == 0) {
+              stop("Tree is not updated. Use `updateTree()`")
+            }
             msg <- 'Tree (TreeMan Object):\n'
             msg <- paste0(msg, '  + ', object@ntips, ' tips\n')
             msg <- paste0(msg, '  + ', object@nnds, ' internal nodes\n')

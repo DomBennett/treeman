@@ -1,8 +1,45 @@
 #include <R.h>
 #include <Rinternals.h>
 
-// Get prids
-SEXP getPrids(SEXP prid_, SEXP prids_)
+// Loops from qry ids to root
+// Return matrix of 01s for presence/absence
+// all nodes are rows, qry ids are cols
+SEXP cGetNdsMat(SEXP nids_, SEXP qrys_, SEXP prids_)
+{
+  SEXP res;
+  int nids = asInteger(nids_);
+  int nqrys = length(qrys_);
+  int* qrys = INTEGER(qrys_);
+  int* prids = INTEGER(prids_);
+  PROTECT(res=allocMatrix(INTSXP, nids, nqrys));
+  int n = length(res);
+  int i;
+  for(i=0;i<n; i++) {
+    INTEGER(res)[i] = 0;
+  }
+  int qry;
+  int id;
+  int prv_ids[2];
+  for(i=0;i<nqrys; i++) {
+    qry = qrys[i] - 1;
+    id = prids[qry] - 1;
+    // stop while loop by testing for self-reference
+    // if the last two assignments to id are the same, break
+    prv_ids[0] = -1;
+    prv_ids[1] = id;
+    while(prv_ids[0] != prv_ids[1]) {
+      prv_ids[0] = id;
+      INTEGER(res)[id + i * nids] = 1;
+      id = prids[id] - 1;
+      prv_ids[1] = id;
+    }
+  }
+  UNPROTECT(1);
+  return res;
+}
+
+// Get prids for a node
+SEXP cGetNdPrids(SEXP prid_, SEXP prids_)
 {
   int nprids = length(prids_);
   int init_res[nprids+2];
@@ -29,8 +66,8 @@ SEXP getPrids(SEXP prid_, SEXP prids_)
   return res;
 }
 
-// get ptids
-SEXP getPtids(SEXP id_, SEXP prids_) {
+// get ptids for a node
+SEXP cGetNdPtids(SEXP id_, SEXP prids_) {
   int nids = length(prids_);
   int id = asInteger(id_);
   int* prids = INTEGER(prids_);  //vector of internal node prids

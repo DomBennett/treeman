@@ -78,6 +78,7 @@ writeTree <- function(tree, file, ndLabels=function(nd){
 #' @details Read a single or multiple trees from a file, or a text string. Parallelizable.
 #' @param file file path
 #' @param text Newick character string
+#' @param update T/F update tree slots after generation? Default TRUE.
 #' @param ... \code{plyr} arguments
 #' @seealso
 #' \code{\link{writeTree}}, \code{\link{randTree}}, \url{https://en.wikipedia.org/wiki/Newick_format}
@@ -87,22 +88,23 @@ writeTree <- function(tree, file, ndLabels=function(nd){
 #' @examples
 #' library(treeman)
 #' tree <- readTree(text="((A:1.0,B:1.0):1.0,(C:1.0,D:1.0):1.0);")
-readTree <- function(file=NULL, text=NULL, ...) {
+readTree <- function(file=NULL, text=NULL, update=TRUE, ...) {
   if(!is.null(file)) {
     trstr <- scan(file, what="raw", quiet=TRUE)
   } else {
     trstr <- text
   }
   if(length(trstr) > 1) {
-    trees <- plyr::mlply(trstr, .fun=.readTree, ...)
+    trees <- plyr::mlply(trstr, .fun=.readTree,
+                         update=update, ...)
     tree <- as(trees, 'TreeMen')
   } else {
-    tree <- .readTree(trstr)
+    tree <- .readTree(trstr, update)
   }
   tree
 }
 
-.readTree <- function(trstr) {
+.readTree <- function(trstr, update) {
   # Internals
   .idspn <- function(i) {
     mtdt <- substr(trstr, start=nds[i-1] + 1, stop=nds[i])
@@ -166,7 +168,10 @@ readTree <- function(file=NULL, text=NULL, ...) {
   ndlst <- lapply(1:length(ids), .add)
   names(ndlst) <- ids
   tree <- new('TreeMan', ndlst=ndlst, root=ids[root])
-  updateTree(tree)
+  if(update) {
+    tree <- updateTree(tree)
+  }
+  tree
 }
 
 
