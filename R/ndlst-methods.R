@@ -1,5 +1,11 @@
 # TODO: get intrnls nodes function for faster multiple node computation
 
+.getSstr <- function(ndlst, id) {
+  prid <- ndlst[[id]][['prid']][[1]]
+  ptids <- ndlst[[prid]][['ptid']]
+  ptids[ptids != id]
+}
+
 #' @useDynLib treeman getPrids
 .getPrids <- function(ndlst, id) {
   prids <- sapply(ndlst, function(x) x[['prid']])

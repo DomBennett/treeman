@@ -6,14 +6,14 @@
 #' For faster computation, especially within function that perform multiple
 #' tree manipulations where the whole tree doesn't need updating, use this function.
 #' @param tree \code{TreeMan} object
-#' @param id node id
 #' @seealso
 #' \code{\link{updateTree}}, 
 #' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 #' @export
 #' @examples
 #' library(treeman)
-#' #tree <- randTree(10)
+#' tree <- randTree(10)
+#' (getTreeAge(tree))
 getTreeAge <- function(tree) {
   .getAge(tree@ndlst)
 }
@@ -34,9 +34,7 @@ getTreeAge <- function(tree) {
 #' tree <- randTree(10)
 #' getNdSstr(tree, id='t1')
 getNdSstr <- function(tree, id) {
-  prid <- tree@ndlst[[id]][['prid']][[1]]
-  ptids <- tree@ndlst[[prid]][['ptid']]
-  ptids[ptids != id]
+  .getSstr(tree@ndlst, id)
 }
 
 #' @name getNdsSstr
@@ -61,35 +59,35 @@ getNdsSstr <- function(tree, ids, ...) {
   res[ ,2]
 }
 
-#' @name getTxnyms
-#' @title Get node id(s) for txonyms
-#' @description Returns the node ids of nodes with given taxonyms.
-#' @details Returns a \code{list}, parallelizable.
-#' @param tree \code{TreeMan} object
-#' @param txnyms vector of taxonomic names
-#' @param ... \code{plyr} arguments
-#' @seealso
-#' \code{\link{getNdLng}}, 
-#' \code{\link{getNdsLng}}, 
-#' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
-#' @export
-#' @examples
-#' library(treeman)
-#' data(mammals)
-#' homo_ids <- getTxnyms(mammals, txnyms='Homo')
-getTxnyms <- function(tree, txnyms, ...) {
-  # get node id(s) for taxonyms
-  .get <- function(id, txnym, ...) {
-    for(t in txnyms) {
-      if(t %in% txnym) {
-        res[[t]] <<- c(res[[t]], id)
-      }
-    }
-  }
-  res <- vector("list", lenght=length(tree@ndlst))
-  plyr::m_ply(tree@ndlst, .fun=.get)
-  res
-}
+# #' @name getTxnyms
+# #' @title Get node id(s) for txonyms
+# #' @description Returns the node ids of nodes with given taxonyms.
+# #' @details Returns a \code{list}, parallelizable.
+# #' @param tree \code{TreeMan} object
+# #' @param txnyms vector of taxonomic names
+# #' @param ... \code{plyr} arguments
+# #' @seealso
+# #' \code{\link{getNdLng}}, 
+# #' \code{\link{getNdsLng}}, 
+# #' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
+# #' @export
+# #' @examples
+# #' library(treeman)
+# #' data(mammals)
+# #' homo_ids <- getTxnyms(mammals, txnyms='Homo')
+# getTxnyms <- function(tree, txnyms, ...) {
+#   # get node id(s) for taxonyms
+#   .get <- function(id, txnym, ...) {
+#     for(t in txnyms) {
+#       if(t %in% txnym) {
+#         res[[t]] <<- c(res[[t]], id)
+#       }
+#     }
+#   }
+#   res <- vector("list", lenght=length(tree@ndlst))
+#   plyr::m_ply(tree@ndlst, .fun=.get)
+#   res
+# }
 
 #' @name getOtgrp
 #' @title Get outgroup
@@ -314,7 +312,7 @@ getNdsKids <- function(tree, ids, ...) {
 #' # when did apes emerge?
 #' # get parent id for all apes
 #' prnt_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
-#' getNdAge(mammals, id=prnt_id, tree_age=tree['age'])
+#' getNdAge(mammals, id=prnt_id, tree_age=mammals['age'])
 getNdAge <- function(tree, id, tree_age) {
   tree_age - .getPrdst(tree@ndlst, id)
 }
@@ -362,7 +360,7 @@ getNdsAge <- function(tree, ids, tree_age, ...) {
 #' @examples
 #' library(treeman)
 #' data(mammals)
-#' getSpnAge(mammals, id='Homo_sapiens', tree_age=tree['age'])
+#' getSpnAge(mammals, id='Homo_sapiens', tree_age=mammals['age'])
 getSpnAge <- function(tree, id, tree_age) {
   start <- getNdAge(tree, tree@ndlst[[id]][['prid']][1], tree_age)
   end <- getNdAge(tree, id, tree_age)
@@ -600,54 +598,54 @@ getNdsPtid <- function(tree, ids, ...) {
   res
 }
 
-#' @name getNdLng
-#' @title Get lineage
-#' @description Return unique taxonyms for connecting \code{id} to root.
-#' @details Returns a vector.
-#' @param tree \code{TreeMan} object
-#' @param id node id
-#' @seealso
-#' \code{\link{getNdsLng}}, 
-#' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
-#' @export
-#' @examples
-#' library(treeman)
-#' data(mammals)
-#' # return human lineage
-#' getNdLng(mammals, id='Homo_sapiens')
-getNdLng <- function(tree, id) {
-  .get <- function(txnym, ...) {
-    lng <<- c(txnym, lng)
-  }
-  prids <- c(id, getNdPrids(tree, id))
-  lng <- NULL
-  plyr::m_ply(tree@ndlst[prids], .fun=.get)
-  unique(lng)
-}
+# #' @name getNdLng
+# #' @title Get lineage
+# #' @description Return unique taxonyms for connecting \code{id} to root.
+# #' @details Returns a vector.
+# #' @param tree \code{TreeMan} object
+# #' @param id node id
+# #' @seealso
+# #' \code{\link{getNdsLng}}, 
+# #' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
+# #' @export
+# #' @examples
+# #' library(treeman)
+# #' data(mammals)
+# #' # return human lineage
+# #' getNdLng(mammals, id='Homo_sapiens')
+# getNdLng <- function(tree, id) {
+#   .get <- function(txnym, ...) {
+#     lng <<- c(txnym, lng)
+#   }
+#   prids <- c(id, getNdPrids(tree, id))
+#   lng <- NULL
+#   plyr::m_ply(tree@ndlst[prids], .fun=.get)
+#   unique(lng)
+# }
 
-#' @name getNdsLng
-#' @title Get lineage for multiple nodes
-#' @description Return unique taxonyms for connecting \code{ids} to root.
-#' @details Returns a list, parallelizable.
-#' @param tree \code{TreeMan} object
-#' @param ids vector of node ids
-#' @param ... \code{plyr} arguments
-#' @seealso
-#' \code{\link{getNdLng}}, 
-#' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
-#' @export
-#' @examples
-#' library(treeman)
-#' data(mammals)
-#' # return human and gorilla lineages
-#' getNdLng(mammals, id=c('Homo_sapiens', 'Gorilla_gorilla'))
-getNdsLng <- function(tree, ids, ...) {
-  l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
-  out <- plyr::mlply(.data=l_data, .fun=getNdLng, tree=tree, ...)
-  names(out) <- attr(out, 'split_labels')[,1]
-  res <- out[1:length(out)]
-  res
-}
+# #' @name getNdsLng
+# #' @title Get lineage for multiple nodes
+# #' @description Return unique taxonyms for connecting \code{ids} to root.
+# #' @details Returns a list, parallelizable.
+# #' @param tree \code{TreeMan} object
+# #' @param ids vector of node ids
+# #' @param ... \code{plyr} arguments
+# #' @seealso
+# #' \code{\link{getNdLng}}, 
+# #' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
+# #' @export
+# #' @examples
+# #' library(treeman)
+# #' data(mammals)
+# #' # return human and gorilla lineages
+# #' getNdLng(mammals, id=c('Homo_sapiens', 'Gorilla_gorilla'))
+# getNdsLng <- function(tree, ids, ...) {
+#   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
+#   out <- plyr::mlply(.data=l_data, .fun=getNdLng, tree=tree, ...)
+#   names(out) <- attr(out, 'split_labels')[,1]
+#   res <- out[1:length(out)]
+#   res
+# }
 
 #' @name getSubtree
 #' @title Get subtree

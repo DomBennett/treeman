@@ -91,18 +91,18 @@ test_that("get_Ptid() works", {
   expect_true(all(n1_ptids %in% ptids[['n1']]))
   expect_that(ptids[['t1']], is_null())
 })
-test_that("get_Lng() works", {
-  # TODO: redo with setNds
-  tree <- randTree(10)
-  for(i in 1:length(tree@ndlst)) {
-    tree@ndlst[[i]]$txnym <- paste0("l", sample(1:1000, 1))
-  }
-  lngs <- getNdsLng(tree, tree['tips'])
-  rnd1 <- sample(1:length(lngs), 1)
-  rnd2 <- sample(1:length(lngs), 1)
-  expect_that(sum(lngs[[rnd1]] %in% lngs[[rnd2]]),
-              is_more_than(0))
-})
+# test_that("get_Lng() works", {
+#   # TODO: redo with setNds
+#   tree <- randTree(10)
+#   for(i in 1:length(tree@ndlst)) {
+#     tree@ndlst[[i]]$txnym <- paste0("l", sample(1:1000, 1))
+#   }
+#   lngs <- getNdsLng(tree, tree['tips'])
+#   rnd1 <- sample(1:length(lngs), 1)
+#   rnd2 <- sample(1:length(lngs), 1)
+#   expect_that(sum(lngs[[rnd1]] %in% lngs[[rnd2]]),
+#               is_more_than(0))
+# })
 test_that("getSubtree() works", {
   tree <- randTree(10)
   subtree <- getSubtree(tree, 'n2')

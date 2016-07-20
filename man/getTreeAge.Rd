@@ -8,8 +8,6 @@ getTreeAge(tree)
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}
-
-\item{id}{node id}
 }
 \description{
 Returns age, numeric, of tree
@@ -22,7 +20,8 @@ tree manipulations where the whole tree doesn't need updating, use this function
 }
 \examples{
 library(treeman)
-#tree <- randTree(10)
+tree <- randTree(10)
+(getTreeAge(tree))
 }
 \seealso{
 \code{\link{updateTree}}, 

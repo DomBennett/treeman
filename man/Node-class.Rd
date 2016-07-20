@@ -8,6 +8,7 @@
 \alias{as.character,Node-method}
 \alias{print,Node-method}
 \alias{show,Node-method}
+\alias{summary,Node-method}
 \title{Node-class}
 \usage{
 \S4method{as.character}{Node}(x)
@@ -15,6 +16,8 @@
 \S4method{show}{Node}(object)
 
 \S4method{print}{Node}(x)
+
+\S4method{summary}{Node}(object)
 
 \S4method{[}{Node,character}(x, i)
 }
@@ -27,7 +30,8 @@
 }
 \description{
 The \code{Node} is an S4 class used for displaying node information.
-It is only generated when a user implements the \code{[[]]} on a tree.
+It is only generated when a user implements the \code{[[]]} on a tree. Information
+is only accurate if tree has been updated with \code{updateTree()}.
 }
 \section{Slots}{
 
@@ -57,6 +61,6 @@ It is only generated when a user implements the \code{[[]]} on a tree.
 \item{\code{tip}}{T/F tip node?}
 }}
 \seealso{
-\code{\link{cTrees}}
+\code{\link{TreeMan-class}}, \code{\link{TreeMen-class}}
 }
 

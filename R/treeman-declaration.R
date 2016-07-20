@@ -46,33 +46,30 @@
 #' 
 #' See below in 'Examples' for these methods in use.
 #' @seealso
-#' \code{\link{randTree}}, \code{\link{Node-class}}, \code{\link{viz}}
+#' \code{\link{randTree}}, \code{\link{Node-class}}
 #' @examples
 #' library(treeman)
 #' # Generate random tree
 #' tree <- randTree(10)
 #' # Print to get basic stats
-#' print(tree)
-#' # Currently available methods
-#' tree['tips']  # return all tips IDs
-#' tree['nds']  # return all internal node IDs
+#' summary(tree)
+#' # Slots....
+#' tree['tips']   # return all tips IDs
+#' tree['nds']    # return all internal node IDs
 #' tree['ntips']  # count all tips
-#' tree['nnds']  # count all internal nodes
-#' tree['root']  # identify root node
-#' tree[['t1']]  # return t1 node object
-#' tree['pd']  # return phylogenetic diversity
-#' tree['age']  # return age of tree
-#' tree['ultr']  # is ultrametric?
-#' tree['ply']  # is polytomous?
-#' tree['ext']  # return all extant tip IDs
-#' tree['exc']  # return all extinct tip IDs
-#' tree <- setTol(tree, 10)  # reset tolerance, default 1e-8
-#' # now tol is higher more tips will be classed as extant
-#' tree['ext']
+#' tree['nnds']   # count all internal nodes
+#' tree['root']   # identify root node
+#' tree[['t1']]   # return t1 node object
+#' tree['pd']     # return phylogenetic diversity
+#' tree['age']    # return age of tree
+#' tree['ultr']   # is ultrametric?
+#' tree['ply']    # is polytomous?
+#' tree['ext']    # return all extant tip IDs
+#' tree['exc']    # return all extinct tip IDs
 #' # Because all nodes are lists with metadata we can readily
 #' #  get specific information on nodes of interest
 #' nd <- tree[['n2']]
-#' print(nd)
+#' summary(nd)
 #' # And then use the same syntax for the tree
 #' nd['age']  # .... nkids, pd, etc.
 #' @exportClass TreeMan

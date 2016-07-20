@@ -28,7 +28,7 @@ setRoot <- function(...) {
 #' tree <- randTree(10)
 #' tree <- setPD(tree, val=1)
 #' tree <- updateTree(tree)
-#' (summary(tree))
+#' summary(tree)
 setPD <- function(tree, val) {
   spns <- getNdsSlt(tree, ids=tree@all, slt_nm="spn")
   spns <- spns/(tree@pd/val)
@@ -53,7 +53,7 @@ setPD <- function(tree, val) {
 #' tree <- randTree(10)
 #' tree <- setAge(tree, val=1)
 #' tree <- updateTree(tree)
-#' (summary(tree))
+#' summary(tree)
 setAge <- function(tree, val) {
   spns <- getNdsSlt(tree, ids=tree@all, slt_nm="spn")
   spns <- spns/(tree@age/val)
@@ -104,11 +104,11 @@ setNdSpn <- function(tree, id, val) {
 #' # make tree taxonomic
 #' tree <- setNdsSpn(tree, ids=tree['all'], vals=1)
 #' tree <- updateTree(tree)
-#' (summary(tree))
+#' summary(tree)
 #' # remove spns by setting all to 0
 #' tree <- setNdsSpn(tree, ids=tree['all'], vals=0)
 #' tree <- updateTree(tree)
-#' (summary(tree))
+#' summary(tree)
 setNdsSpn <- function(tree, ids, vals, ...) {
   .reset <- function(id, spn) {
     ndlst[[id]][['spn']] <- spn
@@ -139,7 +139,7 @@ setNdsSpn <- function(tree, ids, vals, ...) {
 #' tree <- randTree(10)
 #' tree <- setTol(tree, 10)
 #' tree <- updateTree(tree)
-#' (summary(tree))
+#' summary(tree)
 setTol <- function(tree, tol) {
   tree@tol <- tol
   tree

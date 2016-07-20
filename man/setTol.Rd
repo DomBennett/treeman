@@ -24,7 +24,7 @@ library(treeman)
 tree <- randTree(10)
 tree <- setTol(tree, 10)
 tree <- updateTree(tree)
-(summary(tree))
+summary(tree)
 }
 \seealso{
 \code{\link{setNdsSpn}}

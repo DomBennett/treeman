@@ -18,13 +18,14 @@
 #' }
 #' writeTree(tree, file='example.tre', ndLabels)
 #' file.remove('example.tre')
+# TODO: really slow
 # TODO: test this with unrooted trees, adapt for TreeMen
 writeTree <- function(tree, file, ndLabels=function(nd){
   return(NULL)
   }) {
   tipBytip <- function(i) {
-    ids <- c(ndlst[[prid]][['kids']], prid,
-             ndlst[[prid]][['prid']])
+    kids <- getNdKids(tree, prid)
+    ids <- c(kids, prid, ndlst[[prid]][['prid']])
     id <<- ids[!ids %in% deja_vues][1]
     deja_vues[i] <<- id
     spn <- ndlst[[id]][['spn']]

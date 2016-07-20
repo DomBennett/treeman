@@ -25,7 +25,7 @@ data(mammals)
 # when did apes emerge?
 # get parent id for all apes
 prnt_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
-getNdAge(mammals, id=prnt_id, tree_age=tree['age'])
+getNdAge(mammals, id=prnt_id, tree_age=mammals['age'])
 }
 \seealso{
 \code{\link{getNdsAge}}, 

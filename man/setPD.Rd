@@ -24,7 +24,7 @@ library(treeman)
 tree <- randTree(10)
 tree <- setPD(tree, val=1)
 tree <- updateTree(tree)
-(summary(tree))
+summary(tree)
 }
 \seealso{
 \code{\link{setAge}}

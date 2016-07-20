@@ -47,7 +47,7 @@
 #' @slot tip T/F tip node?
 #' @exportClass Node
 #' @seealso 
-#' \code{\link{TreeMan}}, \code{\link{TreeMen}}
+#' \code{\link{TreeMan-class}}, \code{\link{TreeMen-class}}
 setClass ('Node', representation=representation (
   id='character',        # unique ID for node in tree@nodelist
   spn='numeric',        # length of preceding branch
@@ -67,7 +67,7 @@ setClass ('Node', representation=representation (
 #' @exportMethod as.character
 setMethod ('as.character', c('x'='Node'),
            function(x) {
-             paste0('Node Obj. [ID=', nd@id, ']')
+             paste0('Node Obj. [ID=', x@id, ']')
            })
 #' @rdname Node-class
 #' @aliases Node-method

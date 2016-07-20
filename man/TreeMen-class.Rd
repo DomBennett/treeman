@@ -11,6 +11,7 @@
 \alias{print,TreeMen-method}
 \alias{show,TreeMen-method}
 \alias{str,TreeMen-method}
+\alias{summary,TreeMen-method}
 \title{TreeMen-class}
 \usage{
 \S4method{cTrees}{TreeMen}(x, ...)
@@ -26,6 +27,8 @@
 \S4method{str}{TreeMen}(object, max.level = 2L, ...)
 
 \S4method{print}{TreeMen}(x)
+
+\S4method{summary}{TreeMen}(object)
 }
 \arguments{
 \item{x}{\code{TreeMen} object}
