@@ -4,12 +4,14 @@
 \alias{readTree}
 \title{Read a Newick tree}
 \usage{
-readTree(file = NULL, text = NULL, ...)
+readTree(file = NULL, text = NULL, update = TRUE, ...)
 }
 \arguments{
 \item{file}{file path}
 
 \item{text}{Newick character string}
+
+\item{update}{T/F update tree slots after generation? Default TRUE.}
 
 \item{...}{\code{plyr} arguments}
 }

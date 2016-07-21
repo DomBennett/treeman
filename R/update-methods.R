@@ -25,7 +25,7 @@ updateTree <- function(tree) {
   tree@ntips <- length(tree@tips)
   tree@nds <- sort(names(wo_pstndes)[!wo_pstndes])
   tree@nnds <- length(tree@nds)
-  tree@all <- c(tree@tips, tree@nds)
+  tree@all <- names(tree@ndlst)
   tree@nall <- length(tree@all)
   tree@wspn <- any(sapply(tree@ndlst, function(n) n[['spn']] != 0))
   if(tree@wspn) {

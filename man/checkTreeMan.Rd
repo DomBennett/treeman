@@ -17,6 +17,6 @@ Tests whether each node in tree points to valid other node IDs. Also
 ensures `spn` and `root` are correct. Reports nodes that have errors.
 }
 \seealso{
-\code{\link{checkTreeMen}}
+\code{\link{fastCheckTreeMan}}, \code{\link{checkTreeMen}}
 }
 

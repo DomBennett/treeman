@@ -1,3 +1,47 @@
+#' @name getNdsMat
+#' @title Get T/F matrix of connected node IDs
+#' @description Returns a TRUE/FALSE matrix of connected node IDs given
+#' a vector of query IDs.
+#' @details The function takes each ID in \code{qry_ids} and tests whether
+#' each ID in tree descends from it. The resulting matrix has the \code{qry_ids}
+#' as columns and all node IDs in tree as rows. Each column is a TRUE/FALSE vector
+#' of prids, each row a TRUE/FALSE vector for ptids (when \code{qry_ids} equals all
+#' node IDs). Kids can be calculated by node IDs using this function by providing
+#' all tip IDs as \code{qry_ids}.
+#' 
+#' Functions that require running multiple get methods across all nodes may
+#' run faster by using this function once. All \code{getNds_} use this function.
+#' @param tree \code{TreeMan} object
+#' @param qry_ids vector of IDs
+#' @seealso
+#' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
+#' @export
+#' @examples
+#' library(treeman)
+#' # generate tree and extract IDs
+#' tree <- randTree(100)
+#' all <- tree['all']
+#' nids <- tree['nds']
+#' tids <- tree['tips']
+#' # get kids by only providing tip IDs
+#' res <- getNdsMat(tree, tids)
+#' kids <- apply(res, 1, function(x) tids[x])
+#' # or count kids by node....
+#' nkids <- apply(res, 1, sum)
+#' # get ptids for internal nodes by slicing res
+#' res <- getNdsMat(tree, all)
+#' ptids <- apply(res, 1, function(x) all[x])
+#' ptids <- ptids[nids]
+#' # get prids by extracting columns
+#' prids <- apply(res, 2, function(x) all[x])
+getNdsMat <- function(tree, qry_ids) {
+  res <- .getNdsMat(tree@ndlst, qry_ids)
+  res <- res > 0
+  rownames(res) <- names(tree@ndlst)
+  colnames(res) <- qry_ids
+  res
+}
+
 #' @name getTreeAge
 #' @title Get age of tree
 #' @description Returns age, numeric, of tree
@@ -286,10 +330,10 @@ getNdKids <- function(tree, id) {
 #' getNdsKids(tree, id=tree['nds'])
 getNdsKids <- function(tree, ids, ...) {
   # TODO: make parallel
-  tids <- sapply(ndlst, function(x) length(x[['ptid']]) == 0)
+  tids <- sapply(tree@ndlst, function(x) length(x[['ptid']]) == 0)
   tids <- names(tids)[tids]
   res <- .getNdsMat(tree@ndlst, tids)
-  is <- match(ids, names(ndlst))
+  is <- match(ids, names(tree@ndlst))
   res <- apply(res[is, ], 1, function(x) tids[x])
   names(res) <- ids
   res

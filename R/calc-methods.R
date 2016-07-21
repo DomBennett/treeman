@@ -262,20 +262,19 @@ calcPhyDv <- function(tree, tids, ...) {
 #' tree <- randTree(10)
 #' calcFrPrp(tree, tree['tips'])
 calcFrPrp <- function(tree, tids, ...) {
-  .share <- function(id) {
-    spn <- tree@ndlst[[id]][['spn']]
-    n <- length(getNdKids(tree, id))
-    if(n == 0) {
-      n <- 1
-    }
-    spn/n
-  }
   .calc <- function(tid) {
-    ids <- c(tid, getNdPrids(tree, tid))
-    l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
-    shares <- plyr::mdply(.data=l_data, .fun=.share)[ ,2]
-    sum(shares)
+    ids <- c(tid, prids[[tid]])
+    sum(spns[ids]/ns[ids])
   }
+  all <- names(tree@ndlst)
+  tids <- sapply(tree@ndlst, function(x) length(x[['ptid']]) == 0)
+  tids <- all[tids]
+  nds_mat <- getNdsMat(tree, all)
+  prids <- apply(nds_mat, 2, function(x) all[x])
+  ns <- apply(nds_mat, 1, sum)
+  rm(nds_mat)
+  ns[ns == 0] <- 1  # prevent division by 0
+  spns <- sapply(tree@ndlst, function(x) x[['spn']])
   l_data <- data.frame(tid=tids, stringsAsFactors=FALSE)
   plyr::mdply(.data=l_data, .fun=.calc, ...)[ ,2]
 }

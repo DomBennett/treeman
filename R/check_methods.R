@@ -1,3 +1,19 @@
+#' @name fastCheckTreeMan
+#' @title Check if tree is correct, fast!
+#' @description Return T/F if tree is a true \code{TreeMan} object
+#' @details Whenever a tree is first initiated this check is used.
+#' For more detailed checking use \code{checkTreeMan}.
+#' @param object \code{TreeMan} object
+#' @seealso
+#' \code{\link{checkTreeMan}}, \code{\link{checkTreeMen}}
+#' @export
+fastCheckTreeMan <- function(object) {
+  kwn_ids <- names(object@ndlst)
+  ids <- unlist(sapply(object@ndlst, function(x) x[c('id', 'ptid', 'prid')]))
+  test <- all(ids %in% kwn_ids) & object@root %in% kwn_ids
+  test
+}
+
 #' @name checkTreeMan
 #' @title Check if tree is correct
 #' @description Return T/F if tree is a true \code{TreeMan} object
@@ -5,7 +21,7 @@
 #' ensures `spn` and `root` are correct. Reports nodes that have errors.
 #' @param object \code{TreeMan} object
 #' @seealso
-#' \code{\link{checkTreeMen}}
+#' \code{\link{fastCheckTreeMan}}, \code{\link{checkTreeMen}}
 #' @export
 checkTreeMan <- function(object) {
   # TODO: use prids as vector to test for circularity

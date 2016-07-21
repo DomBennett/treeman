@@ -90,7 +90,7 @@ setClass('TreeMan', representation=representation(
   ply='logical',         # logical, is tree bifurcating
   tol='numeric',         # numeric of tolerance for determining extant
   root='character'),     # character of node id of root, if no root then empty character
-  prototype=prototype(tol=1e-8), validity=checkTreeMan)
+  prototype=prototype(tol=1e-8), validity=fastCheckTreeMan)
 
 # Accessor methods
 #' @rdname TreeMan-class

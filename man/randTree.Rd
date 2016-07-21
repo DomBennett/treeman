@@ -4,10 +4,14 @@
 \alias{randTree}
 \title{Generate a random tree}
 \usage{
-randTree(n)
+randTree(n, update = TRUE, parallel = FALSE)
 }
 \arguments{
 \item{n}{number of tips, integer, must be 3 or greater}
+
+\item{update}{T/F update tree slots after generation? Default TRUE.}
+
+\item{parallel}{T/F run in parallel? Default FALSE.}
 }
 \description{
 Returns a random \code{TreeMan} tree with \code{n}

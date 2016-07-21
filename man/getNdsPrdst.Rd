@@ -4,14 +4,12 @@
 \alias{getNdsPrdst}
 \title{Get pre-distances}
 \usage{
-getNdsPrdst(tree, ids, ...)
+getNdsPrdst(tree, ids)
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}
 
 \item{ids}{vector of node ids}
-
-\item{...}{\code{plyr} arguments}
 }
 \description{
 Return root to tip distances (prdst) for \code{ids}
