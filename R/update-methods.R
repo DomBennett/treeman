@@ -5,19 +5,21 @@
 #' to make mainipulations computationally faster. To update these slots, run this function.
 #' @param tree \code{TreeMan} object
 #' @seealso
-#' \code{\link{getTreeAge}}
+#' \code{\link{downdateTree}}, \code{\link{getTreeAge}}
 #' @export
 #' @examples
 #' # library(treeman)
 #' # tree <- randTree(10)
-#' # rmTip
-#' # summary(tree)  # old information
+#' # tree <- rmTips(tree, 't1')
+#' # summary(tree)  # error
 #' # tree <- updateTree(tree)
 #' # summary(tree)  # new information
 updateTree <- function(tree) {
   if(!checkTreeMan(tree)) {
     stop('Invalid tree')
   }
+  # Generate ndmtrx
+  tree@ndmtrx <- .getNdmtrxFrmLst(tree@ndlst)
   # Update the slots for a tree
   wo_pstndes <- sapply(tree@ndlst,
                        function(n) length(n[['ptid']]) == 0)
@@ -27,10 +29,14 @@ updateTree <- function(tree) {
   tree@nnds <- length(tree@nds)
   tree@all <- names(tree@ndlst)
   tree@nall <- length(tree@all)
-  tree@wspn <- any(sapply(tree@ndlst, function(n) n[['spn']] > 0))
+  spns <- sapply(tree@ndlst, function(n) n[['spn']])
+  tree@wspn <- any(spns > 0)
   if(tree@wspn) {
     if(length(tree@root) > 0) {
-      tip_prdsts <- getNdsPrdst(tree, tree@tips)
+      tip_prdsts <- .getNdsPrdstsFrmMtrx(tree@ndmtrx,
+                                         tree@all,
+                                         tree@tips,
+                                         spns)
       tree@age <- max(tip_prdsts)
       extant_is <- (tree@age - tip_prdsts) <= tree@tol
       tree@ext <- names(extant_is)[extant_is]
@@ -50,4 +56,23 @@ updateTree <- function(tree) {
   tree@ply <- any(sapply(tree@ndlst, function(n) length(n[['ptid']]) > 2))
   tree@updtd <- TRUE
   initialize(tree)
+}
+
+#' @name downdateTree
+#' @title Downdate tree slots
+#' @description Return tree with memory heavy node slots removed.
+#' @details Potential uses: reduce memory load by downdating a tree,
+#' force get-methods to use ndlst rather than ndmtrx.
+#' @param tree \code{TreeMan} object
+#' @seealso
+#' \code{\link{updateTree}}
+#' @export
+#' @examples
+#' # library(treeman)
+#' tree <- randTree(10)
+#' tree <- downdateTree(tree)
+#' summary(tree)  # error
+downdateTree <- function(tree) {
+  tree@ndmtrx <- matrix()
+  tree@updtd <- FALSE
 }

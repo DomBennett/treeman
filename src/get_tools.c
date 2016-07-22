@@ -4,7 +4,7 @@
 // Loops from qry ids to root
 // Return matrix of 01s for presence/absence
 // all nodes are rows, qry ids are cols
-SEXP cGetNdsMat(SEXP nids_, SEXP qrys_, SEXP prids_)
+SEXP cGetNdmtrx(SEXP nids_, SEXP qrys_, SEXP prids_)
 {
   SEXP res;
   int nids = asInteger(nids_);

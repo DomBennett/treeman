@@ -29,6 +29,7 @@
 #' @slot tol numeric of tolerance for determining extant
 #' @slot root character of node id of root, if no root then empty character
 #' @slot updtd logical, if tree slots have been updated since initiation or change
+#' @slot ndmtrx matrix, T/Fs representing tree structure
 #' @details
 #' A \code{TreeMan} object holds a list of nodes. The idea of the \code{TreeMan}
 #' class is to make adding and removing nodes as similar as possible to adding
@@ -91,6 +92,7 @@ setClass('TreeMan', representation=representation(
   ply='logical',         # logical, is tree bifurcating
   tol='numeric',         # numeric of tolerance for determining extant
   updtd='logical',       # logical, if tree has been updated since a change
+  ndmtrx='matrix',       # matrix of logicals
   root='character'),     # character of node id of root, if no root then empty character
   prototype=prototype(tol=1e-8), validity=fastCheckTreeMan)
 

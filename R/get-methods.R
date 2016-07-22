@@ -1,46 +1,3 @@
-#' @name getNdsMat
-#' @title Get T/F matrix of connected node IDs
-#' @description Returns a TRUE/FALSE matrix of connected node IDs given
-#' a vector of query IDs.
-#' @details The function takes each ID in \code{qry_ids} and tests whether
-#' each ID in tree descends from it. The resulting matrix has the \code{qry_ids}
-#' as columns and all node IDs in tree as rows. Each column is a TRUE/FALSE vector
-#' of prids, each row a TRUE/FALSE vector for ptids (when \code{qry_ids} equals all
-#' node IDs). Kids can be calculated by node IDs using this function by providing
-#' all tip IDs as \code{qry_ids}.
-#' 
-#' Functions that require running multiple get methods across all nodes may
-#' run faster by using this function once. All \code{getNds_} use this function.
-#' @param tree \code{TreeMan} object
-#' @param qry_ids vector of IDs
-#' @seealso
-#' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
-#' @export
-#' @examples
-#' library(treeman)
-#' # generate tree and extract IDs
-#' tree <- randTree(100)
-#' all <- tree['all']
-#' nids <- tree['nds']
-#' tids <- tree['tips']
-#' # get kids by only providing tip IDs
-#' res <- getNdsMat(tree, tids)
-#' kids <- apply(res, 1, function(x) tids[x])
-#' # or count kids by node....
-#' nkids <- apply(res, 1, sum)
-#' # get ptids for internal nodes by slicing res
-#' res <- getNdsMat(tree, all)
-#' ptids <- apply(res, 1, function(x) all[x])
-#' ptids <- ptids[nids]
-#' # get prids by extracting columns
-#' prids <- apply(res, 2, function(x) all[x])
-getNdsMat <- function(tree, qry_ids) {
-  res <- .getNdsMat(tree@ndlst, qry_ids)
-  rownames(res) <- names(tree@ndlst)
-  colnames(res) <- qry_ids
-  res
-}
-
 #' @name getTreeAge
 #' @title Get age of tree
 #' @description Returns age, numeric, of tree
@@ -58,7 +15,12 @@ getNdsMat <- function(tree, qry_ids) {
 #' tree <- randTree(10)
 #' (getTreeAge(tree))
 getTreeAge <- function(tree) {
-  .getTreeAge(tree@ndlst)
+  if(tree@updtd) {
+    res <- .getTreeAgeFrmMtrx(tree@ndsmtrx)
+  } else {
+    res <- .getTreeAgeFrmLst(tree@ndslst)
+  }
+  res
 }
 
 #' @name getNdSstr
@@ -98,7 +60,7 @@ getNdSstr <- function(tree, id) {
 #' getNdsSstr(tree, ids=tree['tips'])
 getNdsSstr <- function(tree, ids, ...) {
   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
-  res <- plyr::mdply(.data=l_data, .fun=getNdSstr, tree=tree, ...)
+  res <- plyr::mdply(.data=l_data, .fun=.getNdSstrFrmLst, ndlst=ndlst, ...)
   res[ ,2]
 }
 
@@ -181,7 +143,7 @@ getOtgrp <- function(tree, ids) {
 #' tree <- randTree(10)
 #' getNdPD(tree, id='n1')  # return PD of n1 which in this case is for the whole tree
 getNdPD <- function(tree, id) {
-  .getNdPD(tree@ndlst, id)
+  .getNdPDFrmLst(tree@ndlst, id)
 }
 
 #' @name getNdsPD
@@ -201,7 +163,7 @@ getNdPD <- function(tree, id) {
 #' getNdsPD(tree, ids=tree['all'])  # return PD of all ids
 getNdsPD <- function(tree, ids, ...) {
   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
-  out <- plyr::mdply(.data=l_data, .fun=getNdPD, tree=tree, ...)
+  out <- plyr::mdply(.data=l_data, .fun=.getNdPDFrmLst, ndlst=ndlst, ...)
   res <- out[ ,2]
   names(res) <- out[ ,1]
   res
@@ -222,7 +184,7 @@ getNdsPD <- function(tree, ids, ...) {
 #' tree <- randTree(10)
 #' getNdPrdst(tree, id='t1')  # return the distance to root from t1
 getNdPrdst <- function(tree, id) {
-  .getNdPrdst(tree@ndlst, id)
+  .getNdPrdstFrmLst(tree@ndlst, id)
 }
 
 #' @name getNdsPrdst
@@ -240,11 +202,11 @@ getNdPrdst <- function(tree, id) {
 #' tree <- randTree(10)
 #' getNdsPrdst(tree, ids=tree['tips'])  # return prdsts for all tips
 getNdsPrdst <- function(tree, ids) {
-  res <- .getNdsMat(tree@ndlst, ids)
-  all <- sapply(tree@ndlst, function(x) x[['spn']])
-  res <- apply(res, 2, function(x) sum(all[x]))
-  res <- res + all[ids]
-  names(res) <- ids
+  if(tree@updtd | length(ids) < 2) {
+    res <- .getNdsPrdstFrmMtrx(tree@ndsmtrx, ids)
+  } else {
+    res <- .getNdsPrdstFrmLst(tree@ndslst, ids)
+  }
   res
 }
 
@@ -310,7 +272,7 @@ getNdsSlt <- function(tree, slt_nm, ids, ...) {
 #' # everyone descends from root
 #' getNdKids(tree, id=tree['root'])
 getNdKids <- function(tree, id) {
-  names(tree@ndlst)[.getNdKids(tree@ndlst, id)]
+  .getNdKidsFrmLst(tree@ndlst, id)
 }
 
 #' @name getNdsKids
@@ -328,19 +290,15 @@ getNdKids <- function(tree, id) {
 #' library(treeman)
 #' tree <- randTree(10)
 #' getNdsKids(tree, id=tree['nds'])
-getNdsKids <- function(tree, ids) {
-  # TODO: make parallel
-  if(length(ids) <= 1) {
-    res <- getNdKids(tree, ids)
-    res <- list(res)
+getNdsKids <- function(tree, ids, parallel=FALSE,
+                       progress="none") {
+  if(tree@updtd | length(ids) < 2) {
+    res <- .getNdsKidsFrmMtrx(tree@ndmtrx, tree@all,
+                              ids, tree@tips)
   } else {
-    tids <- sapply(tree@ndlst, function(x) length(x[['ptid']]) == 0)
-    tids <- names(tids)[tids]
-    res <- .getNdsMat(tree@ndlst, tids)
-    is <- match(ids, names(tree@ndlst))
-    res <- apply(res[is, ], 1, function(x) tids[x])
+    res <- .getNdsKidsFrmLst(tree@ndlst, ids,
+                             parallel, progress)
   }
-  names(res) <- ids
   res
 }
 

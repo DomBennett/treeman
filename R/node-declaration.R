@@ -5,7 +5,7 @@
   } else {
     spn <- nd[['spn']]
     pd <- .getNdPD(tree@ndlst, id)
-    prdst <- .getNdPrdst(tree@ndlst, id)
+    prdst <- .getNdPrdstFrmLst(tree@ndlst, id)
   }
   if(length(tree@age) > 0) {
     age <- tree@age - prdst
@@ -17,7 +17,7 @@
   } else {
     txnym <- nd[['txnym']]
   }
-  kids <- names(tree@ndlst)[.getNdKids(tree@ndlst, id)]
+  kids <- names(tree@ndlst)[.getNdKidsFrmLst(tree@ndlst, id)]
   new('Node', id=nd[['id']], spn=spn, prid=as.character(nd[['prid']][1]),
      ptid=as.character(nd[['ptid']]), kids=as.character(kids),
      nkids=length(kids), pd=pd, txnym=txnym, prdst=prdst,
