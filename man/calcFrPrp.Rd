@@ -4,7 +4,7 @@
 \alias{calcFrPrp}
 \title{Calculate evolutionary distinctness}
 \usage{
-calcFrPrp(tree, tids, ...)
+calcFrPrp(tree, tids, parallel = FALSE)
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}

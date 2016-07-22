@@ -22,7 +22,7 @@ rmTips <- function(tree, tid, drp_intrnl=TRUE) {
   # internal
   .rmTip <- function(tid) {
     # get sister IDs
-    sids <- .getSstr(ndlst, tid)
+    sids <- .getNdSstr(ndlst, tid)
     # get prid
     prid <- ndlst[[tid]][['prid']][[1]]
     # remove tid
@@ -54,6 +54,7 @@ rmTips <- function(tree, tid, drp_intrnl=TRUE) {
   sapply(tid, .rmTip)
   tree@ndlst <- ndlst
   tree@root <- rid
+  tree@updtd <- FALSE
   tree
 }
 

@@ -28,6 +28,7 @@
 #' @slot ply logical, is tree bifurcating
 #' @slot tol numeric of tolerance for determining extant
 #' @slot root character of node id of root, if no root then empty character
+#' @slot updtd logical, if tree slots have been updated since initiation or change
 #' @details
 #' A \code{TreeMan} object holds a list of nodes. The idea of the \code{TreeMan}
 #' class is to make adding and removing nodes as similar as possible to adding
@@ -89,6 +90,7 @@ setClass('TreeMan', representation=representation(
   ultr='logical',        # logical, do all tips end at 0
   ply='logical',         # logical, is tree bifurcating
   tol='numeric',         # numeric of tolerance for determining extant
+  updtd='logical',       # logical, if tree has been updated since a change
   root='character'),     # character of node id of root, if no root then empty character
   prototype=prototype(tol=1e-8), validity=fastCheckTreeMan)
 
@@ -169,8 +171,8 @@ setMethod('str', c('object'='TreeMan'),
 #' @exportMethod summary
 setMethod('summary', c('object'='TreeMan'),
           function(object){
-            if(length(object@ply) == 0) {
-              stop("Tree is not updated. Use `updateTree()`")
+            if(!object@updtd) {
+              stop("Tree is not updated since change or initiation. Use `updateTree()`")
             }
             msg <- 'Tree (TreeMan Object):\n'
             msg <- paste0(msg, '  + ', object@ntips, ' tips\n')

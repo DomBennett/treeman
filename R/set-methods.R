@@ -33,6 +33,7 @@ setPD <- function(tree, val) {
   spns <- getNdsSlt(tree, ids=tree@all, slt_nm="spn")
   spns <- spns/(tree@pd/val)
   tree <- setNdsSpn(tree, ids=tree@all, vals=spns)
+  tree@updtd <- FALSE
   tree
 }
 
@@ -58,6 +59,7 @@ setAge <- function(tree, val) {
   spns <- getNdsSlt(tree, ids=tree@all, slt_nm="spn")
   spns <- spns/(tree@age/val)
   tree <- setNdsSpn(tree, ids=tree@all, vals=spns)
+  tree@updtd <- FALSE
   tree
 }
 
@@ -83,6 +85,7 @@ setAge <- function(tree, val) {
 #' viz(tree)
 setNdSpn <- function(tree, id, val) {
   tree@ndlst[[id]][['spn']] <- val
+  tree@updtd <- FALSE
   tree
 }
 
@@ -119,6 +122,7 @@ setNdsSpn <- function(tree, ids, vals, ...) {
   ndlst <- plyr::mlply(l_data, .fun=.reset, ...)
   ndlst <- ndlst[1:length(ndlst)]
   tree@ndlst[ids] <- ndlst
+  tree@updtd <- FALSE
   tree
 }
 
@@ -142,6 +146,7 @@ setNdsSpn <- function(tree, ids, vals, ...) {
 #' summary(tree)
 setTol <- function(tree, tol) {
   tree@tol <- tol
+  tree@updtd <- FALSE
   tree
 }
 
@@ -221,6 +226,7 @@ setNdsID <- function(tree, ids, vals, ...) {
   tree@ext <- .rplcS4('ext')
   tree@exc <- .rplcS4('exc')
   tree@root <- .rplcS4('root')
+  tree@updtd <- FALSE
   tree
 }
 
@@ -246,6 +252,7 @@ setNdsID <- function(tree, ids, vals, ...) {
 #' (getNdSlt(tree, id='t1', slt_nm='binary_val'))
 setNdOther <- function(tree, id, val, slt_nm) {
   tree@ndlst[[id]][slt_nm] <- val
+  tree@updtd <- FALSE
   tree
 }
 
@@ -275,5 +282,6 @@ setNdsOther <- function(tree, ids, vals, slt_nm, ...) {
   l_data <- data.frame(id=ids, val=vals,
                        stringsAsFactors=FALSE)
   plyr::m_ply(.data=l_data, .fun=.set)
+  tree@updtd <- FALSE
   tree
 }

@@ -27,7 +27,7 @@ updateTree <- function(tree) {
   tree@nnds <- length(tree@nds)
   tree@all <- names(tree@ndlst)
   tree@nall <- length(tree@all)
-  tree@wspn <- any(sapply(tree@ndlst, function(n) n[['spn']] != 0))
+  tree@wspn <- any(sapply(tree@ndlst, function(n) n[['spn']] > 0))
   if(tree@wspn) {
     if(length(tree@root) > 0) {
       tip_prdsts <- getNdsPrdst(tree, tree@tips)
@@ -48,5 +48,6 @@ updateTree <- function(tree) {
     tree@ultr <- logical()
   }
   tree@ply <- any(sapply(tree@ndlst, function(n) length(n[['ptid']]) > 2))
+  tree@updtd <- TRUE
   initialize(tree)
 }

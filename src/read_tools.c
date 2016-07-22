@@ -2,7 +2,7 @@
 #include <Rinternals.h>
 
 // Return vector of position of prid in Newick string
-SEXP findPrids(SEXP nds_, SEXP clss_, SEXP opns_)
+SEXP cFindPrids(SEXP nds_, SEXP clss_, SEXP opns_)
 {
   SEXP res;
   int n = length(nds_);

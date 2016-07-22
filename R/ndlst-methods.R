@@ -1,3 +1,18 @@
+# Attemp for making getNdsMat run in parallel
+# ... actually made it slower
+# ntids <- length(tids)
+# n <- foreach::getDoParWorkers()
+# nparts <- ntids %/% n
+# parts <- c(seq(1, ntids - 1, nparts), ntids + 1)
+# res <- foreach (i=2:length(parts), .combine="cbind") %dopar% {
+#   tids <- tids[parts[i-1]:(parts[i] - 1)]
+#   res <- .Call("cGetNdsMat", PACKAGE="treeman",
+#                as.integer(length(nids)),
+#                as.integer(tids),
+#                as.integer(prids))
+#   res
+# }
+
 # MULTIPLE NDS
 #' @useDynLib treeman cGetNdsMat
 .getNdsMat <- function(ndlst, qry_ids) {
@@ -11,6 +26,7 @@
                as.integer(tids),
                as.integer(prids))
   res <- res > 0
+  res
 }
 
 # SINGLE ND
@@ -35,7 +51,7 @@
 }
 
 .getNdPrdst <- function(ndlst, id) {
-  prids <- .getPrids(ndlst, id)
+  prids <- .getNdPrids(ndlst, id)
   sum(sapply(ndlst[prids], function(x) x[['spn']])) +
     ndlst[[id]][['spn']]
 }
@@ -53,13 +69,13 @@
 }
 
 .getNdKids <- function(ndlst, id) {
-  ptids <- .getPtids(ndlst, id)
+  ptids <- .getNdPtids(ndlst, id)
   kids <- sapply(ndlst[ptids], function(x) length(x[['ptid']]) == 0)
   ptids[as.logical(kids)]
 }
 
 .getNdPD <- function(ndlst, id) {
-  ptids <- .getPtids(ndlst, id)
+  ptids <- .getNdPtids(ndlst, id)
   if(length(ptids) > 0) {
     res <- sum(sapply(ndlst[ptids], function(x) x[['spn']]))
   } else {
@@ -73,6 +89,6 @@
 .getTreeAge <- function(ndlst) {
   tids <- sapply(ndlst, function(x) length(x[['ptid']]) == 0)
   tids <- as.integer(which(tids))
-  tip_prdsts <- sapply(tids, .getPrdst, ndlst=ndlst)
+  tip_prdsts <- sapply(tids, .getNdPrdst, ndlst=ndlst)
   max(tip_prdsts)
 }

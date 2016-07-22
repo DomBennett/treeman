@@ -51,6 +51,16 @@ randTree <- function(n, update=TRUE, parallel=FALSE) {
   tree <- new('TreeMan', ndlst=ndlst, root='n1')
   if(update) {
     tree <- updateTree(tree)
+  } else {
+    # init basic slots
+    tree@updtd <- FALSE
+    tree@tips <- paste0('t', 1:n)
+    tree@ntips <- n
+    tree@nds <- paste0('n', 1:(n-1))
+    tree@nnds <- n - 1
+    tree@all <- names(tree@ndlst)
+    tree@nall <- nnds
+    tree@wspn <- TRUE
   }
   tree
 }

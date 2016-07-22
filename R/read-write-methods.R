@@ -82,8 +82,6 @@ writeTree <- function(tree, file, ndLabels=function(nd){
 #' @param ... \code{plyr} arguments
 #' @seealso
 #' \code{\link{writeTree}}, \code{\link{randTree}}, \url{https://en.wikipedia.org/wiki/Newick_format}
-#' @useDynLib treeman
-#' @useDynLib treeman findPrids
 #' @export
 #' @examples
 #' library(treeman)
@@ -104,6 +102,8 @@ readTree <- function(file=NULL, text=NULL, update=TRUE, ...) {
   tree
 }
 
+#' @useDynLib treeman
+#' @useDynLib treeman cFindPrids
 .readTree <- function(trstr, update) {
   # Internals
   .idspn <- function(i) {
@@ -151,7 +151,7 @@ readTree <- function(file=NULL, text=NULL, update=TRUE, ...) {
   # gen prids
   opns <- gregexpr("\\(", trstr)[[1]]
   clss <- gregexpr("\\)", trstr)[[1]]
-  prids <- .Call("findPrids", PACKAGE="treeman",
+  prids <- .Call("cFindPrids", PACKAGE="treeman",
                  as.integer(nds),
                  as.integer(clss),
                  as.integer(opns))
@@ -170,6 +170,16 @@ readTree <- function(file=NULL, text=NULL, update=TRUE, ...) {
   tree <- new('TreeMan', ndlst=ndlst, root=ids[root])
   if(update) {
     tree <- updateTree(tree)
+  } else {
+    # init basic slots
+    tree@updtd <- FALSE
+    tree@tips <- sort(ids[tids])
+    tree@ntips <- length(tids)
+    tree@nds <- sort(ids[ids != tree@tips])
+    tree@nnds <- length(tree@nds)
+    tree@all <- names(tree@ndlst)
+    tree@nall <- length(tree@all)
+    tree@wspn <- any(spns > 0)
   }
   tree
 }

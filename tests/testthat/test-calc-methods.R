@@ -57,6 +57,7 @@ test_that('calcDstRF() works', {
 # })
 test_that('calcFrPrp() works', {
   tree <- randTree(10)
+  sum(sapply(tree@ndlst, function(x) x[['spn']]))
   ed_values <- calcFrPrp(tree, tree['tips'])
   expect_that(sum(ed_values), equals(tree['pd']))
 })

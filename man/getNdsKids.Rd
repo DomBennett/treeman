@@ -4,7 +4,7 @@
 \alias{getNdsKids}
 \title{Get children IDs for multiple nodes}
 \usage{
-getNdsKids(tree, ids, ...)
+getNdsKids(tree, ids)
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}

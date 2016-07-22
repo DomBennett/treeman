@@ -36,7 +36,6 @@
 #' prids <- apply(res, 2, function(x) all[x])
 getNdsMat <- function(tree, qry_ids) {
   res <- .getNdsMat(tree@ndlst, qry_ids)
-  res <- res > 0
   rownames(res) <- names(tree@ndlst)
   colnames(res) <- qry_ids
   res
@@ -244,6 +243,7 @@ getNdsPrdst <- function(tree, ids) {
   res <- .getNdsMat(tree@ndlst, ids)
   all <- sapply(tree@ndlst, function(x) x[['spn']])
   res <- apply(res, 2, function(x) sum(all[x]))
+  res <- res + all[ids]
   names(res) <- ids
   res
 }
@@ -328,13 +328,18 @@ getNdKids <- function(tree, id) {
 #' library(treeman)
 #' tree <- randTree(10)
 #' getNdsKids(tree, id=tree['nds'])
-getNdsKids <- function(tree, ids, ...) {
+getNdsKids <- function(tree, ids) {
   # TODO: make parallel
-  tids <- sapply(tree@ndlst, function(x) length(x[['ptid']]) == 0)
-  tids <- names(tids)[tids]
-  res <- .getNdsMat(tree@ndlst, tids)
-  is <- match(ids, names(tree@ndlst))
-  res <- apply(res[is, ], 1, function(x) tids[x])
+  if(length(ids) <= 1) {
+    res <- getNdKids(tree, ids)
+    res <- list(res)
+  } else {
+    tids <- sapply(tree@ndlst, function(x) length(x[['ptid']]) == 0)
+    tids <- names(tids)[tids]
+    res <- .getNdsMat(tree@ndlst, tids)
+    is <- match(ids, names(tree@ndlst))
+    res <- apply(res[is, ], 1, function(x) tids[x])
+  }
   names(res) <- ids
   res
 }

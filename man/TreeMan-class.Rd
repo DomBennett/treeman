@@ -96,6 +96,8 @@ See below in 'Examples' for these methods in use.
 \item{\code{tol}}{numeric of tolerance for determining extant}
 
 \item{\code{root}}{character of node id of root, if no root then empty character}
+
+\item{\code{updtd}}{logical, if tree slots have been updated since initiation or change}
 }}
 \examples{
 library(treeman)

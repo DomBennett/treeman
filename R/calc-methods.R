@@ -156,13 +156,14 @@ calcOvrlp <- function(tree, ids_1, ids_2, nrmlsd=FALSE, ...) {
 #' tree_1 <- randTree(10)
 #' tree_2 <- randTree(10)
 #' calcDstBLD(tree_1, tree_2)
+
 calcDstBLD <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
   n1 <- tree_1@nds[!tree_1@nds == tree_1@root]
   n2 <- tree_2@nds[!tree_2@nds == tree_2@root]
-  c1 <- getNdsKids(tree_1, n1, ...)
-  c2 <- getNdsKids(tree_2, n2, ...)
-  s1 <- getNdsSlt(tree_1, slt_nm="spn", ids=n1, ...)
-  s2 <- getNdsSlt(tree_2, slt_nm="spn", ids=n2, ...)
+  c1 <- getNdsKids(tree_1, n1)
+  c2 <- getNdsKids(tree_2, n2)
+  s1 <- getNdsSlt(tree_1, slt_nm="spn", ids=n1)
+  s2 <- getNdsSlt(tree_2, slt_nm="spn", ids=n2)
   d1 <- s2[match(c1, c2)]
   d1[which(is.na(d1))] <- 0
   d1 <- s1 - d1
@@ -261,22 +262,22 @@ calcPhyDv <- function(tree, tids, ...) {
 #' library(treeman)
 #' tree <- randTree(10)
 #' calcFrPrp(tree, tree['tips'])
-calcFrPrp <- function(tree, tids, ...) {
+calcFrPrp <- function(tree, tids, parallel=FALSE) {
   .calc <- function(tid) {
     ids <- c(tid, prids[[tid]])
     sum(spns[ids]/ns[ids])
   }
   all <- names(tree@ndlst)
   tids <- sapply(tree@ndlst, function(x) length(x[['ptid']]) == 0)
-  tids <- all[tids]
   nds_mat <- getNdsMat(tree, all)
   prids <- apply(nds_mat, 2, function(x) all[x])
-  ns <- apply(nds_mat, 1, sum)
+  ns <- apply(nds_mat, 1, function(x) sum(tids & x))
   rm(nds_mat)
   ns[ns == 0] <- 1  # prevent division by 0
   spns <- sapply(tree@ndlst, function(x) x[['spn']])
+  tids <- all[tids]
   l_data <- data.frame(tid=tids, stringsAsFactors=FALSE)
-  plyr::mdply(.data=l_data, .fun=.calc, ...)[ ,2]
+  res_2 <- plyr::mdply(.data=l_data, .fun=.calc, .parallel=parallel)[ ,2]
 }
 
 #' @name calcDstMtrx
