@@ -36,7 +36,9 @@ updateTree <- function(tree) {
       tip_prdsts <- .getNdsPrdstsFrmMtrx(tree@ndmtrx,
                                          tree@all,
                                          tree@tips,
-                                         spns)
+                                         spns,
+                                         parallel=FALSE,
+                                         progress="none")
       tree@age <- max(tip_prdsts)
       extant_is <- (tree@age - tip_prdsts) <= tree@tol
       tree@ext <- names(extant_is)[extant_is]

@@ -4,14 +4,16 @@
 \alias{getNdsSstr}
 \title{Get sister id}
 \usage{
-getNdsSstr(tree, ids, ...)
+getNdsSstr(tree, ids, parallel = FALSE, progress = "none")
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}
 
 \item{ids}{nd ids}
 
-\item{...}{\code{plyr} arguments}
+\item{parallel}{logical, make parallel?}
+
+\item{progress}{name of the progress bar to use, see \code{\link{create_progress_bar}}}
 }
 \description{
 Returns the ids of the sister(s) of nd ids given.

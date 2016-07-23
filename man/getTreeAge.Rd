@@ -4,10 +4,12 @@
 \alias{getTreeAge}
 \title{Get age of tree}
 \usage{
-getTreeAge(tree)
+getTreeAge(tree, parallel = FALSE)
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}
+
+\item{parallel}{logical, make parallel?}
 }
 \description{
 Returns age, numeric, of tree
@@ -17,6 +19,7 @@ This can also be achieved with \code{tree['age']} but will
 only work if the the tree has been updated with \code{updateTree()}.
 For faster computation, especially within function that perform multiple
 tree manipulations where the whole tree doesn't need updating, use this function.
+Parallelizable.
 }
 \examples{
 library(treeman)

@@ -11,7 +11,7 @@ getNdAge(tree, id, tree_age)
 
 \item{id}{node id}
 
-\item{tree_age}{numeric value of known age of tree, tree['age'] if tree is updated}
+\item{tree_age}{numeric value of known age of tree, tree['age'] if tree is up-to-date}
 }
 \description{
 Return the age for \code{id}. Requires the known age of the tree to be provided.
@@ -31,7 +31,7 @@ getNdAge(mammals, id=prnt_id, tree_age=mammals['age'])
 \code{\link{getNdsAge}}, 
 \code{\link{getSpnAge}}, 
 \code{\link{getSpnsAge}}, 
-\code{\link{getPrnt}}, 
+\code{\link{getPrnt}}, \code{\link{getTreeAge}}
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }
 

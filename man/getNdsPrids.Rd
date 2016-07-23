@@ -4,20 +4,22 @@
 \alias{getNdsPrids}
 \title{Get pre-nodes for multiple nodes}
 \usage{
-getNdsPrids(tree, ids, ...)
+getNdsPrids(tree, ids, parallel = FALSE, progress = "none")
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}
 
 \item{ids}{vector of node ids}
 
-\item{...}{\code{plyr} arguments}
+\item{parallel}{logical, make parallel?}
+
+\item{progress}{name of the progress bar to use, see \code{\link{create_progress_bar}}}
 }
 \description{
 Return node ids for connecting \code{id} to root.
 }
 \details{
-Returns a list, parallizable.
+Returns a list, parallizable. Order of prids may vary.
 }
 \examples{
 library(treeman)
@@ -26,10 +28,8 @@ getNdsPrids(tree, ids=tree['tips'])
 }
 \seealso{
 \code{\link{getNdPrids}},
-\code{\link{getNdPrid}},
-\code{\link{getNdsPrid}}, 
-\code{\link{getNdPtid}}, 
-\code{\link{getNdsPtid}}, 
+\code{\link{getNdPtids}}, 
+\code{\link{getNdsPtids}}, 
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }
 

@@ -4,7 +4,7 @@
 \alias{getSpnsAge}
 \title{Get age ranges for multiple nodes}
 \usage{
-getSpnsAge(tree, ids, tree_age, ...)
+getSpnsAge(tree, ids, tree_age, parallel = FALSE, progress = "none")
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}
@@ -13,7 +13,9 @@ getSpnsAge(tree, ids, tree_age, ...)
 
 \item{tree_age}{numeric value of known age of tree, tree['age'] if tree is updated}
 
-\item{...}{\code{plyr} arguments}
+\item{parallel}{logical, make parallel?}
+
+\item{progress}{name of the progress bar to use, see \code{\link{create_progress_bar}}}
 }
 \description{
 Return start and end ages for \code{ids} from when they first appear to when they split

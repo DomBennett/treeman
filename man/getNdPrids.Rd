@@ -15,7 +15,7 @@ getNdPrids(tree, id)
 Return node ids for connecting \code{id} to root.
 }
 \details{
-Returns a vector.
+Returns a vector. Order of prids may vary.
 }
 \examples{
 library(treeman)
@@ -24,11 +24,9 @@ tree <- randTree(10)
 getNdPrids(tree, id='t1')
 }
 \seealso{
-\code{\link{getNdPrid}},
-\code{\link{getNdsPrid}},
 \code{\link{getNdsPrids}}, 
-\code{\link{getNdPtid}}, 
-\code{\link{getNdsPtid}}, 
+\code{\link{getNdPtids}}, 
+\code{\link{getNdsPtids}}, 
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }
 

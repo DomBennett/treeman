@@ -4,7 +4,7 @@
 \alias{getNdsSlt}
 \title{Get a node slot for multiple nodes}
 \usage{
-getNdsSlt(tree, slt_nm, ids, ...)
+getNdsSlt(tree, slt_nm, ids, parallel = FALSE, progress = "none")
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}
@@ -13,7 +13,9 @@ getNdsSlt(tree, slt_nm, ids, ...)
 
 \item{ids}{vector of node ids}
 
-\item{...}{\code{plyr} arguments}
+\item{parallel}{logical, make parallel?}
+
+\item{progress}{name of the progress bar to use, see \code{\link{create_progress_bar}}}
 }
 \description{
 Returns the value of named slot.

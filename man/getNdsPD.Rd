@@ -4,14 +4,14 @@
 \alias{getNdsPD}
 \title{Get phylogenetic diversities of nodes}
 \usage{
-getNdsPD(tree, ids, ...)
+getNdsPD(tree, ids, parallel = FALSE, progress = "none")
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}
 
 \item{ids}{vector of node ids}
 
-\item{...}{\code{plyr} arguments}
+\item{parallel}{logical, make parallel? #' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}}
 }
 \description{
 Return summed value of all descending spns

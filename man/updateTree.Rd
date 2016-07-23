@@ -19,7 +19,7 @@ to make mainipulations computationally faster. To update these slots, run this f
 \examples{
 # library(treeman)
 # tree <- randTree(10)
-# tree <- rmTip(tree, 't1')
+# tree <- rmTips(tree, 't1')
 # summary(tree)  # error
 # tree <- updateTree(tree)
 # summary(tree)  # new information

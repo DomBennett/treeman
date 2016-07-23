@@ -4,7 +4,7 @@
 \alias{getNdsAge}
 \title{Get ages for multiple nodes}
 \usage{
-getNdsAge(tree, ids, tree_age, ...)
+getNdsAge(tree, ids, tree_age, parallel = FALSE, progress = "none")
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}
@@ -13,7 +13,9 @@ getNdsAge(tree, ids, tree_age, ...)
 
 \item{tree_age}{numeric value of known age of tree, tree['age'] if tree is updated}
 
-\item{...}{\code{plyr} arguments}
+\item{parallel}{logical, make parallel?}
+
+\item{progress}{name of the progress bar to use, see \code{\link{create_progress_bar}}}
 }
 \description{
 Return the age for \code{ids}.

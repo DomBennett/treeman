@@ -74,19 +74,16 @@ test_that("get_Prids() works", {
   prid <- getNdPrids(tree, id='n1')
   expect_that(prid, equals('n1'))  # root nodes are recursive
   prids <- getNdsPrids(tree, tree['nds'])
-  lst_nds <- unlist(lapply(prids, function(n) n[length(n)]))
-  expect_true(all(lst_nds == "n1"))
+  tests <- sapply(prids, function(n) 'n1' %in% n)
+  expect_true(all(tests))
+  # ordrd
+  prids <- getNdsPrids(tree, tree['nds'], ordrd=TRUE)
+  lst_ns <- sapply(prids, function(n) n[length(n)])
+  expect_true(all(lst_ns == "n1"))
 })
-test_that("get_Prid() works", {
+test_that("get_Ptids() works", {
   tree <- randTree(10)
-  prid <- getNdPrid(tree, id=sample(tree['tips'], 1))
-  expect_true(prid %in% tree['nds'])
-  prids <- getNdsPrid(tree, tree['nds'])
-  expect_true(all(prids %in% tree['nds']))
-})
-test_that("get_Ptid() works", {
-  tree <- randTree(10)
-  ptids <- getNdsPtid(tree, tree['nds'])
+  ptids <- getNdsPtids(tree, tree['nds'])
   n1_ptids <- tree['all'][tree['all'] != 'n1']
   expect_true(all(n1_ptids %in% ptids[['n1']]))
   expect_that(ptids[['t1']], is_null())

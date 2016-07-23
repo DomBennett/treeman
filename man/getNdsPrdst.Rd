@@ -4,12 +4,16 @@
 \alias{getNdsPrdst}
 \title{Get pre-distances}
 \usage{
-getNdsPrdst(tree, ids)
+getNdsPrdst(tree, ids, parallel = FALSE, progress = "none")
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}
 
 \item{ids}{vector of node ids}
+
+\item{parallel}{logical, make parallel?}
+
+\item{progress}{name of the progress bar to use, see \code{\link{create_progress_bar}}}
 }
 \description{
 Return root to tip distances (prdst) for \code{ids}
