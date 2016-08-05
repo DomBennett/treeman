@@ -271,8 +271,10 @@ calcFrPrp <- function(tree, tids, parallel=FALSE, progress="none") {
     sum(spns/nkids[ids])
   }
   all_ids <- names(tree@ndlst)
-  prids <- getNdsPrids(tree, tids)
-  nkids <- sapply(getNdsKids(tree, all_ids), length)
+  prids <- getNdsPrids(tree, tids, parallel=parallel)
+  kids <- getNdsKids(tree, all_ids, parallel=parallel)
+  nkids <- sapply(kids, length)
+  rm(kids)
   nkids[nkids == 0] <- 1  # prevent division by 0
   l_data <- data.frame(tid=tids, stringsAsFactors=FALSE)
   plyr::mdply(.data=l_data, .fun=.calc, .parallel=parallel,
