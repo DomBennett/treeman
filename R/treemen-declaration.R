@@ -111,7 +111,7 @@ setMethod('[', c('TreeMen', 'character'),
             slot(x, i)
           })
 
-#' @name as-TreeMen
+#' @name list-to-TreeMen
 #' @title Convert list to a TreeMen
 #' @description Return a \code{TreeMen} object from a list of \code{TreeMans}
 #' @seealso 

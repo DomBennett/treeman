@@ -48,7 +48,8 @@
 #' 
 #' See below in 'Examples' for these methods in use.
 #' @seealso
-#' \code{\link{randTree}}, \code{\link{Node-class}}
+#' \code{\link{randTree}}, \code{\link{Node-class}},
+#' \code{\link{phylo-to-TreeMan}}, \code{\link{TreeMan-to-phylo}}
 #' @examples
 #' library(treeman)
 #' # Generate random tree
@@ -74,6 +75,11 @@
 #' summary(nd)
 #' # And then use the same syntax for the tree
 #' nd['age']  # .... nkids, pd, etc.
+#' 
+#' # Convert to phylo and plot
+#' library(ape)
+#' tree <- as(tree, 'phylo')
+#' plot(tree)
 #' @exportClass TreeMan
 setClass('TreeMan', representation=representation(
   ndlst='list',          # list of node lists
