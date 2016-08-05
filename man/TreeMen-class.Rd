@@ -47,7 +47,7 @@ S4 class for multiple phylogenetic trees
 \section{Slots}{
 
 \describe{
-\item{\code{treelist}}{list of \code{TreeMan} objects}
+\item{\code{treelst}}{list of \code{TreeMan} objects}
 
 \item{\code{ntips}}{sum of tips per tree}
 

@@ -4,12 +4,14 @@
 \alias{getNdsPrids}
 \title{Get pre-nodes for multiple nodes}
 \usage{
-getNdsPrids(tree, ids, parallel = FALSE, progress = "none")
+getNdsPrids(tree, ids, ordrd = FALSE, parallel = FALSE, progress = "none")
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}
 
 \item{ids}{vector of node ids}
+
+\item{ordrd}{logical, ensure returned prids are ordered ID to root}
 
 \item{parallel}{logical, make parallel?}
 
@@ -19,7 +21,8 @@ getNdsPrids(tree, ids, parallel = FALSE, progress = "none")
 Return node ids for connecting \code{id} to root.
 }
 \details{
-Returns a list, parallizable. Order of prids may vary.
+Returns a list, parallizable. The function will work faster
+if \code{ordrd} is FALSE.
 }
 \examples{
 library(treeman)

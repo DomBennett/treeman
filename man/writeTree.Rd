@@ -4,12 +4,15 @@
 \alias{writeTree}
 \title{Write a Newick tree}
 \usage{
-writeTree(tree, file, ndLabels = function(nd) {     return(NULL) })
+writeTree(tree, file, append, ndLabels = function(nd) {     return(NULL) },
+  parallel = FALSE, progress = "none")
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}
 
 \item{file}{file path}
+
+\item{append}{T/F append tree to already existing file}
 
 \item{ndLabels}{node label function}
 }

@@ -15,7 +15,7 @@ getNdPrids(tree, id)
 Return node ids for connecting \code{id} to root.
 }
 \details{
-Returns a vector. Order of prids may vary.
+Returns a vector. IDs are returned order from node ID to root.
 }
 \examples{
 library(treeman)

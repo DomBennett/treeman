@@ -4,7 +4,8 @@
 \alias{readTree}
 \title{Read a Newick tree}
 \usage{
-readTree(file = NULL, text = NULL, update = TRUE, ...)
+readTree(file = NULL, text = NULL, update = TRUE, parallel = FALSE,
+  progress = "none")
 }
 \arguments{
 \item{file}{file path}
@@ -13,13 +14,16 @@ readTree(file = NULL, text = NULL, update = TRUE, ...)
 
 \item{update}{T/F update tree slots after generation? Default TRUE.}
 
-\item{...}{\code{plyr} arguments}
+\item{parallel}{logical, make parallel?}
+
+\item{progress}{name of the progress bar to use, see \code{\link{create_progress_bar}}}
 }
 \description{
 Return a \code{TreeMan} or \code{TreeMen} object from a Newick treefile
 }
 \details{
-Read a single or multiple trees from a file, or a text string. Parallelizable.
+Read a single or multiple trees from a file, or a text string. Parallelizable
+when reading multiple trees.
 }
 \examples{
 library(treeman)
