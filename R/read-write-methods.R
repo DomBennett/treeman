@@ -6,6 +6,7 @@
 #' It should only return a single character value that can be added to a newick string.
 #' @param tree \code{TreeMan} object
 #' @param file file path
+#' @param append T/F append tree to already existing file
 #' @param ndLabels node label function
 #' @seealso
 #' \code{\link{readTree}}, \code{\link{randTree}}, \url{https://en.wikipedia.org/wiki/Newick_format}
@@ -18,11 +19,22 @@
 #' }
 #' writeTree(tree, file='example.tre', ndLabels)
 #' file.remove('example.tre')
-# TODO: really slow
-# TODO: test this with unrooted trees, adapt for TreeMen
-writeTree <- function(tree, file, ndLabels=function(nd){
+writeTree <- function(tree, file, append, ndLabels=function(nd){
   return(NULL)
-  }) {
+  }, parallel=FALSE, progress="none") {
+  if(is(tree) == 'TreeMen') {
+    plyr::m_ply(tree@treelst, .fun=.writeTree, file=file,
+                append=TRUE, ndLabels=ndLabels,
+                .progress=progress, .parallel=parallel)
+  } else if(is(tree) == "TreeMan") {
+    .writeTree(tree, file, append, ndLabels)
+  } else {
+    stop('`tree` must be TreeMan or TreeMen')
+  }
+  NULL
+}
+
+.writeTree <- function(tree, file, append, ndLabels) {
   tipBytip <- function(i) {
     kids <- getNdKids(tree, prid)
     ids <- c(kids, prid, ndlst[[prid]][['prid']])
@@ -69,32 +81,35 @@ writeTree <- function(tree, file, ndLabels=function(nd){
   plyr::m_ply(2:(length(ndlst) - 1), .fun=tipBytip)
   trstr <- paste0(trstr, ');')
   write.table(x=trstr, file=file, quote=FALSE, row.names=FALSE,
-              col.names=FALSE)
+              col.names=FALSE, append=append)
 }
 
 #' @name readTree
 #' @title Read a Newick tree
 #' @description Return a \code{TreeMan} or \code{TreeMen} object from a Newick treefile
-#' @details Read a single or multiple trees from a file, or a text string. Parallelizable.
+#' @details Read a single or multiple trees from a file, or a text string. Parallelizable
+#' when reading multiple trees.
 #' @param file file path
 #' @param text Newick character string
 #' @param update T/F update tree slots after generation? Default TRUE.
-#' @param ... \code{plyr} arguments
+#' @param parallel logical, make parallel?
+#' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
 #' @seealso
 #' \code{\link{writeTree}}, \code{\link{randTree}}, \url{https://en.wikipedia.org/wiki/Newick_format}
 #' @export
 #' @examples
 #' library(treeman)
 #' tree <- readTree(text="((A:1.0,B:1.0):1.0,(C:1.0,D:1.0):1.0);")
-readTree <- function(file=NULL, text=NULL, update=TRUE, ...) {
+readTree <- function(file=NULL, text=NULL, update=TRUE, parallel=FALSE,
+                     progress='none') {
   if(!is.null(file)) {
     trstr <- scan(file, what="raw", quiet=TRUE)
   } else {
     trstr <- text
   }
   if(length(trstr) > 1) {
-    trees <- plyr::mlply(trstr, .fun=.readTree,
-                         update=update, ...)
+    trees <- plyr::mlply(trstr, .fun=.readTree, update=update,
+                         .progress=progress, .parallel=parallel)
     tree <- as(trees, 'TreeMen')
   } else {
     tree <- .readTree(trstr, update)
