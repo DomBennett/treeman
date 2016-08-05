@@ -19,7 +19,7 @@
 #' }
 #' writeTree(tree, file='example.tre', ndLabels)
 #' file.remove('example.tre')
-writeTree <- function(tree, file, append, ndLabels=function(nd){
+writeTree <- function(tree, file, append=FALSE, ndLabels=function(nd){
   return(NULL)
   }, parallel=FALSE, progress="none") {
   if(is(tree) == 'TreeMen') {
