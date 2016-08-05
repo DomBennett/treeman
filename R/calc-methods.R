@@ -250,6 +250,8 @@ calcPhyDv <- function(tree, tids, ...) {
 #' each branch in the tree is evenly divided between all descendants. Parallelizable.
 #' @param tree \code{TreeMan} object
 #' @param tids tip IDs
+#' @param parallel logical, make parallel?
+#' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
 #' @param ... \code{plyr} arguments
 #' @references
 #' Isaac, N.J.B., Turvey, S.T., Collen, B., Waterman, C. and Baillie, J.E.M. (2007). 
@@ -262,22 +264,19 @@ calcPhyDv <- function(tree, tids, ...) {
 #' library(treeman)
 #' tree <- randTree(10)
 #' calcFrPrp(tree, tree['tips'])
-calcFrPrp <- function(tree, tids, parallel=FALSE) {
+calcFrPrp <- function(tree, tids, parallel=FALSE, progress="none") {
   .calc <- function(tid) {
     ids <- c(tid, prids[[tid]])
-    sum(spns[ids]/ns[ids])
+    spns <- getNdsSlt(tree, 'spn', ids)
+    sum(spns/nkids[ids])
   }
-  all <- names(tree@ndlst)
-  tids <- sapply(tree@ndlst, function(x) length(x[['ptid']]) == 0)
-  nds_mat <- getNdsMat(tree, all)
-  prids <- apply(nds_mat, 2, function(x) all[x])
-  ns <- apply(nds_mat, 1, function(x) sum(tids & x))
-  rm(nds_mat)
-  ns[ns == 0] <- 1  # prevent division by 0
-  spns <- sapply(tree@ndlst, function(x) x[['spn']])
-  tids <- all[tids]
+  all_ids <- names(tree@ndlst)
+  prids <- getNdsPrids(tree, tids)
+  nkids <- sapply(getNdsKids(tree, all_ids), length)
+  nkids[nkids == 0] <- 1  # prevent division by 0
   l_data <- data.frame(tid=tids, stringsAsFactors=FALSE)
-  res_2 <- plyr::mdply(.data=l_data, .fun=.calc, .parallel=parallel)[ ,2]
+  plyr::mdply(.data=l_data, .fun=.calc, .parallel=parallel,
+              .progress=progress)[ ,2]
 }
 
 #' @name calcDstMtrx
