@@ -6,30 +6,30 @@
 #' @param max.level \code{str()} maximum level
 #' @param ... additional tree objects
 #' @description S4 class for multiple phylogenetic trees
-#' @slot treelist list of \code{TreeMan} objects
+#' @slot treelst list of \code{TreeMan} objects
 #' @slot ntips sum of tips per tree
 #' @slot ntrees total number of trees
 #' @exportClass TreeMen
 #' @seealso 
 #' \code{\link{cTrees}}
 setClass('TreeMen', representation=representation(
-  treelist='list',       # list of TreeMan objects
+  treelst='list',       # list of TreeMan objects
   ntips='numeric',       # sum of tips per tree
   ntrees='numeric'),     # number of trees in object
   validity=checkTreeMen)
 
 # concatenate methods
 .cMenToMen <- function(treemen_1, treemen_2) {
-  treelist <- c(treemen_1@treelist, treemen_2@treelist)
-  treemen_1@treelist <- treelist
+  treelst <- c(treemen_1@treelst, treemen_2@treelst)
+  treemen_1@treelst <- treelst
   treemen_1@ntips <- treemen_1@ntips + treemen_2@ntips
   treemen_1@ntrees <- treemen_1@ntrees + treemen_2@ntrees
   treemen_1
 }
 
 .cMenToMan <- function(treemen, treeman) {
-  treelist <- c(treemen@treelist, treeman)
-  treemen@treelist <- treelist
+  treelst <- c(treemen@treelst, treeman)
+  treemen@treelst <- treelst
   treemen@ntips <- treeman@ntips + treemen@ntips
   treemen@ntrees <- treemen@ntrees + 1
   treemen
@@ -95,10 +95,10 @@ setMethod('cTrees', c('TreeMen'),
 #' @exportMethod [[
 setMethod('[[', c('TreeMen', 'ANY'),
           function(x, i) {
-            if(!i %in% 1:length(x@treelist)) {
+            if(!i %in% 1:length(x@treelst)) {
               stop(paste0(i, ' not in tree'))
             }
-            x@treelist[[i]]
+            x@treelst[[i]]
           })
 #' @rdname TreeMen-class
 #' @aliases TreeMen-method
@@ -124,7 +124,7 @@ setMethod('[', c('TreeMen', 'character'),
 setAs(from="list", to="TreeMen", def=function(from, to) {
   ntips <- sum(unlist(lapply(from, function(tree) tree@ntips)))
   ntrees <- length(from)
-  new(to, treelist=from, ntips=ntips, ntrees=ntrees)
+  new(to, treelst=from, ntips=ntips, ntrees=ntrees)
   })
 
 # display methods
