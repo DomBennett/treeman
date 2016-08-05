@@ -126,8 +126,14 @@ nd <- tree[['n2']]
 summary(nd)
 # And then use the same syntax for the tree
 nd['age']  # .... nkids, pd, etc.
+
+# Convert to phylo and plot
+library(ape)
+tree <- as(tree, 'phylo')
+plot(tree)
 }
 \seealso{
-\code{\link{randTree}}, \code{\link{Node-class}}
+\code{\link{randTree}}, \code{\link{Node-class}},
+\code{\link{phylo-to-TreeMan}}, \code{\link{TreeMan-to-phylo}}
 }
 
