@@ -42,11 +42,11 @@
   res[1:length(res)]
 }
 
-.getNdsPrdstFrmLst <- function(ndlst, ids,
+.getNdsPrdstsFrmLst <- function(ndlst, ids,
                                parallel, progress) {
-  prids <- .getSltPrid(ndlst, parallel)
+  prids <- .getSltPrids(ndlst, parallel)
   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
-  out <- plyr::mdply(.data=l_data, .fun=.getNdPrdstFrmLst, prids=prids,
+  out <- plyr::mdply(.data=l_data, .fun=.getNdPrdstsFrmLst, prids=prids,
                      ndlst=ndlst, .parallel=parallel, .progress=progress)
   res <- out[ ,2]
   names(res) <- out[ ,1]
@@ -74,6 +74,7 @@
 }
 
 .getNdPrdstsFrmLst <- function(ndlst, prids, id) {
+  prids <- .getNdPridsFrmLst(ndlst, prids, id)
   sum(sapply(ndlst[prids], function(x) x[['spn']])) +
     ndlst[[id]][['spn']]
 }
