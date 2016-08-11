@@ -142,9 +142,12 @@ getSubtree <- function(tree, id) {
 #' (getTreeAge(tree))
 getTreeAge <- function(tree, parallel=FALSE) {
   if(tree@updtd) {
-    res <- .getTreeAgeFrmMtrx(tree@ndsmtrx, parallel)
+    all_ids <- tree@all
+    tids <- tree@tips
+    spns <- .getSltSpns(tree@ndlst, parallel)
+    res <- .getTreeAgeFrmMtrx(tree@ndmtrx, all_ids, tids, spns, parallel)
   } else {
-    res <- .getTreeAgeFrmLst(tree@ndslst, parallel)
+    res <- .getTreeAgeFrmLst(tree@ndlst, parallel)
   }
   res
 }

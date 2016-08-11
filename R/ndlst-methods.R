@@ -109,8 +109,8 @@
 
 .getTreeAgeFrmLst <- function(ndlst, parallel) {
   tids <- .getSltTids(ndlst, parallel)
-  prdsts <- .getNdsPrdstFrmLst(ndlst, tids,
-                               parallel=paralell, progress="none")
+  prdsts <- .getNdsPrdstsFrmLst(ndlst, tids,
+                               parallel=parallel, progress="none")
   max(prdsts)
 }
 

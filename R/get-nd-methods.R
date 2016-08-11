@@ -133,8 +133,7 @@ getNdKids <- function(tree, id) {
 #' getNdPrdst(tree, id='t1')  # return the distance to root from t1
 getNdPrdst <- function(tree, id) {
   prids <- .getSltPrids(tree@ndlst, FALSE)
-  prids <- .getNdPridsFrmLst(tree@ndlst, prids, id)
-  .getNdPrdstFrmLst(tree@ndlst, prids, id)
+  .getNdPrdstsFrmLst(tree@ndlst, prids, id)
 }
 
 #' @name getNdSlt
@@ -192,5 +191,8 @@ getNdPD <- function(tree, id) {
 #' tree <- randTree(10)
 #' getNdSstr(tree, id='t1')
 getNdSstr <- function(tree, id) {
+  if(id == tree@root) {
+    return(NULL)
+  }
   .getNdSstrFrmLst(tree@ndlst, id)
 }
