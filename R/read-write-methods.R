@@ -108,6 +108,7 @@ readTree <- function(file=NULL, text=NULL, update=TRUE, parallel=FALSE,
     trstr <- text
   }
   if(length(trstr) > 1) {
+    trstr <- as.list(trstr)
     trees <- plyr::mlply(trstr, .fun=.readTree, update=update,
                          .progress=progress, .parallel=parallel)
     tree <- as(trees, 'TreeMen')
