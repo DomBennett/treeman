@@ -39,9 +39,13 @@ getNdsSstr <- function(tree, ids, parallel=FALSE, progress="none") {
 #' getNdsPD(tree, ids=tree['all'])  # return PD of all ids
 getNdsPD <- function(tree, ids, parallel=FALSE, progress="none") {
   if(tree@updtd & length(ids) > 1) {
-    res <- .getNdsPDFrmMtrx(tree@ndsmtrx, ids, parallel, progress)
+    all_ids <- tree@all
+    spns <- .getSltSpns(tree@ndlst, parallel)
+    res <- .getNdsPDFrmMtrx(tree@ndmtrx, all_ids, ids, spns,
+                            parallel, progress)
   } else {
-    res <- .getNdsPDFrmLst(tree@ndslst, ids, parallel, progress)
+    res <- .getNdsPDFrmLst(tree@ndlst,
+                           ids, parallel, progress)
   }
   res
 }
@@ -64,9 +68,12 @@ getNdsPD <- function(tree, ids, parallel=FALSE, progress="none") {
 #' getNdsPrdst(tree, ids=tree['tips'])  # return prdsts for all tips
 getNdsPrdst <- function(tree, ids, parallel=FALSE, progress="none") {
   if(tree@updtd & length(ids) > 1) {
-    res <- .getNdsPrdstFrmMtrx(tree@ndsmtrx, ids, parallel, progress)
+    all_ids <- tree@all
+    spns <- .getSltSpns(tree@ndlst, parallel)
+    res <- .getNdsPrdstsFrmMtrx(tree@ndmtrx, all_ids, ids, spns,
+                                parallel, progress)
   } else {
-    res <- .getNdsPrdstFrmLst(tree@ndslst, ids, parallel, progress)
+    res <- .getNdsPrdstsFrmLst(tree@ndlst, ids, parallel, progress)
   }
   res
 }
@@ -185,8 +192,8 @@ getNdsAge <- function(tree, ids, tree_age,
 #' getSpnsAge(tree, ids=ids, tree_age=tree['age'])
 getSpnsAge <- function(tree, ids, tree_age,
                        parallel=FALSE, progress="none") {
-  spns <- .getSltSpns(tree@ndlst, parallel)
   if(tree@updtd & length(ids) > 1) {
+    spns <- .getSltSpns(tree@ndlst, parallel)
     end <- .getNdsPrdstsFrmMtrx(tree@ndmtrx, tree@all,
                                 ids, spns, parallel, progress)
     
@@ -194,6 +201,7 @@ getSpnsAge <- function(tree, ids, tree_age,
     end <- .getNdsPrdstsFrmLst(tree@ndlst, ids,
                                parallel, progress)
   }
+  spns <- getNdsSlt(tree, slt_nm="spn", ids=ids, parallel)
   start <- end - spns
   end <- tree_age - end
   start <- tree_age - start

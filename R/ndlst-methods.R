@@ -4,7 +4,7 @@
 .getNdsPtidsFrmLst <- function(ndlst, ids, parallel, progress) {
   prids <- .getSltPrids(ndlst, parallel=parallel)
   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
-  out <- plyr::mlply(.data=l_data, .fun=.getNdPtidFrmLst, ndlst=ndlst,
+  out <- plyr::mlply(.data=l_data, .fun=.getNdPtidsFrmLst, ndlst=ndlst,
                      prids=prids, .parallel=parallel, .progress=progress)
   names(out) <- attr(out, 'split_labels')[,1]
   res <- out[1:length(out)]
@@ -24,8 +24,9 @@
 
 .getNdsPDFrmLst <- function(ndlst, ids,
                             parallel, progress) {
+  prids <- .getSltPrids(ndlst, parallel)
   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
-  out <- plyr::mdply(.data=l_data, .fun=.getNdPDFrmLst,
+  out <- plyr::mdply(.data=l_data, .fun=.getNdPDFrmLst, prids=prids,
                      ndlst=ndlst, .parallel=parallel, .progress=progress)
   res <- out[ ,2]
   names(res) <- out[ ,1]
@@ -34,9 +35,11 @@
 
 .getNdsKidsFrmLst <- function(ndlst, ids,
                               parallel, progress) {
+  prids <- .getSltPrids(ndlst, parallel)
   tids <- .getSltTids(ndlst, parallel)
   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
-  res <- plyr::mlply(.data=l_data, .fun=.getNdKidsFrmLst, ndlst=ndlst,
+  res <- plyr::mlply(.data=l_data, .fun=.getNdKidsFrmLst,
+                     ndlst=ndlst, prids=prids,
                      tids=tids, .parallel=parallel, .progress=progress)
   names(res) <- ids
   res[1:length(res)]

@@ -8,7 +8,7 @@
   res <- plyr::adply(ndmtrx[ ,all_ids %in% ids], .margins=2,
                      .fun=.get, .parallel=parallel, .progress=progress)[ ,2]
   res <- res + spns[all_ids %in% ids]
-  names(res) <- ids
+  names(res) <- all_ids[all_ids %in% ids]
   res
 }
 
@@ -19,7 +19,7 @@
   }
   res <- plyr::alply(ndmtrx[all_ids %in% ids, ], .margins=1,
                      .fun=.get, .parallel=parallel, .progress=progress)
-  names(res) <- ids
+  names(res) <- all_ids[all_ids %in% ids]
   res <- res[1:length(res)]
   res
 }
@@ -31,7 +31,7 @@
   }
   res <- plyr::alply(ndmtrx[all_ids %in% ids, ], .margins=1,
                      .fun=.get, .parallel=parallel, .progress=progress)
-  names(res) <- ids
+  names(res) <- all_ids[all_ids %in% ids]
   res <- res[1:length(res)]
   res
 }
@@ -43,7 +43,7 @@
   }
   res <- plyr::alply(ndmtrx[ ,all_ids %in% ids], .margins=2,
                      .fun=.get, .parallel=parallel, .progress=progress)
-  names(res) <- ids
+  names(res) <- all_ids[all_ids %in% ids]
   res <- res[1:length(res)]
   res
 }
@@ -55,7 +55,7 @@
   }
   res <- plyr::adply(ndmtrx[all_ids %in% ids, ], .margins=1,
                      .fun=.get, .parallel=parallel, .progress=progress)[ ,2]
-  names(res) <- ids
+  names(res) <- all_ids[all_ids %in% ids]
   res <- res[1:length(res)]
   res
 }
