@@ -15,6 +15,15 @@ getTestTree <- function(n) {
 # RUNNING
 context('Testing \'get-nd-methods\'')
 # TODO: test txnyms
+test_that('getNdPD() works', {
+  tree <- getTestTree(n)
+  tot_pd <- sum(getNdsSlt(tree, "spn", tree['all']))
+  id <- sample(tree['tips'], 1)
+  pd <- getNdPD(tree, id)
+  expect_equal(pd, 0)
+  pd <- getNdPD(tree, tree['root'])
+  expect_equal(pd, tot_pd)
+})
 test_that('getNdAge() works', {
   tree <- getTestTree(n)
   id <- sample(tree['all'], 1)
