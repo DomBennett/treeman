@@ -14,9 +14,9 @@
 #' library(treeman)
 #' tree <- randTree(10)
 #' calcNdBlnc(tree, nid=tree['root'])  # root balance
-calcNdBlnc <- function(tree, nid) {
-  ntot <- length(getNdKids(tree, nid))
-  ptids <- tree@ndlst[[nid]][['ptid']]
+calcNdBlnc <- function(tree, id) {
+  ntot <- length(getNdKids(tree, id))
+  ptids <- tree@ndlst[[id]][['ptid']]
   if(length(ptids) > 2) {
     return(NA)
   }
@@ -35,8 +35,9 @@ calcNdBlnc <- function(tree, nid) {
 #' @details Runs \code{calcNdBlnc()} across all node IDs. \code{NA} is returned if the
 #' node is polytomous. Parallelizable.
 #' @param tree \code{TreeMan} object
-#' @param nids node ids
-#' @param ... \code{plyr} arguments
+#' @param ids node ids
+#' @param parallel logical, make parallel?
+#' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
 #' @seealso
 #' \code{\link{calcNdBlnc}}, 
 #' \url{https://github.com/DomBennett/treeman/wiki/calc-methods}
@@ -45,9 +46,10 @@ calcNdBlnc <- function(tree, nid) {
 #' library(treeman)
 #' tree <- randTree(10)
 #' calcNdsBlnc(tree, nids=tree['nds'])
-calcNdsBlnc <- function(tree, nids, ...) {
-  l_data <- data.frame(nid=nids, stringsAsFactors=FALSE)
-  plyr::mdply(.data=l_data, .fun=calcNdBlnc, tree=tree, ...)[ ,2]
+calcNdsBlnc <- function(tree, ids, parallel=FALSE, progress="none") {
+  l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
+  plyr::mdply(.data=l_data, .fun=calcNdBlnc, tree=tree, 
+              .parallel=parallel, .progress=progress)[ ,2]
 }
 
 #' @name calcDstTrp
@@ -60,7 +62,8 @@ calcNdsBlnc <- function(tree, nids, ...) {
 #' @param tree_1 \code{TreeMan} object
 #' @param tree_2 \code{TreeMan} object
 #' @param nrmlsd Boolean, should returned value be between 0 and 1? Default, FALSE.
-#' @param ... \code{plyr} arguments
+#' @param parallel logical, make parallel?
+#' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
 #' @references
 #' Critchlow DE, Pearl DK, Qian C. (1996) The Triples Distance for rooted bifurcating phylogenetic trees.
 #' Systematic Biology, 45, 323-34.
@@ -73,7 +76,8 @@ calcNdsBlnc <- function(tree, nids, ...) {
 #' tree_1 <- randTree(10)
 #' tree_2 <- randTree(10)
 #' calcDstTrp(tree_1, tree_2)
-calcDstTrp <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
+calcDstTrp <- function(tree_1, tree_2, nrmlsd=FALSE,
+                       parallel=FALSE, progress="none") {
   .count <- function(i) {
     o1 <- getOtgrp(tree_1, cmbs[ ,i])
     o2 <- getOtgrp(tree_2, cmbs[ ,i])
@@ -87,7 +91,7 @@ calcDstTrp <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
   shrd <- tree_1@tips[tree_1@tips %in% tree_2@tips]
   cmbs <- combn(shrd, 3)
   l_data <- data.frame(i=1:ncol(cmbs), stringsAsFactors=FALSE)
-  res <- plyr::mdply(.data=l_data, .count, ...)
+  res <- plyr::mdply(.data=l_data, .count, .parallel=parallel, .progress=progress)
   cntr <- sum(res[ ,2])
   if (nrmlsd) {
     cntr <- cntr/ncol(cmbs)
@@ -105,7 +109,8 @@ calcDstTrp <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
 #' @param ids_1 tip ids of community 1
 #' @param ids_2 tip ids of community 2
 #' @param nrmlsd Boolean, should returned value be between 0 and 1? Default, FALSE.
-#' @param ... \code{plyr} arguments
+#' @param parallel logical, make parallel?
+#' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
 #' @references
 #' Lozupone, C., & Knight, R. (2005). UniFrac: a new phylogenetic method for comparing
 #' microbial communities. Applied and Environmental Microbiology, 71(12), 8228-35.
@@ -119,13 +124,26 @@ calcDstTrp <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
 #' ids_1 <- sample(tree['tips'], 5)
 #' ids_2 <- sample(tree['tips'], 5)
 #' calcOvrlp(tree, ids_1, ids_2)
-calcOvrlp <- function(tree, ids_1, ids_2, nrmlsd=FALSE, ...) {
-  spns <- getNdsSlt(tree, slt_nm='spn', tree@all, ...)
+calcOvrlp <- function(tree, ids_1, ids_2, nrmlsd=FALSE,
+                      parallel=FALSE, progress="none") {
+  if(progress != "none") {
+    cat("Part 1/3 ....\n")
+  }
+  spns <- getNdsSlt(tree, slt_nm='spn', ids=tree@all,
+                    parallel=parallel, progress=progress)
   names(spns) <- tree@all
-  ids_1 <- c(unique(unlist(getNdsPrids(tree, ids_1, ...))),
-             ids_1)
-  ids_2 <- c(unique(unlist(getNdsPrids(tree, ids_2, ...))),
-             ids_2)
+  if(progress != "none") {
+    cat("Part 2/3 ....\n")
+  }
+  ids_1 <- c(unique(unlist(getNdsPrids(tree, ids=ids_1,
+                                       parallel=parallel,
+                                       progress=progress))), ids_1)
+  if(progress != "none") {
+    cat("Part 3/3 ....\n")
+  }
+  ids_2 <- c(unique(unlist(getNdsPrids(tree, ids=ids_2,
+                                       parallel=parallel,
+                                       progress=progress))), ids_2)
   ovrlp <- sum(spns[ids_2[ids_2 %in% ids_1]])
   if(nrmlsd) {
     ovrlp <- ovrlp/tree@pd
@@ -142,7 +160,8 @@ calcOvrlp <- function(tree, ids_1, ids_2, nrmlsd=FALSE, ...) {
 #' @param tree_1 \code{TreeMan} object
 #' @param tree_2 \code{TreeMan} object
 #' @param nrmlsd Boolean, should returned value be between 0 and 1? Default, FALSE.
-#' @param ... \code{plyr} arguments
+#' @param parallel logical, make parallel?
+#' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
 #' @references
 #' Kuhner, M. K. and Felsenstein, J. (1994) Simulation comparison of phylogeny
 #' algorithms under equal and unequal evolutionary rates. Molecular Biology and
@@ -157,11 +176,18 @@ calcOvrlp <- function(tree, ids_1, ids_2, nrmlsd=FALSE, ...) {
 #' tree_2 <- randTree(10)
 #' calcDstBLD(tree_1, tree_2)
 
-calcDstBLD <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
+calcDstBLD <- function(tree_1, tree_2, nrmlsd=FALSE,
+                       parallel=FALSE, progress="none") {
   n1 <- tree_1@nds[!tree_1@nds == tree_1@root]
   n2 <- tree_2@nds[!tree_2@nds == tree_2@root]
-  c1 <- getNdsKids(tree_1, n1)
-  c2 <- getNdsKids(tree_2, n2)
+  if(progress != "none") {
+    cat("Part 1/2 ....\n")
+  }
+  c1 <- getNdsKids(tree_1, n1, parallel=parallel, progress=progress)
+  if(progress != "none") {
+    cat("Part 2/2 ....\n")
+  }
+  c2 <- getNdsKids(tree_2, n2, parallel=parallel, progress=progress)
   s1 <- getNdsSlt(tree_1, slt_nm="spn", ids=n1)
   s2 <- getNdsSlt(tree_2, slt_nm="spn", ids=n2)
   d1 <- s2[match(c1, c2)]
@@ -187,7 +213,8 @@ calcDstBLD <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
 #' @param tree_1 \code{TreeMan} object
 #' @param tree_2 \code{TreeMan} object
 #' @param nrmlsd Boolean, should returned value be between 0 and 1? Default, FALSE.
-#' @param ... \code{plyr} arguments
+#' @param parallel logical, make parallel?
+#' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
 #' @references
 #' Robinson, D. R.; Foulds, L. R. (1981). "Comparison of phylogenetic trees".
 #' Mathematical Biosciences 53: 131-147.
@@ -200,11 +227,18 @@ calcDstBLD <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
 #' tree_1 <- randTree(10)
 #' tree_2 <- randTree(10)
 #' calcDstRF(tree_1, tree_2)
-calcDstRF <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
+calcDstRF <- function(tree_1, tree_2, nrmlsd=FALSE,
+                      parallel=FALSE, progress="none") {
   n1 <- tree_1@nds[!tree_1@nds == tree_1@root]
   n2 <- tree_2@nds[!tree_2@nds == tree_2@root]
-  c1 <- getNdsKids(tree_1, n1, ...)
-  c2 <- getNdsKids(tree_2, n2, ...)
+  if(progress != "none") {
+    cat("Part 1/2 ....\n")
+  }
+  c1 <- getNdsKids(tree_1, n1, parallel=parallel, progress=progress)
+  if(progress != "none") {
+    cat("Part 2/2 ....\n")
+  }
+  c2 <- getNdsKids(tree_2, n2, parallel=parallel, progress=progress)
   d <- sum(!c1 %in% c2) + sum(!c2 %in% c1)
   if(nrmlsd) {
     max_d <- (length(n1) + length(n2))
@@ -221,7 +255,8 @@ calcDstRF <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
 #' as measured by the phylogeny changes. Parallelizable.
 #' @param tree \code{TreeMan} object
 #' @param tids tip ids
-#' @param ... \code{plyr} arguments
+#' @param parallel logical, make parallel?
+#' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
 #' @references
 #' Faith, D. (1992). Conservation evaluation and phylogenetic diversity.
 #'  Biological Conservation, 61, 1-10.
@@ -233,12 +268,14 @@ calcDstRF <- function(tree_1, tree_2, nrmlsd=FALSE, ...) {
 #' library(treeman)
 #' tree <- randTree(10)
 #' calcPhyDv(tree, tree['tips'])
-calcPhyDv <- function(tree, tids, ...) {
+calcPhyDv <- function(tree, tids,
+                      parallel=FALSE, progress="none") {
   prids <- c(unique(unlist(getNdsPrids(tree, tids))),
              tids)
   counts <- table(prids)
   prids <- names(counts)[counts < length(tids)]
-  spns <- getNdsSlt(tree, slt_nm="spn", ids=prids, ...)
+  spns <- getNdsSlt(tree, slt_nm="spn", ids=prids,
+                    parallel=parallel, progress=progress)
   sum(spns)
 }
 
@@ -252,7 +289,6 @@ calcPhyDv <- function(tree, tids, ...) {
 #' @param tids tip IDs
 #' @param parallel logical, make parallel?
 #' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
-#' @param ... \code{plyr} arguments
 #' @references
 #' Isaac, N.J.B., Turvey, S.T., Collen, B., Waterman, C. and Baillie, J.E.M. (2007). 
 #'  Mammals on the EDGE: conservation priorities based on threat and phylogeny. PLoS ONE, 2, e296.
@@ -271,8 +307,16 @@ calcFrPrp <- function(tree, tids, parallel=FALSE, progress="none") {
     sum(spns/nkids[ids])
   }
   all_ids <- names(tree@ndlst)
-  prids <- getNdsPrids(tree, tids, parallel=parallel)
-  kids <- getNdsKids(tree, all_ids, parallel=parallel)
+  if(progress != "none") {
+    cat("Part 1/2 ....\n")
+  }
+  prids <- getNdsPrids(tree, tids, parallel=parallel,
+                       progress=progress)
+  if(progress != "none") {
+    cat("Part 2/2 ....\n")
+  }
+  kids <- getNdsKids(tree, all_ids, parallel=parallel,
+                     progress=progress)
   nkids <- sapply(kids, length)
   rm(kids)
   nkids[nkids == 0] <- 1  # prevent division by 0
@@ -289,7 +333,8 @@ calcFrPrp <- function(tree, tids, parallel=FALSE, progress="none") {
 #' between trees, checking for evoltuionary isolated tips etc. Parallelizable.
 #' @param tree \code{TreeMan} object
 #' @param ids IDs of nodes/tips
-#' @param ... \code{plyr} arguments
+#' @param parallel logical, make parallel?
+#' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
 #' @seealso
 #' \code{\link{calcDstBLD}}, \code{\link{calcDstRF}}, \code{\link{calcDstTrp}}
 #' \url{https://github.com/DomBennett/treeman/wiki/calc-methods}
@@ -303,7 +348,8 @@ calcFrPrp <- function(tree, tids, parallel=FALSE, progress="none") {
 #' dmat2 <- calcDstMtrx(tree_2, tree_2['tips'])
 #' mdl <- cor.test(x=dmat1, y=dmat2)
 #' as.numeric(1 - mdl$estimate)  # 1 - Pearson's r
-calcDstMtrx <- function(tree, ids, ...) {
+calcDstMtrx <- function(tree, ids, parallel=FALSE,
+                        progress="none") {
   .getDist <- function(id_1, id_2) {
     if(id_1 == id_2) {
       return(0)
@@ -314,7 +360,8 @@ calcDstMtrx <- function(tree, ids, ...) {
   }
   cmbs <- expand.grid(ids, ids, stringsAsFactors=FALSE)
   colnames(cmbs) <- c('id_1', 'id_2')
-  res <- plyr::mdply(.data=cmbs, .fun=.getDist, ...)
+  res <- plyr::mdply(.data=cmbs, .fun=.getDist,
+                     .parallel=parallel, .progress=progress)
   res <- matrix(res[ ,3], ncol=length(ids))
   colnames(res) <- rownames(res) <- ids
   res

@@ -11,10 +11,10 @@ test_that('calc_Blnc() works', {
 })
 test_that('calcDstTrp() works', {
   tree_1 <- randTree(10)
-  # small chance that they will both be the same
-  # tree_2 <- randTree(10)
-  # res <- calcDstTrp(tree_1, tree_2, nrmlsd=TRUE)
-  # expect_that(res, is_more_than(0))
+  tree_2 <- setNdsID(tree_1, tree_1['tips'],
+                     sample(tree_1['tips']))
+  res <- calcDstTrp(tree_1, tree_2, nrmlsd=TRUE)
+  expect_that(res, is_more_than(0))
   res <- calcDstTrp(tree_1, tree_1, nrmlsd=TRUE)
   expect_that(res, equals(0))
 })
@@ -34,27 +34,18 @@ test_that('calcDstBLD() works', {
 test_that('calcDstRF() works', {
   tree_1 <- readTree(text="((t1,t2),t3);")
   tree_2 <- readTree(text="((t3,t2),t1);")
-  d <- calcDstRF(tree_1, tree_2, TRUE)
+  d <- calcDstRF(tree_1, tree_2, nrmlsd=TRUE)
   expect_that(d, equals(1))
   d <- calcDstRF(tree_1, tree_1, TRUE)
   expect_that(d, equals(0))
 })
-# test_that('calcPhyDv() works', {
-#   tree <- randTree(10)
-#   tips <- sample(tree['tips'], 3)
-#   pd <- calcPhyDv(tree, tips)
-#   parent <- getPrnt(tree, ids=tips)
-#   test_that(pd, is_less_than(tree@ndlst[[parent]][['pd']]))
-#   # add a tip with a specified length.
-#   sister <- sample(tips, 1)
-#   sister_age <- getNdAge(tree, sister)
-#   parent_age <- getNdAge(tree, tree@ndlst[[sister]][['prid']][1])
-#   start <- runif(min=sister_age, max=parent_age, n=1)
-#   end <- runif(min=0, max=start, n=1)
-#   tree <- addTip(tree, tid='new_tip', sid=sister, start=start, end=end)
-#   new_pd <- calcPhyDv(tree, c(tips, 'new_tip'))
-#   test_that(new_pd, equals(pd + (start - end)))
-# })
+test_that('calcPhyDv() works', {
+  tree <- randTree(10)
+  tips <- sample(tree['tips'], 3)
+  pd <- calcPhyDv(tree, tips)
+  parent <- getPrnt(tree, ids=tips)
+  test_that(pd, is_less_than(tree@ndlst[[parent]][['pd']]))
+})
 test_that('calcFrPrp() works', {
   tree <- randTree(10)
   sum(sapply(tree@ndlst, function(x) x[['spn']]))
