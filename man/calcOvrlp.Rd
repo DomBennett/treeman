@@ -4,7 +4,8 @@
 \alias{calcOvrlp}
 \title{Calculate phylogenetic overlap}
 \usage{
-calcOvrlp(tree, ids_1, ids_2, nrmlsd = FALSE, ...)
+calcOvrlp(tree, ids_1, ids_2, nrmlsd = FALSE, parallel = FALSE,
+  progress = "none")
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}
@@ -15,7 +16,9 @@ calcOvrlp(tree, ids_1, ids_2, nrmlsd = FALSE, ...)
 
 \item{nrmlsd}{Boolean, should returned value be between 0 and 1? Default, FALSE.}
 
-\item{...}{\code{plyr} arguments}
+\item{parallel}{logical, make parallel?}
+
+\item{progress}{name of the progress bar to use, see \code{\link{create_progress_bar}}}
 }
 \description{
 Returns the sum of branch lengths represented by ids_1 and ids_2 for a tree.

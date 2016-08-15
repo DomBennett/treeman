@@ -6,23 +6,23 @@
 #' @details Removes tips in a tree. Set drp_intrnl to FALSE to convert
 #' internal nodes into new tips.
 #' @param tree \code{TreeMan} object
-#' @param tid tip ID
+#' @param tids tip IDs
 #' @param drp_intrnl Boolean, drop internal branches, default FALSE
+#' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
 #' \url{https://github.com/DomBennett/treeman/wiki/manip-methods}
 #' @export
 #' @examples
 #' library(treeman)
 #' tree <- randTree(10)
 #' tree <- rmTips(tree, 't1')
-#' tree <- updateTree(tree)
 #' summary(tree)
 # @seealso
 # \code{\link{addTip}}, 
-rmTips <- function(tree, tid, drp_intrnl=TRUE) {
+rmTips <- function(tree, tids, drp_intrnl=TRUE, progress="none") {
   # internal
   .rmTip <- function(tid) {
     # get sister IDs
-    sids <- .getNdSstr(ndlst, tid)
+    sids <- .getNdSstrFrmLst(ndlst, tid)
     # get prid
     prid <- ndlst[[tid]][['prid']][[1]]
     # remove tid
@@ -47,14 +47,17 @@ rmTips <- function(tree, tid, drp_intrnl=TRUE) {
       }
       ndlst <<- ndlst[names(ndlst) != prid]
     }
-    NULL
   }
   ndlst <- tree@ndlst
   rid <- tree@root
-  sapply(tid, .rmTip)
+  plyr::m_ply(.data=tids, .fun=.rmTip, .progress=progress)
+  bool <- tree@all %in% names(ndlst)
   tree@ndlst <- ndlst
   tree@root <- rid
-  tree@updtd <- FALSE
+  if(tree@updtd) {
+    tree@ndmtrx <- tree@ndmtrx[bool, bool]
+    tree <- updateTree(tree)
+  }
   tree
 }
 

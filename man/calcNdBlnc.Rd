@@ -4,7 +4,7 @@
 \alias{calcNdBlnc}
 \title{Calculate the balance of a node}
 \usage{
-calcNdBlnc(tree, nid)
+calcNdBlnc(tree, id)
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}

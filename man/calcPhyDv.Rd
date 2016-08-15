@@ -4,14 +4,16 @@
 \alias{calcPhyDv}
 \title{Calculate phylogenetic diversity}
 \usage{
-calcPhyDv(tree, tids, ...)
+calcPhyDv(tree, tids, parallel = FALSE, progress = "none")
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}
 
 \item{tids}{tip ids}
 
-\item{...}{\code{plyr} arguments}
+\item{parallel}{logical, make parallel?}
+
+\item{progress}{name of the progress bar to use, see \code{\link{create_progress_bar}}}
 }
 \description{
 Returns the phylogenetic diversity of a tree for the tips specified.

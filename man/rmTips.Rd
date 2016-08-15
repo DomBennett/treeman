@@ -4,14 +4,16 @@
 \alias{rmTips}
 \title{Remove tips from a tree}
 \usage{
-rmTips(tree, tid, drp_intrnl = TRUE)
+rmTips(tree, tids, drp_intrnl = TRUE, progress = "none")
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}
 
-\item{tid}{tip ID}
+\item{tids}{tip IDs}
 
-\item{drp_intrnl}{Boolean, drop internal branches, default FALSE
+\item{drp_intrnl}{Boolean, drop internal branches, default FALSE}
+
+\item{progress}{name of the progress bar to use, see \code{\link{create_progress_bar}}
 \url{https://github.com/DomBennett/treeman/wiki/manip-methods}}
 }
 \description{
@@ -25,7 +27,6 @@ internal nodes into new tips.
 library(treeman)
 tree <- randTree(10)
 tree <- rmTips(tree, 't1')
-tree <- updateTree(tree)
 summary(tree)
 }
 

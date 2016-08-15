@@ -7,7 +7,7 @@ context('Testing \'check-methods\'')
 test_that("checkTreeMen() works", {
   tree <- randTree(10)
   trees <- cTrees(tree, tree, tree)
-  trees@treelist[[4]] <- "this is not a tree"
+  trees@treelst[[4]] <- "this is not a tree"
   res <- checkTreeMen(trees)
   expect_false(res)
 })

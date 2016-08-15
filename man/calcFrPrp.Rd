@@ -14,8 +14,6 @@ calcFrPrp(tree, tids, parallel = FALSE, progress = "none")
 \item{parallel}{logical, make parallel?}
 
 \item{progress}{name of the progress bar to use, see \code{\link{create_progress_bar}}}
-
-\item{...}{\code{plyr} arguments}
 }
 \description{
 Returns the evolutationary distinctness of ids using the fair proportion metric.

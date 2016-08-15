@@ -85,7 +85,6 @@ test_that('rmTips() work', {
   tid_spn <- getNdSlt(tree, id=tid, slt_nm='spn')
   tree <- rmTips(tree, tid)
   expect_true(checkTreeMan(tree))
-  tree <- updateTree(tree)
   expect_that(tree['ntips'], equals(n - 1))
   expect_that(pd_before-tid_spn, equals(tree['pd']))
   # test multiple tips
@@ -94,7 +93,6 @@ test_that('rmTips() work', {
   tids <- sample(tree['tips'], 10)
   tree <- rmTips(tree, tids)
   expect_true(checkTreeMan(tree))
-  tree <- updateTree(tree)
   expect_that(tree['ntips'], equals(n - 10))
   expect_that(pd_before, is_more_than(tree['pd']))
 })

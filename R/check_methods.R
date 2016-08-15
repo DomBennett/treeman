@@ -80,16 +80,16 @@ checkTreeMan <- function(object) {
 #' @export
 checkTreeMen <- function(object) {
   .check <- function(i, invlds) {
-    if(class(object@treelist[[i]])[1] != "TreeMan") {
+    if(class(object@treelst[[i]])[1] != "TreeMan") {
       invlds <<- c(i, invlds)
     }
     NULL
   }
   invlds <- NULL
-  sapply(1:length(object@treelist), .check, invlds=invlds)
+  sapply(1:length(object@treelst), .check, invlds=invlds)
   if(length(invlds) > 0) {
     for(i in invlds) {
-      cat("[", i, "] in treelist is not a TreeMan object\n", sep="")
+      cat("[", i, "] in treelst is not a TreeMan object\n", sep="")
     }
     return(FALSE)
   }

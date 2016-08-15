@@ -18,8 +18,10 @@ updateTree <- function(tree) {
   if(!checkTreeMan(tree)) {
     stop('Invalid tree')
   }
-  # Generate ndmtrx
-  tree@ndmtrx <- .getNdmtrxFrmLst(tree@ndlst)
+  if(length(tree@ndmtrx) == 0) {
+    # generate ndmtrx
+    tree@ndmtrx <- .getNdmtrxFrmLst(tree@ndlst)
+  }
   # Update the slots for a tree
   wo_pstndes <- sapply(tree@ndlst,
                        function(n) length(n[['ptid']]) == 0)
@@ -33,10 +35,8 @@ updateTree <- function(tree) {
   tree@wspn <- any(spns > 0)
   if(tree@wspn) {
     if(length(tree@root) > 0) {
-      tip_prdsts <- .getNdsPrdstsFrmMtrx(tree@ndmtrx,
-                                         tree@all,
-                                         tree@tips,
-                                         spns,
+      tip_prdsts <- .getNdsPrdstsFrmMtrx(tree@ndmtrx, tree@all,
+                                         tree@tips, spns,
                                          parallel=FALSE,
                                          progress="none")
       tree@age <- max(tip_prdsts)
@@ -75,6 +75,6 @@ updateTree <- function(tree) {
 #' tree <- downdateTree(tree)
 #' summary(tree)  # error
 downdateTree <- function(tree) {
-  tree@ndmtrx <- matrix()
+  tree@ndmtrx <- matrix(nrow=0, ncol=0)
   tree@updtd <- FALSE
 }

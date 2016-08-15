@@ -4,14 +4,16 @@
 \alias{calcNdsBlnc}
 \title{Calculate the balances of all nodes}
 \usage{
-calcNdsBlnc(tree, nids, ...)
+calcNdsBlnc(tree, ids, parallel = FALSE, progress = "none")
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}
 
-\item{nids}{node ids}
+\item{ids}{node ids}
 
-\item{...}{\code{plyr} arguments}
+\item{parallel}{logical, make parallel?}
+
+\item{progress}{name of the progress bar to use, see \code{\link{create_progress_bar}}}
 }
 \description{
 Returns the absolute differences in number of descendants for bifurcating 
