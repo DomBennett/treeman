@@ -129,19 +129,56 @@ test_that('.getNdPDFrmLst([basic]) works', {
 })
 # multiple nodes
 test_that('.getNdsPtidsFrmLst() works', {
-  #TODO
+  # init
+  tree <- randTree(100)
+  ndlst <- tree@ndlst
+  ids <- names(ndlst)
+  # test
+  ptids <- treeman:::.getNdsPtidsFrmLst(tree@ndlst, ids=ids,
+                                        parallel=FALSE, progress="none")
+  expect_true(all(sapply(ptids[names(ptids) %in% tree['tips']],
+                         length) == 0))
 })
 test_that('.getNdsPridsFrmLst() works', {
-  #TODO
+  # init
+  tree <- randTree(100)
+  ndlst <- tree@ndlst
+  ids <- names(ndlst)
+  # test
+  prids <- treeman:::.getNdsPridsFrmLst(tree@ndlst, ids=ids,
+                                        parallel=FALSE, progress="none")
+  expect_true(prids[[tree['root']]] == tree['root'])
 })
 test_that('.getNdsPDFrmLst() works', {
-  #TODO
+  # init
+  tree <- randTree(100)
+  ndlst <- tree@ndlst
+  ids <- names(ndlst)
+  # test
+  pds <- treeman:::.getNdsPDFrmLst(tree@ndlst, ids=ids,
+                                   parallel=FALSE, progress="none")
+  expect_true(sum(pds[names(pds) %in% tree['tips']]) == 0)
 })
 test_that('.getNdsKidsFrmLst() works', {
-  #TODO
+  # init
+  tree <- randTree(100)
+  ndlst <- tree@ndlst
+  ids <- names(ndlst)
+  # test
+  kids <- treeman:::.getNdsKidsFrmLst(tree@ndlst, ids=ids,
+                                      parallel=FALSE, progress="none")
+  expect_true(all(sapply(kids[names(kids) %in% tree['tips']],
+                         length) == 0))
 })
 test_that('.getNdsPrdstsFrmLst() works', {
-  #TODO
+  # init
+  tree <- randTree(100)
+  ndlst <- tree@ndlst
+  ids <- names(ndlst)
+  # test
+  prdsts <- treeman:::.getNdsPrdstsFrmLst(tree@ndlst, ids=ids,
+                                          parallel=FALSE, progress="none")
+  expect_true(all(prdsts <= tree['age']))
 })
 # tree
 test_that('.getTreeAge() works', {
