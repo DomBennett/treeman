@@ -3,7 +3,7 @@
 .getNdsPrdstsFrmMtrx <- function(ndmtrx, all_ids, ids, spns,
                                  parallel, progress) {
   .get <- function(x) {
-    sum(spns[x])
+    sum(spns[as.logical(x)])
   }
   res <- plyr::adply(ndmtrx[ ,all_ids %in% ids], .margins=2,
                      .fun=.get, .parallel=parallel, .progress=progress)[ ,2]
@@ -15,7 +15,7 @@
 .getNdsKidsFrmMtrx <- function(ndmtrx, all_ids, ids, tids,
                                parallel, progress) {
   .get <- function(x) {
-    all_ids[x & all_ids %in% tids]
+    all_ids[as.logical(x) & all_ids %in% tids]
   }
   res <- plyr::alply(ndmtrx[all_ids %in% ids, ], .margins=1,
                      .fun=.get, .parallel=parallel, .progress=progress)
@@ -27,7 +27,7 @@
 .getNdsPtidsFrmMtrx <- function(ndmtrx, all_ids, ids,
                                 parallel, progress) {
   .get <- function(x) {
-    all_ids[x]
+    all_ids[as.logical(x)]
   }
   res <- plyr::alply(ndmtrx[all_ids %in% ids, ], .margins=1,
                      .fun=.get, .parallel=parallel, .progress=progress)
@@ -39,7 +39,7 @@
 .getNdsPridsFrmMtrx <- function(ndmtrx, all_ids, ids,
                                 parallel, progress) {
   .get <- function(x) {
-    all_ids[x]
+    all_ids[as.logical(x)]
   }
   res <- plyr::alply(ndmtrx[ ,all_ids %in% ids], .margins=2,
                      .fun=.get, .parallel=parallel, .progress=progress)
@@ -51,7 +51,7 @@
 .getNdsPDFrmMtrx <- function(ndmtrx, all_ids, ids, spns,
                              parallel, progress) {
   .get <- function(x) {
-    sum(spns[x])
+    sum(spns[as.logical(x)])
   }
   res <- plyr::adply(ndmtrx[all_ids %in% ids, ], .margins=1,
                      .fun=.get, .parallel=parallel, .progress=progress)[ ,2]

@@ -5,7 +5,7 @@ library(testthat)
 # RUNNING
 context('Testing \'gen-methods\'')
 test_that('randTree() works', {
-  ns <- sample(2:100, 5)
+  ns <- sample(3:100, 5)
   for(n in ns) {
     tree <- randTree(n)
     expect_that(tree['ntips'], equals(n))

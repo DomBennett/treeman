@@ -20,7 +20,7 @@ force get-methods to use ndlst rather than ndmtrx.
 # library(treeman)
 tree <- randTree(10)
 tree <- downdateTree(tree)
-summary(tree)  # error
+# summary(tree)  # running this will lead to an error
 }
 \seealso{
 \code{\link{updateTree}}

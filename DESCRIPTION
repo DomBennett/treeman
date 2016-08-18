@@ -12,7 +12,8 @@ Depends:
     methods
 Imports:
     plyr,
-    ape
+    ape,
+    bigmemory
 Suggests:
     testthat
 RoxygenNote: 5.0.1

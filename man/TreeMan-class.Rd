@@ -4,7 +4,7 @@
 \name{TreeMan-class}
 \alias{TreeMan-class}
 \alias{TreeMan-method}
-\alias{[,TreeMan,character-method}
+\alias{[,TreeMan,character,ANY,ANY-method}
 \alias{[[,TreeMan,character-method}
 \alias{as.character,TreeMan-method}
 \alias{cTrees,TreeMan-method}
@@ -16,7 +16,7 @@
 \usage{
 \S4method{[[}{TreeMan,character}(x, i)
 
-\S4method{[}{TreeMan,character}(x, i)
+\S4method{[}{TreeMan,character,ANY,ANY}(x, i)
 
 \S4method{as.character}{TreeMan}(x)
 

@@ -185,7 +185,8 @@ readTree <- function(file=NULL, text=NULL, update=TRUE, parallel=FALSE,
   ptnds_pool <- prids[-root]
   ndlst <- lapply(1:length(ids), .add)
   names(ndlst) <- ids
-  tree <- new('TreeMan', ndlst=ndlst, root=ids[root])
+  tree <- new('TreeMan', ndlst=ndlst, root=ids[root],
+              ndmtrx=bigmemory::big.matrix(1,1))
   if(update) {
     tree <- updateTree(tree)
   } else {

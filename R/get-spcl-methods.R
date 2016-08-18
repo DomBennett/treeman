@@ -116,7 +116,8 @@ getSubtree <- function(tree, id) {
   ndlst <- tree@ndlst[ids]
   ndlst[[id]][['prid']] <- id
   ndlst[[id]][['spn']] <- 0
-  new_tree <- new('TreeMan', ndlst=ndlst, root=id)
+  new_tree <- new('TreeMan', ndlst=ndlst, root=id,
+                  ndmtrx=bigmemory::big.matrix(1,1))
   updateTree(new_tree)
 }
 

@@ -7,18 +7,11 @@
 #' @seealso
 #' \code{\link{downdateTree}}, \code{\link{getTreeAge}}
 #' @export
-#' @examples
-#' # library(treeman)
-#' # tree <- randTree(10)
-#' # tree <- rmTips(tree, 't1')
-#' # summary(tree)  # error
-#' # tree <- updateTree(tree)
-#' # summary(tree)  # new information
 updateTree <- function(tree) {
   if(!checkTreeMan(tree)) {
     stop('Invalid tree')
   }
-  if(length(tree@ndmtrx) == 0) {
+  if(is.na(tree@ndmtrx[1,1])) {
     # generate ndmtrx
     tree@ndmtrx <- .getNdmtrxFrmLst(tree@ndlst)
   }
@@ -73,8 +66,9 @@ updateTree <- function(tree) {
 #' # library(treeman)
 #' tree <- randTree(10)
 #' tree <- downdateTree(tree)
-#' summary(tree)  # error
+#' # summary(tree)  # running this will lead to an error
 downdateTree <- function(tree) {
-  tree@ndmtrx <- matrix(nrow=0, ncol=0)
+  tree@ndmtrx <- bigmemory::big.matrix(1,1)
   tree@updtd <- FALSE
+  tree
 }

@@ -4,7 +4,7 @@
 \name{Node-class}
 \alias{Node-class}
 \alias{Node-method}
-\alias{[,Node,character-method}
+\alias{[,Node,character,ANY,ANY-method}
 \alias{as.character,Node-method}
 \alias{print,Node-method}
 \alias{show,Node-method}
@@ -19,7 +19,7 @@
 
 \S4method{summary}{Node}(object)
 
-\S4method{[}{Node,character}(x, i)
+\S4method{[}{Node,character,ANY,ANY}(x, i)
 }
 \arguments{
 \item{x}{\code{Node} object}

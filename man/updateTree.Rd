@@ -16,14 +16,6 @@ Return tree with updated node slots.
 Tree slots in the \code{TreeMan} object are not automatically updated
 to make mainipulations computationally faster. To update these slots, run this function.
 }
-\examples{
-# library(treeman)
-# tree <- randTree(10)
-# tree <- rmTips(tree, 't1')
-# summary(tree)  # error
-# tree <- updateTree(tree)
-# summary(tree)  # new information
-}
 \seealso{
 \code{\link{downdateTree}}, \code{\link{getTreeAge}}
 }

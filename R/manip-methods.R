@@ -55,7 +55,7 @@ rmTips <- function(tree, tids, drp_intrnl=TRUE, progress="none") {
   tree@ndlst <- ndlst
   tree@root <- rid
   if(tree@updtd) {
-    tree@ndmtrx <- tree@ndmtrx[bool, bool]
+    tree@ndmtrx <- bigmemory::as.big.matrix(tree@ndmtrx[bool, bool])
     tree <- updateTree(tree)
   }
   tree

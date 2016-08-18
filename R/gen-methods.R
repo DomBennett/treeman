@@ -48,7 +48,8 @@ randTree <- function(n, update=TRUE, parallel=FALSE) {
     attr(ndlst, "split_type") <- NULL
   names(ndlst) <- ids
   # init new tree object
-  tree <- new('TreeMan', ndlst=ndlst, root='n1')
+  tree <- new('TreeMan', ndlst=ndlst, root='n1',
+              ndmtrx=bigmemory::big.matrix(1,1))
   if(update) {
     tree <- updateTree(tree)
   } else {
