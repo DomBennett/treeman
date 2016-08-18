@@ -184,7 +184,6 @@ test_that('.getNdsPrdstsFrmLst() works', {
 test_that('.getTreeAge() works', {
   # init
   tree <- randTree(100)
-  ndlst <- tree@ndlst
   # test
   res <- treeman:::.getTreeAgeFrmLst(tree@ndlst, FALSE)
   expect_lt(res, tree['pd'])
