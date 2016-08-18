@@ -32,7 +32,7 @@ install_github('dombennett/treeman')
 library(treeman)
 ?TreeMan  # check the documentation
 tree <- randTree(10)  # generate a random tree of 10 tips
-print(tree)  # check key stats
+summary(tree)  # check key stats
 tree["tips"]  # extract key stats
 ```
 
