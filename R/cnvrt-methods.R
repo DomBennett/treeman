@@ -41,3 +41,5 @@ setAs(from="TreeMan", to="phylo", def=function(from, to) {
   file.remove('temp.tre')
   return(tree)
 })
+
+# TODO: multiphylo conversions
