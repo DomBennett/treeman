@@ -9,7 +9,7 @@ calcNdBlnc(tree, id)
 \arguments{
 \item{tree}{\code{TreeMan} object}
 
-\item{nid}{node id}
+\item{id}{node id}
 }
 \description{
 Returns the balance of a node.
@@ -22,7 +22,7 @@ of the two bifurcating edges of a node and the expected value for a balanced tre
 \examples{
 library(treeman)
 tree <- randTree(10)
-calcNdBlnc(tree, nid=tree['root'])  # root balance
+calcNdBlnc(tree, id=tree['root'])  # root balance
 }
 \seealso{
 \code{\link{calcNdsBlnc}}, 

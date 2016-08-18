@@ -79,10 +79,8 @@ setAge <- function(tree, val) {
 #' @examples
 #' library(treeman)
 #' tree <- randTree(10)
-#' viz(tree)
 #' tree <- setNdSpn(tree, id='t1', val=100)
 #' tree <- updateTree(tree)
-#' viz(tree)
 setNdSpn <- function(tree, id, val) {
   tree@ndlst[[id]][['spn']] <- val
   tree@updtd <- FALSE

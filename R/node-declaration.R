@@ -1,11 +1,15 @@
 .newNd <- function(tree, id) {
   nd <- tree@ndlst[[id]]
+  prids <- .getSltPrids(tree@ndlst, FALSE)
+  tids <- .getSltTids(tree@ndlst, FALSE)
   if(!tree@wspn) {
     spn <- pd <- prdst <- numeric()
   } else {
     spn <- nd[['spn']]
-    pd <- .getNdPD(tree@ndlst, id)
-    prdst <- .getNdPrdstFrmLst(tree@ndlst, id)
+    pd <- .getNdPDFrmLst(tree@ndlst, prids=prids,
+                                   id=id)
+    prdst <- .getNdPrdstsFrmLst(tree@ndlst, prids=prids,
+                                id=id)
   }
   if(length(tree@age) > 0) {
     age <- tree@age - prdst
@@ -17,7 +21,7 @@
   } else {
     txnym <- nd[['txnym']]
   }
-  kids <- names(tree@ndlst)[.getNdKidsFrmLst(tree@ndlst, id)]
+  kids <- .getNdKidsFrmLst(tree@ndlst, prids=prids, id=id, tids=tids)
   new('Node', id=nd[['id']], spn=spn, prid=as.character(nd[['prid']][1]),
      ptid=as.character(nd[['ptid']]), kids=as.character(kids),
      nkids=length(kids), pd=pd, txnym=txnym, prdst=prdst,

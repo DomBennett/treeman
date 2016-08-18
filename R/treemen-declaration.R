@@ -60,11 +60,10 @@ setClass('TreeMen', representation=representation(
 #' @param x \code{TreeMan} or \code{TreeMen} objects
 #' @param ... more \code{TreeMan} or \code{TreeMen} objects
 #' @seealso 
-#' \code{\link{TreeMen-class}}, \code{\link{TreeMan-class}}, \code{\link{as-TreeMen}}
+#' \code{\link{TreeMen-class}}, \code{\link{TreeMan-class}}, \code{\link{list-to-TreeMen}}
 #' @examples 
 #' library(treeman)
 #' trees <- cTrees(randTree(10), randTree(10))
-#TODO: fix this for when just two trees cTrees(tree, tree)
 #' @export
 setGeneric("cTrees", signature=c("x"),
            function(x, ...) {

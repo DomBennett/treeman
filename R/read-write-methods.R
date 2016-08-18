@@ -8,6 +8,8 @@
 #' @param file file path
 #' @param append T/F append tree to already existing file
 #' @param ndLabels node label function
+#' @param parallel logical, make parallel?
+#' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
 #' @seealso
 #' \code{\link{readTree}}, \code{\link{randTree}}, \url{https://en.wikipedia.org/wiki/Newick_format}
 #' @export
@@ -17,7 +19,7 @@
 #' ndLabels <- function(n) {
 #' paste0(n[['id']], '_ndlabel')
 #' }
-#' writeTree(tree, file='example.tre', ndLabels)
+#' writeTree(tree, file='example.tre', ndLabels=ndLabels)
 #' file.remove('example.tre')
 writeTree <- function(tree, file, append=FALSE, ndLabels=function(nd){
   return(NULL)

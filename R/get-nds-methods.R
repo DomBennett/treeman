@@ -28,7 +28,8 @@ getNdsSstr <- function(tree, ids, parallel=FALSE, progress="none") {
 #' @details Sums the lengths of all descending branches from a node.
 #' @param tree \code{TreeMan} object
 #' @param ids vector of node ids
-#' @param parallel logical, make parallel? #' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
+#' @param parallel logical, make parallel?
+#' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
 #' @seealso
 #' \code{\link{getNdPD}},
 #' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
@@ -171,7 +172,8 @@ getNdsAge <- function(tree, ids, tree_age,
 
 #' @name getSpnsAge
 #' @title Get age ranges for multiple nodes
-#' @description Return start and end ages for \code{ids} from when they first appear to when they split
+#' @description Return start and end ages for \code{ids} from
+#' when they first appear to when they split
 #' @details Returns a dataframe, parallelizable.
 #' @param tree \code{TreeMan} object
 #' @param ids vector of node ids
@@ -302,7 +304,8 @@ getNdsPtids <- function(tree, ids, parallel=FALSE, progress="none") {
 # #' @details Returns a list, parallelizable.
 # #' @param tree \code{TreeMan} object
 # #' @param ids vector of node ids
-# #' @param parallel logical, make parallel? #' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
+# #' @param parallel logical, make parallel?
+# #' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
 # #' @seealso
 # #' \code{\link{getNdLng}}, 
 # #' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
@@ -326,7 +329,8 @@ getNdsPtids <- function(tree, ids, parallel=FALSE, progress="none") {
 # #' @details Returns a \code{list}, parallelizable.
 # #' @param tree \code{TreeMan} object
 # #' @param txnyms vector of taxonomic names
-# #' @param parallel logical, make parallel? #' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
+# #' @param parallel logical, make parallel?
+# #' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
 # #' @seealso
 # #' \code{\link{getNdLng}}, 
 # #' \code{\link{getNdsLng}}, 

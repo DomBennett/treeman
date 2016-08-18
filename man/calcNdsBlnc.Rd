@@ -26,7 +26,7 @@ node is polytomous. Parallelizable.
 \examples{
 library(treeman)
 tree <- randTree(10)
-calcNdsBlnc(tree, nids=tree['nds'])
+calcNdsBlnc(tree, ids=tree['nds'])
 }
 \seealso{
 \code{\link{calcNdBlnc}}, 

@@ -5,7 +5,7 @@
 #' of the two bifurcating edges of a node and the expected value for a balanced tree.
 #' \code{NA} is returned if the node is polytomous or a tip.
 #' @param tree \code{TreeMan} object
-#' @param nid node id
+#' @param id node id
 #' @seealso
 #' \code{\link{calcNdsBlnc}}, 
 #' \url{https://github.com/DomBennett/treeman/wiki/calc-methods}
@@ -13,7 +13,7 @@
 #' @examples
 #' library(treeman)
 #' tree <- randTree(10)
-#' calcNdBlnc(tree, nid=tree['root'])  # root balance
+#' calcNdBlnc(tree, id=tree['root'])  # root balance
 calcNdBlnc <- function(tree, id) {
   ntot <- length(getNdKids(tree, id))
   ptids <- tree@ndlst[[id]][['ptid']]
@@ -45,7 +45,7 @@ calcNdBlnc <- function(tree, id) {
 #' @examples
 #' library(treeman)
 #' tree <- randTree(10)
-#' calcNdsBlnc(tree, nids=tree['nds'])
+#' calcNdsBlnc(tree, ids=tree['nds'])
 calcNdsBlnc <- function(tree, ids, parallel=FALSE, progress="none") {
   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
   plyr::mdply(.data=l_data, .fun=calcNdBlnc, tree=tree, 

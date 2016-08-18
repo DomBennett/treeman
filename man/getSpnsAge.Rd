@@ -18,7 +18,8 @@ getSpnsAge(tree, ids, tree_age, parallel = FALSE, progress = "none")
 \item{progress}{name of the progress bar to use, see \code{\link{create_progress_bar}}}
 }
 \description{
-Return start and end ages for \code{ids} from when they first appear to when they split
+Return start and end ages for \code{ids} from
+when they first appear to when they split
 }
 \details{
 Returns a dataframe, parallelizable.

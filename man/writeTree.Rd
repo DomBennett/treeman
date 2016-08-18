@@ -15,6 +15,10 @@ writeTree(tree, file, append = FALSE, ndLabels = function(nd) {
 \item{append}{T/F append tree to already existing file}
 
 \item{ndLabels}{node label function}
+
+\item{parallel}{logical, make parallel?}
+
+\item{progress}{name of the progress bar to use, see \code{\link{create_progress_bar}}}
 }
 \description{
 Creates a Newick tree from a \code{TreeMan} object.
@@ -30,7 +34,7 @@ tree <- randTree(10)
 ndLabels <- function(n) {
 paste0(n[['id']], '_ndlabel')
 }
-writeTree(tree, file='example.tre', ndLabels)
+writeTree(tree, file='example.tre', ndLabels=ndLabels)
 file.remove('example.tre')
 }
 \seealso{

@@ -11,7 +11,9 @@ getNdsPD(tree, ids, parallel = FALSE, progress = "none")
 
 \item{ids}{vector of node ids}
 
-\item{parallel}{logical, make parallel? #' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}}
+\item{parallel}{logical, make parallel?}
+
+\item{progress}{name of the progress bar to use, see \code{\link{create_progress_bar}}}
 }
 \description{
 Return summed value of all descending spns

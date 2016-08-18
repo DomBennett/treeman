@@ -1,4 +1,4 @@
-#' @export
-viz <- function(tree) {
-  cat("Cominig soon ...\n")
-}
+#' #' @export
+#' viz <- function(tree) {
+#'   #TODO
+#' }
