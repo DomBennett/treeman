@@ -99,6 +99,8 @@ setClass('TreeMan', representation=representation(
   tol='numeric',         # numeric of tolerance for determining extant
   updtd='logical',       # logical, if tree has been updated since a change
   ndmtrx='big.matrix',   # bigmemory matrix of logicals
+  tinds='vector',        # indexes of tip nodes
+  prinds='vector',       # indexes of pre-nodes
   root='character'),     # character of node id of root, if no root then empty character
   prototype=prototype(tol=1e-8), validity=fastCheckTreeMan)
 
@@ -134,6 +136,8 @@ setMethod('[', c('TreeMan', 'character'),
             slt_nms <- slotNames(x)
             slt_nms <- slt_nms[slt_nms != 'ndlst']
             slt_nms <- slt_nms[slt_nms != 'ndmtrx']
+            slt_nms <- slt_nms[slt_nms != 'tinds']
+            slt_nms <- slt_nms[slt_nms != 'prinds']
             if(!i %in% slt_nms) {
               slt_nms <- paste0(slt_nms, collapse=', ')
               stop(paste0('`', i, '` not a tree slot. Available slots: ', slt_nms))

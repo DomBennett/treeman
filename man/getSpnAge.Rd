@@ -22,7 +22,7 @@ Returns a dataframe.
 \examples{
 library(treeman)
 data(mammals)
-getSpnAge(mammals, id='Homo_sapiens', tree_age=mammals['age'])
+#getSpnAge(mammals, id='Homo_sapiens', tree_age=mammals['age'])
 }
 \seealso{
 \code{\link{getNdAge}}, 

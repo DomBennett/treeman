@@ -56,6 +56,8 @@ rmTips <- function(tree, tids, drp_intrnl=TRUE, progress="none") {
   tree@root <- rid
   if(tree@updtd) {
     tree@ndmtrx <- bigmemory::as.big.matrix(tree@ndmtrx[bool, bool])
+    tree@prinds <- vector("integer", length=0)
+    tree@tinds <- vector("integer", length=0)
     tree <- updateTree(tree)
   }
   tree

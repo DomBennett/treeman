@@ -4,16 +4,16 @@
 \alias{calcFrPrp}
 \title{Calculate evolutionary distinctness}
 \usage{
-calcFrPrp(tree, tids, parallel = FALSE, progress = "none")
+calcFrPrp(tree, tids, progress = "none")
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}
 
 \item{tids}{tip IDs}
 
-\item{parallel}{logical, make parallel?}
-
 \item{progress}{name of the progress bar to use, see \code{\link{create_progress_bar}}}
+
+\item{parallel}{logical, make parallel?}
 }
 \description{
 Returns the evolutationary distinctness of ids using the fair proportion metric.

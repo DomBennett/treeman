@@ -151,7 +151,7 @@ readTree <- function(file=NULL, text=NULL, update=TRUE, parallel=FALSE,
     names(nd) <- c('id', 'ptid', 'prid', 'spn')
     nd[['id']] <- ids[i]
     nd[['spn']] <- spns[i]
-    nd[['prid']] <- ids[prids[i]]
+    nd[['prid']] <- ids[prinds[i]]
     nd[['ptid']] <- ptids[ptnds_pool == i]
     nd
   }
@@ -169,31 +169,32 @@ readTree <- function(file=NULL, text=NULL, update=TRUE, parallel=FALSE,
   # gen prids
   opns <- gregexpr("\\(", trstr)[[1]]
   clss <- gregexpr("\\)", trstr)[[1]]
-  prids <- .Call("cFindPrids", PACKAGE="treeman",
-                 as.integer(nds),
-                 as.integer(clss),
-                 as.integer(opns))
-  if(sum(prids == -1) > 1) {
+  prinds <- .Call("cFindPrids", PACKAGE="treeman",
+                  as.integer(nds),
+                  as.integer(clss),
+                  as.integer(opns))
+  if(sum(prinds == -1) > 1) {
     stop('Invalid tree string')
   }
-  root <- which(prids == -1)
-  prids <- match(prids, nds)
-  tids <- which(!1:length(ids) %in% prids)
-  prids[is.na(prids)] <- root
+  root <- which(prinds == -1)
+  prinds <- match(prinds, nds)
+  tinds <- which(!1:length(ids) %in% prinds)
+  prinds[is.na(prinds)] <- root
   spns[is.na(spns)] <- 0
   ptids <- ids[-root]
-  ptnds_pool <- prids[-root]
+  ptnds_pool <- prinds[-root]
   ndlst <- lapply(1:length(ids), .add)
   names(ndlst) <- ids
   tree <- new('TreeMan', ndlst=ndlst, root=ids[root],
-              ndmtrx=bigmemory::big.matrix(1,1))
+              ndmtrx=bigmemory::big.matrix(1,1),
+              prinds=prinds, tinds=tinds)
   if(update) {
     tree <- updateTree(tree)
   } else {
     # init basic slots
     tree@updtd <- FALSE
-    tree@tips <- sort(ids[tids])
-    tree@ntips <- length(tids)
+    tree@tips <- sort(ids[tinds])
+    tree@ntips <- length(tinds)
     tree@nds <- sort(ids[ids != tree@tips])
     tree@nnds <- length(tree@nds)
     tree@all <- names(tree@ndlst)
@@ -202,6 +203,8 @@ readTree <- function(file=NULL, text=NULL, update=TRUE, parallel=FALSE,
   }
   tree
 }
+
+
 
 
 # TODO: develop .trmn file format

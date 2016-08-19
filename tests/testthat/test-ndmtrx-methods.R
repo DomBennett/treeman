@@ -10,7 +10,7 @@ test_that('.getNdsPrdstsFrmMtrx() works', {
   tree <- randTree(100)
   ndlst <- tree@ndlst
   ids <- names(ndlst)
-  spns <- treeman:::.getSltSpns(tree@ndlst, FALSE)
+  spns <- treeman:::.getSltSpns(tree@ndlst)
   # test
   prdsts <- treeman:::.getNdsPrdstsFrmMtrx(tree@ndmtrx, all_ids=ids, ids=ids,
                                            spns=spns, parallel=FALSE,
@@ -22,7 +22,7 @@ test_that('.getNdsKidsFrmMtrx() works', {
   tree <- randTree(100)
   ndlst <- tree@ndlst
   ids <- names(ndlst)
-  tids <- treeman:::.getSltTids(tree@ndlst, FALSE)
+  tids <- tree@tips
   # test
   kids <- treeman:::.getNdsKidsFrmMtrx(tree@ndmtrx, all_ids=ids, ids=ids,
                                        tids=tids, parallel=FALSE,
@@ -56,7 +56,7 @@ test_that('.getNdsPDFrmMtrx() works', {
   tree <- randTree(100)
   ndlst <- tree@ndlst
   ids <- names(ndlst)
-  spns <- treeman:::.getSltSpns(tree@ndlst, FALSE)
+  spns <- treeman:::.getSltSpns(tree@ndlst)
   # test
   pds <- treeman:::.getNdsPDFrmMtrx(tree@ndmtrx, all_ids=ids, ids=ids,
                                     spns=spns, parallel=FALSE, progress="none")
@@ -67,8 +67,8 @@ test_that('.getTreeAgeFrmMtrx() works', {
   # init
   tree <- randTree(100)
   ids <- names(tree@ndlst)
-  spns <- treeman:::.getSltSpns(tree@ndlst, FALSE)
-  tids <- treeman:::.getSltTids(tree@ndlst, FALSE)
+  spns <- treeman:::.getSltSpns(tree@ndlst)
+  tids <- tree@tips
   # test
   res <- treeman:::.getTreeAgeFrmMtrx(tree@ndmtrx,
                                       all_ids=ids,

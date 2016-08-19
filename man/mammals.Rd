@@ -15,8 +15,8 @@
    Bininda-Emonds et al. (2007) The Delayed Rise of Present-Day Mammals. Nature, 446(7135): 507-512
 }
 \examples{
-data(mammals) # load object
-print(mammals)
-print(mammals[['Homo_sapiens']])
+#data(mammals) # load object
+#print(mammals)
+#print(mammals[['Homo_sapiens']])
 }
 \keyword{datasets}

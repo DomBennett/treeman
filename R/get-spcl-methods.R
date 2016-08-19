@@ -15,11 +15,11 @@
 #' library(treeman)
 #' data(mammals)
 #' # choosing ids from the two main branches of apes allows to find the parent for all apes
-#' ape_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
+#' #ape_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
 getPrnt <- function(tree, ids) {
   # using ndlst guarrantees order
-  prids <- .getNdsPridsFrmLst(tree@ndlst, ids, parallel=FALSE,
-                              progress="none")
+  prids <- .getNdsPridsFrmLst(tree@ndlst, ids=ids, prinds=tree@prinds,
+                              parallel=FALSE, progress="none")
   rf <- prids[[1]]
   mn_rnk <- 0
   for(n in prids[-1]) {
@@ -43,9 +43,9 @@ getPrnt <- function(tree, ids) {
 #' library(treeman)
 #' data(mammals)
 #' # what's the phylogenetic distance from humans to gorillas?
-#' ape_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
-#' pth <- getPath(mammals, from='Homo_sapiens', to='Gorilla_gorilla')
-#' sum(getNdsSlt(mammals, ids=pth, slt_nm='spn'))
+#' #ape_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
+#' #pth <- getPath(mammals, from='Homo_sapiens', to='Gorilla_gorilla')
+#' #sum(getNdsSlt(mammals, ids=pth, slt_nm='spn'))
 getPath <- function(tree, from, to) {
   pre_1 <- c(from, getNdPrids(tree, from))
   pre_2 <- c(to, getNdPrids(tree, to))
@@ -69,7 +69,7 @@ getPath <- function(tree, from, to) {
 #' library(treeman)
 #' data(mammals)
 #' # orangutan is an outgroup wrt humans and chimps
-#' getOtgrp(mammals, ids=c('Homo_sapiens', 'Pan_troglodytes', 'Pongo_pygmaeus'))
+#' #getOtgrp(mammals, ids=c('Homo_sapiens', 'Pan_troglodytes', 'Pongo_pygmaeus'))
 getOtgrp <- function(tree, ids) {
   .cntr <- function(id) {
     kids <- getNdKids(tree, id)
@@ -106,8 +106,8 @@ getOtgrp <- function(tree, ids) {
 #' library(treeman)
 #' data(mammals)
 #' # get tree of apes
-#' ape_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
-#' apes <- getSubtree(mammals, id=ape_id)
+#' #ape_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
+#' #apes <- getSubtree(mammals, id=ape_id)
 getSubtree <- function(tree, id) {
   if(!id %in% tree@nds) {
     stop('`id` is not an internal node')
@@ -142,13 +142,14 @@ getSubtree <- function(tree, id) {
 #' tree <- randTree(10)
 #' (getTreeAge(tree))
 getTreeAge <- function(tree, parallel=FALSE) {
+  tids <- tree@tips
   if(tree@updtd) {
     all_ids <- tree@all
-    tids <- tree@tips
-    spns <- .getSltSpns(tree@ndlst, parallel)
+    spns <- .getSltSpns(tree@ndlst)
     res <- .getTreeAgeFrmMtrx(tree@ndmtrx, all_ids, tids, spns, parallel)
   } else {
-    res <- .getTreeAgeFrmLst(tree@ndlst, parallel)
+    res <- .getTreeAgeFrmLst(tree@ndlst, prinds=tree@prinds,
+                             tids=tids, parallel)
   }
   res
 }

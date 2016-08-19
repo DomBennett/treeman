@@ -5,23 +5,24 @@ library(testthat)
 # RUNNING
 context('Testing \'ndlst-methods\'')
 # slot
-test_that('.getSltPrids() works', {
+test_that('.getPrinds() works', {
   tree <- randTree(10)
-  prids <- treeman:::.getSltPrids(tree@ndlst, FALSE)
+  prinds <- treeman:::.getPrinds(tree@ndlst)
   i <- sample(1:tree@nall, 1)
-  prid <- tree@ndlst[[i]][['prid']]
-  expect_equal(prids[i], prid)
+  prind <- which(names(tree@ndlst) == tree@ndlst[[i]][['prid']])
+  expect_equal(prinds[i], prind)
 })
 test_that('.getSltSpns() works', {
   tree <- randTree(10)
-  spns <- treeman:::.getSltSpns(tree@ndlst, FALSE)
+  spns <- treeman:::.getSltSpns(tree@ndlst)
   i <- sample(1:tree@nall, 1)
   spn <- tree@ndlst[[i]][['spn']]
   expect_equal(spns[i], spn)
 })
-test_that('.getSltTids() works', {
+test_that('.getTinds() works', {
   tree <- randTree(10)
-  tids <- treeman:::.getSltTids(tree@ndlst, FALSE)
+  tinds <- treeman:::.getTinds(tree@ndlst)
+  tids <- names(tree@ndlst)[tinds]
   expect_true(all(tree['tips'] %in% tids))
   expect_true(all(tids %in% tree['tips']))
 })
@@ -41,19 +42,19 @@ test_that('.getNdPridsFrmLst() works', {
   tree <- randTree(100)
   ndlst <- tree@ndlst
   ids <- names(ndlst)
-  prids <- treeman:::.getSltPrids(tree@ndlst, FALSE)
+  prinds <- tree@prinds
   # tests
   rnd_tip <- sample(tree@tips, 1)
-  res <- treeman:::.getNdPridsFrmLst(ndlst, prids=prids,
+  res <- treeman:::.getNdPridsFrmLst(ndlst, prinds=prinds,
                                      id=rnd_tip)
   expect_true(ndlst[[rnd_tip]]['prid'] %in% res)
   expect_true(tree@root %in% res)
   rnd_nd <- sample(tree@nds, 1)
-  res <- treeman:::.getNdPridsFrmLst(ndlst, prids=prids,
+  res <- treeman:::.getNdPridsFrmLst(ndlst, prinds=prinds,
                                      id=rnd_nd)
   expect_true(ndlst[[rnd_nd]]['prid'] %in% res)
   expect_true(tree@root %in% res)
-  res <- treeman:::.getNdPridsFrmLst(ndlst, prids=prids,
+  res <- treeman:::.getNdPridsFrmLst(ndlst, prinds=prinds,
                                      tree@root)
   expect_true(tree@root == res)
 })
@@ -62,13 +63,13 @@ test_that('.getNdPrdstFrmLst([basic]) works', {
   tree <- randTree(100)
   ndlst <- tree@ndlst
   ids <- names(ndlst)
-  prids <- treeman:::.getSltPrids(tree@ndlst, FALSE)
+  prinds <- tree@prinds
   # tests
-  res <- treeman:::.getNdPrdstsFrmLst(ndlst, prids=prids,
+  res <- treeman:::.getNdPrdstsFrmLst(ndlst, prinds=prinds,
                                      id=tree@root)
   expect_that(res, equals(0))
   rnd_nd <- sample(tree@nds[tree@nds != tree@root], 1)
-  res <- treeman:::.getNdPrdstsFrmLst(ndlst, prids=prids,
+  res <- treeman:::.getNdPrdstsFrmLst(ndlst, prinds=prinds,
                                      id=rnd_nd)
   expect_that(res, is_less_than(tree@age))
 })
@@ -77,18 +78,18 @@ test_that('.getNdPtidsFrmLst([basic]) works', {
   tree <- randTree(100)
   ndlst <- tree@ndlst
   ids <- names(ndlst)
-  prids <- treeman:::.getSltPrids(tree@ndlst, FALSE)
+  prinds <- tree@prinds
   # tests
   rnd_tip <- sample(tree@tips, 1)
-  res <- treeman:::.getNdPtidsFrmLst(ndlst, prids=prids,
+  res <- treeman:::.getNdPtidsFrmLst(ndlst, prinds=prinds,
                                      id=rnd_tip)
   expect_that(length(res), equals(0))
   intrnls <- tree@nds[tree@nds != tree@root]
-  res <- treeman:::.getNdPtidsFrmLst(ndlst, prids=prids,
+  res <- treeman:::.getNdPtidsFrmLst(ndlst, prinds=prinds,
                                      id=tree@root)
   expect_true(all(intrnls %in% res))
   rnd_nd <- sample(intrnls, 1)
-  res <- treeman:::.getNdPtidsFrmLst(ndlst, prids=prids,
+  res <- treeman:::.getNdPtidsFrmLst(ndlst, prinds=prinds,
                                      id=rnd_nd)
   expect_false(all(intrnls %in% res))
 })
@@ -97,19 +98,19 @@ test_that('.getNdKidsFrmLst([basic]) works', {
   tree <- randTree(100)
   ndlst <- tree@ndlst
   ids <- names(ndlst)
-  prids <- treeman:::.getSltPrids(tree@ndlst, FALSE)
-  tids <- treeman:::.getSltTids(tree@ndlst, FALSE)
+  prinds <- tree@prinds
+  tinds <- tree@tinds
   # tests
-  res <- treeman:::.getNdKidsFrmLst(ndlst, prids=prids,
-                                    tids=tids, id=tree@root)
+  res <- treeman:::.getNdKidsFrmLst(ndlst, prinds=prinds,
+                                    tinds=tinds, id=tree@root)
   expect_true(all(tree@tips %in% res))
   rnd_nd <- sample(tree@nds[tree@nds != tree@root], 1)
-  res <- treeman:::.getNdKidsFrmLst(ndlst, prids=prids,
-                                    tids=tids, id=rnd_nd)
+  res <- treeman:::.getNdKidsFrmLst(ndlst, prinds=prinds,
+                                    tinds=tinds, id=rnd_nd)
   expect_false(all(tree@tips %in% res))
   rnd_tip <- sample(tree@tips, 1)
-  res <- treeman:::.getNdKidsFrmLst(ndlst, prids=prids,
-                                    tids=tids, id=rnd_tip)
+  res <- treeman:::.getNdKidsFrmLst(ndlst, prinds=prinds,
+                                    tinds=tinds, id=rnd_tip)
   expect_that(length(res), equals(0))
 })
 test_that('.getNdPDFrmLst([basic]) works', {
@@ -117,13 +118,13 @@ test_that('.getNdPDFrmLst([basic]) works', {
   tree <- randTree(100)
   ndlst <- tree@ndlst
   ids <- names(ndlst)
-  prids <- treeman:::.getSltPrids(tree@ndlst, FALSE)
+  prinds <- tree@prinds
   # tests
-  res <- treeman:::.getNdPDFrmLst(ndlst, prids=prids,
+  res <- treeman:::.getNdPDFrmLst(ndlst, prinds=prinds,
                                   id=tree@root)
   expect_that(res, equals(tree@pd))
   rnd_nd <- sample(tree@nds[tree@nds != tree@root], 1)
-  res <- treeman:::.getNdPDFrmLst(ndlst, prids=prids,
+  res <- treeman:::.getNdPDFrmLst(ndlst, prinds=prinds,
                                   id=rnd_nd)
   expect_that(res, is_less_than(tree@pd))
 })
@@ -133,8 +134,9 @@ test_that('.getNdsPtidsFrmLst() works', {
   tree <- randTree(100)
   ndlst <- tree@ndlst
   ids <- names(ndlst)
+  prinds <- tree@prinds
   # test
-  ptids <- treeman:::.getNdsPtidsFrmLst(tree@ndlst, ids=ids,
+  ptids <- treeman:::.getNdsPtidsFrmLst(tree@ndlst, ids=ids, prinds=prinds,
                                         parallel=FALSE, progress="none")
   expect_true(all(sapply(ptids[names(ptids) %in% tree['tips']],
                          length) == 0))
@@ -144,8 +146,9 @@ test_that('.getNdsPridsFrmLst() works', {
   tree <- randTree(100)
   ndlst <- tree@ndlst
   ids <- names(ndlst)
+  prinds <- tree@prinds
   # test
-  prids <- treeman:::.getNdsPridsFrmLst(tree@ndlst, ids=ids,
+  prids <- treeman:::.getNdsPridsFrmLst(tree@ndlst, ids=ids, prinds=prinds,
                                         parallel=FALSE, progress="none")
   expect_true(prids[[tree['root']]] == tree['root'])
 })
@@ -154,8 +157,9 @@ test_that('.getNdsPDFrmLst() works', {
   tree <- randTree(100)
   ndlst <- tree@ndlst
   ids <- names(ndlst)
+  prinds <- tree@prinds
   # test
-  pds <- treeman:::.getNdsPDFrmLst(tree@ndlst, ids=ids,
+  pds <- treeman:::.getNdsPDFrmLst(tree@ndlst, ids=ids, prinds,
                                    parallel=FALSE, progress="none")
   expect_true(sum(pds[names(pds) %in% tree['tips']]) == 0)
 })
@@ -164,9 +168,11 @@ test_that('.getNdsKidsFrmLst() works', {
   tree <- randTree(100)
   ndlst <- tree@ndlst
   ids <- names(ndlst)
+  prinds <- tree@prinds
+  tinds <- tree@tinds
   # test
-  kids <- treeman:::.getNdsKidsFrmLst(tree@ndlst, ids=ids,
-                                      parallel=FALSE, progress="none")
+  kids <- treeman:::.getNdsKidsFrmLst(tree@ndlst, ids=ids, prinds=prinds,
+                                      tinds=tinds, parallel=FALSE, progress="none")
   expect_true(all(sapply(kids[names(kids) %in% tree['tips']],
                          length) == 0))
 })
@@ -175,8 +181,9 @@ test_that('.getNdsPrdstsFrmLst() works', {
   tree <- randTree(100)
   ndlst <- tree@ndlst
   ids <- names(ndlst)
+  prinds <- tree@prinds
   # test
-  prdsts <- treeman:::.getNdsPrdstsFrmLst(tree@ndlst, ids=ids,
+  prdsts <- treeman:::.getNdsPrdstsFrmLst(tree@ndlst, ids=ids, prinds=prinds,
                                           parallel=FALSE, progress="none")
   expect_true(all(prdsts <= tree['age']))
 })
@@ -184,8 +191,11 @@ test_that('.getNdsPrdstsFrmLst() works', {
 test_that('.getTreeAge() works', {
   # init
   tree <- randTree(100)
+  prinds <- tree@prinds
+  tids <- tree@tips
   # test
-  res <- treeman:::.getTreeAgeFrmLst(tree@ndlst, FALSE)
+  res <- treeman:::.getTreeAgeFrmLst(tree@ndlst, tids=tids,
+                                     prinds=prinds, parallel=FALSE)
   expect_lt(res, tree['pd'])
   expect_equal(res, tree['age'])
 })

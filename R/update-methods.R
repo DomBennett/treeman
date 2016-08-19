@@ -11,6 +11,12 @@ updateTree <- function(tree) {
   if(!checkTreeMan(tree)) {
     stop('Invalid tree')
   }
+  if(length(tree@tinds) == 0) {
+    tree@tinds <- .getTinds(tree@ndlst)
+  }
+  if(length(tree@prinds) == 0) {
+    tree@prinds <- .getPrinds(tree@ndlst)
+  }
   if(is.na(tree@ndmtrx[1,1])) {
     # generate ndmtrx
     tree@ndmtrx <- .getNdmtrxFrmLst(tree@ndlst)
@@ -70,5 +76,7 @@ updateTree <- function(tree) {
 downdateTree <- function(tree) {
   tree@ndmtrx <- bigmemory::big.matrix(1,1)
   tree@updtd <- FALSE
+  tree@tinds <- vector("integer", length=0)
+  tree@prinds <- vector("integer", length=0)
   tree
 }

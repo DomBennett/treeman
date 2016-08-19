@@ -300,29 +300,24 @@ calcPhyDv <- function(tree, tids,
 #' library(treeman)
 #' tree <- randTree(10)
 #' calcFrPrp(tree, tree['tips'])
-calcFrPrp <- function(tree, tids, parallel=FALSE, progress="none") {
-  .calc <- function(tid) {
-    ids <- c(tid, prids[[tid]])
-    spns <- getNdsSlt(tree, 'spn', ids)
-    sum(spns/nkids[ids])
+calcFrPrp <- function(tree, tids, progress="none") {
+  .calc <- function(i) {
+    id <- tree@all[i]
+    spn <- getNdSlt(tree, "spn", id)
+    kids <- getNdKids(tree, id)
+    if(length(kids) == 0) {
+      spn_shres[i, id] <<- spn
+    } else {
+      spn_shre <- spn/length(kids)
+      spn_shres[i, kids] <<- spn_shre
+    }
   }
-  all_ids <- names(tree@ndlst)
-  if(progress != "none") {
-    cat("Part 1/2 ....\n")
-  }
-  prids <- getNdsPrids(tree, tids, parallel=parallel,
-                       progress=progress)
-  if(progress != "none") {
-    cat("Part 2/2 ....\n")
-  }
-  kids <- getNdsKids(tree, all_ids, parallel=parallel,
-                     progress=progress)
-  nkids <- sapply(kids, length)
-  rm(kids)
-  nkids[nkids == 0] <- 1  # prevent division by 0
-  l_data <- data.frame(tid=tids, stringsAsFactors=FALSE)
-  plyr::mdply(.data=l_data, .fun=.calc, .parallel=parallel,
-              .progress=progress)[ ,2]
+  spn_shres <- bigmemory::big.matrix(init=0, ncol=tree@ntips, nrow=tree@nall)
+  options(bigmemory.allow.dimnames=TRUE)
+  colnames(spn_shres) <- tree@tips
+  plyr::m_ply(.data=data.frame(i=1:tree@nall), .fun = .calc,
+              .progress=progress)
+  colSums(spn_shres[, tids])
 }
 
 #' @name calcDstMtrx

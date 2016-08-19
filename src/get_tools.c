@@ -6,16 +6,16 @@
 // all nodes are rows, qry ids are cols
 SEXP cGetNdmtrx(SEXP nids_, SEXP qrys_, SEXP prids_)
 {
-  SEXP res;
+  SEXP ndmtrx;
   int nids = asInteger(nids_);
   int nqrys = length(qrys_);
   int* qrys = INTEGER(qrys_);
   int* prids = INTEGER(prids_);
-  PROTECT(res=allocMatrix(INTSXP, nids, nqrys));
-  int n = length(res);
+  PROTECT(ndmtrx=allocMatrix(INTSXP, nids, nqrys));
+  int n = length(ndmtrx);
   int i;
   for(i=0;i<n; i++) {
-    INTEGER(res)[i] = 0;
+    INTEGER(ndmtrx)[i] = 0;
   }
   int qry;
   int id;
@@ -29,13 +29,13 @@ SEXP cGetNdmtrx(SEXP nids_, SEXP qrys_, SEXP prids_)
     prv_ids[1] = id;
     while(prv_ids[0] != prv_ids[1]) {
       prv_ids[0] = id;
-      INTEGER(res)[id + i * nids] = 1;
+      INTEGER(ndmtrx)[id + i * nids] = 1;
       id = prids[id] - 1;
       prv_ids[1] = id;
     }
   }
   UNPROTECT(1);
-  return res;
+  return ndmtrx;
 }
 
 // Get prids for a node
@@ -70,14 +70,18 @@ SEXP cGetNdPrids(SEXP prid_, SEXP prids_)
 SEXP cGetNdPtids(SEXP id_, SEXP prids_) {
   int nids = length(prids_);
   int id = asInteger(id_);
-  int* prids = INTEGER(prids_);  //vector of internal node prids
-  SEXP res;
-  PROTECT(res=allocVector(INTSXP, nids));
+  // vector of internal node prids
+  // duplicate, potential to be a C generated object via cFindPrids
+  // without duplicating, this function will modify other vectors
+  // in the R environment
+  int* prids = INTEGER(duplicate(prids_));
+  SEXP res_ptids;
+  PROTECT(res_ptids=allocVector(INTSXP, nids));
   int qrys[nids+1];
   int i;
-  // init res and qrys
+  // init res_ptids and qrys
   for(i=0;i<nids; i++) {
-    INTEGER(res)[i] = 0;
+    INTEGER(res_ptids)[i] = 0;
     qrys[i] = -1;
   }
   qrys[nids+1] = -1;
@@ -94,7 +98,7 @@ SEXP cGetNdPtids(SEXP id_, SEXP prids_) {
     // search for qry in prids
     for(i=0;i<nids; i++) {
       if(qry == prids[i]) {
-        INTEGER(res)[i] = 1;
+        INTEGER(res_ptids)[i] = 1;
         nqrys = nqrys + 1;
         qrys[nqrys] = i + 1;
       }
@@ -104,5 +108,5 @@ SEXP cGetNdPtids(SEXP id_, SEXP prids_) {
     qry = qrys[ni];
   }
   UNPROTECT(1);
-  return res;
+  return res_ptids;
 }

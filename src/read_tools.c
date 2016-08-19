@@ -4,14 +4,14 @@
 // Return vector of position of prid in Newick string
 SEXP cFindPrids(SEXP nds_, SEXP clss_, SEXP opns_)
 {
-  SEXP res;
+  SEXP res_prids;
   int n = length(nds_);
   int nclss = length(clss_);
   int nopns = length(opns_);
   int* nds = INTEGER(nds_);
   int* opns = INTEGER(opns_);
   int* clss = INTEGER(clss_);
-  PROTECT(res=allocVector(REALSXP, n));
+  PROTECT(res_prids=allocVector(REALSXP, n));
   int i, j, cls_cc, opn_cc, cls;
   int cls_up[nclss];
   int opn_up[nopns];
@@ -46,16 +46,16 @@ SEXP cFindPrids(SEXP nds_, SEXP clss_, SEXP opns_)
     }
     if(cls == -1) {
       //use -1 for NA
-      REAL(res)[i] = -1;
+      REAL(res_prids)[i] = -1;
     } else {
       for(j=0;j<n; j++) {
         if(nds[j] >= cls) {
-          REAL(res)[i] = nds[j];
+          REAL(res_prids)[i] = nds[j];
           break;
         }
       }
     }
   }
   UNPROTECT(1);
-  return res;
+  return res_prids;
 }

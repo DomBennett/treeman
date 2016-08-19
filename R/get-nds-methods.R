@@ -41,12 +41,12 @@ getNdsSstr <- function(tree, ids, parallel=FALSE, progress="none") {
 getNdsPD <- function(tree, ids, parallel=FALSE, progress="none") {
   if(tree@updtd & length(ids) > 1) {
     all_ids <- tree@all
-    spns <- .getSltSpns(tree@ndlst, parallel)
+    spns <- .getSltSpns(tree@ndlst)
     res <- .getNdsPDFrmMtrx(tree@ndmtrx, all_ids, ids, spns,
                             parallel, progress)
   } else {
-    res <- .getNdsPDFrmLst(tree@ndlst,
-                           ids, parallel, progress)
+    res <- .getNdsPDFrmLst(tree@ndlst, prinds=tree@prinds,
+                           ids=ids, parallel=parallel, progress=progress)
   }
   res
 }
@@ -70,11 +70,12 @@ getNdsPD <- function(tree, ids, parallel=FALSE, progress="none") {
 getNdsPrdst <- function(tree, ids, parallel=FALSE, progress="none") {
   if(tree@updtd & length(ids) > 1) {
     all_ids <- tree@all
-    spns <- .getSltSpns(tree@ndlst, parallel)
+    spns <- .getSltSpns(tree@ndlst)
     res <- .getNdsPrdstsFrmMtrx(tree@ndmtrx, all_ids, ids, spns,
                                 parallel, progress)
   } else {
-    res <- .getNdsPrdstsFrmLst(tree@ndlst, ids, parallel, progress)
+    res <- .getNdsPrdstsFrmLst(tree@ndlst, prinds=tree@prinds,
+                               ids=ids, parallel, progress)
   }
   res
 }
@@ -129,8 +130,9 @@ getNdsKids <- function(tree, ids, parallel=FALSE,
     res <- .getNdsKidsFrmMtrx(tree@ndmtrx, tree@all,
                               ids, tree@tips, parallel, progress)
   } else {
-    res <- .getNdsKidsFrmLst(tree@ndlst, ids,
-                             parallel, progress)
+    res <- .getNdsKidsFrmLst(tree@ndlst, ids=ids,
+                             prinds=tree@prinds, tinds=tree@tinds,
+                             parallel=parallel, progress=progress)
   }
   res
 }
@@ -158,13 +160,15 @@ getNdsAge <- function(tree, ids, tree_age,
                       parallel=FALSE,
                       progress="none") {
   if(tree@updtd & length(ids) > 1) {
-    spns <- .getSltSpns(tree@ndlst, parallel)
+    spns <- .getSltSpns(tree@ndlst)
     res <- .getNdsPrdstsFrmMtrx(tree@ndmtrx, tree@all,
                                ids, spns, parallel, progress)
     res <- tree_age - res
   } else {
-    res <- .getNdsPrdstsFrmLst(tree@ndlst, ids,
-                              parallel, progress)
+    res <- .getNdsPrdstsFrmLst(tree@ndlst, ids=ids,
+                               prinds=tree@prinds,
+                               parallel=parallel,
+                               progress=progress)
     res <- tree_age - res
   }
   res
@@ -195,13 +199,15 @@ getNdsAge <- function(tree, ids, tree_age,
 getSpnsAge <- function(tree, ids, tree_age,
                        parallel=FALSE, progress="none") {
   if(tree@updtd & length(ids) > 1) {
-    spns <- .getSltSpns(tree@ndlst, parallel)
+    spns <- .getSltSpns(tree@ndlst)
     end <- .getNdsPrdstsFrmMtrx(tree@ndmtrx, tree@all,
                                 ids, spns, parallel, progress)
     
   } else {
-    end <- .getNdsPrdstsFrmLst(tree@ndlst, ids,
-                               parallel, progress)
+    end <- .getNdsPrdstsFrmLst(tree@ndlst, ids=ids,
+                               prinds=tree@prinds,
+                               parallel=parallel,
+                               progress=progress)
   }
   spns <- getNdsSlt(tree, slt_nm="spn", ids=ids, parallel)
   start <- end - spns
@@ -236,8 +242,9 @@ getNdsPrids <- function(tree, ids, ordrd=FALSE,
     res <- .getNdsPridsFrmMtrx(tree@ndmtrx, tree@all,
                                ids, parallel, progress)
   } else {
-    res <- .getNdsPridsFrmLst(tree@ndlst, ids,
-                              parallel, progress)
+    res <- .getNdsPridsFrmLst(tree@ndlst, ids=ids,
+                              prinds=tree@prinds, parallel=parallel,
+                              progress=progress)
   }
   res
 }
@@ -266,8 +273,9 @@ getNdsPtids <- function(tree, ids, parallel=FALSE, progress="none") {
     res <- .getNdsPtidsFrmMtrx(tree@ndmtrx, tree@all,
                                ids, parallel, progress)
   } else {
-    res <- .getNdsPtidsFrmLst(tree@ndlst, ids,
-                              parallel, progress)
+    res <- .getNdsPtidsFrmLst(tree@ndlst, ids=ids,
+                              prinds=tree@prinds, parallel=parallel,
+                              progress=progress)
   }
   res
 }

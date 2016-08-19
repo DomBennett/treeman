@@ -17,11 +17,10 @@
 #' data(mammals)
 #' # when did apes emerge?
 #' # get parent id for all apes
-#' prnt_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
-#' getNdAge(mammals, id=prnt_id, tree_age=mammals['age'])
+#' #prnt_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
+#' #getNdAge(mammals, id=prnt_id, tree_age=mammals['age'])
 getNdAge <- function(tree, id, tree_age) {
-  prids <- .getSltPrids(tree@ndlst, FALSE)
-  tree_age - .getNdPrdstsFrmLst(tree@ndlst, prids, id)
+  tree_age - .getNdPrdstsFrmLst(tree@ndlst, tree@prinds, id=id)
 }
 
 #' @name getSpnAge
@@ -40,10 +39,9 @@ getNdAge <- function(tree, id, tree_age) {
 #' @examples
 #' library(treeman)
 #' data(mammals)
-#' getSpnAge(mammals, id='Homo_sapiens', tree_age=mammals['age'])
+#' #getSpnAge(mammals, id='Homo_sapiens', tree_age=mammals['age'])
 getSpnAge <- function(tree, id, tree_age) {
-  prids <- .getSltPrids(tree@ndlst, FALSE)
-  end <- .getNdPrdstsFrmLst(tree@ndlst, prids, id)
+  end <- .getNdPrdstsFrmLst(tree@ndlst, tree@prinds, id=id)
   start <- end - tree@ndlst[[id]][['spn']]
   end <- tree_age - end
   start <- tree_age - start
@@ -68,8 +66,7 @@ getSpnAge <- function(tree, id, tree_age) {
 #' # get all nodes to root
 #' getNdPrids(tree, id='t1')
 getNdPrids <- function(tree, id) {
-  prids <- .getSltPrids(tree@ndlst, FALSE)
-  .getNdPridsFrmLst(tree@ndlst, prids, id)
+  .getNdPridsFrmLst(tree@ndlst, prinds=tree@prinds, id=id)
 }
 
 #' @name getNdPtids
@@ -92,8 +89,7 @@ getNdPrids <- function(tree, id) {
 # reduce dependence on the recursive, by getting prenodes
 # tip ids to id
 getNdPtids <- function(tree, id) {
-  prids <- .getSltPrids(tree@ndlst, FALSE)
-  .getNdPtidsFrmLst(tree@ndlst, prids, id)
+  .getNdPtidsFrmLst(tree@ndlst, tree@prinds, id=id)
 }
 
 #' @name getNdKids
@@ -112,9 +108,7 @@ getNdPtids <- function(tree, id) {
 #' # everyone descends from root
 #' getNdKids(tree, id=tree['root'])
 getNdKids <- function(tree, id) {
-  prids <- .getSltPrids(tree@ndlst, FALSE)
-  tids <- .getSltTids(tree@ndlst, FALSE)
-  .getNdKidsFrmLst(tree@ndlst, prids, tids, id)
+  .getNdKidsFrmLst(tree@ndlst, prinds=tree@prinds, tinds=tree@tinds, id=id)
 }
 
 #' @name getNdPrdst
@@ -132,8 +126,7 @@ getNdKids <- function(tree, id) {
 #' tree <- randTree(10)
 #' getNdPrdst(tree, id='t1')  # return the distance to root from t1
 getNdPrdst <- function(tree, id) {
-  prids <- .getSltPrids(tree@ndlst, FALSE)
-  .getNdPrdstsFrmLst(tree@ndlst, prids, id)
+  .getNdPrdstsFrmLst(tree@ndlst, tree@prinds, id=id)
 }
 
 #' @name getNdSlt
@@ -171,8 +164,7 @@ getNdSlt <- function(tree, slt_nm, id) {
 #' tree <- randTree(10)
 #' getNdPD(tree, id='n1')  # return PD of n1 which in this case is for the whole tree
 getNdPD <- function(tree, id) {
-  prids <- .getSltPrids(tree@ndlst, FALSE)
-  .getNdPDFrmLst(tree@ndlst, prids, id)
+  .getNdPDFrmLst(tree@ndlst, prinds=tree@prinds, id=id)
 }
 
 #' @name getNdSstr

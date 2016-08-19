@@ -1,55 +1,49 @@
 
 # MULTIPLE NDS
 
-.getNdsPtidsFrmLst <- function(ndlst, ids, parallel, progress) {
-  prids <- .getSltPrids(ndlst, parallel=parallel)
+.getNdsPtidsFrmLst <- function(ndlst, ids, prinds, parallel, progress) {
   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
   out <- plyr::mlply(.data=l_data, .fun=.getNdPtidsFrmLst, ndlst=ndlst,
-                     prids=prids, .parallel=parallel, .progress=progress)
+                     prinds=prinds, .parallel=parallel, .progress=progress)
   names(out) <- attr(out, 'split_labels')[,1]
   res <- out[1:length(out)]
   res
 }
 
-.getNdsPridsFrmLst <- function(ndlst, ids,
+.getNdsPridsFrmLst <- function(ndlst, ids, prinds,
                                parallel, progress) {
-  prids <- .getSltPrids(ndlst, parallel=parallel)
   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
   out <- plyr::mlply(.data=l_data, .fun=.getNdPridsFrmLst, ndlst=ndlst,
-                     prids=prids, .parallel=parallel, .progress=progress)
+                     prinds=prinds, .parallel=parallel, .progress=progress)
   names(out) <- attr(out, 'split_labels')[,1]
   res <- out[1:length(out)]
   res
 }
 
-.getNdsPDFrmLst <- function(ndlst, ids,
+.getNdsPDFrmLst <- function(ndlst, ids, prinds,
                             parallel, progress) {
-  prids <- .getSltPrids(ndlst, parallel)
   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
-  out <- plyr::mdply(.data=l_data, .fun=.getNdPDFrmLst, prids=prids,
+  out <- plyr::mdply(.data=l_data, .fun=.getNdPDFrmLst, prinds=prinds,
                      ndlst=ndlst, .parallel=parallel, .progress=progress)
   res <- out[ ,2]
   names(res) <- out[ ,1]
   res
 }
 
-.getNdsKidsFrmLst <- function(ndlst, ids,
+.getNdsKidsFrmLst <- function(ndlst, ids, prinds, tinds,
                               parallel, progress) {
-  prids <- .getSltPrids(ndlst, parallel)
-  tids <- .getSltTids(ndlst, parallel)
   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
   res <- plyr::mlply(.data=l_data, .fun=.getNdKidsFrmLst,
-                     ndlst=ndlst, prids=prids,
-                     tids=tids, .parallel=parallel, .progress=progress)
+                     ndlst=ndlst, prinds=prinds,
+                     tinds=tinds, .parallel=parallel, .progress=progress)
   names(res) <- ids
   res[1:length(res)]
 }
 
-.getNdsPrdstsFrmLst <- function(ndlst, ids,
+.getNdsPrdstsFrmLst <- function(ndlst, ids, prinds,
                                parallel, progress) {
-  prids <- .getSltPrids(ndlst, parallel)
   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
-  out <- plyr::mdply(.data=l_data, .fun=.getNdPrdstsFrmLst, prids=prids,
+  out <- plyr::mdply(.data=l_data, .fun=.getNdPrdstsFrmLst, prinds=prinds,
                      ndlst=ndlst, .parallel=parallel, .progress=progress)
   res <- out[ ,2]
   names(res) <- out[ ,1]
@@ -65,41 +59,40 @@
 }
 
 #' @useDynLib treeman cGetNdPrids
-.getNdPridsFrmLst <- function(ndlst, prids, id) {
+.getNdPridsFrmLst <- function(ndlst, prinds, id) {
   prid <- ndlst[[id]][['prid']]
   nids <- names(ndlst)
-  prid <- which(nids == prid)
-  prids <- match(prids, nids)
+  prind <- which(nids == prid)
   res <- .Call("cGetNdPrids", PACKAGE="treeman",
-               as.integer(prid),
-               as.integer(prids))
+               as.integer(prind),
+               as.integer(prinds))
   nids[res]
 }
 
-.getNdPrdstsFrmLst <- function(ndlst, prids, id) {
-  prids <- .getNdPridsFrmLst(ndlst, prids, id)
+.getNdPrdstsFrmLst <- function(ndlst, prinds, id) {
+  prids <- .getNdPridsFrmLst(ndlst, prinds, id)
   sum(sapply(ndlst[prids], function(x) x[['spn']])) +
     ndlst[[id]][['spn']]
 }
 
 #' @useDynLib treeman cGetNdPtids
-.getNdPtidsFrmLst <- function(ndlst, prids, id) {
+.getNdPtidsFrmLst <- function(ndlst, prinds, id) {
   nids <- names(ndlst)
   id <- which(nids == id)
-  prids <- match(prids, nids)
   res <- .Call("cGetNdPtids", PACKAGE="treeman",
                as.integer(id),
-               as.integer(prids))
+               as.integer(prinds))
   nids[which(res > 0)]
 }
 
-.getNdKidsFrmLst <- function(ndlst, prids, tids, id) {
-  ptids <- .getNdPtidsFrmLst(ndlst, prids, id)
+.getNdKidsFrmLst <- function(ndlst, prinds, tinds, id) {
+  ptids <- .getNdPtidsFrmLst(ndlst, prinds, id)
+  tids <- names(ndlst)[tinds]
   ptids[ptids %in% tids]
 }
 
-.getNdPDFrmLst <- function(ndlst, prids, id) {
-  ptids <- .getNdPtidsFrmLst(ndlst, prids, id)
+.getNdPDFrmLst <- function(ndlst, prinds, id) {
+  ptids <- .getNdPtidsFrmLst(ndlst, prinds, id)
   if(length(ptids) > 0) {
     res <- sum(sapply(ndlst[ptids], function(x) x[['spn']]))
   } else {
@@ -110,37 +103,42 @@
 
 # TREE FUNCTIONS
 
-.getTreeAgeFrmLst <- function(ndlst, parallel) {
-  tids <- .getSltTids(ndlst, parallel)
-  prdsts <- .getNdsPrdstsFrmLst(ndlst, tids,
-                               parallel=parallel, progress="none")
+.getTreeAgeFrmLst <- function(ndlst, prinds, tids, parallel) {
+  prdsts <- .getNdsPrdstsFrmLst(ndlst, ids=tids, prinds=prinds,
+                                parallel=parallel, progress="none")
   max(prdsts)
 }
 
 # SLOT
 
-.getSltPrids <- function(ndlst, parallel) {
-  .get <- function(x) {
-    x[['prid']]
-  }
-  res <- plyr::ldply(ndlst, .fun=.get, .parallel=parallel)
-  res[ ,2]
-}
-
-.getSltSpns <- function(ndlst, parallel) {
+.getSltSpns <- function(ndlst) {
   .get <- function(x) {
     x[['spn']]
   }
-  res <- plyr::ldply(ndlst, .fun=.get, .parallel=parallel)
-  res[ ,2]
+  res <- sapply(ndlst, .get)
+  names(res) <- NULL
+  res
 }
 
-.getSltTids <- function(ndlst, parallel) {
+# INDS
+
+.getPrinds <- function(ndlst) {
+  # pre-node index
+  .get <- function(x) {
+    x[['prid']]
+  }
+  res <- sapply(ndlst, .get)
+  match(res, names(ndlst))
+}
+
+.getTinds <- function(ndlst) {
+  # tip-node index
   .get <- function(x) {
     length(x[['ptid']]) == 0
   }
-  res <- plyr::ldply(ndlst, .fun=.get, .parallel=parallel)
-  res[ ,1][res[ ,2]]
+  res <- sapply(ndlst, .get)
+  names(res) <- NULL
+  which(res)
 }
 
 # SPECIAL
