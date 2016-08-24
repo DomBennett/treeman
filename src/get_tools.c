@@ -76,7 +76,7 @@ SEXP cGetNdPtids(SEXP id_, SEXP prids_) {
   // in the R environment
   int* prids = INTEGER(duplicate(prids_));
   SEXP res_ptids;
-  PROTECT(res_ptids=allocVector(INTSXP, nids));
+  PROTECT(res_ptids=duplicate(allocVector(INTSXP, nids)));
   int qrys[nids+1];
   int i;
   // init res_ptids and qrys
