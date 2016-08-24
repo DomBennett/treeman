@@ -195,7 +195,7 @@ readTree <- function(file=NULL, text=NULL, update=TRUE, parallel=FALSE,
     tree@updtd <- FALSE
     tree@tips <- sort(ids[tinds])
     tree@ntips <- length(tinds)
-    tree@nds <- sort(ids[ids != tree@tips])
+    tree@nds <- sort(ids[!ids %in% tree@tips])
     tree@nnds <- length(tree@nds)
     tree@all <- names(tree@ndlst)
     tree@nall <- length(tree@all)
