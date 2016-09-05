@@ -44,7 +44,9 @@ SEXP cGetNdPrids(SEXP prid_, SEXP prids_)
   int nprids = length(prids_);
   int init_res[nprids+2];
   int prid = asInteger(prid_);
-  int* prids = INTEGER(prids_);  //vector of internal node prids
+  //vector of internal node prids
+  // duplicated and protected
+  int* prids = INTEGER(PROTECT(duplicate(prids_)));
   int i=2;
   init_res[0] = -1;
   init_res[1] = -1;
@@ -68,26 +70,25 @@ SEXP cGetNdPrids(SEXP prid_, SEXP prids_)
 
 // get ptids for a node
 SEXP cGetNdPtids(SEXP id_, SEXP prids_) {
-  int nids = length(prids_);
+  SEXP res_ptids;
+  R_xlen_t nids = xlength(prids_);
   int id = asInteger(id_);
   // vector of internal node prids
   // duplicate, potential to be a C generated object via cFindPrids
   // without duplicating, this function will modify other vectors
   // in the R environment
-  int* prids = INTEGER(duplicate(prids_));
-  SEXP res_ptids;
-  PROTECT(res_ptids=duplicate(allocVector(INTSXP, nids)));
+  // Protect duplicate again, no longer argument
+  int* prids = INTEGER(PROTECT(duplicate(prids_)));
+  PROTECT(res_ptids=allocVector(INTSXP, nids));
+  int *pres = INTEGER(res_ptids);
   int qrys[nids+1];
-  int i;
   // init res_ptids and qrys
-  for(i=0;i<nids; i++) {
-    INTEGER(res_ptids)[i] = 0;
-    qrys[i] = -1;
-  }
-  qrys[nids+1] = -1;
+  memset(pres, 0, nids * sizeof(int));
+  memset(qrys, -1, (nids + 1) * sizeof(int));
   int qry=id;
   int ni=0;
   int nqrys=0;
+  R_xlen_t i;
   while(qry != -1) {
     // remove qry from prids
     for(i=0;i<nids; i++) {
@@ -98,7 +99,7 @@ SEXP cGetNdPtids(SEXP id_, SEXP prids_) {
     // search for qry in prids
     for(i=0;i<nids; i++) {
       if(qry == prids[i]) {
-        INTEGER(res_ptids)[i] = 1;
+        pres[i] = 1;
         nqrys = nqrys + 1;
         qrys[nqrys] = i + 1;
       }
@@ -107,6 +108,6 @@ SEXP cGetNdPtids(SEXP id_, SEXP prids_) {
     ni = ni + 1;
     qry = qrys[ni];
   }
-  UNPROTECT(1);
+  UNPROTECT(2);
   return res_ptids;
 }

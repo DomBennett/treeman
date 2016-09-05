@@ -5,3 +5,6 @@
 *.Rproj
 *.so
 *.o
+
+# mac
+.DS_Store
