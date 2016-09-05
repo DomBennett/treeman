@@ -58,6 +58,7 @@ SEXP cGetNdPrids(SEXP prid_, SEXP prids_)
     prid = prids[prid - 1];
     i++;
   }
+  UNPROTECT(1);
   SEXP res;
   int j;
   PROTECT(res=allocVector(INTSXP, i-2));
