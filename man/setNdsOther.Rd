@@ -4,7 +4,7 @@
 \alias{setNdsOther}
 \title{Set a user defined slot for multiple nodes}
 \usage{
-setNdsOther(tree, ids, vals, slt_nm, ...)
+setNdsOther(tree, ids, vals, slt_nm, parallel = FALSE, progress = "none")
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}
@@ -15,7 +15,9 @@ setNdsOther(tree, ids, vals, slt_nm, ...)
 
 \item{slt_nm}{slot name}
 
-\item{...}{\code{plyr} arguments}
+\item{parallel}{logical, make parallel?}
+
+\item{progress}{name of the progress bar to use, see \code{\link{create_progress_bar}}}
 }
 \description{
 Return a tree with a user defined slot for node IDs.

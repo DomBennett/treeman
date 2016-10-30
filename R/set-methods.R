@@ -94,7 +94,8 @@ setNdSpn <- function(tree, id, val) {
 #' @param tree \code{TreeMan} object
 #' @param ids ids of nodes whose preceding edges are to be changed
 #' @param vals new spans
-#' @param ... \code{plyr} arguments
+#' @param parallel logical, make parallel?
+#' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
 #' @seealso
 #' \code{\link{setNdSpn}}
 #' \url{https://github.com/DomBennett/treeman/wiki/set-methods}
@@ -110,14 +111,15 @@ setNdSpn <- function(tree, id, val) {
 #' tree <- setNdsSpn(tree, ids=tree['all'], vals=0)
 #' tree <- updateTree(tree)
 #' summary(tree)
-setNdsSpn <- function(tree, ids, vals, ...) {
+setNdsSpn <- function(tree, ids, vals, parallel=FALSE, progress="none") {
   .reset <- function(id, spn) {
     ndlst[[id]][['spn']] <- spn
     ndlst[[id]]
   }
   ndlst <- tree@ndlst[ids]
   l_data <- data.frame(id=ids, spn=vals, stringsAsFactors=FALSE)
-  ndlst <- plyr::mlply(l_data, .fun=.reset, ...)
+  ndlst <- plyr::mlply(l_data, .fun=.reset, .parallel=parallel,
+                       .progress=progress)
   ndlst <- ndlst[1:length(ndlst)]
   tree@ndlst[ids] <- ndlst
   tree@updtd <- FALSE
@@ -178,7 +180,8 @@ setNdID <- function(tree, id, val) {
 #' @param tree \code{TreeMan} object
 #' @param ids ids to be changed
 #' @param vals new ids
-#' @param ... \code{plyr} arguments
+#' @param parallel logical, make parallel?
+#' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
 #' @seealso
 #' \code{\link{setNdID}}
 #' \url{https://github.com/DomBennett/treeman/wiki/set-methods}
@@ -188,7 +191,7 @@ setNdID <- function(tree, id, val) {
 #' tree <- randTree(10)
 #' new_ids <- paste0('heffalump_', 1:tree['ntips'])
 #' tree <- setNdsID(tree, tree['tips'], new_ids)
-setNdsID <- function(tree, ids, vals, ...) {
+setNdsID <- function(tree, ids, vals, parallel=FALSE, progress="none") {
   # internals
   .rplcS4 <- function(slt) {
     if(any(slot(tree, slt) %in% ids)) {
@@ -213,7 +216,7 @@ setNdsID <- function(tree, ids, vals, ...) {
     nd
   }
   l_data <- data.frame(i=1:length(tree@ndlst), stringsAsFactors=FALSE)
-  ndlst <- plyr::mlply(l_data, .fun=.reset)
+  ndlst <- plyr::mlply(l_data, .fun=.reset, .parallel=parallel, .progress=progress)
   ndlst <- ndlst[1:length(ndlst)]
   all <- names(tree@ndlst)
   all[match(ids, all)] <- vals
@@ -262,7 +265,8 @@ setNdOther <- function(tree, id, val, slt_nm) {
 #' @param ids id sof the nodes
 #' @param vals data for slot
 #' @param slt_nm slot name
-#' @param ... \code{plyr} arguments
+#' @param parallel logical, make parallel?
+#' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
 #' @seealso
 #' \code{\link{setNdOther}}
 #' \url{https://github.com/DomBennett/treeman/wiki/set-methods}
@@ -273,13 +277,13 @@ setNdOther <- function(tree, id, val, slt_nm) {
 #' vals <- sample(0:1, size=tree['nall'], replace=TRUE)
 #' tree <- setNdsOther(tree, tree['all'], vals, 'binary_val')
 #' (getNdsSlt(tree, ids=tree['all'], slt_nm='binary_val'))
-setNdsOther <- function(tree, ids, vals, slt_nm, ...) {
+setNdsOther <- function(tree, ids, vals, slt_nm, parallel=FALSE, progress="none") {
   .set <- function(id, val) {
     tree@ndlst[[id]][[slt_nm]] <<- val
   }
   l_data <- data.frame(id=ids, val=vals,
                        stringsAsFactors=FALSE)
-  plyr::m_ply(.data=l_data, .fun=.set)
+  plyr::m_ply(.data=l_data, .fun=.set, .parallel=parallel, .progress=progress)
   tree@updtd <- FALSE
   tree
 }

@@ -4,7 +4,7 @@
 \alias{setNdsID}
 \title{Set the IDs of multiple nodes}
 \usage{
-setNdsID(tree, ids, vals, ...)
+setNdsID(tree, ids, vals, parallel = FALSE, progress = "none")
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}
@@ -13,7 +13,9 @@ setNdsID(tree, ids, vals, ...)
 
 \item{vals}{new ids}
 
-\item{...}{\code{plyr} arguments}
+\item{parallel}{logical, make parallel?}
+
+\item{progress}{name of the progress bar to use, see \code{\link{create_progress_bar}}}
 }
 \description{
 Return a tree with the IDs of nodes altered.

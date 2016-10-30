@@ -4,7 +4,7 @@
 \alias{setNdsSpn}
 \title{Set the branch lengths of specific nodes}
 \usage{
-setNdsSpn(tree, ids, vals, ...)
+setNdsSpn(tree, ids, vals, parallel = FALSE, progress = "none")
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}
@@ -13,7 +13,9 @@ setNdsSpn(tree, ids, vals, ...)
 
 \item{vals}{new spans}
 
-\item{...}{\code{plyr} arguments}
+\item{parallel}{logical, make parallel?}
+
+\item{progress}{name of the progress bar to use, see \code{\link{create_progress_bar}}}
 }
 \description{
 Return a tree with the spans of nodes altered.
