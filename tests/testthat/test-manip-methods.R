@@ -49,33 +49,39 @@ context('Testing \'manip-methods\'')
 #   tree <- unroot(tree)
 #   expect_that(length(tree['root']), equals(0))
 # })
-# test_that('addTip() works', {
-#   # random tree + basic stats
-#   data(mammals)
-#   tree <- getSubtree(mammals, "n821")
-#   pd_before <- tree['pd']
-#   age_before <- tree['age']
-#   ntips_before <- tree['ntips']
-#   # add random tip
-#   sister <- sample(tree@all[tree@all != tree@root], 1)
-#   sister_pd_before <- tree[[sister]]['pd']
-#   sister_age <- getNdAge(tree, sister)
-#   parent_age <- getNdAge(tree, tree@ndlst[[sister]][['prid']][1])
-#   start <- runif(min=sister_age, max=parent_age, n=1)
-#   end <- runif(min=0, max=start, n=1)
-#   tree <- addTip(tree, tid='new_tip', sid=sister, start=start, end=end,
-#                  pid='new_nd')
-#   tree@ndlst[['new_nd']][['spn']]
-#   # test if successful
-#   expect_that(length(tree@ndlst[[tree['root']]][['kids']]), equals(tree['ntips']))
-#   expect_that(validObject(tree), is_true())
-#   #expect_that(tree['ply'], is_false())
-#   expect_that(tree['age'], equals(age_before))
-#   expect_that(tree['ntips'], equals(ntips_before + 1))
-#   expect_that(tree['pd'], equals(pd_before + (start-end)))
-#   expect_that(tree[['new_nd']]['pd'], equals(sister_pd_before + (start - end)))
-#   expect_false(any(duplicated(tree[['new_nd']]['kids'])))
-# })
+test_that('addTips() works', {
+  test_tree_size <- 10
+  test_n_newtips <- 5
+  # TEST 1 check for tree without spns
+  tree <- randTree(test_tree_size)
+  tree <- setNdsSpn(tree, tree['all'], 0)
+  tree <- updateTree(tree)
+  tid <- paste0('t', tree['ntips'] + 1)
+  sid <- sample(tree['tips'], 1)
+  new_tree <- addTips(tree, tids = tid, sids=sid)
+  new_tree <- updateTree(new_tree)
+  # test if successful
+  expect_that(length(getNdKids(new_tree, tree['root'])),
+              equals(new_tree['ntips']))
+  # TEST 2 check for multiple tips with spns
+  tree <- randTree(test_tree_size)
+  pd_before <- tree['pd']
+  age_before <- tree['age']
+  tids <- paste0('t', tree['ntips'] + (1:test_n_newtips))
+  sids <- sample(tree['tips'], test_n_newtips, replace=FALSE)
+  # create suitable age ranges
+  sid_spns <- getNdsSlt(tree, 'spn', sids)
+  end_ages <- getNdsAge(tree, sids, tree['age'])
+  strt_ages <- end_ages - (sid_spns * runif(min=.25, max=.75, n=length(sids)))
+  additional_pd <- sum(end_ages - strt_ages)
+  new_tree <- addTips(tree, tids=tids, sids=sids, strt_ages=strt_ages,
+                      end_ages=end_ages)
+  new_tree <- updateTree(new_tree)
+  #plot(as(new_tree, 'phylo'))
+  expect_that(new_tree['age'], equals(age_before))
+  expect_that(new_tree['ntips'], equals(test_tree_size + test_n_newtips))
+  expect_that(new_tree['pd'], equals(pd_before + additional_pd))
+})
 test_that('rmTips() work', {
   n <- 100
   tree <- randTree(n)

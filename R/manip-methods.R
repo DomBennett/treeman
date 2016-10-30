@@ -63,70 +63,97 @@ rmTips <- function(tree, tids, drp_intrnl=TRUE, progress="none") {
   tree
 }
 
-# TODO: fix
-#' #' @name addTips
-#' #' @title Add tips to a tree
-#' #' @description Returns a tree with tip ID(s) added
-#' #' @details User must provide new tip ID(s), the ID(s) of the nodes
-#' #' which will become the new tip's sister, and new branch lengths.
-#' #' Optionally, user can specify the IDs for the new parent nodes.
-#' #' @param tree \code{TreeMan} object
-#' #' @param tids tip IDs
-#' #' @param sids IDs of node that will become new tip sisters
-#' #' @param spns length of new branch
-#' #' @param pids parent ID (default is 'p_' + tid)
-#' #' @seealso
-#' #' \code{\link{rmTips}}, 
-#' #' \url{https://github.com/DomBennett/treeman/wiki/manip-methods}
-#' #' @export
-#' #' @examples
-#' #' library(treeman)
-#' #' tree <- randTree(10)
-#' #' tree <- addTip(tree, tids='t11', sids='t1', spns=1)
-#' #' tree <- updateTree(tree)
-#' #' summary(tree)
-#' addTip <- function(tree, tids, sids, pids=paste0("p_", tids)) {
-#'   # internals
-#'   .addTip <- function(i) {
-#'     # terminology
-#'     # snd, sid -- old sister node and id
-#'     # tnd, tid -- new tip node and id
-#'     # pnd, pid -- new parent node and id
-#'     # gpnd, gpid -- grand parent (prid of old sister)
-#'     # unpack
-#'     tid <- tids[i]
-#'     sids <- sids[i]
-#'     pid <- pids[i]
-#'     spn <- spns[i]
-#'     # init new nodes
-#'     tnd <- list('id'=tid)
-#'     snd <- ndlst[[sid]]
-#'     gpid <- snd[['prid']][[1]]
-#'     gpnd <- ndlst[[gpid]]
-#'     pnd <- list('id'=pid, 'kids'=sid)
-#'     # update spans
-#'     tnd[['spn']] <- start - end
-#'     pnd[['spn']] <- snd[['spn']] - (start - age)
-#'     snd[['spn']] <- start - age
-#'     # update ptid
-#'     gpnd[['ptid']] <- gpnd[['ptid']][!gpnd[['ptid']] %in% snd[['id']]]
-#'     gpnd[['ptid']] <- c(gpnd[['ptid']], pnd[['id']])
-#'     pnd[['ptid']] <- c(tid, sid)
-#'     # set prid
-#'     tnd[['prid']] <- snd[['prid']]
-#'     pnd[['prid']] <- snd[['prid']]
-#'     # add to ndlst
-#'     ndlst[[tid]] <<- tnd
-#'     ndlst[[pid]] <<- pnd
-#'     ndlst[[sid]] <<- snd
-#'     ndlst[[gpid]] <<- gpnd
-#'   }
-#'   ndlst <- tree@ndlst
-#'   sapply(1:length(ids))
-#'   tree@ndlst <- ndlst
-#'   tree
-#' }
-#' 
+#' @name addTips
+#' @title Add tips to a tree
+#' @description Returns a tree with tip ID(s) added
+#' @details User must provide new tip ID(s), the ID(s) of the nodes
+#' which will become the new tip's sister, and new branch lengths.
+#' Optionally, user can specify the IDs for the new parent nodes.
+#' Note, returned tree is no longer up-to-date.
+#' @param tree \code{TreeMan} object
+#' @param tids tip IDs
+#' @param sids IDs of node that will become new tip sisters
+#' @param spns length of new branch
+#' @param pids parent ID (default is 'p_' + tid)
+#' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
+#' @seealso
+#' \code{\link{rmTips}}, \code{\link{updateTree}},
+#' \url{https://github.com/DomBennett/treeman/wiki/manip-methods}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree <- randTree(10)
+#' tree <- addTips(tree, tids='t11', sids='t1', spns=1)
+#' tree <- updateTree(tree)
+#' summary(tree)
+addTips <- function(tree, tids, sids, strt_ages=NULL,
+                   end_ages=0, pids=paste0("p_", tids),
+                   progress='none') {
+  # internals
+  .addTip <- function(i) {
+    # terminology
+    # snd, sid -- old sister node and id
+    # tnd, tid -- new tip node and id
+    # pnd, pid -- new parent node and id
+    # gpnd, gpid -- grand parent (prid of old sister)
+    # unpack
+    tid <- tids[i]
+    sid <- sids[i]
+    pid <- pids[i]
+    # init new nodes
+    tnd <- list('id'=tid, 'prid'=pid, 'ptid'=character(), 'spn'=0)
+    snd <- ndlst[[sid]]
+    gpid <- snd[['prid']][[1]]
+    gpnd <- ndlst[[gpid]]
+    pnd <- list('id'=pid, 'spn'=0)
+    # update ptid
+    gpnd[['ptid']] <- gpnd[['ptid']][!gpnd[['ptid']] %in% snd[['id']]]
+    gpnd[['ptid']] <- c(gpnd[['ptid']], pnd[['id']])
+    pnd[['ptid']] <- c(tid, sid)
+    # set prid
+    pnd[['prid']] <- snd[['prid']]
+    snd[['prid']] <- pid
+    # add to ndlst
+    ndlst[[tid]] <<- tnd
+    ndlst[[pid]] <<- pnd
+    ndlst[[sid]] <<- snd
+    ndlst[[gpid]] <<- gpnd
+  }
+  .updateSpns <- function(i) {
+    # unpack
+    strt_age <- strt_ages[i]
+    end_age <- end_ages[i]
+    tid <- tids[i]
+    sid <- sids[i]
+    sid_spn <- ndlst[[sid]][['spn']]
+    prid <- ndlst[[tid]][['prid']]
+    # calc
+    spn <- end_age - strt_age
+    ndlst[[tid]][['spn']] <<- spn
+    ndlst[[prid]][['spn']] <<- sid_spn - spn
+    ndlst[[sid]][['spn']] <<- spn
+  }
+  if(!is.numeric(strt_ages) & tree@wspn) {
+    stop('Valid strt_ages not provided')
+  }
+  ndlst <- tree@ndlst
+  if(progress != "none") {
+    cat("Adding tips ....\n")
+  }
+  plyr::m_ply(.data=1:length(tids), .fun=.addTip, .progress=progress)
+  if(tree@wspn) {
+    if(progress != "none") {
+      cat("Updating spans ....\n")
+    }
+    plyr::m_ply(.data=1:length(tids), .fun=.updateSpns, .progress=progress)
+  }
+  tree@ndlst <- ndlst
+  if(tree@updtd) {
+    tree <- downdateTree(tree)
+  }
+  tree
+}
+
 #' #' @name pinTips
 #' #' @title Pin tips to a tree
 #' #' @description Returns a tree with new tips added based on given lineages and time points
