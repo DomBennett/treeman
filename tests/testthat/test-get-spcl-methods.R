@@ -4,6 +4,11 @@ library(testthat)
 
 # RUNNING
 context('Testing \'get-spcl-methods\'')
+test_that('getTxnyms() works', {
+  data(mammals)
+  res <- getTxnyms(mammals, 'Homo')[[1]]
+  expect_true(res == 'Homo_sapiens')
+})
 test_that('getTreeAge() works', {
   tree <- randTree(10)
   age <- getTreeAge(tree)
@@ -34,6 +39,7 @@ test_that("getPath() works", {
 test_that("getSubtree() works", {
   tree <- randTree(10)
   subtree <- getSubtree(tree, 'n2')
+  subtree <- updateTree(subtree)
   expect_that(tree['ntips'], is_more_than(subtree['ntips']))
   expect_that(tree['nnds'], is_more_than(subtree['nnds']))
   expect_that(tree['pd'], is_more_than(subtree['pd']))

@@ -4,6 +4,14 @@ library(testthat)
 
 # RUNNING
 context('Testing \'set-methods\'')
+test_that('setTxnyms() works', {
+  tree <- randTree(100)
+  txnyms <- paste0('txnym_', 1:tree['nall'])
+  names(txnyms) <- tree['all']
+  tree <- setTxnyms(tree, txnyms)
+  tree <- updateTree(tree)
+  expect_true(tree['wtxnyms'])
+})
 test_that('set_ID() works', {
   tree <- randTree(100)
   vals <- paste0('new_id_', 1:100)

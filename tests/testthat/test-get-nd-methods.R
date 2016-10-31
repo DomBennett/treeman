@@ -14,7 +14,12 @@ getTestTree <- function(n) {
 
 # RUNNING
 context('Testing \'get-nd-methods\'')
-# TODO: test txnyms
+test_that('getNdLng() works', {
+  data(mammals)
+  rndm_tp <- sample(mammals['tips'], 1)
+  res <- getNdLng(mammals, rndm_tp)
+  expect_true('Mammalia' %in% res)
+})
 test_that('getNdPD() works', {
   tree <- getTestTree(n)
   tot_pd <- sum(getNdsSlt(tree, "spn", tree['all']))
