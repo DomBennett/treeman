@@ -15,7 +15,7 @@
 #' library(treeman)
 #' data(mammals)
 #' # choosing ids from the two main branches of apes allows to find the parent for all apes
-#' #ape_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
+#' ape_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
 getPrnt <- function(tree, ids) {
   # using ndlst guarrantees order
   prids <- .getNdsPridsFrmLst(tree@ndlst, ids=ids, prinds=tree@prinds,
@@ -43,9 +43,9 @@ getPrnt <- function(tree, ids) {
 #' library(treeman)
 #' data(mammals)
 #' # what's the phylogenetic distance from humans to gorillas?
-#' #ape_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
-#' #pth <- getPath(mammals, from='Homo_sapiens', to='Gorilla_gorilla')
-#' #sum(getNdsSlt(mammals, ids=pth, slt_nm='spn'))
+#' ape_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
+#' pth <- getPath(mammals, from='Homo_sapiens', to='Gorilla_gorilla')
+#' sum(getNdsSlt(mammals, ids=pth, slt_nm='spn'))
 getPath <- function(tree, from, to) {
   pre_1 <- c(from, getNdPrids(tree, from))
   pre_2 <- c(to, getNdPrids(tree, to))
@@ -69,7 +69,7 @@ getPath <- function(tree, from, to) {
 #' library(treeman)
 #' data(mammals)
 #' # orangutan is an outgroup wrt humans and chimps
-#' #getOtgrp(mammals, ids=c('Homo_sapiens', 'Pan_troglodytes', 'Pongo_pygmaeus'))
+#' getOtgrp(mammals, ids=c('Homo_sapiens', 'Pan_troglodytes', 'Pongo_pygmaeus'))
 getOtgrp <- function(tree, ids) {
   .cntr <- function(id) {
     kids <- getNdKids(tree, id)
@@ -92,6 +92,35 @@ getOtgrp <- function(tree, ids) {
 
 # SPECIAL
 
+#' @name getTxnyms
+#' @title Get IDs for nodes represented txnyms
+#' @description Return a list of IDs for any node that contains the given txnyms.
+#' @details Returns a list. Txnyms must be spelt correctly.
+#' @param tree \code{TreeMan} object
+#' @param txnyms vector of taxonomic group names
+#' @seealso
+#' \code{\link{taxaResolve}}, \code{\link{setTxnyms}}, \code{\link{searchTxnyms}},
+#' \code{\link{getNdsLng}}, \code{\link{getNdLng}}
+#' @export
+#' @examples
+#' library(treeman)
+#' data(mammals)
+#' # what ID represents the apes?
+#' getTxnyms(mammals, 'Hominoidea')
+getTxnyms <- function(tree, txnyms) {
+  # get nd id(s) for taxonyms
+  .get <- function(id, txnym, ...) {
+    for(t in txnyms) {
+      if(t %in% txnym) {
+        res[[t]] <<- c(res[[t]], id)
+      }
+    }
+  }
+  res <- list()
+  plyr::m_ply(tree@ndlst, .fun=.get)
+  res
+}
+
 #' @name getSubtree
 #' @title Get subtree
 #' @description Return tree descending from \code{id}.
@@ -106,8 +135,9 @@ getOtgrp <- function(tree, ids) {
 #' library(treeman)
 #' data(mammals)
 #' # get tree of apes
-#' #ape_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
-#' #apes <- getSubtree(mammals, id=ape_id)
+#' ape_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
+#' apes <- getSubtree(mammals, id=ape_id)
+#' apes <- updateTree(apes)
 getSubtree <- function(tree, id) {
   if(!id %in% tree@nds) {
     stop('`id` is not an internal node')
@@ -117,8 +147,8 @@ getSubtree <- function(tree, id) {
   ndlst[[id]][['prid']] <- id
   ndlst[[id]][['spn']] <- 0
   new_tree <- new('TreeMan', ndlst=ndlst, root=id,
-                  ndmtrx=bigmemory::big.matrix(1,1))
-  updateTree(new_tree)
+                  ndmtrx=NULL)
+  new_tree
 }
 
 # TREE FUNCTIONS

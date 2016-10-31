@@ -1,3 +1,28 @@
+#' @name getNdLng
+#' @title Get lineage
+#' @description Return unique taxonomic names for connecting \code{id} to root.
+#' @details Returns a vector.
+#' @param tree \code{TreeMan} object
+#' @param id node id
+#' @seealso
+#' \code{\link{getNdsLng}}, \code{\link{getTxnyms}},
+#' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
+#' @export
+#' @examples
+#' library(treeman)
+#' data(mammals)
+#' # return human lineage
+#' getNdLng(mammals, id='Homo_sapiens')
+getNdLng <- function(tree, id) {
+  .get <- function(txnym, ...) {
+    lng <<- c(txnym, lng)
+  }
+  prids <- c(id, getNdPrids(tree, id))
+  lng <- NULL
+  plyr::m_ply(tree@ndlst[prids], .fun=.get)
+  unique(lng)
+}
+
 #' @name getNdAge
 #' @title Get age
 #' @description Return the age for \code{id}. Requires the known age of the tree to be provided.
@@ -17,8 +42,9 @@
 #' data(mammals)
 #' # when did apes emerge?
 #' # get parent id for all apes
-#' #prnt_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
-#' #getNdAge(mammals, id=prnt_id, tree_age=mammals['age'])
+#' mammal_age <- getTreeAge(mammals)
+#' prnt_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
+#' getNdAge(mammals, id=prnt_id, tree_age=mammal_age)
 getNdAge <- function(tree, id, tree_age) {
   tree_age - .getNdPrdstsFrmLst(tree@ndlst, tree@prinds, id=id)
 }
@@ -39,7 +65,8 @@ getNdAge <- function(tree, id, tree_age) {
 #' @examples
 #' library(treeman)
 #' data(mammals)
-#' #getSpnAge(mammals, id='Homo_sapiens', tree_age=mammals['age'])
+#' mammal_age <- getTreeAge(mammals)
+#' getSpnAge(mammals, id='Homo_sapiens', tree_age=mammal_age)
 getSpnAge <- function(tree, id, tree_age) {
   end <- .getNdPrdstsFrmLst(tree@ndlst, tree@prinds, id=id)
   start <- end - tree@ndlst[[id]][['spn']]

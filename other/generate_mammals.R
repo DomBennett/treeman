@@ -2,7 +2,7 @@
 
 library(treeman)
 
-mammals <- readTree(file="other/bininda.tre")
+mammals <- readTree(file="/Users/djb208/Coding/Project-EDBMM/data/raw_trees/literature/bininda.tre", update = FALSE)
 print(mammals)
 
 load("other/mammalia_resolvedlist.Rd")
@@ -19,78 +19,43 @@ load("other/mammalia_resolvedlist.Rd")
 }
 
 for(i in 1:length(mammals@ndlst)) {
-  print(mammals@ndlst[[i]][['id']])
+  nid <- mammals@ndlst[[i]][['id']]
   done <- FALSE
-  if(!is.null(mammals@ndlst[[i]][['kids']])) {
-    trms <- mammals@ndlst[[i]][['kids']]
-    trms <- sub("_", " ", trms)
-    indxs <- resolve.list$resolved$search.name %in% trms
-    if(sum(indxs) > 1) {
-      lngs <- resolve.list[['lineages']][indxs]
-      bool <- unlist(lapply(lngs, function(l) 'Mammalia' %in% l))
-      lngs <- lngs[bool]
-      if(length(lngs) > 1) {
-        mammals@ndlst[[i]][['txnym']] <- .findClade(lngs)
-        done <- TRUE
-      }
-      if(length(lngs) == 1) {
-        lng <- resolve.list[['lineages']][indxs][[1]]
-        mammals@ndlst[[i]][['txnym']] <- lng[length(lng)-1]
-        done <- TRUE
+  kids <- getNdKids(mammals, nid)
+  if(length(kids) > 0) {
+    trms <- gsub("_", " ", kids)
+    genus_names <- sapply(strsplit(trms, ' '), function(x) x[[1]])
+    if(all(genus_names == genus_names[1])) {
+      mammals@ndlst[[i]][['txnym']] <- genus_names[1]
+      done <- TRUE
+    } else {
+      indxs <- resolve.list$resolved$search.name %in% trms
+      if(sum(indxs) > 1) {
+        lngs <- resolve.list[['lineages']][indxs]
+        bool <- unlist(lapply(lngs, function(l) 'Mammalia' %in% l))
+        lngs <- lngs[bool]
+        if(length(lngs) > 1) {
+          mammals@ndlst[[i]][['txnym']] <- .findClade(lngs)
+          done <- TRUE
+        }
+        if(length(lngs) == 1) {
+          lng <- resolve.list[['lineages']][indxs][[1]]
+          mammals@ndlst[[i]][['txnym']] <- lng[length(lng)-1]
+          done <- TRUE
+        }
       }
     }
     if(!done) {
       mammals@ndlst[[i]][['txnym']] <- 'Unknown'
     }
   } else {
-    mammals@ndlst[[i]][['txnym']] <- strsplit(mammals@ndlst[[i]][['id']], "_")[[1]]
+    mammals@ndlst[[i]][['txnym']] <- strsplit(mammals@ndlst[[i]][['id']], "_")[[1]][1]
   }
 }
 
 mammals@ndlst[['Homo_sapiens']]
-mammals[['n816']]
-mammals[['n815']]
-mammals[['n814']]
-mammals[['n813']]
-mammals[['n754']]
-mammals[['n753']]
-mammals[['n752']]
-mammals[['n751']]
-mammals[['n750']]
-mammals[['n749']]
-mammals[['n8']]
-mammals[['n7']]
-mammals[['n6']]
-mammals[['n5']]
-mammals[['n4']]
-mammals[['n1']]
-
-getTxnym <- function(tree, txnym) {
-  # get nd id(s) for a taxonym
-  .get <- function(id, txnym, ...) {
-    if(rfrnc_txnym %in% txnym) {
-      ids <<- c(id, ids)
-    }
-  }
-  rfrnc_txnym <- txnym
-  ids <- NULL
-  m_ply(tree@ndlst, .fun=.get)
-  ids
-}
-
-getTxnyms <- function(tree, txnyms) {
-  # get nd id(s) for taxonyms
-  .get <- function(id, txnym, ...) {
-    for(t in txnyms) {
-      if(t %in% txnym) {
-        res[[t]] <<- c(res[[t]], id)
-      }
-    }
-  }
-  res <- list()
-  m_ply(tree@ndlst, .fun=.get)
-  res
-}
+mammals@ndlst[['n816']]
+mammals@ndlst[['n1044']]
 
 mammalian_orders <- c('Macroscelidea', 'Afrosoricida', 'Tubulidentata', 'Hyracoidea',
                       'Proboscidea', 'Sirenia', 'Pilosa', 'Cingulata', 'Scandentia',

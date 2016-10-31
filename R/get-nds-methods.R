@@ -1,3 +1,29 @@
+#' @name getNdsLng
+#' @title Get lineage for multiple nodes
+#' @description Return unique taxonyms for connecting \code{ids} to root.
+#' @details Returns a list, parallelizable.
+#' @param tree \code{TreeMan} object
+#' @param ids vector of node ids
+#' @param parallel logical, make parallel?
+#' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
+#' @seealso
+#' \code{\link{getNdLng}}, \code{\link{getTxnyms}},
+#' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
+#' @export
+#' @examples
+#' library(treeman)
+#' data(mammals)
+#' # return human and gorilla lineages
+#' getNdsLng(mammals, id=c('Homo_sapiens', 'Gorilla_gorilla'))
+getNdsLng <- function(tree, ids, parallel=FALSE, progress="none") {
+  l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
+  out <- plyr::mlply(.data=l_data, .fun=getNdLng, tree=tree,
+                     .parallel=parallel, .progress=progress)
+  names(out) <- attr(out, 'split_labels')[,1]
+  res <- out[1:length(out)]
+  res
+}
+
 #' @name getNdsSstr
 #' @title Get sister id
 #' @description Returns the ids of the sister(s) of nd ids given.
@@ -279,85 +305,3 @@ getNdsPtids <- function(tree, ids, parallel=FALSE, progress="none") {
   }
   res
 }
-
-# FOR RESURRECTION
-# #' @name getNdLng
-# #' @title Get lineage
-# #' @description Return unique taxonyms for connecting \code{id} to root.
-# #' @details Returns a vector.
-# #' @param tree \code{TreeMan} object
-# #' @param id node id
-# #' @seealso
-# #' \code{\link{getNdsLng}}, 
-# #' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
-# #' @export
-# #' @examples
-# #' library(treeman)
-# #' data(mammals)
-# #' # return human lineage
-# #' getNdLng(mammals, id='Homo_sapiens')
-# getNdLng <- function(tree, id) {
-#   .get <- function(txnym, ...) {
-#     lng <<- c(txnym, lng)
-#   }
-#   prids <- c(id, getNdPrids(tree, id))
-#   lng <- NULL
-#   plyr::m_ply(tree@ndlst[prids], .fun=.get)
-#   unique(lng)
-# }
-
-# #' @name getNdsLng
-# #' @title Get lineage for multiple nodes
-# #' @description Return unique taxonyms for connecting \code{ids} to root.
-# #' @details Returns a list, parallelizable.
-# #' @param tree \code{TreeMan} object
-# #' @param ids vector of node ids
-# #' @param parallel logical, make parallel?
-# #' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
-# #' @seealso
-# #' \code{\link{getNdLng}}, 
-# #' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
-# #' @export
-# #' @examples
-# #' library(treeman)
-# #' data(mammals)
-# #' # return human and gorilla lineages
-# #' getNdLng(mammals, id=c('Homo_sapiens', 'Gorilla_gorilla'))
-# getNdsLng <- function(tree, ids, ...) {
-#   l_data <- data.frame(id=ids, stringsAsFactors=FALSE)
-#   out <- plyr::mlply(.data=l_data, .fun=getNdLng, tree=tree, ...)
-#   names(out) <- attr(out, 'split_labels')[,1]
-#   res <- out[1:length(out)]
-#   res
-# }
-
-# #' @name getTxnyms
-# #' @title Get node id(s) for txonyms
-# #' @description Returns the node ids of nodes with given taxonyms.
-# #' @details Returns a \code{list}, parallelizable.
-# #' @param tree \code{TreeMan} object
-# #' @param txnyms vector of taxonomic names
-# #' @param parallel logical, make parallel?
-# #' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
-# #' @seealso
-# #' \code{\link{getNdLng}}, 
-# #' \code{\link{getNdsLng}}, 
-# #' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
-# #' @export
-# #' @examples
-# #' library(treeman)
-# #' data(mammals)
-# #' homo_ids <- getTxnyms(mammals, txnyms='Homo')
-# getTxnyms <- function(tree, txnyms, ...) {
-#   # get node id(s) for taxonyms
-#   .get <- function(id, txnym, ...) {
-#     for(t in txnyms) {
-#       if(t %in% txnym) {
-#         res[[t]] <<- c(res[[t]], id)
-#       }
-#     }
-#   }
-#   res <- vector("list", lenght=length(tree@ndlst))
-#   plyr::m_ply(tree@ndlst, .fun=.get)
-#   res
-# }

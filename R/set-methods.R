@@ -1,14 +1,31 @@
-# #TODO
-setNdTxnym <- function(...) {
-  cat('Sorry not yet implemented!\n')
-}
-
-setNdsTxnym <- function(...) {
-  cat('Sorry not yet implemented!\n')
-}
-
-setRoot <- function(...) {
-  cat('Sorry not yet implemented!\n')
+#' @name setTxnyms
+#' @title Set the txnym slots in a tree
+#' @description Return a tree with txnyms added to specified nodes
+#' @details Returns a tree. Specify the taxonomic groups for nodes in a tree
+#' by providing a vector or list named by node IDs. Takes output from \code{searchTxnyms}.
+#' @param tree \code{TreeMan} object
+#' @param txnyms named vector or list
+#' @seealso
+#' \code{\link{taxaResolve}}, \code{\link{searchTxnyms}},
+#' \code{\link{getNdsLng}}, \code{\link{getNdLng}},
+#' \url{https://github.com/DomBennett/treeman/wiki/set-methods}
+#' @export
+#' @examples
+#' library(treeman)
+#' data(mammals)
+#' # let's change the txnym for humans
+#' new_txnym <- list('Homo_sapiens'=c('Hominini', 'Homo'))
+#' mammals <- setTxnyms(mammals, new_txnym)
+#' summary(mammals[['Homo_sapiens']])
+setTxnyms <- function(tree, txnyms) {
+  .add <- function(nid) {
+    tree@ndlst[[nid]][['txnym']] <<- txnyms[[nid]]
+  }
+  pull <- names(txnyms) %in% names(tree@ndlst)
+  txnyms <- txnyms[pull]
+  plyr::m_ply(names(txnyms), .fun=.add)
+  tree@updtd <- FALSE
+  tree
 }
 
 #' @name setPD
