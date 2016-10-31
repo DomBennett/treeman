@@ -1,4 +1,4 @@
-# TODO: mergeTree, collapseNode, removeNode, reRoot
+# TODO: mergeTree, collapseNode, removeNode
 
 #' @name rmTips
 #' @title Remove tips from a tree

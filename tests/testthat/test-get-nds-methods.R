@@ -84,22 +84,13 @@ test_that("getNdsPtids() works", {
   expect_true(all(n1_ptids %in% ptids[['n1']]))
   expect_that(ptids[['t1']], is_null())
 })
-# test_that("get_Lng() works", {
-#   # TODO: redo with setNds
-#   tree <- getTestTree(n)
-#   for(i in 1:length(tree@ndlst)) {
-#     tree@ndlst[[i]]$txnym <- paste0("l", sample(1:1000, 1))
-#   }
-#   lngs <- getNdsLng(tree, tree['tips'])
-#   rnd1 <- sample(1:length(lngs), 1)
-#   rnd2 <- sample(1:length(lngs), 1)
-#   expect_that(sum(lngs[[rnd1]] %in% lngs[[rnd2]]),
-#               is_more_than(0))
-# })
-# test_that('getTxnyms() works', {
-#   data('mammals')
-#   nid <- sample(mammals['nds'], 1)
-#   txnym <- mammals[[nid]]['txnym']
-#   res <- getTxnyms(mammals, txnym)
-#   expect_true(nid %in% res[[1]])
-# })
+test_that("getNdsLng() works", {
+  tree <- getTestTree(n)
+  txnyms <- paste0('txnymns_', 1:tree['nall'])
+  names(txnyms) <- tree['all']
+  txnyms[tree['root']] <- 'this is the root'
+  tree <- setTxnyms(tree, txnyms)
+  lngs <- getNdsLng(tree, tree['tips'])
+  test <- all(sapply(lngs, function(x) x[[1]] == 'this is the root'))
+  expect_true(test)
+})
