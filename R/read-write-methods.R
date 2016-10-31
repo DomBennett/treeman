@@ -186,7 +186,7 @@ readTree <- function(file=NULL, text=NULL, update=TRUE, parallel=FALSE,
   ndlst <- lapply(1:length(ids), .add)
   names(ndlst) <- ids
   tree <- new('TreeMan', ndlst=ndlst, root=ids[root],
-              ndmtrx=bigmemory::big.matrix(1,1),
+              ndmtrx=NULL, wtxnyms=FALSE,
               prinds=prinds, tinds=tinds)
   if(update) {
     tree <- updateTree(tree)
@@ -203,8 +203,6 @@ readTree <- function(file=NULL, text=NULL, update=TRUE, parallel=FALSE,
   }
   tree
 }
-
-
 
 
 # TODO: develop .trmn file format

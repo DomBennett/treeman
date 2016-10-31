@@ -17,7 +17,6 @@ test_that('downdateTree() works', {
   tree <- randTree(100)
   tree <- downdateTree(tree)
   expect_false(tree['updtd'])
-  # ndmtrx is reduced to 1 by 1 matrix with NA
-  expect_equal(nrow(tree@ndmtrx), 1)
-  expect_equal(ncol(tree@ndmtrx), 1)
+  # ndmtrx is null
+  expect_true(is.null(tree@ndmtrx))
 })

@@ -23,7 +23,10 @@
 #' @slot pd numeric of total branch length of tree
 #' @slot ext vector of node ids of all tips with 0 age
 #' @slot exc vector of node ids of all tips with age > 0
+#' @slot tinds indexes of all tip nodes in tree
+#' @slot prinds indexes of all pre-nodes in tree
 #' @slot wspn logical, do nodes have spans
+#' @slot wtxnyms logical, do nodes have txnyms
 #' @slot ultr logical, do all tips end at 0
 #' @slot ply logical, is tree bifurcating
 #' @slot tol numeric of tolerance for determining extant
@@ -93,12 +96,13 @@ setClass('TreeMan', representation=representation(
   pd='numeric',          # numeric of total branch length of tree
   ext='vector',          # vector of node ids of all tips with 0 age
   exc='vector',          # vector of node ids of all tips with age > 0
-  wspn='logical',        # logical, do nodes have spans
-  ultr='logical',        # logical, do all tips end at 0
+  wspn='logical',        # logical, do all nodes have spans
+  wtxnyms='logical',     # logical, do nodes txnyms
+  ultr='logical',        # logical, do tips end at 0
   ply='logical',         # logical, is tree bifurcating
   tol='numeric',         # numeric of tolerance for determining extant
   updtd='logical',       # logical, if tree has been updated since a change
-  ndmtrx='big.matrix',   # bigmemory matrix of logicals
+  ndmtrx='ANY',          # bigmemory matrix of logicals
   tinds='vector',        # indexes of tip nodes
   prinds='vector',       # indexes of pre-nodes
   root='character'),     # character of node id of root, if no root then empty character
@@ -190,6 +194,9 @@ setMethod('summary', c('object'='TreeMan'),
             msg <- 'Tree (TreeMan Object):\n'
             msg <- paste0(msg, '  + ', object@ntips, ' tips\n')
             msg <- paste0(msg, '  + ', object@nnds, ' internal nodes\n')
+            if(object@wtxnyms) {
+              msg <- paste0(msg, '  + With taxonomic names\n')
+            }
             if(object@ply) {
               msg <- paste0(msg, '  + Polytomous\n')
             } else {

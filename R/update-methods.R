@@ -17,7 +17,7 @@ updateTree <- function(tree) {
   if(length(tree@prinds) == 0) {
     tree@prinds <- .getPrinds(tree@ndlst)
   }
-  if(is.na(tree@ndmtrx[1,1])) {
+  if(is.null(tree@ndmtrx)) {
     # generate ndmtrx
     tree@ndmtrx <- .getNdmtrxFrmLst(tree@ndlst)
   }
@@ -30,6 +30,7 @@ updateTree <- function(tree) {
   tree@nnds <- length(tree@nds)
   tree@all <- names(tree@ndlst)
   tree@nall <- length(tree@all)
+  tree@wtxnyms <- any(sapply(tree@ndlst, function(n) !is.null(n[['txnym']])))
   spns <- sapply(tree@ndlst, function(n) n[['spn']])
   tree@wspn <- any(spns > 0)
   if(tree@wspn) {
@@ -74,7 +75,7 @@ updateTree <- function(tree) {
 #' tree <- downdateTree(tree)
 #' # summary(tree)  # running this will lead to an error
 downdateTree <- function(tree) {
-  tree@ndmtrx <- bigmemory::big.matrix(1,1)
+  tree@ndmtrx <- NULL
   tree@updtd <- FALSE
   tree@tinds <- vector("integer", length=0)
   tree@prinds <- vector("integer", length=0)
