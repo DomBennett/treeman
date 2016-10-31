@@ -42,9 +42,9 @@ getNdLng <- function(tree, id) {
 #' data(mammals)
 #' # when did apes emerge?
 #' # get parent id for all apes
-#' mammal_age <- getTreeAge(mammals)
 #' prnt_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
-#' getNdAge(mammals, id=prnt_id, tree_age=mammal_age)
+#' # mammal_age <- getTreeAge(mammals)  # ~166.2, needs to be performed when tree is not up-to-date
+#' getNdAge(mammals, id=prnt_id, tree_age=166.2)
 getNdAge <- function(tree, id, tree_age) {
   tree_age - .getNdPrdstsFrmLst(tree@ndlst, tree@prinds, id=id)
 }
@@ -65,8 +65,8 @@ getNdAge <- function(tree, id, tree_age) {
 #' @examples
 #' library(treeman)
 #' data(mammals)
-#' mammal_age <- getTreeAge(mammals)
-#' getSpnAge(mammals, id='Homo_sapiens', tree_age=mammal_age)
+#' # mammal_age <- getTreeAge(mammals)  # ~166.2, needs to be performed when tree is not up-to-date
+#' getSpnAge(mammals, id='Homo_sapiens', tree_age=166.2)
 getSpnAge <- function(tree, id, tree_age) {
   end <- .getNdPrdstsFrmLst(tree@ndlst, tree@prinds, id=id)
   start <- end - tree@ndlst[[id]][['spn']]
