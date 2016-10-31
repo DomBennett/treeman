@@ -74,7 +74,7 @@ writeTree <- function(tree, file, append=FALSE, ndLabels=function(nd){
   deja_vues <- rep(NA, length(ndlst))
   deja_vues[1] <- id
   spn <- ndlst[[id]][['spn']]
-  dpth <- length(ndlst[[id]][['prid']])
+  dpth <- length(getNdPrids(tree, id))
   prid <- ndlst[[id]][['prid']]
   tpstr <- paste0(id, ':', spn)
   trstr <- paste0(rep('(', dpth), collapse='')
