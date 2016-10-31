@@ -14,11 +14,13 @@ addTips(tree, tids, sids, strt_ages = NULL, end_ages = 0,
 
 \item{sids}{IDs of node that will become new tip sisters}
 
+\item{strt_ages}{timepoints at which new tips first appear in the tree}
+
+\item{end_ages}{timepoints at which new tips end appear in the tree, default 0.}
+
 \item{pids}{parent ID (default is 'p_' + tid)}
 
 \item{progress}{name of the progress bar to use, see \code{\link{create_progress_bar}}}
-
-\item{spns}{length of new branch}
 }
 \description{
 Returns a tree with tip ID(s) added
@@ -32,7 +34,11 @@ Note, returned tree is no longer up-to-date.
 \examples{
 library(treeman)
 tree <- randTree(10)
-tree <- addTips(tree, tids='t11', sids='t1', spns=1)
+possible_ages <- getSpnAge(tree, 't1', tree['age'])
+start_age <- runif(1, possible_ages[['end']], possible_ages[['start']])
+end_age <- possible_ages[['end']]
+tree <- addTips(tree, tids='t11', sids='t1', strt_ages=start_age,
+end_ages=end_age)
 tree <- updateTree(tree)
 summary(tree)
 }

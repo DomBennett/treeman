@@ -87,7 +87,13 @@ See below in 'Examples' for these methods in use.
 
 \item{\code{exc}}{vector of node ids of all tips with age > 0}
 
+\item{\code{tinds}}{indexes of all tip nodes in tree}
+
+\item{\code{prinds}}{indexes of all pre-nodes in tree}
+
 \item{\code{wspn}}{logical, do nodes have spans}
+
+\item{\code{wtxnyms}}{logical, do nodes have txnyms}
 
 \item{\code{ultr}}{logical, do all tips end at 0}
 

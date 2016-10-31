@@ -73,7 +73,8 @@ rmTips <- function(tree, tids, drp_intrnl=TRUE, progress="none") {
 #' @param tree \code{TreeMan} object
 #' @param tids tip IDs
 #' @param sids IDs of node that will become new tip sisters
-#' @param spns length of new branch
+#' @param strt_ages timepoints at which new tips first appear in the tree
+#' @param end_ages timepoints at which new tips end appear in the tree, default 0.
 #' @param pids parent ID (default is 'p_' + tid)
 #' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
 #' @seealso
@@ -83,7 +84,11 @@ rmTips <- function(tree, tids, drp_intrnl=TRUE, progress="none") {
 #' @examples
 #' library(treeman)
 #' tree <- randTree(10)
-#' tree <- addTips(tree, tids='t11', sids='t1', spns=1)
+#' possible_ages <- getSpnAge(tree, 't1', tree['age'])
+#' start_age <- runif(1, possible_ages[['end']], possible_ages[['start']])
+#' end_age <- possible_ages[['end']]
+#' tree <- addTips(tree, tids='t11', sids='t1', strt_ages=start_age,
+#' end_ages=end_age)
 #' tree <- updateTree(tree)
 #' summary(tree)
 addTips <- function(tree, tids, sids, strt_ages=NULL,

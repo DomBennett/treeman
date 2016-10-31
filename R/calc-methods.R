@@ -287,7 +287,6 @@ calcPhyDv <- function(tree, tids,
 #' each branch in the tree is evenly divided between all descendants. Parallelizable.
 #' @param tree \code{TreeMan} object
 #' @param tids tip IDs
-#' @param parallel logical, make parallel?
 #' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
 #' @references
 #' Isaac, N.J.B., Turvey, S.T., Collen, B., Waterman, C. and Baillie, J.E.M. (2007). 

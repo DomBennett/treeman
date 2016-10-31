@@ -21,7 +21,7 @@ Returns a character.
 library(treeman)
 data(mammals)
 # choosing ids from the two main branches of apes allows to find the parent for all apes
-#ape_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
+ape_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
 }
 \seealso{
 \code{\link{getSubtree}}, 

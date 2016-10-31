@@ -21,7 +21,7 @@ Returns a id, character. If there are multiple possible outgroups, returns NULL.
 library(treeman)
 data(mammals)
 # orangutan is an outgroup wrt humans and chimps
-#getOtgrp(mammals, ids=c('Homo_sapiens', 'Pan_troglodytes', 'Pongo_pygmaeus'))
+getOtgrp(mammals, ids=c('Homo_sapiens', 'Pan_troglodytes', 'Pongo_pygmaeus'))
 }
 \seealso{
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}

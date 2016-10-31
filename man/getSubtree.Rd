@@ -21,8 +21,9 @@ Returns a \code{TreeMan}, parallelizable. \code{id} must be an internal node.
 library(treeman)
 data(mammals)
 # get tree of apes
-#ape_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
-#apes <- getSubtree(mammals, id=ape_id)
+ape_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
+apes <- getSubtree(mammals, id=ape_id)
+apes <- updateTree(apes)
 }
 \seealso{
 \code{\link{getPrnt}}, 

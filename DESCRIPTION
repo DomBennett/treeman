@@ -13,6 +13,8 @@ Depends:
 Imports:
     plyr,
     ape,
+    RJSONIO,
+    stringr,
     bigmemory
 Suggests:
     testthat
