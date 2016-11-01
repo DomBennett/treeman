@@ -1,3 +1,17 @@
+# prevent sudden crashes by stopping incorrect arguments going to C code
+.preCtest <- function(...) {
+  argg <- c(as.list(environment()), list(...))
+  bool <- FALSE
+  for(arg in argg) {
+    if(!is.numeric(arg) | length(arg) < 1) {
+      bool <- TRUE
+    }
+  }
+  if(bool) {
+    stop('1 or more arguments are of the wrong type')
+  }
+  NULL
+}
 
 # MULTIPLE NDS
 
@@ -63,6 +77,7 @@
   prid <- ndlst[[id]][['prid']]
   nids <- names(ndlst)
   prind <- which(nids == prid)
+  .preCtest(prind, prinds)
   res <- .Call("cGetNdPrids", PACKAGE="treeman",
                as.integer(prind),
                as.integer(prinds))
@@ -79,6 +94,7 @@
 .getNdPtidsFrmLst <- function(ndlst, prinds, id) {
   nids <- names(ndlst)
   id <- which(nids == id)
+  .preCtest(id, prinds)
   res <- .Call("cGetNdPtids", PACKAGE="treeman",
                as.integer(id),
                as.integer(prinds))
@@ -150,6 +166,7 @@
   nids <- names(prids)
   prids <- match(prids, nids)
   qry_ids <- 1:length(nids)
+  .preCtest(length(nids), qry_ids, prids)
   res <- .Call("cGetNdmtrx", PACKAGE="treeman",
                as.integer(length(nids)),
                as.integer(qry_ids),
