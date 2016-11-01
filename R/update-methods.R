@@ -1,8 +1,19 @@
+
+.updateEssntls <- function(tree) {
+  # after any adding or removing of tips and nodes,
+  # these slots MUST be updated to ensure full functionality
+  tree@tinds <- .getTinds(tree@ndlst)
+  tree@prinds <- .getPrinds(tree@ndlst)
+  tree
+}
+
 #' @name updateTree
 #' @title Update tree slots after manipulation
 #' @description Return tree with updated node slots.
-#' @details Tree slots in the \code{TreeMan} object are not automatically updated
-#' to make mainipulations computationally faster. To update these slots, run this function.
+#' @details Tree slots in the \code{TreeMan} object are not automatically updated.
+#' Essential slot are always updated, but slots displayed when running \code{summary}
+#' and the node matrix, which may increase computation for certain methods, are not.
+#' To update these slots, run this function.
 #' @param tree \code{TreeMan} object
 #' @seealso
 #' \code{\link{downdateTree}}, \code{\link{getTreeAge}}
@@ -10,12 +21,6 @@
 updateTree <- function(tree) {
   if(!checkTreeMan(tree)) {
     stop('Invalid tree')
-  }
-  if(length(tree@tinds) == 0) {
-    tree@tinds <- .getTinds(tree@ndlst)
-  }
-  if(length(tree@prinds) == 0) {
-    tree@prinds <- .getPrinds(tree@ndlst)
   }
   if(is.null(tree@ndmtrx)) {
     # generate ndmtrx
@@ -77,7 +82,5 @@ updateTree <- function(tree) {
 downdateTree <- function(tree) {
   tree@ndmtrx <- NULL
   tree@updtd <- FALSE
-  tree@tinds <- vector("integer", length=0)
-  tree@prinds <- vector("integer", length=0)
   tree
 }

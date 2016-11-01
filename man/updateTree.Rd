@@ -13,8 +13,10 @@ updateTree(tree)
 Return tree with updated node slots.
 }
 \details{
-Tree slots in the \code{TreeMan} object are not automatically updated
-to make mainipulations computationally faster. To update these slots, run this function.
+Tree slots in the \code{TreeMan} object are not automatically updated.
+Essential slot are always updated, but slots displayed when running \code{summary}
+and the node matrix, which may increase computation for certain methods, are not.
+To update these slots, run this function.
 }
 \seealso{
 \code{\link{downdateTree}}, \code{\link{getTreeAge}}
