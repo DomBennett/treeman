@@ -54,10 +54,10 @@ rmTips <- function(tree, tids, drp_intrnl=TRUE, progress="none") {
   bool <- tree@all %in% names(ndlst)
   tree@ndlst <- ndlst
   tree@root <- rid
-  tree <- .updateEssntls(tree)
-  if(tree@updtd) {
+  tree <- pstMnp(tree)
+  tree <- updateSlts(tree)
+  if(!is.null(tree@ndmtrx)) {
     tree@ndmtrx <- bigmemory::as.big.matrix(tree@ndmtrx[bool, bool])
-    tree <- updateTree(tree)
   }
   tree
 }
@@ -71,30 +71,32 @@ rmTips <- function(tree, tids, drp_intrnl=TRUE, progress="none") {
 #' Ensure that the \code{strt_age} is greater than the \code{end_age}, and that
 #' the \code{strt_age} falls within the age span of the sister ID. Otherwise, negative
 #' spns may be produced leading to an error.
-#' Note, returned tree is no longer up-to-date.
+#' Note, returned tree will not have a node matrix.
+#' Note, providing negative end ages will increase the age of the tree.
 #' @param tree \code{TreeMan} object
 #' @param tid tip ID
 #' @param sid ID of node that will become new tip sisters
 #' @param strt_age timepoint at which new tips first appear in the tree
 #' @param end_age timepoint at which new tips end appear in the tree, default 0.
+#' @param tree_age age of tree
 #' @param pid parent ID (default is 'p_' + tid)
 #' @seealso
-#' \code{\link{rmTips}}, \code{\link{updateTree}},
+#' \code{\link{rmTips}},
 #' \url{https://github.com/DomBennett/treeman/wiki/manip-methods}
 #' @export
 #' @examples
 #' library(treeman)
 #' tree <- randTree(10)
-#' possible_ages <- getSpnAge(tree, 't1', tree['age'])
+#' tree_age <- getAge(tree)
+#' possible_ages <- getSpnAge(tree, 't1', tree_age)
 #' start_age <- runif(1, possible_ages[['end']], possible_ages[['start']])
 #' end_age <- possible_ages[['end']]
 #' tree <- addTip(tree, tid='t11', sid='t1', strt_age=start_age,
-#' end_age=end_age)
-#' tree <- updateTree(tree)
+#' end_age=end_age, tree_age=tree_age)
 #' summary(tree)
 addTip <- function(tree, tid, sid, strt_age=NULL,
-                   end_age=0, pid=paste0("p_", tid),
-                   progress='none') {
+                   end_age=0, tree_age=NULL,
+                   pid=paste0("p_", tid)) {
   if(!is.numeric(strt_age) & tree@wspn) {
     stop('Valid strt_age not provided')
   }
@@ -123,7 +125,6 @@ addTip <- function(tree, tid, sid, strt_age=NULL,
   ndlst[[sid]] <- snd
   ndlst[[gpid]] <- gpnd
   if(tree@wspn) {
-    tree_age <- getTreeAge(tree)
     sspn <- ndlst[[sid]][['spn']]
     prid <- ndlst[[tid]][['prid']]
     gprid <- ndlst[[prid]][['prid']]
@@ -140,8 +141,9 @@ addTip <- function(tree, tid, sid, strt_age=NULL,
     ndlst[[sid]][['spn']] <- new_spsn
   }
   tree@ndlst <- ndlst
-  tree <- .updateEssntls(tree)
-  tree <- downdateTree(tree)
+  tree <- pstMnp(tree)
+  tree <- rmNdmtrx(tree)
+  tree <- updateSlts(tree)
   tree
 }
 
@@ -153,14 +155,14 @@ addTip <- function(tree, tid, sid, strt_age=NULL,
 #' (0s for extant tips). The function expects the given tree to be taxonomically informed;
 #' the \code{txnym} slot for every node should have a taxonomic label. The function takes
 #' the lineage and tries to randomly add the new tip at the lowest point in the taxonomic rank
-#' before the end time point. Note, returned tree is not up-to-date.
+#' before the end time point. Note, returned tree will not have a node matrix.
 #' @param tree \code{TreeMan} object
 #' @param tids new tip ids
 #' @param lngs list of vectors of the lineages of each tid
 #' @param end_ages end time points for each tid
 #' @param tree_age age of tree
 #' @seealso
-#' \code{\link{addTip}}, \code{\link{rmTips}}, \code{\link{updateTree}},
+#' \code{\link{addTip}}, \code{\link{rmTips}},
 #' \url{https://github.com/DomBennett/treeman/wiki/manip-methods}
 #' @export
 #' @examples
@@ -196,7 +198,7 @@ pinTips <- function(tree, tids, lngs, end_ages, tree_age) {
         }
         pid <- paste0('p_', tid, sep='')
         tree <- addTip(tree, tid=tid, sid=e, strt_age=start, end_age=end,
-                       pid=pid)
+                       pid=pid, tree_age=tree_age)
         tree@ndlst[[tid]][['txnym']] <- tip_txnym
         tree@ndlst[[pid]][['txnym']] <- pid_txnym
         # add to txnyms list
@@ -214,7 +216,9 @@ pinTips <- function(tree, tids, lngs, end_ages, tree_age) {
   if(!tree@wtxnyms) {
     stop('tree has no txnyms')
   }
-  tree <- downdateTree(tree)
+  if(any(end_ages < 0)) {
+    warning('One or more end ages are less than zero, this will change the age of tree.')
+  }
   txnyms <- plyr::mlply(tree@ndlst, .fun=.getTxnyms)
   txnyms <- txnyms[1:length(txnyms)]
   names(txnyms) <- names(tree@ndlst)

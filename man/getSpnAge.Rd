@@ -11,7 +11,7 @@ getSpnAge(tree, id, tree_age)
 
 \item{id}{node id}
 
-\item{tree_age}{numeric value of known age of tree, tree['age'] if tree is updated}
+\item{tree_age}{numeric value of known age of tree}
 }
 \description{
 Return start and end ages for \code{id} from when it first appears to when it splits
@@ -22,7 +22,7 @@ Returns a dataframe.
 \examples{
 library(treeman)
 data(mammals)
-# mammal_age <- getTreeAge(mammals)  # ~166.2, needs to be performed when tree is not up-to-date
+# mammal_age <- getAge(mammals)  # ~166.2, needs to be performed when tree is not up-to-date
 getSpnAge(mammals, id='Homo_sapiens', tree_age=166.2)
 }
 \seealso{

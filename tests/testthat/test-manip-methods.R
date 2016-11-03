@@ -23,9 +23,10 @@ randomLineage <- function(n, tree) {
     tree <- addLname(nd, tree)
   }
   getNdsLng(tree, tree['tips'])
+  tree@wtxnyms <- TRUE
   tree
 }
-randomTips <- function(n, tree) {
+randomTips <- function(n, tree, tree_age) {
   # generate random tips with lineages for pinning
   lngs <- ends <- tip_ids <- rep(NA, n)
   nds <- names(tree@ndlst)
@@ -35,7 +36,7 @@ randomTips <- function(n, tree) {
     l <- c(getNdLng(tree, random_nd),
            paste0('new_l', i))
     lngs[i] <- list(l)
-    ends[i] <- runif(max=tree@age, min=0, n=1)
+    ends[i] <- runif(max=tree_age, min=0, n=1)
     tip_ids[i] <- paste0('new_', i)
   }
   list("l"=lngs, "e"=ends, "t"=tip_ids)
@@ -48,35 +49,32 @@ test_that('addTip() works', {
   # TEST 1 check for tree without spns
   tree <- randTree(test_tree_size)
   tree <- setNdsSpn(tree, tree['all'], 0)
-  tree <- updateTree(tree)
   tid <- paste0('t', tree['ntips'] + 1)
   sid <- sample(tree['tips'], 1)
   new_tree <- addTip(tree, tid=tid, sid=sid)
-  new_tree <- updateTree(new_tree)
   # test if successful
   expect_that(length(getNdKids(new_tree, tree['root'])),
               equals(new_tree['ntips']))
   # TEST 2 check for multiple tips with spns
   tree <- randTree(test_tree_size)
   pd_before <- tree['pd']
-  age_before <- tree['age']
+  age_before <- getAge(tree)
   tid <- paste0('t', tree['ntips'] + 1)
   sid <- sample(tree['tips'], 1, replace=FALSE)
   # create suitable age range
   sid_spn <- getNdSlt(tree, 'spn', sid)
-  min_strt_age <- getNdAge(tree, sid, tree['age'])
+  min_strt_age <- getNdAge(tree, sid, age_before)
   max_strt_age <- min_strt_age + sid_spn
   strt_age <- runif(1, max=max_strt_age, min=min_strt_age)
   end_age <- strt_age - runif(1, max=strt_age, min=0)
   additional_pd <- sum(strt_age - end_age)
   new_tree <- addTip(tree, tid=tid, sid=sid, strt_age=strt_age,
-                      end_age=end_age)
-  new_tree <- updateTree(new_tree)
+                      end_age=end_age, tree_age=age_before)
   # phylo <- as(new_tree, 'phylo')
   # plot(phylo)
   spns <- getNdsSlt(tree, 'spn', tree['all'])
   expect_true(all(spns >= 0))
-  expect_that(new_tree['age'], equals(age_before))
+  expect_that(getAge(new_tree), equals(age_before))
   expect_that(new_tree['ntips'], equals(test_tree_size + 1))
   expect_that(new_tree['pd'], equals(pd_before + additional_pd))
 })
@@ -105,17 +103,15 @@ test_that('pinTips() work', {
   n_add <- 20
   tree <- randTree(n_start)
   tree <- randomLineage(n_start/2, tree)
-  tree <- updateTree(tree)
   pd_before <- tree['pd']
-  age_before <- tree['age']
-  rdata <- randomTips(n_add, tree)
+  age_before <- getAge(tree)
+  rdata <- randomTips(n_add, tree, getAge(tree))
   tree <- pinTips(tree, tids=rdata[["t"]],
                   lngs=rdata[["l"]],
                   end_ages=rdata[["e"]],
-                  tree_age=tree['age'])
-  tree <- updateTree(tree)
-  # phylo <- as(tree, 'phylo')
-  # plot(phylo)
+                  tree_age=age_before)
+  #phylo <- as(tree, 'phylo')
+  #plot(phylo)
   expect_that(validObject(tree), is_true())
   #expect_that(tree['ntips'], equals(n_start+n_add))  # not necessarily true
   expect_that(pd_before, is_less_than(tree['pd']))

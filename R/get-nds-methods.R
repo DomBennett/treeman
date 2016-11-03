@@ -65,7 +65,7 @@ getNdsSstr <- function(tree, ids, parallel=FALSE, progress="none") {
 #' tree <- randTree(10)
 #' getNdsPD(tree, ids=tree['all'])  # return PD of all ids
 getNdsPD <- function(tree, ids, parallel=FALSE, progress="none") {
-  if(tree@updtd & length(ids) > 1) {
+  if(!is.null(tree@ndmtrx) & length(ids) > 1) {
     all_ids <- tree@all
     spns <- .getSltSpns(tree@ndlst)
     res <- .getNdsPDFrmMtrx(tree@ndmtrx, all_ids, ids, spns,
@@ -94,7 +94,7 @@ getNdsPD <- function(tree, ids, parallel=FALSE, progress="none") {
 #' tree <- randTree(10)
 #' getNdsPrdst(tree, ids=tree['tips'])  # return prdsts for all tips
 getNdsPrdst <- function(tree, ids, parallel=FALSE, progress="none") {
-  if(tree@updtd & length(ids) > 1) {
+  if(!is.null(tree@ndmtrx) & length(ids) > 1) {
     all_ids <- tree@all
     spns <- .getSltSpns(tree@ndlst)
     res <- .getNdsPrdstsFrmMtrx(tree@ndmtrx, all_ids, ids, spns,
@@ -152,7 +152,7 @@ getNdsSlt <- function(tree, slt_nm, ids, parallel=FALSE, progress="none") {
 #' getNdsKids(tree, id=tree['nds'])
 getNdsKids <- function(tree, ids, parallel=FALSE,
                        progress="none") {
-  if(tree@updtd & length(ids) > 1) {
+  if(!is.null(tree@ndmtrx) & length(ids) > 1) {
     res <- .getNdsKidsFrmMtrx(tree@ndmtrx, tree@all,
                               ids, tree@tips, parallel, progress)
   } else {
@@ -169,7 +169,7 @@ getNdsKids <- function(tree, ids, parallel=FALSE,
 #' @details Returns a vector, parallelizable.
 #' @param tree \code{TreeMan} object
 #' @param ids vector of node ids
-#' @param tree_age numeric value of known age of tree, tree['age'] if tree is updated
+#' @param tree_age numeric value of known age of tree
 #' @param parallel logical, make parallel?
 #' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
 #' @seealso
@@ -181,11 +181,11 @@ getNdsKids <- function(tree, ids, parallel=FALSE,
 #' @examples
 #' library(treeman)
 #' tree <- randTree(10)
-#' getNdsAge(tree, ids=tree['nds'], tree_age=tree['age'])
+#' getNdsAge(tree, ids=tree['nds'], tree_age=getAge(tree))
 getNdsAge <- function(tree, ids, tree_age,
                       parallel=FALSE,
                       progress="none") {
-  if(tree@updtd & length(ids) > 1) {
+  if(!is.null(tree@ndmtrx) & length(ids) > 1) {
     spns <- .getSltSpns(tree@ndlst)
     res <- .getNdsPrdstsFrmMtrx(tree@ndmtrx, tree@all,
                                ids, spns, parallel, progress)
@@ -207,7 +207,7 @@ getNdsAge <- function(tree, ids, tree_age,
 #' @details Returns a dataframe, parallelizable.
 #' @param tree \code{TreeMan} object
 #' @param ids vector of node ids
-#' @param tree_age numeric value of known age of tree, tree['age'] if tree is updated
+#' @param tree_age numeric value of known age of tree
 #' @param parallel logical, make parallel?
 #' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
 #' @seealso
@@ -221,10 +221,10 @@ getNdsAge <- function(tree, ids, tree_age,
 #' tree <- randTree(10)
 #' # all nodes but root
 #' ids <- tree['nds'][tree['nds'] != tree['root']]
-#' getSpnsAge(tree, ids=ids, tree_age=tree['age'])
+#' getSpnsAge(tree, ids=ids, tree_age=getAge(tree))
 getSpnsAge <- function(tree, ids, tree_age,
                        parallel=FALSE, progress="none") {
-  if(tree@updtd & length(ids) > 1) {
+  if(!is.null(tree@ndmtrx) & length(ids) > 1) {
     spns <- .getSltSpns(tree@ndlst)
     end <- .getNdsPrdstsFrmMtrx(tree@ndmtrx, tree@all,
                                 ids, spns, parallel, progress)
@@ -264,7 +264,7 @@ getSpnsAge <- function(tree, ids, tree_age,
 #' getNdsPrids(tree, ids=tree['tips'])
 getNdsPrids <- function(tree, ids, ordrd=FALSE,
                         parallel=FALSE, progress="none") {
-  if(tree@updtd & length(ids) > 1 & !ordrd) {
+  if(!is.null(tree@ndmtrx) & length(ids) > 1 & !ordrd) {
     res <- .getNdsPridsFrmMtrx(tree@ndmtrx, tree@all,
                                ids, parallel, progress)
   } else {
@@ -295,7 +295,7 @@ getNdsPrids <- function(tree, ids, ordrd=FALSE,
 #' # get all nodes to tip for all nodes
 #' getNdsPtids(tree, ids=tree['nds'])
 getNdsPtids <- function(tree, ids, parallel=FALSE, progress="none") {
-  if(tree@updtd & length(ids) > 1) {
+  if(!is.null(tree@ndmtrx) & length(ids) > 1) {
     res <- .getNdsPtidsFrmMtrx(tree@ndmtrx, tree@all,
                                ids, parallel, progress)
   } else {

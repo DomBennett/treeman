@@ -16,7 +16,6 @@ test_that('Node works (rooted + with spns)', {
 test_that('Node works (rooted + w/o spns)', {
   tree <- randTree(10)
   tree <- setNdsSpn(tree, ids=tree['all'], vals=0)
-  tree <- updateTree(tree)
   nid <- tree['all'][sample(1:10, 1)]
   nd <- tree[[nid]]
 })

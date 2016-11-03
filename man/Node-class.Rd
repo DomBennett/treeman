@@ -54,8 +54,6 @@ is only accurate if tree has been updated with \code{updateTree()}.
 
 \item{\code{prdst}}{total branch length of connected prids}
 
-\item{\code{age}}{age of node in tree}
-
 \item{\code{root}}{T/F root node?}
 
 \item{\code{tip}}{T/F tip node?}

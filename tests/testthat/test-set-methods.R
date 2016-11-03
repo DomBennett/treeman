@@ -9,7 +9,6 @@ test_that('setTxnyms() works', {
   txnyms <- paste0('txnym_', 1:tree['nall'])
   names(txnyms) <- tree['all']
   tree <- setTxnyms(tree, txnyms)
-  tree <- updateTree(tree)
   expect_true(tree['wtxnyms'])
 })
 test_that('set_ID() works', {
@@ -17,14 +16,13 @@ test_that('set_ID() works', {
   vals <- paste0('new_id_', 1:100)
   ids <- tree['tips']
   tree <- setNdsID(tree, ids=ids, vals=vals)
-  expect_true(all(tree['tips'] == vals))
+  expect_true(all(tree['tips'] %in% vals))
   expect_true(all(getNdKids(tree, 'n1') %in% vals))
   tree <- setNdID(tree, id='new_id_1', val='t1')
   expect_false('new_id_1' %in% tree@tips)
 })
 test_that('setNdSpn() works', {
   tree <- randTree(10)
-  before_age <- tree['age']
   before_pd <- tree['pd']
   ids <- tree['all'][tree['all'] != tree['root']]
   id <- sample(ids, 1)
@@ -37,36 +35,26 @@ test_that('setNdSpn() works', {
 test_that('setNdsSpn() works', {
   tree <- randTree(10)
   before_pd <- tree['pd']
-  before_age <- tree['age']
+  before_age <- getAge(tree)
   ids <- tree['all'][tree['all'] != tree['root']]
   vals <- getNdsSlt(tree, slt_nm='spn', ids=ids)
   vals <- vals/2
   tree <- setNdsSpn(tree, ids=ids, vals=vals)
-  tree <- updateTree(tree)
   expect_that(tree['pd']*2, equals(before_pd))
-  expect_that(tree['age']*2, equals(before_age))
+  expect_that(getAge(tree)*2, equals(before_age))
   tree <- setNdsSpn(tree, ids=ids, vals=0)
-  tree <- updateTree(tree)
   expect_false(tree['wspn'])
 })
 test_that('setPD() works', {
   tree <- randTree(10)
   tree <- setPD(tree, val=1)
-  tree <- updateTree(tree)
   expect_that(tree['pd'], equals(1))
 })
 test_that('setAge() works', {
   tree <- randTree(10)
   tree <- setAge(tree, val=1)
-  tree <- updateTree(tree)
-  expect_that(tree['age'], equals(1))
-})
-test_that('setTol() works', {
-  tree <- randTree(10)
-  before <- length(tree@ext)
-  tree <- setTol(tree, tol=tree['age'])
-  tree <- updateTree(tree)
-  expect_that(before, is_less_than(length(tree@ext)))
+  tree_age <- getAge(tree)
+  expect_that(tree_age, equals(1))
 })
 test_that('setNdOther() works', {
   tree <- randTree(10)

@@ -58,5 +58,6 @@ test_that('calcDstMtrx() works', {
   dmtrx <- calcDstMtrx(tree, ids)
   rndnd <- sample(ids, 1)
   expect_that(dmtrx[rndnd, rndnd], equals(0))
-  expect_that(sum(dmtrx['n1', ] == tree['age']), is_more_than(0))
+  tree_age <- getAge(tree)
+  expect_that(sum(dmtrx['n1', ] == tree_age), is_more_than(0))
 })

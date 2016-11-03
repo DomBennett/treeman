@@ -29,12 +29,12 @@ getNdLng <- function(tree, id) {
 #' @details Returns a numeric.
 #' @param tree \code{TreeMan} object
 #' @param id node id
-#' @param tree_age numeric value of known age of tree, tree['age'] if tree is up-to-date
+#' @param tree_age numeric value of known age of tree
 #' @seealso
 #' \code{\link{getNdsAge}}, 
 #' \code{\link{getSpnAge}}, 
 #' \code{\link{getSpnsAge}}, 
-#' \code{\link{getPrnt}}, \code{\link{getTreeAge}}
+#' \code{\link{getPrnt}}, \code{\link{getAge}}
 #' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 #' @export
 #' @examples
@@ -43,7 +43,7 @@ getNdLng <- function(tree, id) {
 #' # when did apes emerge?
 #' # get parent id for all apes
 #' prnt_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
-#' # mammal_age <- getTreeAge(mammals)  # ~166.2, needs to be performed when tree is not up-to-date
+#' # mammal_age <- getAge(mammals)  # ~166.2, needs to be performed when tree is not up-to-date
 #' getNdAge(mammals, id=prnt_id, tree_age=166.2)
 getNdAge <- function(tree, id, tree_age) {
   tree_age - .getNdPrdstsFrmLst(tree@ndlst, tree@prinds, id=id)
@@ -55,7 +55,7 @@ getNdAge <- function(tree, id, tree_age) {
 #' @details Returns a dataframe.
 #' @param tree \code{TreeMan} object
 #' @param id node id
-#' @param tree_age numeric value of known age of tree, tree['age'] if tree is updated
+#' @param tree_age numeric value of known age of tree
 #' @seealso
 #' \code{\link{getNdAge}}, 
 #' \code{\link{getNdsAge}}, 
@@ -65,7 +65,7 @@ getNdAge <- function(tree, id, tree_age) {
 #' @examples
 #' library(treeman)
 #' data(mammals)
-#' # mammal_age <- getTreeAge(mammals)  # ~166.2, needs to be performed when tree is not up-to-date
+#' # mammal_age <- getAge(mammals)  # ~166.2, needs to be performed when tree is not up-to-date
 #' getSpnAge(mammals, id='Homo_sapiens', tree_age=166.2)
 getSpnAge <- function(tree, id, tree_age) {
   end <- .getNdPrdstsFrmLst(tree@ndlst, tree@prinds, id=id)

@@ -79,13 +79,7 @@ See below in 'Examples' for these methods in use.
 
 \item{\code{nall}}{numeric of number of all nodes in tree}
 
-\item{\code{age}}{numeric of max root to tip distance}
-
 \item{\code{pd}}{numeric of total branch length of tree}
-
-\item{\code{ext}}{vector of node ids of all tips with 0 age}
-
-\item{\code{exc}}{vector of node ids of all tips with age > 0}
 
 \item{\code{tinds}}{indexes of all tip nodes in tree}
 
@@ -95,11 +89,7 @@ See below in 'Examples' for these methods in use.
 
 \item{\code{wtxnyms}}{logical, do nodes have txnyms}
 
-\item{\code{ultr}}{logical, do all tips end at 0}
-
 \item{\code{ply}}{logical, is tree bifurcating}
-
-\item{\code{tol}}{numeric of tolerance for determining extant}
 
 \item{\code{root}}{character of node id of root, if no root then empty character}
 
@@ -121,17 +111,13 @@ tree['nnds']   # count all internal nodes
 tree['root']   # identify root node
 tree[['t1']]   # return t1 node object
 tree['pd']     # return phylogenetic diversity
-tree['age']    # return age of tree
-tree['ultr']   # is ultrametric?
 tree['ply']    # is polytomous?
-tree['ext']    # return all extant tip IDs
-tree['exc']    # return all extinct tip IDs
 # Because all nodes are lists with metadata we can readily
 #  get specific information on nodes of interest
 nd <- tree[['n2']]
 summary(nd)
 # And then use the same syntax for the tree
-nd['age']  # .... nkids, pd, etc.
+nd['nkids']  # .... nkids, pd, etc.
 
 # Convert to phylo and plot
 library(ape)

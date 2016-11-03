@@ -4,8 +4,8 @@
 \alias{addTip}
 \title{Add tip to a tree}
 \usage{
-addTip(tree, tid, sid, strt_age = NULL, end_age = 0, pid = paste0("p_",
-  tid), progress = "none")
+addTip(tree, tid, sid, strt_age = NULL, end_age = 0, tree_age = NULL,
+  pid = paste0("p_", tid))
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}
@@ -17,6 +17,8 @@ addTip(tree, tid, sid, strt_age = NULL, end_age = 0, pid = paste0("p_",
 \item{strt_age}{timepoint at which new tips first appear in the tree}
 
 \item{end_age}{timepoint at which new tips end appear in the tree, default 0.}
+
+\item{tree_age}{age of tree}
 
 \item{pid}{parent ID (default is 'p_' + tid)}
 }
@@ -30,21 +32,22 @@ Optionally, user can specify the IDs for the new parental interal nodes.
 Ensure that the \code{strt_age} is greater than the \code{end_age}, and that
 the \code{strt_age} falls within the age span of the sister ID. Otherwise, negative
 spns may be produced leading to an error.
-Note, returned tree is no longer up-to-date.
+Note, returned tree will not have a node matrix.
+Note, providing negative end ages will increase the age of the tree.
 }
 \examples{
 library(treeman)
 tree <- randTree(10)
-possible_ages <- getSpnAge(tree, 't1', tree['age'])
+tree_age <- getAge(tree)
+possible_ages <- getSpnAge(tree, 't1', tree_age)
 start_age <- runif(1, possible_ages[['end']], possible_ages[['start']])
 end_age <- possible_ages[['end']]
 tree <- addTip(tree, tid='t11', sid='t1', strt_age=start_age,
-end_age=end_age)
-tree <- updateTree(tree)
+end_age=end_age, tree_age=tree_age)
 summary(tree)
 }
 \seealso{
-\code{\link{rmTips}}, \code{\link{updateTree}},
+\code{\link{rmTips}},
 \url{https://github.com/DomBennett/treeman/wiki/manip-methods}
 }
 

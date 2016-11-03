@@ -9,6 +9,7 @@ test_that('randTree() works', {
   for(n in ns) {
     tree <- randTree(n)
     expect_that(tree['ntips'], equals(n))
-    expect_that(tree['pd'], is_more_than(tree['age']))
+    tree_age <- getAge(tree)
+    expect_that(tree['pd'], is_more_than(tree_age))
   }
 })

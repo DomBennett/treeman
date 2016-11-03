@@ -19,17 +19,12 @@
 #' @slot ntips numeric of number of internal nodes in tree
 #' @slot all vector of all node ids
 #' @slot nall numeric of number of all nodes in tree
-#' @slot age numeric of max root to tip distance
 #' @slot pd numeric of total branch length of tree
-#' @slot ext vector of node ids of all tips with 0 age
-#' @slot exc vector of node ids of all tips with age > 0
 #' @slot tinds indexes of all tip nodes in tree
 #' @slot prinds indexes of all pre-nodes in tree
 #' @slot wspn logical, do nodes have spans
 #' @slot wtxnyms logical, do nodes have txnyms
-#' @slot ultr logical, do all tips end at 0
 #' @slot ply logical, is tree bifurcating
-#' @slot tol numeric of tolerance for determining extant
 #' @slot root character of node id of root, if no root then empty character
 #' @slot updtd logical, if tree slots have been updated since initiation or change
 #' @slot ndmtrx matrix, T/Fs representing tree structure
@@ -67,17 +62,13 @@
 #' tree['root']   # identify root node
 #' tree[['t1']]   # return t1 node object
 #' tree['pd']     # return phylogenetic diversity
-#' tree['age']    # return age of tree
-#' tree['ultr']   # is ultrametric?
 #' tree['ply']    # is polytomous?
-#' tree['ext']    # return all extant tip IDs
-#' tree['exc']    # return all extinct tip IDs
 #' # Because all nodes are lists with metadata we can readily
 #' #  get specific information on nodes of interest
 #' nd <- tree[['n2']]
 #' summary(nd)
 #' # And then use the same syntax for the tree
-#' nd['age']  # .... nkids, pd, etc.
+#' nd['nkids']  # .... nkids, pd, etc.
 #' 
 #' # Convert to phylo and plot
 #' library(ape)
@@ -92,21 +83,16 @@ setClass('TreeMan', representation=representation(
   ntips='numeric',       # numeric of number of internal nodes in tree
   all='vector',          # vector of all Node ids
   nall='numeric',        # numeric of number of all nodes in tree
-  age='numeric',         # numeric of max root to tip distance
   pd='numeric',          # numeric of total branch length of tree
-  ext='vector',          # vector of node ids of all tips with 0 age
-  exc='vector',          # vector of node ids of all tips with age > 0
   wspn='logical',        # logical, do all nodes have spans
   wtxnyms='logical',     # logical, do nodes txnyms
-  ultr='logical',        # logical, do tips end at 0
   ply='logical',         # logical, is tree bifurcating
-  tol='numeric',         # numeric of tolerance for determining extant
-  updtd='logical',       # logical, if tree has been updated since a change
+  updtd='logical',       # logical, if tree slots has been updated since a change
   ndmtrx='ANY',          # bigmemory matrix of logicals
   tinds='vector',        # indexes of tip nodes
   prinds='vector',       # indexes of pre-nodes
   root='character'),     # character of node id of root, if no root then empty character
-  prototype=prototype(tol=1e-8), validity=fastCheckTreeMan)
+  validity=fastCheckTreeMan)
 
 # Accessor methods
 #' @rdname TreeMan-class
@@ -189,11 +175,14 @@ setMethod('str', c('object'='TreeMan'),
 setMethod('summary', c('object'='TreeMan'),
           function(object){
             if(!object@updtd) {
-              stop("Tree is not updated since change or initiation. Use `updateTree()`")
+              stop("Tree is not updated since change or initiation. Use `updateSlts()`")
             }
             msg <- 'Tree (TreeMan Object):\n'
             msg <- paste0(msg, '  + ', object@ntips, ' tips\n')
             msg <- paste0(msg, '  + ', object@nnds, ' internal nodes\n')
+            if(!is.null(object@ndmtrx)) {
+              msg <- paste0(msg, '  + With node matrix\n')
+            }
             if(object@wtxnyms) {
               msg <- paste0(msg, '  + With taxonomic names\n')
             }
@@ -211,13 +200,7 @@ setMethod('summary', c('object'='TreeMan'),
               }
             } else {
               if(object@wspn) {
-                msg <- paste0(msg, '  + Age ', signif(object@age, 3), '\n')
                 msg <- paste0(msg, '  + PD ', signif(object@pd, 3), '\n')
-                if(object@ultr) {
-                  msg <- paste0(msg, '  + Ultrametric (all tips are extant)\n')
-                } else {
-                  msg <- paste0(msg, '  + Not ultrametric (with extinct tips)\n')
-                }
               } else {
                 msg <- paste0(msg, '  + Without node spans\n')
               }

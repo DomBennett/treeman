@@ -4,12 +4,12 @@
 \alias{randTree}
 \title{Generate a random tree}
 \usage{
-randTree(n, update = TRUE, parallel = FALSE)
+randTree(n, wndmtrx = TRUE, parallel = FALSE)
 }
 \arguments{
 \item{n}{number of tips, integer, must be 3 or greater}
 
-\item{update}{T/F update tree slots after generation? Default TRUE.}
+\item{wndmtrx}{T/F add node matrix? Default TRUE.}
 
 \item{parallel}{T/F run in parallel? Default FALSE.}
 }

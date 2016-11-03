@@ -4,7 +4,7 @@
 \alias{readTree}
 \title{Read a Newick tree}
 \usage{
-readTree(file = NULL, text = NULL, update = TRUE, parallel = FALSE,
+readTree(file = NULL, text = NULL, wndmtrx = TRUE, parallel = FALSE,
   progress = "none")
 }
 \arguments{
@@ -12,7 +12,7 @@ readTree(file = NULL, text = NULL, update = TRUE, parallel = FALSE,
 
 \item{text}{Newick character string}
 
-\item{update}{T/F update tree slots after generation? Default TRUE.}
+\item{wndmtrx}{T/F add node matrix? Default TRUE.}
 
 \item{parallel}{logical, make parallel?}
 
@@ -30,6 +30,7 @@ library(treeman)
 tree <- readTree(text="((A:1.0,B:1.0):1.0,(C:1.0,D:1.0):1.0);")
 }
 \seealso{
-\code{\link{writeTree}}, \code{\link{randTree}}, \url{https://en.wikipedia.org/wiki/Newick_format}
+\code{\link{addNdmtrx}}, \code{\link{writeTree}},
+\code{\link{randTree}}, \url{https://en.wikipedia.org/wiki/Newick_format}
 }
 

@@ -1,3 +1,63 @@
+
+# EXTINCT/EXTANT
+.livingOrDesceased <- function(tree, tol=1e-8, bool) {
+  if(!is.null(tree@ndmtrx)) {
+    spns <- getNdsSlt(tree, 'spn', names(tree@ndlst))
+    tip_prdsts <- .getNdsPrdstsFrmMtrx(tree@ndmtrx, tree@all,
+                                       tree@tips, spns,
+                                       parallel=FALSE,
+                                       progress="none")
+  } else {
+    tip_prdsts <- .getNdsPrdstsFrmLst(tree@ndlst, tree@tips,
+                                      tree@prinds, parallel=FALSE,
+                                      progress='none')
+  }
+  age <- max(tip_prdsts)
+  extant_is <- (age - tip_prdsts) <= tol
+  living <- names(extant_is)[extant_is]
+  deceased <- tree@tips[!tree@tips %in% living]
+  if(bool) {
+    return(living)
+  }
+  deceased
+}
+
+#' @name getDcsd
+#' @title Get extinct tips from a tree
+#' @description Return all extinct tip \code{ID}s.
+#' @details Returns a vector.
+#' @param tree \code{TreeMan} object
+#' @param tol zero tolerance
+#' @seealso
+#' \code{\link{getLvng}}, 
+#' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree <- randTree(10)
+#' (getDcsd(tree))
+getDcsd <- function(tree, tol=1e-8) {
+  .livingOrDesceased(tree=tree, tol=tol, bool=FALSE)
+}
+
+#' @name getLvng
+#' @title Get extant tips from a tree
+#' @description Return all extant tip \code{ID}s.
+#' @details Returns a vector.
+#' @param tree \code{TreeMan} object
+#' @param tol zero tolerance
+#' @seealso
+#' \code{\link{getDcsd}}, 
+#' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree <- randTree(10)
+#' (getLvng(tree))
+getLvng <- function(tree, tol=1e-8) {
+  .livingOrDesceased(tree=tree, tol=tol, bool=TRUE)
+}
+
 # SINGLE ND
 # TODO: bring outgroup, parent and path into terminological line with getNd(s)
 
@@ -137,7 +197,7 @@ getTxnyms <- function(tree, txnyms) {
 #' # get tree of apes
 #' ape_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
 #' apes <- getSubtree(mammals, id=ape_id)
-#' apes <- updateTree(apes)
+#' summary(apes)
 getSubtree <- function(tree, id) {
   if(!id %in% tree@nds) {
     stop('`id` is not an internal node')
@@ -148,32 +208,31 @@ getSubtree <- function(tree, id) {
   ndlst[[id]][['spn']] <- 0
   new_tree <- new('TreeMan', ndlst=ndlst, root=id,
                   ndmtrx=NULL)
+  new_tree <- pstMnp(new_tree)
+  new_tree <- updateSlts(new_tree)
   new_tree
 }
 
 # TREE FUNCTIONS
 
-#' @name getTreeAge
+#' @name getAge
 #' @title Get age of tree
 #' @description Returns age, numeric, of tree
-#' @details This can also be achieved with \code{tree['age']} but will
-#' only work if the the tree has been updated with \code{updateTree()}.
-#' For faster computation, especially within function that perform multiple
-#' tree manipulations where the whole tree doesn't need updating, use this function.
-#' Parallelizable.
+#' @details Calculates the age of a tree, determined as the maximum tip to root
+#' distance.
 #' @param tree \code{TreeMan} object
 #' @param parallel logical, make parallel?
 #' @seealso
-#' \code{\link{updateTree}}, 
+#' \code{\link{updateSlts}}, 
 #' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 #' @export
 #' @examples
 #' library(treeman)
 #' tree <- randTree(10)
-#' (getTreeAge(tree))
-getTreeAge <- function(tree, parallel=FALSE) {
+#' (getAge(tree))
+getAge <- function(tree, parallel=FALSE) {
   tids <- tree@tips
-  if(tree@updtd) {
+  if(!is.null(tree@ndmtrx)) {
     all_ids <- tree@all
     spns <- .getSltSpns(tree@ndlst)
     res <- .getTreeAgeFrmMtrx(tree@ndmtrx, all_ids, tids, spns, parallel)

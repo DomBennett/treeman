@@ -23,13 +23,13 @@ Return a tree with the IDs of nodes altered.
 \details{
 Runs \code{setNdID()} over multiple nodes. Warning: all IDs must be unique,
 avoid spaces in IDs. Parellizable.
-No need for \code{updateTree()}.
 }
 \examples{
 library(treeman)
 tree <- randTree(10)
 new_ids <- paste0('heffalump_', 1:tree['ntips'])
 tree <- setNdsID(tree, tree['tips'], new_ids)
+summary(tree)
 }
 \seealso{
 \code{\link{setNdID}}

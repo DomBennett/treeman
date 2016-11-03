@@ -9,11 +9,6 @@
     prdst <- .getNdPrdstsFrmLst(tree@ndlst, prinds=tree@prinds,
                                 id=id)
   }
-  if(length(tree@age) > 0) {
-    age <- tree@age - prdst
-  } else {
-    age <- numeric()
-  }
   if(is.null(nd[['txnym']])) {
     txnym <- vector()
   } else {
@@ -23,8 +18,7 @@
   new('Node', id=nd[['id']], spn=spn, prid=as.character(nd[['prid']][1]),
      ptid=as.character(nd[['ptid']]), kids=as.character(kids),
      nkids=length(kids), pd=pd, txnym=txnym, prdst=prdst,
-     root=tree@root == nd[['id']], age=age,
-     tip=length(nd[['ptid']]) == 0)
+     root=tree@root == nd[['id']], tip=length(nd[['ptid']]) == 0)
 }
 
 #' @name Node-class
@@ -44,7 +38,6 @@
 #' @slot txnym list of associated taxonyms
 #' @slot pd total branch length represented by node
 #' @slot prdst total branch length of connected prids
-#' @slot age age of node in tree
 #' @slot root T/F root node?
 #' @slot tip T/F tip node?
 #' @exportClass Node
@@ -60,7 +53,6 @@ setClass ('Node', representation=representation (
   txnym="vector",        # list of associated taxonyms
   pd='numeric',          # total branch length represented by node
   prdst='numeric',       # total branch length of connected pres
-  age='numeric',         # age of node in tree
   root='logical',        # T/F root node?
   tip='logical')         # T/F tip node?
 )
@@ -112,11 +104,7 @@ setMethod ('summary', c('object'='Node'),
                if(!object@root) {
                  msg <- paste0(msg, '  + spn: ', signif(object@spn, 2), '\n')
                }
-               if(length(object@age) > 0) {
-                 msg <- paste0(msg, '  + age: ', signif(object@age, 2), '\n')
-               } else {
-                 msg <- paste0(msg, '  + predist: ', signif(object@prdst, 2), '\n') 
-               }
+               msg <- paste0(msg, '  + predist: ', signif(object@prdst, 2), '\n') 
                msg <- paste0(msg, '  + pd: ', signif(object@pd, 2), '\n')
              }
              cat(msg)

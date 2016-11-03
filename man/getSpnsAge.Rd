@@ -11,7 +11,7 @@ getSpnsAge(tree, ids, tree_age, parallel = FALSE, progress = "none")
 
 \item{ids}{vector of node ids}
 
-\item{tree_age}{numeric value of known age of tree, tree['age'] if tree is updated}
+\item{tree_age}{numeric value of known age of tree}
 
 \item{parallel}{logical, make parallel?}
 
@@ -29,7 +29,7 @@ library(treeman)
 tree <- randTree(10)
 # all nodes but root
 ids <- tree['nds'][tree['nds'] != tree['root']]
-getSpnsAge(tree, ids=ids, tree_age=tree['age'])
+getSpnsAge(tree, ids=ids, tree_age=getAge(tree))
 }
 \seealso{
 \code{\link{getNdAge}}, 

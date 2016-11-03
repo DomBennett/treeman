@@ -8,8 +8,8 @@ n <- 10  # number of tips in test trees
 # FUNCTIONS
 getTestTree <- function(n) {
   # test 'update'
-  update <- sample(c(TRUE, FALSE), 1)
-  randTree(n, update)
+  wndmtrx <- sample(c(TRUE, FALSE), 1)
+  randTree(n, wndmtrx)
 }
 
 # RUNNING
@@ -32,7 +32,7 @@ test_that('getNdPD() works', {
 test_that('getNdAge() works', {
   tree <- getTestTree(n)
   id <- sample(tree['all'], 1)
-  tree_age <- getTreeAge(tree)
+  tree_age <- getAge(tree)
   nd_age <- getNdAge(tree, id, tree_age=tree_age)
   expect_true(nd_age >= 0)
 })
@@ -69,7 +69,7 @@ test_that('getNdKids() works', {
 })
 test_that('getSpnAge() works', {
   tree <- getTestTree(n)
-  tree_age <- getTreeAge(tree)
+  tree_age <- getAge(tree)
   tip_age <- getSpnAge(tree, sample(tree['tips'], 1), tree_age=tree_age)
   expect_true(tip_age[['start']] > tip_age[['end']])
 })

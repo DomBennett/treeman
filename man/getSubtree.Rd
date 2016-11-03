@@ -23,7 +23,7 @@ data(mammals)
 # get tree of apes
 ape_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
 apes <- getSubtree(mammals, id=ape_id)
-apes <- updateTree(apes)
+summary(apes)
 }
 \seealso{
 \code{\link{getPrnt}}, 

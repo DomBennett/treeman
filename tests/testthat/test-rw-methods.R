@@ -24,7 +24,9 @@ test_that('writeTree() works', {
   expect_that(t1['ntips'], equals(t2['ntips']))
   expect_that(t1['nnds'], equals(t2['nnds']))
   expect_that(t1['pd'], equals(t2['pd']))
-  expect_that(t1['age'], equals(t2['age']))
+  t1_age <- getAge(t1)
+  t2_age <- getAge(t2)
+  expect_that(t1_age, equals(t2_age))
 })
 if(file.exists('test.tre')) {
   file.remove('test.tre')

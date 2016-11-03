@@ -18,17 +18,20 @@ rslvd_mammals <- rslvd_mammals[rnds, ]
 lngs <- plyr::mlply(rslvd_mammals, function(lineage, ...) strsplit(lineage, '\\|')[[1]])
 tids <- gsub("\\s+", "_", rslvd_mammals$search_name)  # always replace spaces with _
 ends <- rep(0, length(tids))  # all tips end in the present
-pinned_tree <- pinTips(tree=mammals, lngs=lngs, tids=tids, ends=ends)
+pinned_tree <- pinTips(tree=mammals, lngs=lngs, tids=tids, end_ages=ends, tree_age=166.2)
+pinned_tree <- updateTree(pinned_tree)
 p_added <- sum(tids %in% pinned_tree['tips'])*100/n
 cat('[', p_added, '%] of n pinned to mammals\n', sep='')
 
 # VIZ
 library(MoreTreeTools)  # for conversion to phylo
+# taxonyms function not working
 txnym <- function(n) {
   # return taxonyms for node labels, combining any multiple entries with _
   paste0(n[['txnym']], collapse='_')
 }
 writeTree(pinned_tree, file='temp.tre', ndLabels = txnym)
+writeTree(pinned_tree, file='temp.tre')
 tree_phylo <- ape::read.tree('temp.tre')
 plot(tree_phylo, show.tip.label=FALSE, edge.width=0.5, type='fan', no.margin=FALSE,
      edge.color='lightsteelblue3')

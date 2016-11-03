@@ -5,7 +5,7 @@
 #' @details Equivalent to \code{ape}'s \code{rtree()} but returns a
 #' \code{TreeMan} tree. Tree is always rooted and bifurcating.
 #' @param n number of tips, integer, must be 3 or greater
-#' @param update T/F update tree slots after generation? Default TRUE.
+#' @param wndmtrx T/F add node matrix? Default TRUE.
 #' @param parallel T/F run in parallel? Default FALSE.
 #' @seealso
 #' \code{\link{TreeMan-class}}
@@ -13,7 +13,7 @@
 #' @examples
 #' library(treeman)
 #' tree <- randTree(5)
-randTree <- function(n, update=TRUE, parallel=FALSE) {
+randTree <- function(n, wndmtrx=TRUE, parallel=FALSE) {
   # Return a random tree based on a broken-stick model
   .add <- function(i) {
     nd <- vector("list", length=4)
@@ -51,18 +51,9 @@ randTree <- function(n, update=TRUE, parallel=FALSE) {
   # init new tree object
   tree <- new('TreeMan', ndlst=ndlst, root='n1', wtxnyms=FALSE,
               ndmtrx=NULL, prinds=prinds, tinds=tinds)
-  if(update) {
-    tree <- updateTree(tree)
-  } else {
-    # init basic slots
-    tree@updtd <- FALSE
-    tree@tips <- paste0('t', 1:n)
-    tree@ntips <- n
-    tree@nds <- paste0('n', 1:(n-1))
-    tree@nnds <- n - 1
-    tree@all <- names(tree@ndlst)
-    tree@nall <- nnds
-    tree@wspn <- TRUE
+  tree <- updateSlts(tree)
+  if(wndmtrx) {
+    tree <- addNdmtrx(tree)
   }
   tree
 }

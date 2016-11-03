@@ -26,13 +26,13 @@ for these IDs (in ascending order) and a vector of end time points for each new 
 (0s for extant tips). The function expects the given tree to be taxonomically informed;
 the \code{txnym} slot for every node should have a taxonomic label. The function takes
 the lineage and tries to randomly add the new tip at the lowest point in the taxonomic rank
-before the end time point. Note, returned tree is not up-to-date.
+before the end time point. Note, returned tree will not have a node matrix.
 }
 \examples{
 # see https://github.com/DomBennett/treeman/wiki/Pinning-tips for a detailed example
 }
 \seealso{
-\code{\link{addTip}}, \code{\link{rmTips}}, \code{\link{updateTree}},
+\code{\link{addTip}}, \code{\link{rmTips}},
 \url{https://github.com/DomBennett/treeman/wiki/manip-methods}
 }
 

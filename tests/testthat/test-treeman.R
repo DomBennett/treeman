@@ -22,5 +22,4 @@ test_that('[ works', {
   expect_error(tree['not a valid slot name'])
   expect_that(tree['ntips'], equals(100))
   expect_that(tree['nnds'], equals(99))
-  expect_that(tree['age'], equals(tree@age))
 })

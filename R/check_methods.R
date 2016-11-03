@@ -25,6 +25,7 @@ fastCheckTreeMan <- function(object) {
 #' @export
 checkTreeMan <- function(object) {
   # TODO: use prids as vector to test for circularity
+  # TODO: ensure spns are not negative
   .check <- function(nd) {
     test_id <- is.character(nd[['id']]) & 'id' %in% names(nd)  # must have id
     # must have either prid/ptid or both

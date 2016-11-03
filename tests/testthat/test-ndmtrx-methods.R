@@ -15,7 +15,8 @@ test_that('.getNdsPrdstsFrmMtrx() works', {
   prdsts <- treeman:::.getNdsPrdstsFrmMtrx(tree@ndmtrx, all_ids=ids, ids=ids,
                                            spns=spns, parallel=FALSE,
                                            progress="none")
-  expect_true(all(prdsts <= tree['age']))
+  tree_age <- getAge(tree)
+  expect_true(all(prdsts <= tree_age))
 })
 test_that('.getNdsKidsFrmMtrx() works', {
   # init
@@ -76,5 +77,6 @@ test_that('.getTreeAgeFrmMtrx() works', {
                                       spns=spns,
                                       FALSE)
   expect_lt(res, tree['pd'])
-  expect_equal(res, tree['age'])
+  tree_age <- getAge(tree)
+  expect_equal(res, tree_age)
 })

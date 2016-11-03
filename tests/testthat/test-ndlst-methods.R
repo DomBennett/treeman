@@ -71,7 +71,8 @@ test_that('.getNdPrdstFrmLst([basic]) works', {
   rnd_nd <- sample(tree@nds[tree@nds != tree@root], 1)
   res <- treeman:::.getNdPrdstsFrmLst(ndlst, prinds=prinds,
                                      id=rnd_nd)
-  expect_that(res, is_less_than(tree@age))
+  tree_age <- getAge(tree)
+  expect_that(res, is_less_than(tree_age))
 })
 test_that('.getNdPtidsFrmLst([basic]) works', {
   # init
@@ -185,7 +186,8 @@ test_that('.getNdsPrdstsFrmLst() works', {
   # test
   prdsts <- treeman:::.getNdsPrdstsFrmLst(tree@ndlst, ids=ids, prinds=prinds,
                                           parallel=FALSE, progress="none")
-  expect_true(all(prdsts <= tree['age']))
+  tree_age <- getAge(tree)
+  expect_true(all(prdsts <= tree_age))
 })
 # tree
 test_that('.getTreeAge() works', {
@@ -197,5 +199,6 @@ test_that('.getTreeAge() works', {
   res <- treeman:::.getTreeAgeFrmLst(tree@ndlst, tids=tids,
                                      prinds=prinds, parallel=FALSE)
   expect_lt(res, tree['pd'])
-  expect_equal(res, tree['age'])
+  tree_age <- getAge(tree)
+  expect_equal(res, tree_age)
 })

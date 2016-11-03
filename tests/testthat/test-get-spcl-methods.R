@@ -4,6 +4,16 @@ library(testthat)
 
 # RUNNING
 context('Testing \'get-spcl-methods\'')
+test_that('getDcsd() works', {
+  tree <- randTree(10, wndmtrx=sample(c(TRUE, FALSE), 1))
+  dead <- getDcsd(tree)
+  expect_true(all(dead %in% tree['tips']))
+})
+test_that('getLvng() works', {
+  tree <- randTree(10, wndmtrx=sample(c(TRUE, FALSE), 1))
+  living <- getLvng(tree)
+  expect_true(all(living %in% tree['tips']))
+})
 test_that('getTxnyms() works', {
   data(mammals)
   res <- getTxnyms(mammals, 'Homo')[[1]]
@@ -11,7 +21,7 @@ test_that('getTxnyms() works', {
 })
 test_that('getTreeAge() works', {
   tree <- randTree(10)
-  age <- getTreeAge(tree)
+  age <- getAge(tree)
   expect_true(age > 0)
   expect_true(age < tree['pd'])
 })
@@ -39,9 +49,10 @@ test_that("getPath() works", {
 test_that("getSubtree() works", {
   tree <- randTree(10)
   subtree <- getSubtree(tree, 'n2')
-  subtree <- updateTree(subtree)
+  tree_age <- getAge(tree)
+  subtree_age <- getAge(subtree)
   expect_that(tree['ntips'], is_more_than(subtree['ntips']))
   expect_that(tree['nnds'], is_more_than(subtree['nnds']))
   expect_that(tree['pd'], is_more_than(subtree['pd']))
-  expect_that(tree['age'], is_more_than(subtree['age']))
+  expect_that(tree_age, is_more_than(subtree_age))
 })

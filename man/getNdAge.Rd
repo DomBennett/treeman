@@ -11,7 +11,7 @@ getNdAge(tree, id, tree_age)
 
 \item{id}{node id}
 
-\item{tree_age}{numeric value of known age of tree, tree['age'] if tree is up-to-date}
+\item{tree_age}{numeric value of known age of tree}
 }
 \description{
 Return the age for \code{id}. Requires the known age of the tree to be provided.
@@ -25,14 +25,14 @@ data(mammals)
 # when did apes emerge?
 # get parent id for all apes
 prnt_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
-# mammal_age <- getTreeAge(mammals)  # ~166.2, needs to be performed when tree is not up-to-date
+# mammal_age <- getAge(mammals)  # ~166.2, needs to be performed when tree is not up-to-date
 getNdAge(mammals, id=prnt_id, tree_age=166.2)
 }
 \seealso{
 \code{\link{getNdsAge}}, 
 \code{\link{getSpnAge}}, 
 \code{\link{getSpnsAge}}, 
-\code{\link{getPrnt}}, \code{\link{getTreeAge}}
+\code{\link{getPrnt}}, \code{\link{getAge}}
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }
 

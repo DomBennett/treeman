@@ -23,7 +23,6 @@ that by modiyfing every branch, while maintaining their relative lengths.
 library(treeman)
 tree <- randTree(10)
 tree <- setPD(tree, val=1)
-tree <- updateTree(tree)
 summary(tree)
 }
 \seealso{

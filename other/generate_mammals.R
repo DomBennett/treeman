@@ -2,8 +2,8 @@
 
 library(treeman)
 
-mammals <- readTree(file="/Users/djb208/Coding/Project-EDBMM/data/raw_trees/literature/bininda.tre", update = FALSE)
-print(mammals)
+mammals <- readTree(file="/Users/djb208/Coding/Project-EDBMM/data/raw_trees/literature/bininda.tre", wndmtrx = FALSE)
+summary(mammals)
 
 load("other/mammalia_resolvedlist.Rd")
 

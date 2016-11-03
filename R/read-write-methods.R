@@ -93,16 +93,17 @@ writeTree <- function(tree, file, append=FALSE, ndLabels=function(nd){
 #' when reading multiple trees.
 #' @param file file path
 #' @param text Newick character string
-#' @param update T/F update tree slots after generation? Default TRUE.
+#' @param wndmtrx T/F add node matrix? Default TRUE.
 #' @param parallel logical, make parallel?
 #' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
 #' @seealso
-#' \code{\link{writeTree}}, \code{\link{randTree}}, \url{https://en.wikipedia.org/wiki/Newick_format}
+#' \code{\link{addNdmtrx}}, \code{\link{writeTree}},
+#' \code{\link{randTree}}, \url{https://en.wikipedia.org/wiki/Newick_format}
 #' @export
 #' @examples
 #' library(treeman)
 #' tree <- readTree(text="((A:1.0,B:1.0):1.0,(C:1.0,D:1.0):1.0);")
-readTree <- function(file=NULL, text=NULL, update=TRUE, parallel=FALSE,
+readTree <- function(file=NULL, text=NULL, wndmtrx=TRUE, parallel=FALSE,
                      progress='none') {
   if(!is.null(file)) {
     trstr <- scan(file, what="raw", quiet=TRUE)
@@ -111,18 +112,18 @@ readTree <- function(file=NULL, text=NULL, update=TRUE, parallel=FALSE,
   }
   if(length(trstr) > 1) {
     trstr <- as.list(trstr)
-    trees <- plyr::mlply(trstr, .fun=.readTree, update=update,
+    trees <- plyr::mlply(trstr, .fun=.readTree, wndmtrx=wndmtrx,
                          .progress=progress, .parallel=parallel)
     tree <- as(trees, 'TreeMen')
   } else {
-    tree <- .readTree(trstr, update)
+    tree <- .readTree(trstr, wndmtrx)
   }
   tree
 }
 
 #' @useDynLib treeman
 #' @useDynLib treeman cFindPrids
-.readTree <- function(trstr, update) {
+.readTree <- function(trstr, wndmtrx) {
   # Internals
   .idspn <- function(i) {
     mtdt <- substr(trstr, start=nds[i-1] + 1, stop=nds[i])
@@ -188,18 +189,9 @@ readTree <- function(file=NULL, text=NULL, update=TRUE, parallel=FALSE,
   tree <- new('TreeMan', ndlst=ndlst, root=ids[root],
               ndmtrx=NULL, wtxnyms=FALSE,
               prinds=prinds, tinds=tinds)
-  if(update) {
-    tree <- updateTree(tree)
-  } else {
-    # init basic slots
-    tree@updtd <- FALSE
-    tree@tips <- sort(ids[tinds])
-    tree@ntips <- length(tinds)
-    tree@nds <- sort(ids[!ids %in% tree@tips])
-    tree@nnds <- length(tree@nds)
-    tree@all <- names(tree@ndlst)
-    tree@nall <- length(tree@all)
-    tree@wspn <- any(spns > 0)
+  tree <- updateSlts(tree)
+  if(wndmtrx) {
+    tree <- addNdmtrx(tree)
   }
   tree
 }

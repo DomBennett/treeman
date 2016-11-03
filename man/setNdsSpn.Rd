@@ -28,11 +28,9 @@ library(treeman)
 tree <- randTree(10)
 # make tree taxonomic
 tree <- setNdsSpn(tree, ids=tree['all'], vals=1)
-tree <- updateTree(tree)
 summary(tree)
 # remove spns by setting all to 0
 tree <- setNdsSpn(tree, ids=tree['all'], vals=0)
-tree <- updateTree(tree)
 summary(tree)
 }
 \seealso{

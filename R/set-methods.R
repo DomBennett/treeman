@@ -24,7 +24,7 @@ setTxnyms <- function(tree, txnyms) {
   pull <- names(txnyms) %in% names(tree@ndlst)
   txnyms <- txnyms[pull]
   plyr::m_ply(names(txnyms), .fun=.add)
-  tree@updtd <- FALSE
+  tree@wtxnyms <- TRUE
   tree
 }
 
@@ -44,13 +44,12 @@ setTxnyms <- function(tree, txnyms) {
 #' library(treeman)
 #' tree <- randTree(10)
 #' tree <- setPD(tree, val=1)
-#' tree <- updateTree(tree)
 #' summary(tree)
 setPD <- function(tree, val) {
   spns <- getNdsSlt(tree, ids=tree@all, slt_nm="spn")
   spns <- spns/(tree@pd/val)
   tree <- setNdsSpn(tree, ids=tree@all, vals=spns)
-  tree@updtd <- FALSE
+  tree@pd <- val
   tree
 }
 
@@ -70,13 +69,12 @@ setPD <- function(tree, val) {
 #' library(treeman)
 #' tree <- randTree(10)
 #' tree <- setAge(tree, val=1)
-#' tree <- updateTree(tree)
 #' summary(tree)
 setAge <- function(tree, val) {
+  tree_age <- getAge(tree)
   spns <- getNdsSlt(tree, ids=tree@all, slt_nm="spn")
-  spns <- spns/(tree@age/val)
+  spns <- spns/(tree_age)
   tree <- setNdsSpn(tree, ids=tree@all, vals=spns)
-  tree@updtd <- FALSE
   tree
 }
 
@@ -84,7 +82,6 @@ setAge <- function(tree, val) {
 #' @title Set the branch length of a specific node
 #' @description Return a tree with the span of a node altered.
 #' @details Takes a tree, a node ID and a new value for the node's preceding branch length (span).
-#' Parallelizable.
 #' @param tree \code{TreeMan} object
 #' @param id id of node whose preceding edge is to be changed
 #' @param val new span
@@ -97,7 +94,8 @@ setAge <- function(tree, val) {
 #' library(treeman)
 #' tree <- randTree(10)
 #' tree <- setNdSpn(tree, id='t1', val=100)
-#' tree <- updateTree(tree)
+#' tree <- updateSlts(tree)
+#' summary(tree)
 setNdSpn <- function(tree, id, val) {
   tree@ndlst[[id]][['spn']] <- val
   tree@updtd <- FALSE
@@ -122,11 +120,9 @@ setNdSpn <- function(tree, id, val) {
 #' tree <- randTree(10)
 #' # make tree taxonomic
 #' tree <- setNdsSpn(tree, ids=tree['all'], vals=1)
-#' tree <- updateTree(tree)
 #' summary(tree)
 #' # remove spns by setting all to 0
 #' tree <- setNdsSpn(tree, ids=tree['all'], vals=0)
-#' tree <- updateTree(tree)
 #' summary(tree)
 setNdsSpn <- function(tree, ids, vals, parallel=FALSE, progress="none") {
   .reset <- function(id, spn) {
@@ -139,31 +135,7 @@ setNdsSpn <- function(tree, ids, vals, parallel=FALSE, progress="none") {
                        .progress=progress)
   ndlst <- ndlst[1:length(ndlst)]
   tree@ndlst[ids] <- ndlst
-  tree@updtd <- FALSE
-  tree
-}
-
-#' @name setTol
-#' @title Set the extinction tolerance
-#' @description Return a tree with the tolerance altered.
-#' @details Extant tips are determined by how close they are to zero. By default this value
-#' is 1e-8. Using this function to change the tolerance will alter the \code{ext} and \code{exc}
-#' slots.
-#' @param tree \code{TreeMan} object
-#' @param tol new tolerance
-#' @seealso
-#' \code{\link{setNdsSpn}}
-#' \url{https://github.com/DomBennett/treeman/wiki/set-methods}
-#' @export
-#' @examples
-#' library(treeman)
-#' tree <- randTree(10)
-#' tree <- setTol(tree, 10)
-#' tree <- updateTree(tree)
-#' summary(tree)
-setTol <- function(tree, tol) {
-  tree@tol <- tol
-  tree@updtd <- FALSE
+  tree <- updateSlts(tree)
   tree
 }
 
@@ -172,7 +144,7 @@ setTol <- function(tree, tol) {
 #' @description Return a tree with the ID of a node altered.
 #' @details IDs cannot be changed directly for the \code{TreeMan} class. To change an
 #' ID use this function. Warning: all IDs must be unique, avoid spaces in IDs.
-#' No need for \code{updateTree()}.
+#' Use \link{\code{updateSlts}} after running.
 #' @param tree \code{TreeMan} object
 #' @param id id to be changed
 #' @param val new id
@@ -184,7 +156,9 @@ setTol <- function(tree, tol) {
 #' library(treeman)
 #' tree <- randTree(10)
 #' tree <- setNdID(tree, 't1', 'heffalump')
+#' tree <- updateSlts(tree)
 setNdID <- function(tree, id, val) {
+  tree@updtd <- FALSE
   setNdsID(tree, id, val)
 }
 
@@ -193,7 +167,6 @@ setNdID <- function(tree, id, val) {
 #' @description Return a tree with the IDs of nodes altered.
 #' @details Runs \code{setNdID()} over multiple nodes. Warning: all IDs must be unique,
 #' avoid spaces in IDs. Parellizable.
-#' No need for \code{updateTree()}.
 #' @param tree \code{TreeMan} object
 #' @param ids ids to be changed
 #' @param vals new ids
@@ -208,6 +181,7 @@ setNdID <- function(tree, id, val) {
 #' tree <- randTree(10)
 #' new_ids <- paste0('heffalump_', 1:tree['ntips'])
 #' tree <- setNdsID(tree, tree['tips'], new_ids)
+#' summary(tree)
 setNdsID <- function(tree, ids, vals, parallel=FALSE, progress="none") {
   # internals
   .rplcS4 <- function(slt) {
@@ -241,10 +215,8 @@ setNdsID <- function(tree, ids, vals, parallel=FALSE, progress="none") {
   tree@ndlst <- ndlst
   tree@tips <- .rplcS4('tips')
   tree@nds <- .rplcS4('nds')
-  tree@ext <- .rplcS4('ext')
-  tree@exc <- .rplcS4('exc')
   tree@root <- .rplcS4('root')
-  tree@updtd <- FALSE
+  tree <- updateSlts(tree)
   tree
 }
 
