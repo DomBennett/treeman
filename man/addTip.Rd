@@ -28,6 +28,7 @@ Returns a tree with a new tip ID added
 \details{
 User must provide new tip ID, the ID of the node
 which will become the new tip's sister, and new branch lengths.
+The tip ID must only contain letters numbers and underscores.
 Optionally, user can specify the IDs for the new parental interal nodes.
 Ensure that the \code{strt_age} is greater than the \code{end_age}, and that
 the \code{strt_age} falls within the age span of the sister ID. Otherwise, negative

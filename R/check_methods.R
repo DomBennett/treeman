@@ -25,9 +25,19 @@ fastCheckTreeMan <- function(object) {
 #' @export
 checkTreeMan <- function(object) {
   # TODO: use prids as vector to test for circularity
-  # TODO: ensure spns are not negative
   .check <- function(nd) {
-    test_id <- is.character(nd[['id']]) & 'id' %in% names(nd)  # must have id
+    # must have id
+    test_id <- is.character(nd[['id']]) & 'id' %in% names(nd)
+    # id must contain no special characters
+    test_spcl_chrs <- test_id && !grepl('[^0-9a-zA-Z_]', nd[['id']])
+    # txnyms
+    test_txnym <- TRUE
+    if('txnym' %in% names(nd)) {
+      test_txnym <- is.character(nd[['txnym']])
+      for(txnym in nd[['txnym']]) {
+        test_txnym <- test_txnym && !grepl('[^0-9a-zA-Z_]', txnym)
+      }
+    }
     # must have either prid/ptid or both
     test_slts <- ('ptid' %in% names(nd) | 'prid' %in% names(nd))
     test_valid_nd <- nd[['id']] %in% nds  # nd id must be known
@@ -44,7 +54,8 @@ checkTreeMan <- function(object) {
     test_root <- rid != nd[['id']] |
       (rid == nd[['id']] & rid == nd[['prid']])
     bool <- test_id & test_valid_nd & test_prid &
-      test_ptid & test_sr & test_circ & test_slts
+      test_ptid & test_sr & test_circ & test_slts &
+      test_spcl_chrs & test_txnym
     if(length(bool) > 0 && bool) {
       return(TRUE)
     }

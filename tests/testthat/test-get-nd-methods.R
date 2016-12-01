@@ -91,8 +91,8 @@ test_that("getNdLng() works", {
   tree <- getTestTree(n)
   txnyms <- paste0('txnymns_', 1:tree['nall'])
   names(txnyms) <- tree['all']
-  txnyms[tree['root']] <- 'this is the root'
+  txnyms[tree['root']] <- 'this_is_the_root'
   tree <- setTxnyms(tree, txnyms)
   lng <- getNdLng(tree, sample(tree['tips'], 1))
-  expect_true(lng[[1]] == 'this is the root')
+  expect_true(lng[[1]] == 'this_is_the_root')
 })

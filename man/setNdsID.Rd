@@ -22,7 +22,7 @@ Return a tree with the IDs of nodes altered.
 }
 \details{
 Runs \code{setNdID()} over multiple nodes. Warning: all IDs must be unique,
-avoid spaces in IDs. Parellizable.
+avoid spaces in IDs, only use numbers, letters and underscores. Parellizable.
 }
 \examples{
 library(treeman)

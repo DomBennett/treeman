@@ -3,6 +3,8 @@
 #' @description Return a tree with txnyms added to specified nodes
 #' @details Returns a tree. Specify the taxonomic groups for nodes in a tree
 #' by providing a vector or list named by node IDs. Takes output from \code{searchTxnyms}.
+#' Only letters, numbers and underscores allowed. To remove special characters use regular
+#' expressions, e.g. \code{gsub(['a-zA-Z0-9_'], '', txnym)}
 #' @param tree \code{TreeMan} object
 #' @param txnyms named vector or list
 #' @seealso
@@ -14,11 +16,20 @@
 #' library(treeman)
 #' data(mammals)
 #' # let's change the txnym for humans
+#' # what's its summary before we change anything?
+#' summary(mammals[['Homo_sapiens']])
+#' # now let's add Hominini
 #' new_txnym <- list('Homo_sapiens'=c('Hominini', 'Homo'))
 #' mammals <- setTxnyms(mammals, new_txnym)
 #' summary(mammals[['Homo_sapiens']])
 setTxnyms <- function(tree, txnyms) {
   .add <- function(nid) {
+    for(txnym in txnyms[[nid]]) {
+      if(grepl('[^a-zA-Z_0-9]', txnym)) {
+        stop(paste0('Unsuitable characters in [',
+                    txnym, ']'))
+      }
+    }
     tree@ndlst[[nid]][['txnym']] <<- txnyms[[nid]]
   }
   pull <- names(txnyms) %in% names(tree@ndlst)
@@ -143,8 +154,9 @@ setNdsSpn <- function(tree, ids, vals, parallel=FALSE, progress="none") {
 #' @title Set the ID of a node
 #' @description Return a tree with the ID of a node altered.
 #' @details IDs cannot be changed directly for the \code{TreeMan} class. To change an
-#' ID use this function. Warning: all IDs must be unique, avoid spaces in IDs.
-#' Use \link{\code{updateSlts}} after running.
+#' ID use this function. Warning: all IDs must be unique, avoid spaces in IDs and only
+#' use letters, numbers and underscores.
+#' Use \code{\link{updateSlts}} after running.
 #' @param tree \code{TreeMan} object
 #' @param id id to be changed
 #' @param val new id
@@ -166,7 +178,7 @@ setNdID <- function(tree, id, val) {
 #' @title Set the IDs of multiple nodes
 #' @description Return a tree with the IDs of nodes altered.
 #' @details Runs \code{setNdID()} over multiple nodes. Warning: all IDs must be unique,
-#' avoid spaces in IDs. Parellizable.
+#' avoid spaces in IDs, only use numbers, letters and underscores. Parellizable.
 #' @param tree \code{TreeMan} object
 #' @param ids ids to be changed
 #' @param vals new ids
@@ -184,6 +196,12 @@ setNdID <- function(tree, id, val) {
 #' summary(tree)
 setNdsID <- function(tree, ids, vals, parallel=FALSE, progress="none") {
   # internals
+  .testSpcls <- function(id) {
+    if(grepl('[^a-zA-Z_0-9]', id)) {
+      stop(paste0('Unsuitable characters in [', id, ']'))
+    }
+    NULL
+  }
   .rplcS4 <- function(slt) {
     if(any(slot(tree, slt) %in% ids)) {
       mtchs <- match(slot(tree, slt), ids)
@@ -206,6 +224,7 @@ setNdsID <- function(tree, ids, vals, parallel=FALSE, progress="none") {
     nd[['prid']] <- .rplc("prid")
     nd
   }
+  sapply(vals, .testSpcls)
   l_data <- data.frame(i=1:length(tree@ndlst), stringsAsFactors=FALSE)
   ndlst <- plyr::mlply(l_data, .fun=.reset, .parallel=parallel, .progress=progress)
   ndlst <- ndlst[1:length(ndlst)]

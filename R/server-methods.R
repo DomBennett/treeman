@@ -5,9 +5,11 @@
 #' @details For each node, all the descendants are searched, the taxonomic lineages returned and
 #' then searched to find the lowest shared name.
 #' All the tip labels are searched against a specified taxonomic database through the GNR and NCBI.
+#' (So far only tested with NCBI database.)
 #' @param tree TreeMan object
 #' @param cache T/F, create a local cache of downloaded names?
 #' @param parent specify parent of all names to prevent false names
+#' @param clean T/F, ensure returned names contain no special characters?
 #' @seealso
 #' \code{\link{taxaResolve}}, \code{\link{setTxnyms}}, \code{\link{getTxnyms}}
 #' @export
@@ -20,7 +22,7 @@
 #' print(nd_labels)
 # TODO: add compatibility with other GNR datasources
 # TODO: catalogue of life, unlike NCBI, does not keep lineages and rank lengths constant between names
-searchTxnyms <- function (tree, cache=FALSE, parent=NULL) {
+searchTxnyms <- function (tree, cache=FALSE, parent=NULL, clean=TRUE) {
   # Use GNR to label all nodes in a phylogeny
   # first replace all _ with spaces
   tip_labels <- gsub ('_', ' ', tree@tips)
@@ -44,6 +46,10 @@ searchTxnyms <- function (tree, cache=FALSE, parent=NULL) {
         nd_labels[nid] <- .findClade(lineages)
       }
     }
+  }
+  if(clean) {
+    nd_labels <- gsub('\\s', '_', nd_labels)
+    nd_labels <- gsub('[^a-zA-Z_0-9]', '', nd_labels)
   }
   nd_labels
 }
