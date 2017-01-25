@@ -171,7 +171,7 @@
                as.integer(length(nids)),
                as.integer(qry_ids),
                as.integer(prids))
-  res <- bigmemory::as.big.matrix(res)
+  res <- bigmemory::as.big.matrix(res, shared=FALSE)
   res
 }
 # Attemp for making getNdsMat run in parallel

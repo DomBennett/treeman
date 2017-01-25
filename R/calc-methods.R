@@ -311,7 +311,10 @@ calcFrPrp <- function(tree, tids, progress="none") {
       spn_shres[i, kids] <<- spn_shre
     }
   }
-  spn_shres <- bigmemory::big.matrix(init=0, ncol=tree@ntips, nrow=tree@nall)
+  spn_shres <- bigmemory::big.matrix(init=0,
+                                     ncol=tree@ntips,
+                                     nrow=tree@nall,
+                                     shared=FALSE)
   options(bigmemory.allow.dimnames=TRUE)
   colnames(spn_shres) <- tree@tips
   plyr::m_ply(.data=data.frame(i=1:tree@nall), .fun = .calc,
