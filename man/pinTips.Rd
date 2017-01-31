@@ -11,7 +11,7 @@ pinTips(tree, tids, lngs, end_ages, tree_age)
 
 \item{tids}{new tip ids}
 
-\item{lngs}{list of vectors of the lineages of each tid}
+\item{lngs}{list of vectors of the lineages of each tid (ordered high to low rank)}
 
 \item{end_ages}{end time points for each tid}
 

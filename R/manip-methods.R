@@ -162,7 +162,7 @@ addTip <- function(tree, tid, sid, strt_age=NULL,
 #' before the end time point. Note, returned tree will not have a node matrix.
 #' @param tree \code{TreeMan} object
 #' @param tids new tip ids
-#' @param lngs list of vectors of the lineages of each tid
+#' @param lngs list of vectors of the lineages of each tid (ordered high to low rank)
 #' @param end_ages end time points for each tid
 #' @param tree_age age of tree
 #' @seealso
@@ -172,47 +172,100 @@ addTip <- function(tree, tid, sid, strt_age=NULL,
 #' @examples
 #' # see https://github.com/DomBennett/treeman/wiki/Pinning-tips for a detailed example
 pinTips <- function(tree, tids, lngs, end_ages, tree_age) {
-  .pin <- function(i) {
-    # unpack
-    tid <- tids[i]
-    lng <- lngs[[i]]
-    end <- end_ages[i]
-    for(j in length(lng):1) {
-      spns <- names(txnyms)[which(txnyms %in% lng[j])]
-      if(length(spns) == 0) {
+  .getPtntls <- function(lng, end) {
+    sccs <- FALSE
+    # loop backwards through taxonomy
+    # genus --> family --> ....
+    for(i in length(lng):1) {
+      pull <- txnyms %in% lng[i]
+      if(sum(pull) == 0) {
         next
       }
-      spns <- unique(c(spns, unlist(getNdsPtids(tree, spns))))
-      spns <- spns[spns != tree@root]
-      rngs <- getSpnsAge(tree, ids=spns, tree_age=tree_age)
-      bool <- rngs[ ,'start'] > end
-      if(any(bool)) {
-        rngs <- rngs[bool, ]
-        rngs[rngs[ ,'end'] <= end, "end"] <- end
-        # pinning is based on branch length
-        prbs <- rngs$start - rngs$end
-        e <- as.vector(sample(rngs$spn, prob=prbs, size=1))
-        e_i <- which(rngs$spn == e)
-        start <- runif(min=rngs$end[e_i], max=rngs$start[e_i], n=1)
-        tip_txnym <- lng[length(lng)]
-        if(j == length(lng)) {
-          pid_txnym <- lng[length(lng)]
-        } else {
-          pid_txnym <- lng[j:length(lng)]
-        }
-        pid <- paste0('p_', tid, sep='')
-        tree <- addTip(tree, tid=tid, sid=e, strt_age=start, end_age=end,
-                       pid=pid, tree_age=tree_age)
-        tree@ndlst[[tid]][['txnym']] <- tip_txnym
-        tree@ndlst[[pid]][['txnym']] <- pid_txnym
-        # add to txnyms list
-        txnyms[[tid]] <<- tip_txnym
-        txnyms[[pid]] <<- pid_txnym
-        # push out
-        tree <<- tree
+      ptntls <- names(txnyms)[pull]
+      if(length(ptntls) == 1) {
+        prnt <- ptntls
+      } else {
+        # assumes monophylly
+        prnt <- ptntls[which.max(spn_data[ptntls, 'end'])]
+      }
+      ptntls <- c(prnt, getNdPtids(tree, prnt))
+      ptntls <- ptntls[ptntls != rid]
+      pull <- spn_data[ptntls, 'start'] > end
+      if(any(pull)) {
+        ptntls <- ptntls[pull]
+        sccs <- TRUE
         break
       }
     }
+    if(sccs) {
+      return(ptntls)
+    }
+    NULL
+  }
+  .getPTxnym <- function(tip_txnym, sid, start, end, lng) {
+    gp_txnym <- txnyms[[getNdSlt(tree, 'prid', sid)]]
+    s_txnym <- txnyms[[sid]]
+    if(gp_txnym == tip_txnym) {
+      pid_txnym <- tip_txnym
+    } else if(s_txnym == tip_txnym) {
+      pid_txnym <- tip_txnym
+    } else {
+      # new internal node gets either sister or new id taxonomy
+      # determine it by whichever has the most branch length
+      sid_spn <- getNdSlt(tree, 'spn', sid)
+      tid_spn <- start - end
+      if(sid_spn > tid_spn) {
+        pid_txnym <- s_txnym
+      } else {
+        # next id in lineage below that matching the grandparent
+        if(gp_txnym %in% lng) {
+          pid_txnym <- lng[which(gp_txnym == lng) + 1]
+        } else {
+          pid_txnym <- tip_txnym
+        }
+      }
+    }
+    pid_txnym
+  }
+  .pin <- function(i) {
+    tid <- tids[i]
+    end <- end_ages[i]
+    lng <- lngs[[i]]
+    ptntls <- .getPtntls(lng, end)
+    if(is.null(ptntls)) {
+      warning(paste0('[', tid, '] could not be added'))
+      return(NULL)
+    }
+    rngs <- spn_data[ptntls, , drop=FALSE]
+    rngs[rngs[,'end'] <= end, 'end'] <- end
+    # pinning is based on branch length
+    prbs <- rngs[ ,'start'] - rngs[ ,'end']
+    sid <- as.vector(sample(ptntls, prob=prbs, size=1))
+    start <- runif(min=rngs[sid, 'end'], max=rngs[sid, 'start'], n=1)
+    # taxnomy of tip and parent tip based grandparent
+    tip_txnym <- lng[length(lng)]
+    pid_txnym <- .getPTxnym(tip_txnym, sid, start, end, lng)
+    pid <- paste0('p_', tid, sep='')
+    # add tip
+    tree <- addTip(tree, tid=tid, sid=sid, strt_age=start,
+                   end_age=end, pid=pid, tree_age=tree_age)
+    tree@ndlst[[tid]][['txnym']] <- tip_txnym
+    tree@ndlst[[pid]][['txnym']] <- pid_txnym
+    # add to spn_data
+    tid_spn <- getSpnAge(tree, tid, tree_age)
+    spn_data[tid, 'start'] <<- tid_spn[ ,'start']
+    spn_data[tid, 'end'] <<- tid_spn[ ,'end']
+    pid_spn <- getSpnAge(tree, pid, tree_age)
+    spn_data[pid, 'start'] <<- pid_spn[ ,'start']
+    spn_data[pid, 'end'] <<- pid_spn[ ,'end']
+    sid_spn <- getSpnAge(tree, sid, tree_age)
+    spn_data[sid, 'start'] <<- sid_spn[ ,'start']
+    spn_data[sid, 'end'] <<- sid_spn[ ,'end']
+    # add to txnyms list
+    txnyms[[tid]] <<- tip_txnym
+    txnyms[[pid]] <<- pid_txnym
+    # push tree out
+    tree <<- tree
   }
   .testLngs <- function(lng) {
     for(l in lng) {
@@ -222,19 +275,29 @@ pinTips <- function(tree, tids, lngs, end_ages, tree_age) {
     }
     NULL
   }
-  sapply(lngs, .testLngs)
-  .getTxnyms <- function(txnym, ...) {
-    txnym
-  }
   if(!tree@wtxnyms) {
     stop('tree has no txnyms')
   }
   if(any(end_ages < 0)) {
     warning('One or more end ages are less than zero, this will change the age of tree.')
   }
-  txnyms <- plyr::mlply(tree@ndlst, .fun=.getTxnyms)
-  txnyms <- txnyms[1:length(txnyms)]
-  names(txnyms) <- names(tree@ndlst)
-  plyr::m_ply(1:length(tids), .pin)
+  # make sure lineages are right
+  sapply(lngs, .testLngs)
+  # generate taxonomy and span data
+  txnyms <- getNdsSlt(tree, 'txnym', tree@all)
+  txnyms <- c(txnyms, rep(NA, length(tids)*2))
+  names(txnyms) <- c(names(tree@ndlst), tids, paste0('p_', tids))
+  spn_data <- matrix(NA, nrow=(length(tids)*2) + tree@nall,
+                     ncol=2)
+  colnames(spn_data) <- c('start', 'end')
+  tmp_spn_data <- getSpnsAge(tree, tree@all, tree_age)
+  rownames(spn_data) <- c(tree@all, tids, paste0('p_', tids))
+  spn_data[tree@all, 'start'] <- tmp_spn_data[['start']]
+  spn_data[tree@all, 'end'] <- tmp_spn_data[['end']]
+  rm(tmp_spn_data)
+  rid <- tree@root
+  #　add oldest to youngest
+  ordrd <- order(end_ages, decreasing=TRUE)
+  plyr::m_ply(ordrd, .pin)
   tree
 }
