@@ -239,8 +239,15 @@ pinTips <- function(tree, tids, lngs, end_ages, tree_age) {
     rngs <- spn_data[ptntls, , drop=FALSE]
     rngs[rngs[,'end'] <= end, 'end'] <- end
     # pinning is based on branch length
+    # this is not a model, it just ensures
+    # taxonomically matching branch lengths
+    # of the tree have equal change.
     prbs <- rngs[ ,'start'] - rngs[ ,'end']
-    sid <- as.vector(sample(ptntls, prob=prbs, size=1))
+    if(sum(prbs) == 0) {
+      sid <- as.vector(sample(ptntls, size=1))
+    } else {
+      sid <- as.vector(sample(ptntls, prob=prbs, size=1))
+    }
     start <- runif(min=rngs[sid, 'end'], max=rngs[sid, 'start'], n=1)
     # taxnomy of tip and parent tip based grandparent
     tip_txnym <- lng[length(lng)]
