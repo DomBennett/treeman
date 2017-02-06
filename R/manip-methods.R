@@ -244,10 +244,10 @@ pinTips <- function(tree, tids, lngs, end_ages, tree_age) {
     # of the tree have equal change.
     prbs <- rngs[ ,'start'] - rngs[ ,'end']
     if(sum(prbs) == 0) {
-      sid <- as.vector(sample(ptntls, size=1))
-    } else {
-      sid <- as.vector(sample(ptntls, prob=prbs, size=1))
+      warning(paste0('[', tid, '] could not be added'))
+      return(NULL)
     }
+    sid <- as.vector(sample(ptntls, prob=prbs, size=1))
     start <- runif(min=rngs[sid, 'end'], max=rngs[sid, 'start'], n=1)
     # taxnomy of tip and parent tip based grandparent
     tip_txnym <- lng[length(lng)]
