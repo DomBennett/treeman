@@ -28,6 +28,37 @@ test_that('writeTree() works', {
   t2_age <- getAge(t2)
   expect_that(t1_age, equals(t2_age))
 })
+test_that('writeTrmn() works', {
+  t1 <- randTree(100)
+  writeTrmn(t1, 'test.trmn')
+  t2 <- readTrmn('test.trmn')
+  expect_that(t1['ntips'], equals(t2['ntips']))
+  expect_that(t1['nnds'], equals(t2['nnds']))
+  expect_that(t1['pd'], equals(t2['pd']))
+  t1_age <- getAge(t1)
+  t2_age <- getAge(t2)
+  expect_that(t1_age, equals(t2_age))
+  # test example with taxonomy
+  data(mammals)
+  ape_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
+  tree <- getSubtree(mammals, id=ape_id)
+  writeTrmn(tree, file='test.trmn')
+  tree <- readTrmn('test.trmn')
+  expect_true(tree@wtxnyms)
+})
+test_that('readTrmn() works', {
+  tree <- randTree(10)
+  writeTrmn(tree, 'test.trmn')
+  t1 <- readTrmn('test.trmn')
+  tree@wspn <- FALSE
+  writeTrmn(tree, 'test.trmn')
+  t2 <- readTrmn('test.trmn')
+  expect_true(t1@wspn)
+  expect_true(!t2@wspn)
+})
 if(file.exists('test.tre')) {
   file.remove('test.tre')
+}
+if(file.exists('test.trmn')) {
+  file.remove('test.trmn')
 }
