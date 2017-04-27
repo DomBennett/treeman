@@ -48,7 +48,7 @@ Version 1 released.
 
 **Reference**
 
-Bennett, D.J., Sutton, M.D. & Turvey, S.T., 2017. treeman: an R package for efficient and intuitive manipulation of phylogenetic trees. *BMC Research Notes*, 10(1), p.30. [Available online](http://bmcresnotes.biomedcentral.com/articles/10.1186/s13104-016-2340-8.)
+Bennett, D.J., Sutton, M.D. & Turvey, S.T., 2017. treeman: an R package for efficient and intuitive manipulation of phylogenetic trees. *BMC Research Notes*, 10(1), p.30. [Available online](https://bmcresnotes.biomedcentral.com/articles/10.1186/s13104-016-2340-8)
 
 **Author**
 
