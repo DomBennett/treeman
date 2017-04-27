@@ -8,13 +8,89 @@
 #' @param wndmtrx T/F add node matrix? Default TRUE.
 #' @param parallel T/F run in parallel? Default FALSE.
 #' @seealso
-#' \code{\link{TreeMan-class}}
+#' \code{\link{TreeMan-class}}, \code{\link{blncdTree}},
+#' \code{\link{unblncdTree}}
 #' @export
 #' @examples
 #' library(treeman)
 #' tree <- randTree(5)
 randTree <- function(n, wndmtrx=TRUE, parallel=FALSE) {
   # Return a random tree based on a broken-stick model
+  .randomPrinds <- function(n) {
+    pool <- rep((1:(n-1)), each=2)
+    res <- rep(NA, length(pool)+1)
+    res[1] <- 1
+    for(i in 2:length(res)) {
+      pssbls <- which(i > pool)
+      if(length(pssbls) == 1) {
+        i_pool <- pssbls
+      } else {
+        i_pool <- sample(pssbls, 1)
+      }
+      res[i] <- pool[i_pool]
+      pool[i_pool] <- NA
+    }
+    res
+  }
+  if(n < 3) {
+    stop("`n` is too small")
+  }
+  prinds <- .randomPrinds(n)
+  .cnstrctTree(n, prinds, wndmtrx=wndmtrx,
+               parallel=parallel)
+}
+
+#' @name blncdTree
+#' @title Generate a balanced tree
+#' @description Returns a balanced \code{TreeMan} tree with \code{n}
+#' tips.
+#' @details Equivalent to \code{ape}'s \code{stree(type='balanced')} but returns a
+#' \code{TreeMan} tree. Tree is always rooted and bifurcating.
+#' @param n number of tips, integer, must be 3 or greater
+#' @param wndmtrx T/F add node matrix? Default TRUE.
+#' @param parallel T/F run in parallel? Default FALSE.
+#' @seealso
+#' \code{\link{TreeMan-class}}, \code{\link{randTree}},
+#' \code{\link{unblncdTree}}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree <- blncdTree(5)
+blncdTree <- function(n, wndmtrx=TRUE, parallel=FALSE) {
+  if(n < 3) {
+    stop("`n` is too small")
+  }
+  prinds <- c(1, rep((1:(n-1)), each=2))
+  .cnstrctTree(n, prinds, wndmtrx=wndmtrx,
+               parallel=parallel)
+}
+
+#' @name unblncdTree
+#' @title Generate an unbalanced tree
+#' @description Returns an unbalanced \code{TreeMan} tree with \code{n}
+#' tips.
+#' @details Equivalent to \code{ape}'s \code{stree(type='left')} but returns a
+#' \code{TreeMan} tree. Tree is always rooted and bifurcating.
+#' @param n number of tips, integer, must be 3 or greater
+#' @param wndmtrx T/F add node matrix? Default TRUE.
+#' @param parallel T/F run in parallel? Default FALSE.
+#' @seealso
+#' \code{\link{TreeMan-class}}, \code{\link{randTree}},
+#' \code{\link{blncdTree}}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree <- unblncdTree(5)
+unblncdTree <- function(n, wndmtrx=TRUE, parallel=FALSE) {
+  if(n < 3) {
+    stop("`n` is too small")
+  }
+  prinds <- c(1, 1:(n-1), 1:(n-1))
+  .cnstrctTree(n, prinds, wndmtrx=wndmtrx,
+               parallel=parallel)
+}
+
+.cnstrctTree <- function(n, prinds, wndmtrx, parallel) {
   .add <- function(i) {
     nd <- vector("list", length=4)
     names(nd) <- c('id', 'ptid', 'prid', 'spn')
@@ -24,18 +100,7 @@ randTree <- function(n, wndmtrx=TRUE, parallel=FALSE) {
     nd[['ptid']] <- ptids[ptnds_pool == i]
     nd
   }
-  if(n < 3) {
-    stop("`n` is too small")
-  }
-  nnds <- n + (n - 1)
-  prinds <- rep(NA, nnds)
-  intrnls <- seq(2, (nnds-2), 2)
-  # randomise intrnls
-  intrnls <- intrnls +
-    sample(0:1, size=length(intrnls), replace=TRUE)
-  # create prids vector
-  prinds[1:3] <- 1
-  prinds[4:nnds] <- rep(intrnls, each=2)
+  nnds <- length(prinds)
   # random numbers for spans
   spns <- c(0, runif(nnds-1, 0, 1))
   ids <- rep(NA, nnds)
@@ -48,7 +113,6 @@ randTree <- function(n, wndmtrx=TRUE, parallel=FALSE) {
   attr(ndlst, "split_labels") <- 
     attr(ndlst, "split_type") <- NULL
   names(ndlst) <- ids
-  # init new tree object
   tree <- new('TreeMan', ndlst=ndlst, root='n1', wtxnyms=FALSE,
               ndmtrx=NULL, prinds=prinds, tinds=tinds)
   tree <- updateSlts(tree)
@@ -56,12 +120,4 @@ randTree <- function(n, wndmtrx=TRUE, parallel=FALSE) {
     tree <- addNdmtrx(tree)
   }
   tree
-}
-
-blncdTree <- function(...) {
-  cat('This function is in progress.... \n')
-}
-
-imblncdTree <- function(...) {
-  cat('This function is in progress.... \n')
 }
