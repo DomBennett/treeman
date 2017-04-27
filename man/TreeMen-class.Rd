@@ -3,15 +3,22 @@
 \docType{class}
 \name{TreeMen-class}
 \alias{TreeMen-class}
+\alias{cTrees,TreeMen-method}
+\alias{TreeMen-method}
+\alias{[[,TreeMen,ANY-method}
 \alias{TreeMen-method}
 \alias{[,TreeMen,character,ANY,ANY-method}
-\alias{[[,TreeMen,ANY-method}
+\alias{TreeMen-method}
 \alias{as.character,TreeMen-method}
-\alias{cTrees,TreeMen-method}
-\alias{print,TreeMen-method}
+\alias{TreeMen-method}
 \alias{show,TreeMen-method}
+\alias{TreeMen-method}
 \alias{str,TreeMen-method}
+\alias{TreeMen-method}
+\alias{print,TreeMen-method}
+\alias{TreeMen-method}
 \alias{summary,TreeMen-method}
+\alias{TreeMen-method}
 \title{TreeMen-class}
 \usage{
 \S4method{cTrees}{TreeMen}(x, ...)
@@ -53,7 +60,7 @@ S4 class for multiple phylogenetic trees
 
 \item{\code{ntrees}}{total number of trees}
 }}
+
 \seealso{
 \code{\link{cTrees}}
 }
-

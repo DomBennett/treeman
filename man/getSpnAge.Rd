@@ -31,4 +31,3 @@ getSpnAge(mammals, id='Homo_sapiens', tree_age=166.2)
 \code{\link{getSpnsAge}}, 
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }
-

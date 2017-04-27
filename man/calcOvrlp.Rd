@@ -43,4 +43,3 @@ microbial communities. Applied and Environmental Microbiology, 71(12), 8228-35.
 \code{\link{calcPhyDv}}
 \url{https://github.com/DomBennett/treeman/wiki/calc-methods}
 }
-

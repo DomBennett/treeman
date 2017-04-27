@@ -26,4 +26,3 @@ getOtgrp(mammals, ids=c('Homo_sapiens', 'Pan_troglodytes', 'Pongo_pygmaeus'))
 \seealso{
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }
-

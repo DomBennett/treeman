@@ -3,15 +3,22 @@
 \docType{class}
 \name{TreeMan-class}
 \alias{TreeMan-class}
+\alias{[[,TreeMan,character-method}
 \alias{TreeMan-method}
 \alias{[,TreeMan,character,ANY,ANY-method}
-\alias{[[,TreeMan,character-method}
+\alias{TreeMan-method}
 \alias{as.character,TreeMan-method}
-\alias{cTrees,TreeMan-method}
-\alias{print,TreeMan-method}
+\alias{TreeMan-method}
 \alias{show,TreeMan-method}
+\alias{TreeMan-method}
+\alias{print,TreeMan-method}
+\alias{TreeMan-method}
 \alias{str,TreeMan-method}
+\alias{TreeMan-method}
 \alias{summary,TreeMan-method}
+\alias{TreeMan-method}
+\alias{cTrees,TreeMan-method}
+\alias{TreeMan-method}
 \title{TreeMan-class}
 \usage{
 \S4method{[[}{TreeMan,character}(x, i)
@@ -97,6 +104,7 @@ See below in 'Examples' for these methods in use.
 
 \item{\code{ndmtrx}}{matrix, T/Fs representing tree structure}
 }}
+
 \examples{
 library(treeman)
 # Generate random tree
@@ -128,4 +136,3 @@ plot(tree)
 \code{\link{randTree}}, \code{\link{Node-class}},
 \code{\link{phylo-to-TreeMan}}, \code{\link{TreeMan-to-phylo}}
 }
-

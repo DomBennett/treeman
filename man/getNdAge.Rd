@@ -35,4 +35,3 @@ getNdAge(mammals, id=prnt_id, tree_age=166.2)
 \code{\link{getPrnt}}, \code{\link{getAge}}
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }
-

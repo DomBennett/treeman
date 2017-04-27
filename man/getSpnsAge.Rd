@@ -37,4 +37,3 @@ getSpnsAge(tree, ids=ids, tree_age=getAge(tree))
 \code{\link{getSpnAge}}, 
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }
-

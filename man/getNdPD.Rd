@@ -26,4 +26,3 @@ getNdPD(tree, id='n1')  # return PD of n1 which in this case is for the whole tr
 \code{\link{getNdsPD}}, 
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }
-

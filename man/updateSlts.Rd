@@ -20,4 +20,3 @@ function to update the slots.
 \seealso{
 \code{\link{addNdmtrx}}, \code{\link{getAge}}
 }
-

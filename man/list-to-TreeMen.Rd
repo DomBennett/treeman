@@ -14,4 +14,3 @@ trees <- as(trees, 'TreeMen')
 \seealso{
 \code{\link{TreeMen-class}}
 }
-

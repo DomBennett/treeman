@@ -30,4 +30,3 @@ getNdsKids(tree, id=tree['nds'])
 \code{\link{getNdKids}}, 
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }
-

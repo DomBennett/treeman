@@ -30,4 +30,3 @@ getNdsPrdst(tree, ids=tree['tips'])  # return prdsts for all tips
 \code{\link{getNdPrdst}},
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }
-

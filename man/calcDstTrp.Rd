@@ -41,4 +41,3 @@ Systematic Biology, 45, 323-34.
 \code{\link{calcDstBLD}}, \code{\link{calcDstRF}} 
 \url{https://github.com/DomBennett/treeman/wiki/calc-methods}
 }
-

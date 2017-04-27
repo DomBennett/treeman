@@ -51,4 +51,3 @@ summary(tree)
 \code{\link{rmTips}},
 \url{https://github.com/DomBennett/treeman/wiki/manip-methods}
 }
-

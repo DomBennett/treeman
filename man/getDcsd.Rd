@@ -26,4 +26,3 @@ tree <- randTree(10)
 \code{\link{getLvng}}, 
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }
-

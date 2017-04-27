@@ -27,4 +27,3 @@ getTxnyms(mammals, 'Hominoidea')
 \code{\link{taxaResolve}}, \code{\link{setTxnyms}}, \code{\link{searchTxnyms}},
 \code{\link{getNdsLng}}, \code{\link{getNdLng}}
 }
-

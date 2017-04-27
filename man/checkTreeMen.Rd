@@ -18,4 +18,3 @@ Tests whether all trees in object are \code{TreeMan} objects
 \seealso{
 \code{\link{checkTreeMan}}
 }
-

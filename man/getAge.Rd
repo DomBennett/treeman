@@ -27,4 +27,3 @@ tree <- randTree(10)
 \code{\link{updateSlts}}, 
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }
-

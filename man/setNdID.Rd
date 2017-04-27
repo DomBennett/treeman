@@ -32,4 +32,3 @@ tree <- updateSlts(tree)
 \code{\link{setNdsID}}
 \url{https://github.com/DomBennett/treeman/wiki/set-methods}
 }
-

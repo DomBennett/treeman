@@ -40,4 +40,3 @@ Mathematical Biosciences 53: 131-147.
 \code{\link{calcDstBLD}}, \code{\link{calcDstTrp}} 
 \url{https://github.com/DomBennett/treeman/wiki/calc-methods}
 }
-

@@ -19,4 +19,3 @@ ensures `spn` and `root` are correct. Reports nodes that have errors.
 \seealso{
 \code{\link{fastCheckTreeMan}}, \code{\link{checkTreeMen}}
 }
-

@@ -34,4 +34,3 @@ Isaac, N.J.B., Turvey, S.T., Collen, B., Waterman, C. and Baillie, J.E.M. (2007)
 \code{\link{calcPhyDv}}
 \url{https://github.com/DomBennett/treeman/wiki/calc-methods}
 }
-

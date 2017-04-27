@@ -19,4 +19,3 @@ For more detailed checking use \code{checkTreeMan}.
 \seealso{
 \code{\link{checkTreeMan}}, \code{\link{checkTreeMen}}
 }
-

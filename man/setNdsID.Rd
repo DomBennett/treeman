@@ -35,4 +35,3 @@ summary(tree)
 \code{\link{setNdID}}
 \url{https://github.com/DomBennett/treeman/wiki/set-methods}
 }
-

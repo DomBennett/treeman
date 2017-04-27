@@ -31,4 +31,3 @@ getNdsSstr(tree, ids=tree['tips'])
 \code{\link{getNdSstr}}, 
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }
-

@@ -27,4 +27,3 @@ getNdSstr(tree, id='t1')
 \code{\link{getNdsSstr}}, 
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }
-

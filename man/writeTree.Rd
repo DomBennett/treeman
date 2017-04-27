@@ -40,4 +40,3 @@ file.remove('example.tre')
 \seealso{
 \code{\link{readTree}}, \code{\link{randTree}}, \url{https://en.wikipedia.org/wiki/Newick_format}
 }
-

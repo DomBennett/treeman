@@ -41,4 +41,3 @@ Evolution, 11, 459-468.
 \code{\link{calcDstTrp}}, \code{\link{calcDstRF}} 
 \url{https://github.com/DomBennett/treeman/wiki/calc-methods}
 }
-

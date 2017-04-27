@@ -27,4 +27,3 @@ ape_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
 \code{\link{getSubtree}}, 
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }
-

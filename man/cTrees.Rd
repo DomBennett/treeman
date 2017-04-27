@@ -24,4 +24,3 @@ trees <- cTrees(randTree(10), randTree(10))
 \seealso{
 \code{\link{TreeMen-class}}, \code{\link{TreeMan-class}}, \code{\link{list-to-TreeMen}}
 }
-

@@ -29,4 +29,3 @@ getNdPrids(tree, id='t1')
 \code{\link{getNdsPtids}}, 
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }
-

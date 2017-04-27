@@ -30,4 +30,3 @@ sum(getNdsSlt(mammals, ids=pth, slt_nm='spn'))
 \seealso{
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }
-

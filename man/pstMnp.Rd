@@ -21,4 +21,3 @@ are creating yor own functions to add and remove elements of the
 \code{\link{updateSlts}}, \code{\link{addNdmtrx}},
 \code{\link{getAge}}
 }
-

@@ -3,12 +3,16 @@
 \docType{class}
 \name{Node-class}
 \alias{Node-class}
+\alias{as.character,Node-method}
+\alias{Node-method}
+\alias{show,Node-method}
+\alias{Node-method}
+\alias{print,Node-method}
+\alias{Node-method}
+\alias{summary,Node-method}
 \alias{Node-method}
 \alias{[,Node,character,ANY,ANY-method}
-\alias{as.character,Node-method}
-\alias{print,Node-method}
-\alias{show,Node-method}
-\alias{summary,Node-method}
+\alias{Node-method}
 \title{Node-class}
 \usage{
 \S4method{as.character}{Node}(x)
@@ -58,7 +62,7 @@ is only accurate if tree has been updated with \code{updateTree()}.
 
 \item{\code{tip}}{T/F tip node?}
 }}
+
 \seealso{
 \code{\link{TreeMan-class}}, \code{\link{TreeMen-class}}
 }
-

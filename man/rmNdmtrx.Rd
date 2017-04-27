@@ -26,4 +26,3 @@ summary(tree)
 \seealso{
 \code{\link{addNdmtrx}}
 }
-

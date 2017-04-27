@@ -29,4 +29,3 @@ summary(apes)
 \code{\link{getPrnt}}, 
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }
-

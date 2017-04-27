@@ -29,4 +29,3 @@ summary(tree)
 \code{\link{setAge}}
 \url{https://github.com/DomBennett/treeman/wiki/set-methods}
 }
-

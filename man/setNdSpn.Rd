@@ -32,4 +32,3 @@ summary(tree)
 \code{\link{setNdsSpn}}
 \url{https://github.com/DomBennett/treeman/wiki/set-methods}
 }
-

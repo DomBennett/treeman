@@ -36,4 +36,3 @@ print(nd_labels)
 \seealso{
 \code{\link{taxaResolve}}, \code{\link{setTxnyms}}, \code{\link{getTxnyms}}
 }
-

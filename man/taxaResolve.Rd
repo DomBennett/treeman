@@ -42,4 +42,3 @@ print(lineages[[6]])  # the bacteria has far fewer taxonomic levels
 \seealso{
 \code{\link{searchTxnyms}}, \code{\link{setTxnyms}}, \code{\link{getTxnyms}}
 }
-

@@ -28,4 +28,3 @@ calcNdBlnc(tree, id=tree['root'])  # root balance
 \code{\link{calcNdsBlnc}}, 
 \url{https://github.com/DomBennett/treeman/wiki/calc-methods}
 }
-

@@ -29,4 +29,3 @@ summary(tree)
 \code{\link{setPD}}
 \url{https://github.com/DomBennett/treeman/wiki/set-methods}
 }
-

@@ -26,4 +26,3 @@ getNdPrdst(tree, id='t1')  # return the distance to root from t1
 \code{\link{getNdsPrdst}}, 
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }
-

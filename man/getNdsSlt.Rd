@@ -33,4 +33,3 @@ getNdsSlt(tree, slt_nm='spn', ids=tree['tips'])  # return spans of all tips
 \code{\link{getNdSlt}}, 
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }
-

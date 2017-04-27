@@ -34,4 +34,3 @@ getNdsAge(tree, ids=tree['nds'], tree_age=getAge(tree))
 \code{\link{getSpnsAge}}, 
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }
-

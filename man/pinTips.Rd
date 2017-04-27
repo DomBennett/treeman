@@ -35,4 +35,3 @@ before the end time point. Note, returned tree will not have a node matrix.
 \code{\link{addTip}}, \code{\link{rmTips}},
 \url{https://github.com/DomBennett/treeman/wiki/manip-methods}
 }
-

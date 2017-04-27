@@ -27,4 +27,3 @@ getNdKids(tree, id=tree['root'])
 \code{\link{getNdsKids}}, 
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }
-

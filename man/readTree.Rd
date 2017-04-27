@@ -33,4 +33,3 @@ tree <- readTree(text="((A:1.0,B:1.0):1.0,(C:1.0,D:1.0):1.0);")
 \code{\link{addNdmtrx}}, \code{\link{writeTree}},
 \code{\link{randTree}}, \url{https://en.wikipedia.org/wiki/Newick_format}
 }
-

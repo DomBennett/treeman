@@ -33,4 +33,3 @@ tree <- setNdOther(tree, 't1', 1, 'binary_val')
 \code{\link{setNdsOther}}
 \url{https://github.com/DomBennett/treeman/wiki/set-methods}
 }
-

@@ -16,4 +16,3 @@ tree <- as(tree, 'TreeMan')
 \code{\link{TreeMan-to-phylo}},
 \code{\link{TreeMan-class}}
 }
-

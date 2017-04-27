@@ -29,4 +29,3 @@ summary(tree)
 \seealso{
 \code{\link{updateSlts}}, \code{\link{rmNdmtrx}}
 }
-

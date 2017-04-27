@@ -32,4 +32,3 @@ calcNdsBlnc(tree, ids=tree['nds'])
 \code{\link{calcNdBlnc}}, 
 \url{https://github.com/DomBennett/treeman/wiki/calc-methods}
 }
-

@@ -29,4 +29,3 @@ getNdSlt(tree, slt_nm='spn', id='t1')  # return span of t1
 \code{\link{getNdsSlt}}, 
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }
-

@@ -36,4 +36,3 @@ summary(mammals[['Homo_sapiens']])
 \code{\link{getNdsLng}}, \code{\link{getNdLng}},
 \url{https://github.com/DomBennett/treeman/wiki/set-methods}
 }
-

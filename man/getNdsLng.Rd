@@ -31,4 +31,3 @@ getNdsLng(mammals, id=c('Homo_sapiens', 'Gorilla_gorilla'))
 \code{\link{getNdLng}}, \code{\link{getTxnyms}},
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }
-

@@ -29,4 +29,3 @@ tree <- randTree(10)
 tree <- rmTips(tree, 't1')
 summary(tree)
 }
-

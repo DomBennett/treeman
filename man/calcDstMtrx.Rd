@@ -37,4 +37,3 @@ as.numeric(1 - mdl$estimate)  # 1 - Pearson's r
 \code{\link{calcDstBLD}}, \code{\link{calcDstRF}}, \code{\link{calcDstTrp}}
 \url{https://github.com/DomBennett/treeman/wiki/calc-methods}
 }
-

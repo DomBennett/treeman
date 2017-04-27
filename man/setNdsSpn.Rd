@@ -37,4 +37,3 @@ summary(tree)
 \code{\link{setNdSpn}}
 \url{https://github.com/DomBennett/treeman/wiki/set-methods}
 }
-

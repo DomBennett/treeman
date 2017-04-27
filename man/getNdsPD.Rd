@@ -30,4 +30,3 @@ getNdsPD(tree, ids=tree['all'])  # return PD of all ids
 \code{\link{getNdPD}},
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }
-
