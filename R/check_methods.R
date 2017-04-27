@@ -11,6 +11,15 @@ fastCheckTreeMan <- function(object) {
   kwn_ids <- names(object@ndlst)
   ids <- unlist(sapply(object@ndlst, function(x) x[c('id', 'ptid', 'prid')]))
   test <- all(ids %in% kwn_ids) & object@root %in% kwn_ids
+  # check hierarchy through prinds
+  prinds <- object@prinds
+  if(length(prinds) > 0) {
+    # only root node should equal its index
+    prind_test <- sum(prinds == 1:length(prinds)) == 1
+    # all internal nodes should occur more than once (twice for bifurcating trees)
+    prind_test <- all(table(prinds) > 1) & prind_test
+    test <- test & prind_test
+  }
   test
 }
 
@@ -24,7 +33,6 @@ fastCheckTreeMan <- function(object) {
 #' \code{\link{fastCheckTreeMan}}, \code{\link{checkTreeMen}}
 #' @export
 checkTreeMan <- function(object) {
-  # TODO: use prids as vector to test for circularity
   .check <- function(nd) {
     # must have id
     test_id <- is.character(nd[['id']]) & 'id' %in% names(nd)
