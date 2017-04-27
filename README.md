@@ -15,19 +15,19 @@ The `treeman` R package provides a `list` based class for encoding phylogenetic 
 
 With CRAN:
 
-```{R}
+```r
 install.packages('treeman')
 ```
 
 Installing the development copy via GitHub
-```{R}
+```r
 library(devtools)
 install_github('dombennett/treeman')
 ```
 
 **Quick guide**
 
-```{R}
+```r
 # working with the TreeMan class
 library(treeman)
 ?TreeMan  # check the documentation
