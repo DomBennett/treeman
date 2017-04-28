@@ -28,9 +28,12 @@ Runs \code{setNdOther()} over multiple nodes. Parellizable.
 \examples{
 library(treeman)
 tree <- randTree(10)
-vals <- sample(0:1, size=tree['nall'], replace=TRUE)
-tree <- setNdsOther(tree, tree['all'], vals, 'binary_val')
-(getNdsSlt(tree, ids=tree['all'], slt_nm='binary_val'))
+# e.g. confidences for nodes
+vals <- runif(min=0, max=1, n=tree['nall'])
+tree <- setNdsOther(tree, tree['all'], vals, 'confidence')
+tree <- updateSlts(tree)
+summary(tree)
+(getNdsSlt(tree, ids=tree['all'], slt_nm='confidence'))
 }
 \seealso{
 \code{\link{setNdOther}}

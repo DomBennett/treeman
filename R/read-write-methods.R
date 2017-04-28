@@ -203,7 +203,8 @@ readTree <- function(file=NULL, text=NULL, wndmtrx=TRUE, parallel=FALSE,
 #' @details Write a tree(s) to file using the .trmn format.
 #' It is faster to read and write tree files using treeman with the .trmn file format.
 #' In addition it is possible to encode more information than possible with the
-#' Newick, e.g. taxonomic information can be recorded as well.
+#' Newick, e.g. any taxonomic information and additional slot names added to 
+#' the tree are recorded in the file.
 #' @param tree TreeMan object or TreeMen object
 #' @param file file path
 #' @seealso
@@ -231,6 +232,13 @@ writeTrmn <- function(tree, file) {
       res[['txnym']] <- sapply(tree@ndlst,
                                function(x) paste0(x[['txnym']], collapse='|'))
     }
+    # add any additional slots
+    if(length(tree@othr_slt_nms) > 0) {
+      for(slt_nm in tree@othr_slt_nms) {
+        res[[slt_nm]] <- sapply(tree@ndlst,
+                                function(x) x[[slt_nm]])
+      }
+    }
     res
   }
   if(is(tree) == 'TreeMan') {
@@ -251,7 +259,8 @@ writeTrmn <- function(tree, file) {
 #' @details Read a tree(s) from a file using the .trmn format.
 #' It is faster to read and write tree files using treeman with the .trmn file format.
 #' In addition it is possible to encode more information than possible with the
-#' Newick, e.g. taxonomic information can be recorded as well.
+#' Newick, e.g. any taxonomic information and additional slot names added to 
+#' the tree are recorded in the file.
 #' @param file file path
 #' @param wndmtrx T/F add node matrix? Default TRUE.
 #' @param parallel logical, make parallel?
@@ -320,12 +329,20 @@ readTrmn <- function(file, wndmtrx=TRUE, parallel=FALSE,
   tree <- new('TreeMan', ndlst=ndlst, root=ids[root],
               ndmtrx=NULL, wtxnyms=FALSE,
               prinds=prinds, tinds=tinds)
-  tree <- updateSlts(tree)
   if('txnym' %in% names(inpt) && !is.na(inpt[['txnym']][1])) {
     txnyms <- strsplit(inpt[['txnym']], '\\|')
     names(txnyms) <- ids
     tree <- setTxnyms(tree, txnyms)
   }
+  othr_slt_nms <- names(inpt)[!names(inpt) %in%
+                                c('id', 'prind', 'spn', 'txnym', 'tree')]
+  if(length(othr_slt_nms) > 0) {
+    for(slt_nm in othr_slt_nms) {
+      tree <- setNdsOther(tree, ids=inpt[['id']],
+                          vals=inpt[[slt_nm]], slt_nm=slt_nm)
+    }
+  }
+  tree <- updateSlts(tree)
   if(wndmtrx) {
     tree <- addNdmtrx(tree)
   }

@@ -18,7 +18,8 @@ Write to disk a \code{TreeMan} or \code{TreeMan} object using the .trmn treefile
 Write a tree(s) to file using the .trmn format.
 It is faster to read and write tree files using treeman with the .trmn file format.
 In addition it is possible to encode more information than possible with the
-Newick, e.g. taxonomic information can be recorded as well.
+Newick, e.g. any taxonomic information and additional slot names added to 
+the tree are recorded in the file.
 }
 \examples{
 library(treeman)

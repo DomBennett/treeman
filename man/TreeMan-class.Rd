@@ -102,6 +102,8 @@ See below in 'Examples' for these methods in use.
 
 \item{\code{updtd}}{logical, if tree slots have been updated since initiation or change}
 
+\item{\code{othr_slt_nms}}{vector, character list of additional data slots added to nodes}
+
 \item{\code{ndmtrx}}{matrix, T/Fs representing tree structure}
 }}
 

@@ -239,7 +239,6 @@ setNdsID <- function(tree, ids, vals, parallel=FALSE, progress="none") {
   tree
 }
 
-#TODO: get these functions working and tested
 #' @name setNdOther
 #' @title Set a user defined slot
 #' @description Return a tree with a user defined slot for node ID.
@@ -258,10 +257,14 @@ setNdsID <- function(tree, ids, vals, parallel=FALSE, progress="none") {
 #' library(treeman)
 #' tree <- randTree(10)
 #' tree <- setNdOther(tree, 't1', 1, 'binary_val')
+#' tree <- updateSlts(tree)
 #' (getNdSlt(tree, id='t1', slt_nm='binary_val'))
 setNdOther <- function(tree, id, val, slt_nm) {
   tree@ndlst[[id]][slt_nm] <- val
   tree@updtd <- FALSE
+  if(!slt_nm %in% tree@othr_slt_nms) {
+    tree@othr_slt_nms <- c(tree@othr_slt_nms, slt_nm)
+  }
   tree
 }
 
@@ -282,9 +285,12 @@ setNdOther <- function(tree, id, val, slt_nm) {
 #' @examples
 #' library(treeman)
 #' tree <- randTree(10)
-#' vals <- sample(0:1, size=tree['nall'], replace=TRUE)
-#' tree <- setNdsOther(tree, tree['all'], vals, 'binary_val')
-#' (getNdsSlt(tree, ids=tree['all'], slt_nm='binary_val'))
+#' # e.g. confidences for nodes
+#' vals <- runif(min=0, max=1, n=tree['nall'])
+#' tree <- setNdsOther(tree, tree['all'], vals, 'confidence')
+#' tree <- updateSlts(tree)
+#' summary(tree)
+#' (getNdsSlt(tree, ids=tree['all'], slt_nm='confidence'))
 setNdsOther <- function(tree, ids, vals, slt_nm, parallel=FALSE, progress="none") {
   .set <- function(id, val) {
     tree@ndlst[[id]][[slt_nm]] <<- val
@@ -293,5 +299,8 @@ setNdsOther <- function(tree, ids, vals, slt_nm, parallel=FALSE, progress="none"
                        stringsAsFactors=FALSE)
   plyr::m_ply(.data=l_data, .fun=.set, .parallel=parallel, .progress=progress)
   tree@updtd <- FALSE
+  if(!slt_nm %in% tree@othr_slt_nms) {
+    tree@othr_slt_nms <- c(tree@othr_slt_nms, slt_nm)
+  }
   tree
 }

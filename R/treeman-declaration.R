@@ -27,6 +27,7 @@
 #' @slot ply logical, is tree bifurcating
 #' @slot root character of node id of root, if no root then empty character
 #' @slot updtd logical, if tree slots have been updated since initiation or change
+#' @slot othr_slt_nms vector, character list of additional data slots added to nodes 
 #' @slot ndmtrx matrix, T/Fs representing tree structure
 #' @details
 #' A \code{TreeMan} object holds a list of nodes. The idea of the \code{TreeMan}
@@ -91,7 +92,8 @@ setClass('TreeMan', representation=representation(
   ndmtrx='ANY',          # bigmemory matrix of logicals
   tinds='vector',        # indexes of tip nodes
   prinds='vector',       # indexes of pre-nodes
-  root='character'),     # character of node id of root, if no root then empty character
+  root='character',      # character of node id of root, if no root then empty character
+  othr_slt_nms='vector'),# if new slots added to node, list them here
   validity=fastCheckTreeMan)
 
 # Accessor methods
@@ -205,6 +207,12 @@ setMethod('summary', c('object'='TreeMan'),
                 msg <- paste0(msg, '  + Without node spans\n')
               }
               msg <- paste0(msg, '  + Root node is \"', object@root, '\"\n')
+            }
+            if(length(object@othr_slt_nms) > 0) {
+              msg <- paste0(msg, '  + With additional node slots:\n')
+              for(slt_nm in object@othr_slt_nms) {
+                msg <- paste0(msg, '    [', slt_nm, ']\n')
+              }
             }
             cat(msg)
           })

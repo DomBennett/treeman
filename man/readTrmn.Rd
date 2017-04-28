@@ -22,7 +22,8 @@ Return a \code{TreeMan} or \code{TreeMen} object from a .trmn treefile
 Read a tree(s) from a file using the .trmn format.
 It is faster to read and write tree files using treeman with the .trmn file format.
 In addition it is possible to encode more information than possible with the
-Newick, e.g. taxonomic information can be recorded as well.
+Newick, e.g. any taxonomic information and additional slot names added to 
+the tree are recorded in the file.
 }
 \examples{
 library(treeman)

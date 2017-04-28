@@ -89,6 +89,15 @@ test_that('readTrmn([for TreeMen]) works', {
   expect_false(trs[[3]]['wspn'])
   expect_false(trs[[3]]['wtxnyms'])
 })
+test_that('reading and writing with additional slots works', {
+  tree <- randTree(100)
+  confndcs <- runif(min=0, max=1, n=tree['nall'])
+  tree <- setNdsOther(tree, ids=tree['all'], vals=confndcs,
+                      slt_nm='confidences')
+  writeTrmn(tree, file='test.trmn')
+  tree <- readTrmn(file='test.trmn')
+  expect_true(tree['othr_slt_nms'] == 'confidences')
+})
 if(file.exists('test.tre')) {
   file.remove('test.tre')
 }
