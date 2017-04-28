@@ -1,7 +1,7 @@
 # roxygen imports
 #' @import methods
 #' @importFrom graphics lines plot.default text
-#' @importFrom utils combn write.table
+#' @importFrom utils combn write.table read.csv write.csv
 #' @importFrom stats runif
 
 #' @name TreeMan-class

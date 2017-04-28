@@ -114,6 +114,7 @@ readTree <- function(file=NULL, text=NULL, wndmtrx=TRUE, parallel=FALSE,
     trstr <- as.list(trstr)
     trees <- plyr::mlply(trstr, .fun=.readTree, wndmtrx=wndmtrx,
                          .progress=progress, .parallel=parallel)
+    names(trees) <- NULL
     tree <- as(trees, 'TreeMen')
   } else {
     tree <- .readTree(trstr, wndmtrx)
@@ -198,12 +199,12 @@ readTree <- function(file=NULL, text=NULL, wndmtrx=TRUE, parallel=FALSE,
 
 #' @name writeTrmn
 #' @title Write a .trmn tree
-#' @description Write to disk a \code{TreeMan} object using the .trmn treefile
-#' @details Write a single tree to file using the .trmn format.
+#' @description Write to disk a \code{TreeMan} or \code{TreeMan} object using the .trmn treefile
+#' @details Write a tree(s) to file using the .trmn format.
 #' It is faster to read and write tree files using treeman with the .trmn file format.
 #' In addition it is possible to encode more information than possible with the
 #' Newick, e.g. taxonomic information can be recorded as well.
-#' @param tree TreeMan object
+#' @param tree TreeMan object or TreeMen object
 #' @param file file path
 #' @seealso
 #' \code{\link{readTrmn}},
@@ -217,27 +218,44 @@ readTree <- function(file=NULL, text=NULL, wndmtrx=TRUE, parallel=FALSE,
 #' tree <- readTrmn('test.trmn')
 #' file.remove('test.trmn')
 writeTrmn <- function(tree, file) {
-  res <- data.frame(prind=tree@prinds)
-  res[['id']] <- names(tree@ndlst)
-  if(tree@wspn) {
-    res[['spn']] <- sapply(tree@ndlst, function(x) x[['spn']])
+  .unpack <- function(ntree) {
+    .makeDataFrame(ntree, tree@treelst[[ntree]])
   }
-  if(tree@wtxnyms) {
-    res[['txnym']] <- sapply(tree@ndlst,
-                             function(x) paste0(x[['txnym']], collapse='|'))
+  .makeDataFrame <- function(ntree, tree) {
+    res <- data.frame(tree=ntree, prind=tree@prinds)
+    res[['id']] <- names(tree@ndlst)
+    if(tree@wspn) {
+      res[['spn']] <- sapply(tree@ndlst, function(x) x[['spn']])
+    }
+    if(tree@wtxnyms) {
+      res[['txnym']] <- sapply(tree@ndlst,
+                               function(x) paste0(x[['txnym']], collapse='|'))
+    }
+    res
+  }
+  if(is(tree) == 'TreeMan') {
+    res <- .makeDataFrame(1, tree)
+  } else if(is(tree) == 'TreeMen') {
+    res <- plyr::mdply(.data=data.frame(ntree=1:tree@ntrees),
+                       .fun=.unpack)
+    res <- res[ ,-1]
+  } else {
+    stop("`tree` must be TreeMan or TreeMen object.")
   }
   write.csv(res, file=file, quote=FALSE, row.names=FALSE)
 }
 
 #' @name readTrmn
 #' @title Read a .trmn tree
-#' @description Return a \code{TreeMan} object from a .trmn treefile
-#' @details Read a single tree from a file using the .trmn format.
+#' @description Return a \code{TreeMan} or \code{TreeMen} object from a .trmn treefile
+#' @details Read a tree(s) from a file using the .trmn format.
 #' It is faster to read and write tree files using treeman with the .trmn file format.
 #' In addition it is possible to encode more information than possible with the
 #' Newick, e.g. taxonomic information can be recorded as well.
 #' @param file file path
 #' @param wndmtrx T/F add node matrix? Default TRUE.
+#' @param parallel logical, make parallel?
+#' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
 #' @seealso
 #' \code{\link{writeTrmn}},
 #' \code{\link{readTree}},\code{\link{writeTree}},
@@ -249,7 +267,28 @@ writeTrmn <- function(tree, file) {
 #' writeTrmn(tree, file='test.trmn')
 #' tree <- readTrmn('test.trmn')
 #' file.remove('test.trmn')
-readTrmn <- function(file, wndmtrx=TRUE) {
+readTrmn <- function(file, wndmtrx=TRUE, parallel=FALSE,
+                     progress='none') {
+  .pack <- function(i) {
+    .readTrmn(inpt[inpt[['tree']] == i, ],
+              wndmtrx)
+    
+  }
+  inpt <- read.csv(file, stringsAsFactors=FALSE)
+  trids <- unique(inpt[['tree']])
+  trees <- plyr::mlply(.data=trids, .fun=.pack,
+                       .parallel=parallel, .progress=progress)
+  if(length(trees) == 1) {
+    res <- trees[[1]]
+  } else {
+    trees <- trees[1:length(trees)]
+    names(trees) <- NULL
+    res <- as(trees, 'TreeMen')
+  }
+  res
+}
+
+.readTrmn <- function(inpt, wndmtrx) {
   .add <- function(i) {
     nd <- vector("list", length=4)
     names(nd) <- c('id', 'ptid', 'prid', 'spn')
@@ -259,7 +298,6 @@ readTrmn <- function(file, wndmtrx=TRUE) {
     nd[['ptid']] <- ptids[ptnds_pool == i]
     nd
   }
-  inpt <- read.csv(file, stringsAsFactors=FALSE)
   prinds <- inpt[['prind']]
   # all internal nodes should occur more than once (twice for bifurcating trees)
   prind_test <- sum(prinds == 1:length(prinds)) == 1
@@ -268,7 +306,7 @@ readTrmn <- function(file, wndmtrx=TRUE) {
     stop('Tree is corrupted, check node structure is hierarchical.')
   }
   ids <- inpt[['id']]
-  if('spn' %in% names(inpt)) {
+  if('spn' %in% names(inpt) && !is.na(inpt[['spn']][1])) {
     spns <- inpt[['spn']]
   } else {
     spns <- rep(0 , length(ids))
@@ -283,7 +321,7 @@ readTrmn <- function(file, wndmtrx=TRUE) {
               ndmtrx=NULL, wtxnyms=FALSE,
               prinds=prinds, tinds=tinds)
   tree <- updateSlts(tree)
-  if('txnym' %in% names(inpt)) {
+  if('txnym' %in% names(inpt) && !is.na(inpt[['txnym']][1])) {
     txnyms <- strsplit(inpt[['txnym']], '\\|')
     names(txnyms) <- ids
     tree <- setTxnyms(tree, txnyms)

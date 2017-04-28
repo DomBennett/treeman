@@ -7,15 +7,15 @@
 writeTrmn(tree, file)
 }
 \arguments{
-\item{tree}{TreeMan object}
+\item{tree}{TreeMan object or TreeMen object}
 
 \item{file}{file path}
 }
 \description{
-Write to disk a \code{TreeMan} object using the .trmn treefile
+Write to disk a \code{TreeMan} or \code{TreeMan} object using the .trmn treefile
 }
 \details{
-Write a single tree to file using the .trmn format.
+Write a tree(s) to file using the .trmn format.
 It is faster to read and write tree files using treeman with the .trmn file format.
 In addition it is possible to encode more information than possible with the
 Newick, e.g. taxonomic information can be recorded as well.

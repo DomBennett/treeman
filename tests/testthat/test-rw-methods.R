@@ -2,6 +2,9 @@
 library(treeman)
 library(testthat)
 
+# DATA
+data(mammals)
+
 # RUNNING
 context('Testing \'read-write-methods\'')
 test_that('readTree([w/ spans]) works', {
@@ -28,7 +31,7 @@ test_that('writeTree() works', {
   t2_age <- getAge(t2)
   expect_that(t1_age, equals(t2_age))
 })
-test_that('writeTrmn() works', {
+test_that('writeTrmn([for TreeMan]) works', {
   t1 <- randTree(100)
   writeTrmn(t1, 'test.trmn')
   t2 <- readTrmn('test.trmn')
@@ -46,8 +49,18 @@ test_that('writeTrmn() works', {
   tree <- readTrmn('test.trmn')
   expect_true(tree@wtxnyms)
 })
-test_that('readTrmn() works', {
-  tree <- randTree(10)
+test_that('writeTrmn([for TreeMen]) works', {
+  t1 <- randTree(100)
+  ape_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
+  t2 <- getSubtree(mammals, id=ape_id)
+  t3 <- randTree(100)
+  t3 <- setNdsSpn(t3, t3['all'], vals=0)
+  trs <- cTrees(t1, t2, t3)
+  writeTrmn(trs, file='test.trmn')
+  expect_error(writeTrmn('not_a_tree', file='test.trmn'))
+})
+test_that('readTrmn([for TreeMan]) works', {
+  tree <- randTree(100)
   writeTrmn(tree, 'test.trmn')
   t1 <- readTrmn('test.trmn')
   tree@wspn <- FALSE
@@ -55,6 +68,26 @@ test_that('readTrmn() works', {
   t2 <- readTrmn('test.trmn')
   expect_true(t1@wspn)
   expect_true(!t2@wspn)
+})
+test_that('readTrmn([for TreeMen]) works', {
+  t1 <- randTree(100)
+  ape_id <- getPrnt(mammals, ids=c('Homo_sapiens', 'Hylobates_concolor'))
+  t2 <- getSubtree(mammals, id=ape_id)
+  t3 <- randTree(100)
+  t3 <- setNdsSpn(t3, t3['all'], vals=0)
+  trs <- cTrees(t1, t2, t3)
+  writeTrmn(trs, file='test.trmn')
+  remove(trs)
+  trs <- readTrmn(file='test.trmn')
+  expect_true(is(trs) == 'TreeMen')
+  expect_true(trs[[1]]['ntips'] == 100)
+  expect_true(trs[[1]]['wspn'])
+  expect_false(trs[[1]]['wtxnyms'])
+  expect_true(trs[[2]]['wspn'])
+  expect_true(trs[[2]]['wtxnyms'])
+  expect_true(trs[[3]]['ntips'] == 100)
+  expect_false(trs[[3]]['wspn'])
+  expect_false(trs[[3]]['wtxnyms'])
 })
 if(file.exists('test.tre')) {
   file.remove('test.tre')

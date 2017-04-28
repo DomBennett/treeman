@@ -4,18 +4,22 @@
 \alias{readTrmn}
 \title{Read a .trmn tree}
 \usage{
-readTrmn(file, wndmtrx = TRUE)
+readTrmn(file, wndmtrx = TRUE, parallel = FALSE, progress = "none")
 }
 \arguments{
 \item{file}{file path}
 
 \item{wndmtrx}{T/F add node matrix? Default TRUE.}
+
+\item{parallel}{logical, make parallel?}
+
+\item{progress}{name of the progress bar to use, see \code{\link{create_progress_bar}}}
 }
 \description{
-Return a \code{TreeMan} object from a .trmn treefile
+Return a \code{TreeMan} or \code{TreeMen} object from a .trmn treefile
 }
 \details{
-Read a single tree from a file using the .trmn format.
+Read a tree(s) from a file using the .trmn format.
 It is faster to read and write tree files using treeman with the .trmn file format.
 In addition it is possible to encode more information than possible with the
 Newick, e.g. taxonomic information can be recorded as well.
