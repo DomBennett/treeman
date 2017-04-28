@@ -14,5 +14,7 @@ tree <- as(tree, 'TreeMan')
 }
 \seealso{
 \code{\link{TreeMan-to-phylo}},
+\code{\link{TreeMen-to-multiPhylo}}
+\code{\link{multiPhylo-to-TreeMen}}
 \code{\link{TreeMan-class}}
 }
