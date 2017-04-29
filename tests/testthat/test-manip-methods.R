@@ -107,6 +107,7 @@ test_that('rmNodes() works', {
   nids <- sample(tree['nds'][tree['nds'] != tree['root']], 10)
   tree <- rmNodes(tree, nids)
   expect_true(tree['ply'])
+  t_age <- getAge(tree)
 })
 test_that('pinTips() work', {
   n_start <- 10
@@ -138,9 +139,13 @@ test_that('ultrTree() works', {
   }
 })
 test_that('rmClade() works', {
-  tree <- randTree(100)
-  tree <- rmClade(tree, sample(tree['nds'], 1))
-  expect_true(tree['ntips'] < 100)
+  t1 <- randTree(100)
+  t1 <- rmClade(t1, sample(t1['nds'], 1))
+  expect_true(t1['ntips'] < 100)
+  t2 <- randTree(100, wndmtrx=TRUE)
+  t2 <- rmClade(t2, sample(t2['nds'], 1))
+  expect_true(t2['ntips'] < 100)
+  t2_age <- getAge(t2)
 })
 test_that('addClade() works', {
   t1 <- randTree(100)

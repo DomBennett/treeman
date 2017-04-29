@@ -19,7 +19,6 @@ Inverse function of \code{getSubtree()}. Takes a tree
 and removes a clade based on an internal node specified. Node
 is specified with \code{id}, all descending nodes and tips are removed.
 The resulting tree will replace the missing clade with a tip of \code{id}.
-Note, returned tree will not have a node matrix.
 }
 \examples{
 library(treeman)

@@ -154,7 +154,7 @@ rmTips <- function(tree, tids, drp_intrnl=TRUE, progress="none") {
 #' @details User must provide new tip ID, the ID of the node
 #' which will become the new tip's sister, and new branch lengths.
 #' The tip ID must only contain letters numbers and underscores.
-#' Optionally, user can specify the IDs for the new parental interal nodes.
+#' Optionally, user can specify the IDs for the new parental internal nodes.
 #' Ensure that the \code{strt_age} is greater than the \code{end_age}, and that
 #' the \code{strt_age} falls within the age span of the sister ID. Otherwise, negative
 #' spns may be produced leading to an error.
@@ -295,7 +295,6 @@ addClade <- function(tree, id, clade) {
 #' and removes a clade based on an internal node specified. Node
 #' is specified with \code{id}, all descending nodes and tips are removed.
 #' The resulting tree will replace the missing clade with a tip of \code{id}.
-#' Note, returned tree will not have a node matrix.
 #' @param tree \code{TreeMan} object
 #' @param id node ID parent of clade to be removed
 #' @seealso
@@ -311,10 +310,13 @@ addClade <- function(tree, id, clade) {
 #' summary(t2)
 rmClade <- function(tree, id) {
   ptids <- getNdPtids(tree, id)
+  bool <- !tree@all %in% ptids
   tree@ndlst <- tree@ndlst[!names(tree@ndlst) %in% ptids]
   tree@ndlst[[id]][['ptid']] <- character()
   tree <- pstMnp(tree)
-  tree <- rmNdmtrx(tree)
+  if(!is.null(tree@ndmtrx)) {
+    tree@ndmtrx <- bigmemory::as.big.matrix(tree@ndmtrx[bool, bool])
+  }
   updateSlts(tree)
 }
 
