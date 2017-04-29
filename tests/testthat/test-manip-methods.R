@@ -98,6 +98,16 @@ test_that('rmTips() work', {
   expect_that(tree['ntips'], equals(n - 10))
   expect_that(pd_before, is_more_than(tree['pd']))
 })
+test_that('rmNodes() works', {
+  tree <- randTree(100)
+  nids <- sample(tree['nds'][tree['nds'] != tree['root']], 10)
+  tree <- rmNodes(tree, nids)
+  expect_true(tree['ply'])
+  tree <- randTree(100, wndmtrx = TRUE)
+  nids <- sample(tree['nds'][tree['nds'] != tree['root']], 10)
+  tree <- rmNodes(tree, nids)
+  expect_true(tree['ply'])
+})
 test_that('pinTips() work', {
   n_start <- 10
   n_add <- 20

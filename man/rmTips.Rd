@@ -16,7 +16,7 @@ rmTips(tree, tids, drp_intrnl = TRUE, progress = "none")
 \item{progress}{name of the progress bar to use, see \code{\link{create_progress_bar}}}
 }
 \description{
-Returns a tree with a tip ID(s) for removal
+Returns a tree with a tip ID(s) removed
 }
 \details{
 Removes tips in a tree. Set drp_intrnl to FALSE to convert
@@ -36,5 +36,6 @@ tree <- rmTips(tree, 'n3')
 #summary(tree)
 }
 \seealso{
-\code{\link{addTip}}, \url{https://github.com/DomBennett/treeman/wiki/manip-methods}
+\code{\link{addTip}}, \code{\link{rmNodes}},
+ \url{https://github.com/DomBennett/treeman/wiki/manip-methods}
 }

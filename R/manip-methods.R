@@ -25,9 +25,63 @@ ultrTree <- function(tree) {
   updateSlts(tree)
 }
 
+#' @name rmNodes
+#' @title Remove nodes from a tree
+#' @description Returns a tree with a node ID(s) removed
+#' @details Removes nodes in a tree. Joins the nodes following to
+#' the nodes preceding the node to be removed. Creates polytomies.
+#' Warning: do not use this function to remove tip nodes, this create a
+#' corrupted tree.
+#' @param tree \code{TreeMan} object
+#' @param nids internal node IDs
+#' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
+#' @seealso
+#' \code{\link{addTip}}, \code{\link{rmTips}},
+#'  \url{https://github.com/DomBennett/treeman/wiki/manip-methods}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree <- randTree(10)
+#' tree <- rmNodes(tree, 'n3')
+#' summary(tree)  # tree is now polytmous
+rmNodes <- function(tree, nids, progress='none') {
+  .rmNode <- function(nid) {
+    ptids <- ndlst[[nid]][['ptid']]
+    prid <- ndlst[[nid]][['prid']]
+    if(tree@wspn) {
+      for(ptid in ptids) {
+        ndlst[[ptid]][['spn']] <-
+          ndlst[[ptid]][['spn']] +
+          ndlst[[nid]][['spn']]
+      }
+    }
+    for(ptid in ptids) {
+      ndlst[[ptid]][['prid']] <- prid
+    }
+    new_ptids <- ndlst[[prid]][['ptid']]
+    new_ptids <- new_ptids[new_ptids != nid]
+    new_ptids <- c(new_ptids, ptids)
+    ndlst[[prid]][['ptid']] <- new_ptids
+    ndlst <<- ndlst[names(ndlst) != nid]
+  }
+  if(tree@root %in% nids) {
+    stop('Cannot remove root.')
+  }
+  ndlst <- tree@ndlst
+  plyr::m_ply(.data=nids, .fun=.rmNode, .progress=progress)
+  bool <- tree@all %in% names(ndlst)
+  tree@ndlst <- ndlst
+  tree <- pstMnp(tree)
+  tree <- updateSlts(tree)
+  if(!is.null(tree@ndmtrx)) {
+    tree@ndmtrx <- bigmemory::as.big.matrix(tree@ndmtrx[bool, bool])
+  }
+  tree
+}
+
 #' @name rmTips
 #' @title Remove tips from a tree
-#' @description Returns a tree with a tip ID(s) for removal
+#' @description Returns a tree with a tip ID(s) removed
 #' @details Removes tips in a tree. Set drp_intrnl to FALSE to convert
 #' internal nodes into new tips. Warning: do not use this function to remove
 #' internal nodes, this create a corrupted tree.
@@ -36,7 +90,8 @@ ultrTree <- function(tree) {
 #' @param drp_intrnl Boolean, drop internal branches, default FALSE
 #' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
 #' @seealso
-#' \code{\link{addTip}}, \url{https://github.com/DomBennett/treeman/wiki/manip-methods}
+#' \code{\link{addTip}}, \code{\link{rmNodes}},
+#'  \url{https://github.com/DomBennett/treeman/wiki/manip-methods}
 #' @export
 #' @examples
 #' library(treeman)
