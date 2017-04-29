@@ -188,7 +188,7 @@ getTxnyms <- function(tree, txnyms) {
 #' @param tree \code{TreeMan} object
 #' @param id node id
 #' @seealso
-#' \code{\link{getPrnt}}, 
+#' \code{\link{getPrnt}}, \code{\link{addClade}},
 #' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 #' @export
 #' @examples

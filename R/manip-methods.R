@@ -175,6 +175,87 @@ addTip <- function(tree, tid, sid, strt_age=NULL,
   tree
 }
 
+#' @name addClade
+#' @title Add clade to tree
+#' @description Returns a tree with added clade
+#' @details Add a \code{TreeMan} object to an exisiting \code{TreeMan}
+#' object by specifying an ID at which to attach. If the id specified
+#' is an internal node, then the original clade descending from that
+#' node will be replaced. Before running, ensure no IDs are shared
+#' between the \code{tree} and the \code{clade}, except for the IDs in the clade
+#' of that tree that will be replaced.
+#' Note, returned tree will not have a node matrix.
+#' @param tree \code{TreeMan} object
+#' @param id tip/node ID in tree to which the clade will be added
+#' @param clade \code{TreeMan} object
+#' @seealso
+#' \code{\link{rmClade}}, \code{\link{getSubtree}},
+#' \url{https://github.com/DomBennett/treeman/wiki/manip-methods}
+#' @export
+#' @examples
+#' library(treeman)
+#' t1 <- randTree(100)
+#' # extract a clade
+#' cld <- getSubtree(t1, 'n2')
+#' # remove the same clade
+#' t2 <- rmClade(t1, 'n2')
+#' # add the clade again
+#' t3 <- addClade(t2, 'n2', cld)
+#' # t1 and t3 should be the same
+#' # note there is no need to remove a clade before adding
+#' t3 <- addClade(t1, 'n2', cld)  # same tree
+addClade <- function(tree, id, clade) {
+  if(!id %in% tree@tips) {
+    tree <- rmClade(tree, id)
+  }
+  cld_ids <- names(clade@ndlst)[names(clade@ndlst) != clade@root]
+  if(any(names(tree@ndlst) %in% cld_ids) &
+     any(cld_ids %in% names(tree@ndlst))) {
+    stop('IDs in `clade` exist in parts of `tree` not to be replaced.',
+         ' Consider checking for duplicates or renaming IDs in either `tree` or `clade`')
+  }
+  cld_ptids <- clade@ndlst[[clade@root]][['ptid']]
+  for(cld_ptid in cld_ptids) {
+    clade@ndlst[[cld_ptid]][['prid']] <- id
+  }
+  cld_ndlst <- clade@ndlst[names(clade@ndlst) != clade@root]
+  tree@ndlst[[id]][['ptid']] <- cld_ptids
+  tree@ndlst <- c(tree@ndlst, cld_ndlst)
+  tree <- pstMnp(tree)
+  tree <- rmNdmtrx(tree)
+  updateSlts(tree)
+}
+
+#' @name rmClade
+#' @title Remove a clade from a tree
+#' @description Returns a tree with a clade removed
+#' @details Inverse function of \code{getSubtree()}. Takes a tree
+#' and removes a clade based on an internal node specified. Node
+#' is specified with \code{id}, all descending nodes and tips are removed.
+#' The resulting tree will replace the missing clade with a tip of \code{id}.
+#' Note, returned tree will not have a node matrix.
+#' @param tree \code{TreeMan} object
+#' @param id node ID parent of clade to be removed
+#' @seealso
+#' \code{\link{addClade}}, \code{\link{getSubtree}}, \code{\link{rmTips}}
+#' \url{https://github.com/DomBennett/treeman/wiki/manip-methods}
+#' @export
+#' @examples
+#' library(treeman)
+#' t1 <- randTree(100)
+#' # remove a clade
+#' t2 <- rmClade(t1, 'n2')
+#' summary(t1)
+#' summary(t2)
+rmClade <- function(tree, id) {
+  ptids <- getNdPtids(tree, id)
+  tree@ndlst <- tree@ndlst[!names(tree@ndlst) %in% ptids]
+  tree@ndlst[[id]][['ptid']] <- character()
+  tree <- pstMnp(tree)
+  tree <- rmNdmtrx(tree)
+  updateSlts(tree)
+}
+
 #' @name pinTips
 #' @title Pin tips to a tree
 #' @description Returns a tree with new tips added based on given lineages and time points

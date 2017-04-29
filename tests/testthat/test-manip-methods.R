@@ -127,7 +127,18 @@ test_that('ultrTree() works', {
     expect_true(length(getDcsd(tree)) == 0)
   }
 })
-
+test_that('rmClade() works', {
+  tree <- randTree(100)
+  tree <- rmClade(tree, sample(tree['nds'], 1))
+  expect_true(tree['ntips'] < 100)
+})
+test_that('addClade() works', {
+  t1 <- randTree(100)
+  cld <- getSubtree(t1, 'n2')
+  t2 <- rmClade(t1, 'n2')
+  t3 <- addClade(t2, 'n2', cld)
+  expect_true(t3['ntips'] == 100)
+})
 if(file.exists('test.tre')) {
   file.remove('test.tre')
 }

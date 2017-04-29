@@ -26,6 +26,6 @@ apes <- getSubtree(mammals, id=ape_id)
 summary(apes)
 }
 \seealso{
-\code{\link{getPrnt}}, 
+\code{\link{getPrnt}}, \code{\link{addClade}},
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }
