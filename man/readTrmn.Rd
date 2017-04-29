@@ -4,12 +4,12 @@
 \alias{readTrmn}
 \title{Read a .trmn tree}
 \usage{
-readTrmn(file, wndmtrx = TRUE, parallel = FALSE, progress = "none")
+readTrmn(file, wndmtrx = FALSE, parallel = FALSE, progress = "none")
 }
 \arguments{
 \item{file}{file path}
 
-\item{wndmtrx}{T/F add node matrix? Default TRUE.}
+\item{wndmtrx}{T/F add node matrix? Default FALSE.}
 
 \item{parallel}{logical, make parallel?}
 

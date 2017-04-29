@@ -4,12 +4,12 @@
 \alias{unblncdTree}
 \title{Generate an unbalanced tree}
 \usage{
-unblncdTree(n, wndmtrx = TRUE, parallel = FALSE)
+unblncdTree(n, wndmtrx = FALSE, parallel = FALSE)
 }
 \arguments{
 \item{n}{number of tips, integer, must be 3 or greater}
 
-\item{wndmtrx}{T/F add node matrix? Default TRUE.}
+\item{wndmtrx}{T/F add node matrix? Default FALSE.}
 
 \item{parallel}{T/F run in parallel? Default FALSE.}
 }

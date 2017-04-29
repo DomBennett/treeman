@@ -5,7 +5,7 @@
 #' @details Equivalent to \code{ape}'s \code{rtree()} but returns a
 #' \code{TreeMan} tree. Tree is always rooted and bifurcating.
 #' @param n number of tips, integer, must be 3 or greater
-#' @param wndmtrx T/F add node matrix? Default TRUE.
+#' @param wndmtrx T/F add node matrix? Default FALSE.
 #' @param parallel T/F run in parallel? Default FALSE.
 #' @seealso
 #' \code{\link{TreeMan-class}}, \code{\link{blncdTree}},
@@ -14,7 +14,7 @@
 #' @examples
 #' library(treeman)
 #' tree <- randTree(5)
-randTree <- function(n, wndmtrx=TRUE, parallel=FALSE) {
+randTree <- function(n, wndmtrx=FALSE, parallel=FALSE) {
   # Return a random tree based on a broken-stick model
   .randomPrinds <- function(n) {
     pool <- rep((1:(n-1)), each=2)
@@ -47,7 +47,7 @@ randTree <- function(n, wndmtrx=TRUE, parallel=FALSE) {
 #' @details Equivalent to \code{ape}'s \code{stree(type='balanced')} but returns a
 #' \code{TreeMan} tree. Tree is always rooted and bifurcating.
 #' @param n number of tips, integer, must be 3 or greater
-#' @param wndmtrx T/F add node matrix? Default TRUE.
+#' @param wndmtrx T/F add node matrix? Default FALSE.
 #' @param parallel T/F run in parallel? Default FALSE.
 #' @seealso
 #' \code{\link{TreeMan-class}}, \code{\link{randTree}},
@@ -56,7 +56,7 @@ randTree <- function(n, wndmtrx=TRUE, parallel=FALSE) {
 #' @examples
 #' library(treeman)
 #' tree <- blncdTree(5)
-blncdTree <- function(n, wndmtrx=TRUE, parallel=FALSE) {
+blncdTree <- function(n, wndmtrx=FALSE, parallel=FALSE) {
   if(n < 3) {
     stop("`n` is too small")
   }
@@ -72,7 +72,7 @@ blncdTree <- function(n, wndmtrx=TRUE, parallel=FALSE) {
 #' @details Equivalent to \code{ape}'s \code{stree(type='left')} but returns a
 #' \code{TreeMan} tree. Tree is always rooted and bifurcating.
 #' @param n number of tips, integer, must be 3 or greater
-#' @param wndmtrx T/F add node matrix? Default TRUE.
+#' @param wndmtrx T/F add node matrix? Default FALSE.
 #' @param parallel T/F run in parallel? Default FALSE.
 #' @seealso
 #' \code{\link{TreeMan-class}}, \code{\link{randTree}},
@@ -81,7 +81,7 @@ blncdTree <- function(n, wndmtrx=TRUE, parallel=FALSE) {
 #' @examples
 #' library(treeman)
 #' tree <- unblncdTree(5)
-unblncdTree <- function(n, wndmtrx=TRUE, parallel=FALSE) {
+unblncdTree <- function(n, wndmtrx=FALSE, parallel=FALSE) {
   if(n < 3) {
     stop("`n` is too small")
   }

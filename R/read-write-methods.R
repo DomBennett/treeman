@@ -93,7 +93,7 @@ writeTree <- function(tree, file, append=FALSE, ndLabels=function(nd){
 #' when reading multiple trees.
 #' @param file file path
 #' @param text Newick character string
-#' @param wndmtrx T/F add node matrix? Default TRUE.
+#' @param wndmtrx T/F add node matrix? Default FALSE.
 #' @param parallel logical, make parallel?
 #' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
 #' @seealso
@@ -103,7 +103,7 @@ writeTree <- function(tree, file, append=FALSE, ndLabels=function(nd){
 #' @examples
 #' library(treeman)
 #' tree <- readTree(text="((A:1.0,B:1.0):1.0,(C:1.0,D:1.0):1.0);")
-readTree <- function(file=NULL, text=NULL, wndmtrx=TRUE, parallel=FALSE,
+readTree <- function(file=NULL, text=NULL, wndmtrx=FALSE, parallel=FALSE,
                      progress='none') {
   if(!is.null(file)) {
     trstr <- scan(file, what="raw", quiet=TRUE)
@@ -241,9 +241,9 @@ writeTrmn <- function(tree, file) {
     }
     res
   }
-  if(is(tree) == 'TreeMan') {
+  if('TreeMan' %in% is(tree)) {
     res <- .makeDataFrame(1, tree)
-  } else if(is(tree) == 'TreeMen') {
+  } else if('TreeMen' %in% is(tree)) {
     res <- plyr::mdply(.data=data.frame(ntree=1:tree@ntrees),
                        .fun=.unpack)
     res <- res[ ,-1]
@@ -262,7 +262,7 @@ writeTrmn <- function(tree, file) {
 #' Newick, e.g. any taxonomic information and additional slot names added to 
 #' the tree are recorded in the file.
 #' @param file file path
-#' @param wndmtrx T/F add node matrix? Default TRUE.
+#' @param wndmtrx T/F add node matrix? Default FALSE.
 #' @param parallel logical, make parallel?
 #' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
 #' @seealso
@@ -276,7 +276,7 @@ writeTrmn <- function(tree, file) {
 #' writeTrmn(tree, file='test.trmn')
 #' tree <- readTrmn('test.trmn')
 #' file.remove('test.trmn')
-readTrmn <- function(file, wndmtrx=TRUE, parallel=FALSE,
+readTrmn <- function(file, wndmtrx=FALSE, parallel=FALSE,
                      progress='none') {
   .pack <- function(i) {
     .readTrmn(inpt[inpt[['tree']] == i, ],

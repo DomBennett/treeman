@@ -7,7 +7,7 @@ context('Testing \'ndmtrx-methods\'')
 # MULTIPLE
 test_that('.getNdsPrdstsFrmMtrx() works', {
   # init
-  tree <- randTree(100)
+  tree <- randTree(100, wndmtrx=TRUE)
   ndlst <- tree@ndlst
   ids <- names(ndlst)
   spns <- treeman:::.getSltSpns(tree@ndlst)
@@ -20,7 +20,7 @@ test_that('.getNdsPrdstsFrmMtrx() works', {
 })
 test_that('.getNdsKidsFrmMtrx() works', {
   # init
-  tree <- randTree(100)
+  tree <- randTree(100, wndmtrx=TRUE)
   ndlst <- tree@ndlst
   ids <- names(ndlst)
   tids <- tree@tips
@@ -33,7 +33,7 @@ test_that('.getNdsKidsFrmMtrx() works', {
 })
 test_that('.getNdsPtidsFrmMtrx() works', {
   # init
-  tree <- randTree(100)
+  tree <- randTree(100, wndmtrx=TRUE)
   ndlst <- tree@ndlst
   ids <- names(ndlst)
   # test
@@ -44,7 +44,7 @@ test_that('.getNdsPtidsFrmMtrx() works', {
 })
 test_that('.getNdsPridsFrmMtrx() works', {
   # init
-  tree <- randTree(100)
+  tree <- randTree(100, wndmtrx=TRUE)
   ndlst <- tree@ndlst
   ids <- names(ndlst)
   # test
@@ -54,7 +54,7 @@ test_that('.getNdsPridsFrmMtrx() works', {
 })
 test_that('.getNdsPDFrmMtrx() works', {
   # init
-  tree <- randTree(100)
+  tree <- randTree(100, wndmtrx=TRUE)
   ndlst <- tree@ndlst
   ids <- names(ndlst)
   spns <- treeman:::.getSltSpns(tree@ndlst)
@@ -66,7 +66,7 @@ test_that('.getNdsPDFrmMtrx() works', {
 # TREE
 test_that('.getTreeAgeFrmMtrx() works', {
   # init
-  tree <- randTree(100)
+  tree <- randTree(100, wndmtrx=TRUE)
   ids <- names(tree@ndlst)
   spns <- treeman:::.getSltSpns(tree@ndlst)
   tids <- tree@tips

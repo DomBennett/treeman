@@ -4,7 +4,7 @@
 \alias{readTree}
 \title{Read a Newick tree}
 \usage{
-readTree(file = NULL, text = NULL, wndmtrx = TRUE, parallel = FALSE,
+readTree(file = NULL, text = NULL, wndmtrx = FALSE, parallel = FALSE,
   progress = "none")
 }
 \arguments{
@@ -12,7 +12,7 @@ readTree(file = NULL, text = NULL, wndmtrx = TRUE, parallel = FALSE,
 
 \item{text}{Newick character string}
 
-\item{wndmtrx}{T/F add node matrix? Default TRUE.}
+\item{wndmtrx}{T/F add node matrix? Default FALSE.}
 
 \item{parallel}{logical, make parallel?}
 
