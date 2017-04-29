@@ -119,6 +119,15 @@ test_that('pinTips() work', {
   #expect_that(age_before, equals(tree['age']))  # not necessarily true
   writeTree(tree, file='test.tre')  # expect no error
 })
+test_that('ultrTree() works', {
+  trees <- cTrees(randTree(100), unblncdTree(100),
+                  blncdTree(100))
+  for(tree in trees['treelst']) {
+    tree <- ultrTree(tree)
+    expect_true(length(getDcsd(tree)) == 0)
+  }
+})
+
 if(file.exists('test.tre')) {
   file.remove('test.tre')
 }

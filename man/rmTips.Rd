@@ -13,8 +13,7 @@ rmTips(tree, tids, drp_intrnl = TRUE, progress = "none")
 
 \item{drp_intrnl}{Boolean, drop internal branches, default FALSE}
 
-\item{progress}{name of the progress bar to use, see \code{\link{create_progress_bar}}
-\url{https://github.com/DomBennett/treeman/wiki/manip-methods}}
+\item{progress}{name of the progress bar to use, see \code{\link{create_progress_bar}}}
 }
 \description{
 Returns a tree with a tip ID(s) for removal
@@ -28,4 +27,7 @@ library(treeman)
 tree <- randTree(10)
 tree <- rmTips(tree, 't1')
 summary(tree)
+}
+\seealso{
+\code{\link{addTip}}, \url{https://github.com/DomBennett/treeman/wiki/manip-methods}
 }

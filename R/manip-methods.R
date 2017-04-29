@@ -1,4 +1,29 @@
-# TODO: mergeTree, collapseNode, removeNode
+
+#' @name ultrTree
+#' @title Make tree ultrametric
+#' @description Returns a tree with all tips ending at time 0
+#' @details Re-calculates the branch lengths in the tree so that all
+#' tips are brought to the same time point: all species are extant.
+#' @param tree \code{TreeMan} object
+#' @seealso
+#' \url{https://github.com/DomBennett/treeman/wiki/manip-methods}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree <- randTree(10)
+#' (getDcsd(tree))  # list all extinct tips
+#' tree <- ultrTree(tree)
+#' (getDcsd(tree))  # list all extinct tips
+ultrTree <- function(tree) {
+  # bring tips to maximum possible length
+  tip_dpths <- sapply(getNdsPrids(tree, tree@tips), length)
+  tip_spns <- (tree['ntips'] - tip_dpths)
+  nd_spns <- rep(1, tree@nnds)
+  names(nd_spns) <- tree@nds
+  spns <- c(tip_spns, nd_spns)
+  tree <- setNdsSpn(tree, ids=names(spns), vals=spns)
+  updateSlts(tree)
+}
 
 #' @name rmTips
 #' @title Remove tips from a tree
@@ -9,15 +34,14 @@
 #' @param tids tip IDs
 #' @param drp_intrnl Boolean, drop internal branches, default FALSE
 #' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
-#' \url{https://github.com/DomBennett/treeman/wiki/manip-methods}
+#' @seealso
+#' \code{\link{addTip}}, \url{https://github.com/DomBennett/treeman/wiki/manip-methods}
 #' @export
 #' @examples
 #' library(treeman)
 #' tree <- randTree(10)
 #' tree <- rmTips(tree, 't1')
 #' summary(tree)
-# @seealso
-# \code{\link{addTip}}, 
 rmTips <- function(tree, tids, drp_intrnl=TRUE, progress="none") {
   # internal
   .rmTip <- function(tid) {
