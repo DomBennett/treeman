@@ -176,6 +176,9 @@ setMethod('str', c('object'='TreeMan'),
 #' @exportMethod summary
 setMethod('summary', c('object'='TreeMan'),
           function(object){
+            if(!fastCheckTreeMan(object)) {
+              stop("Tree is corrupted. Run `checkTreeMan()` to see how.")
+            }
             if(!object@updtd) {
               stop("Tree is not updated since change or initiation. Use `updateSlts()`")
             }

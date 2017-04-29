@@ -29,7 +29,8 @@ ultrTree <- function(tree) {
 #' @title Remove tips from a tree
 #' @description Returns a tree with a tip ID(s) for removal
 #' @details Removes tips in a tree. Set drp_intrnl to FALSE to convert
-#' internal nodes into new tips.
+#' internal nodes into new tips. Warning: do not use this function to remove
+#' internal nodes, this create a corrupted tree.
 #' @param tree \code{TreeMan} object
 #' @param tids tip IDs
 #' @param drp_intrnl Boolean, drop internal branches, default FALSE
@@ -42,6 +43,12 @@ ultrTree <- function(tree) {
 #' tree <- randTree(10)
 #' tree <- rmTips(tree, 't1')
 #' summary(tree)
+#' # running the function using an internal
+#' # node will create a corrupted tree
+#' tree <- rmTips(tree, 'n3')
+#' # run summary() to make sure a change has
+#' # not created a corruption
+#' #summary(tree)
 rmTips <- function(tree, tids, drp_intrnl=TRUE, progress="none") {
   # internal
   .rmTip <- function(tid) {

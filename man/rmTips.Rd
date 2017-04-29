@@ -20,13 +20,20 @@ Returns a tree with a tip ID(s) for removal
 }
 \details{
 Removes tips in a tree. Set drp_intrnl to FALSE to convert
-internal nodes into new tips.
+internal nodes into new tips. Warning: do not use this function to remove
+internal nodes, this create a corrupted tree.
 }
 \examples{
 library(treeman)
 tree <- randTree(10)
 tree <- rmTips(tree, 't1')
 summary(tree)
+# running the function using an internal
+# node will create a corrupted tree
+tree <- rmTips(tree, 'n3')
+# run summary() to make sure a change has
+# not created a corruption
+#summary(tree)
 }
 \seealso{
 \code{\link{addTip}}, \url{https://github.com/DomBennett/treeman/wiki/manip-methods}
