@@ -4,7 +4,8 @@
 \alias{searchTxnyms}
 \title{Get node labels based on online taxonomic database}
 \usage{
-searchTxnyms(tree, cache = FALSE, parent = NULL, clean = TRUE)
+searchTxnyms(tree, cache = FALSE, parent = NULL, clean = TRUE,
+  infer = TRUE)
 }
 \arguments{
 \item{tree}{TreeMan object}
@@ -14,6 +15,8 @@ searchTxnyms(tree, cache = FALSE, parent = NULL, clean = TRUE)
 \item{parent}{specify parent of all names to prevent false names}
 
 \item{clean}{T/F, ensure returned names contain no special characters?}
+
+\item{infer}{T/F, infer taxonyms for unfound nodes?}
 }
 \description{
 Return names of each node in tree based on searching tip labels
@@ -24,6 +27,8 @@ For each node, all the descendants are searched, the taxonomic lineages returned
 then searched to find the lowest shared name.
 All the tip labels are searched against a specified taxonomic database through the GNR and NCBI.
 (So far only tested with NCBI database.)
+Use the infer argument to ensure a taxonym is returned for all nodes. If infer is true,
+all nodes without an identifed taxonym adopt the taxonym of their parent.
 }
 \examples{
 tree <- randTree(8)

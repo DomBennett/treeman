@@ -56,16 +56,27 @@ test_that ('taxaResolve([basic]) works', {
   expect_that(dim(res), equals(expected_dimensions))
 })
 test_that ('searchTxnyms([basic]) works', {
-  tree <- randTree(8)
-  new_tids <- c("Gallus_gallus", "Aileuropoda_melanoleucha", "Ailurus_fulgens",
-                "Rattus_rattus", "Mus_musculus", "Gorilla_gorilla", "Pan_trogoldytes", "Homo_sapiens")
+  tree <- unblncdTree(8)
+  new_tids <- c("Pan_trogoldytes", "Gallus_gallus", "Ailurus_fulgens",
+                "Aileuropoda_melanoleucha","Rattus_rattus", "Mus_musculus",
+                "Gorilla_gorilla", "Homo_sapiens")
   tree <- setNdsID(tree, tree['tips'], new_tids)
-  
-  nd_labels <- searchTxnyms(tree)
+  nd_labels <- searchTxnyms(tree, cache=TRUE)
   expect_that(sum(is.na(nd_labels)), equals(0))
+  # test infer arg
+  prid_age <- getNdAge(tree, getNdSlt(tree, 'prid', 'Homo_sapiens'),
+                       getAge(tree))
+  tree <- addTip(tree, tid='Unknown_homo_sp', sid='Homo_sapiens',
+         strt_age = runif(max=prid_age, min=0, n=1),
+         tree_age = getAge(tree))
+  nd_labels <- searchTxnyms(tree, cache=TRUE, infer=TRUE)
+  expect_true(nd_labels[['p_Unknown_homo_sp']] == 'Homininae')
 })
 test_that ('.findClade([basic]) works', {
   # class A is shared by all test species
   expect_that (treeman:::.findClade (
     test.lineages), equals ('classA'))
 })
+if(dir.exists('gnr_cache')) {
+  unlink('gnr_cache', recursive=TRUE)
+}

@@ -6,10 +6,13 @@
 #' then searched to find the lowest shared name.
 #' All the tip labels are searched against a specified taxonomic database through the GNR and NCBI.
 #' (So far only tested with NCBI database.)
+#' Use the infer argument to ensure a taxonym is returned for all nodes. If infer is true,
+#' all nodes without an identifed taxonym adopt the taxonym of their parent.
 #' @param tree TreeMan object
 #' @param cache T/F, create a local cache of downloaded names?
 #' @param parent specify parent of all names to prevent false names
 #' @param clean T/F, ensure returned names contain no special characters?
+#' @param infer T/F, infer taxonyms for unfound nodes?
 #' @seealso
 #' \code{\link{taxaResolve}}, \code{\link{setTxnyms}}, \code{\link{getTxnyms}}
 #' @export
@@ -22,7 +25,8 @@
 #' print(nd_labels)
 # TODO: add compatibility with other GNR datasources
 # TODO: catalogue of life, unlike NCBI, does not keep lineages and rank lengths constant between names
-searchTxnyms <- function (tree, cache=FALSE, parent=NULL, clean=TRUE) {
+searchTxnyms <- function (tree, cache=FALSE, parent=NULL, clean=TRUE,
+                          infer=TRUE) {
   # Use GNR to label all nodes in a phylogeny
   # first replace all _ with spaces
   tip_labels <- gsub ('_', ' ', tree@tips)
@@ -50,6 +54,21 @@ searchTxnyms <- function (tree, cache=FALSE, parent=NULL, clean=TRUE) {
   if(clean) {
     nd_labels <- gsub('\\s', '_', nd_labels)
     nd_labels <- gsub('[^a-zA-Z_0-9]', '', nd_labels)
+  }
+  if(infer & any(is.na(nd_labels))) {
+    if(sum(is.na(nd_labels))/length(nd_labels) > 0.5) {
+      message('Fewer than 50% of nodes identified,',
+              ' not attempting inference of remaning nodes.')
+    } else {
+      for(i in which(is.na(nd_labels))) {
+        prids <- getNdPrids(tree, names(nd_labels)[i])
+        pssbls <- nd_labels[prids]
+        pssbls <- pssbls[!is.na(pssbls)]
+        if(length(pssbls) > 0) {
+          nd_labels[[i]] <- pssbls[[1]]
+        }
+      }
+    }
   }
   nd_labels
 }
@@ -133,7 +152,7 @@ taxaResolve <- function (nms, batch=100, datasource=4, genus=TRUE,
   if(sum(!deja_vues) > 0) {
     # Split nms into batch sized chunks
     #  http://stackoverflow.com/questions/3318333/split-a-vector-into-chunks-in-r
-    x <- seq_along (trms)
+    x <- seq_along (trms[!deja_vues])
     btrms <- split (trms[!deja_vues], ceiling (x/batch))
     bnms <- split (nms[!deja_vues], ceiling (x/batch))
     for (i in 1:length(btrms)) {
