@@ -8,3 +8,6 @@
 
 # mac
 .DS_Store
+
+# gnr cache
+gnr_cache
