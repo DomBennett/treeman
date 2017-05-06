@@ -31,5 +31,5 @@ file.remove('test.trmn')
 \seealso{
 \code{\link{readTrmn}},
 \code{\link{readTree}},\code{\link{writeTree}},
-\code{\link{randTree}},
+\code{\link{randTree}}, \code{\link{saveTreeMan}}, \code{\link{loadTreeMan}}
 }

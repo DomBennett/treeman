@@ -11,7 +11,10 @@
 #' @param parallel logical, make parallel?
 #' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
 #' @seealso
-#' \code{\link{readTree}}, \code{\link{randTree}}, \url{https://en.wikipedia.org/wiki/Newick_format}
+#' \url{https://en.wikipedia.org/wiki/Newick_format},
+#' \code{\link{readTree}}, \code{\link{randTree}},
+#' \code{\link{readTrmn}}, \code{\link{writeTrmn}},
+#' \code{\link{saveTreeMan}}, \code{\link{loadTreeMan}}
 #' @export
 #' @examples
 #' library(treeman)
@@ -97,8 +100,10 @@ writeTree <- function(tree, file, append=FALSE, ndLabels=function(nd){
 #' @param parallel logical, make parallel?
 #' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
 #' @seealso
+#' \url{https://en.wikipedia.org/wiki/Newick_format},
 #' \code{\link{addNdmtrx}}, \code{\link{writeTree}},
-#' \code{\link{randTree}}, \url{https://en.wikipedia.org/wiki/Newick_format}
+#' \code{\link{randTree}}, \code{\link{readTrmn}}, \code{\link{writeTrmn}},
+#' \code{\link{saveTreeMan}}, \code{\link{loadTreeMan}}
 #' @export
 #' @examples
 #' library(treeman)
@@ -210,7 +215,7 @@ readTree <- function(file=NULL, text=NULL, wndmtrx=FALSE, parallel=FALSE,
 #' @seealso
 #' \code{\link{readTrmn}},
 #' \code{\link{readTree}},\code{\link{writeTree}},
-#' \code{\link{randTree}},
+#' \code{\link{randTree}}, \code{\link{saveTreeMan}}, \code{\link{loadTreeMan}}
 #' @export
 #' @examples
 #' library(treeman)
@@ -268,7 +273,7 @@ writeTrmn <- function(tree, file) {
 #' @seealso
 #' \code{\link{writeTrmn}},
 #' \code{\link{readTree}},\code{\link{writeTree}},
-#' \code{\link{randTree}},
+#' \code{\link{randTree}}, \code{\link{saveTreeMan}}, \code{\link{loadTreeMan}}
 #' @export
 #' @examples
 #' library(treeman)
@@ -345,6 +350,85 @@ readTrmn <- function(file, wndmtrx=FALSE, parallel=FALSE,
   tree <- updateSlts(tree)
   if(wndmtrx) {
     tree <- addNdmtrx(tree)
+  }
+  tree
+}
+
+#' @name saveTreeMan
+#' @title Save a TreeMan object in serialization format
+#' @description \code{TreeMan} equivalent to \code{save()} but able to handle
+#' node matrices.
+#' @details It is not possible to use \code{save()} on \code{TreeMan} objects
+#' with node matrices. Node matrices are bigmemory matrices and are therefore outside
+#' the R environment, see bigmemory documentation for more information. Saving and loading
+#' a bigmemory matrix may cause memory issues in R and cause R to crash.
+#' 
+#' This function can safely store a \code{TreeMan} object with and without
+#' a node matrix. This function stores the tree using the serialization format and the node
+#' matrix as a hidden .csv. Both parts of the tree can be reloaded to an R environment
+#' with \code{loadTreeMan()}. The hidden node matrix filename is based on the file argument:
+#' \code{file + _ndmtrx}
+#' 
+#' Reading and writing trees with \code{saveTreeMan()} and
+#' \code{loadTreeMan} is faster than any of the other read and write functions.
+#' @param tree \code{TreeMan} object
+#' @param file file path
+#' @seealso
+#' \code{\link{loadTreeMan}},
+#' \code{\link{readTree}},\code{\link{writeTree}},
+#' \code{\link{readTrmn}}, \code{\link{writeTrmn}}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree <- randTree(100, wndmtrx=TRUE)
+#' saveTreeMan(tree, file='test.RData')
+#' rm(tree)
+#' tree <- loadTreeMan(file='test.RData')
+#' file.remove('test.RData', 'testRData_ndmtrx')
+saveTreeMan <- function(tree, file) {
+  ndmtrx_file <- paste0(gsub('\\.', '', file), '_ndmtrx')
+  if(!is.null(tree@ndmtrx)) {
+    bigmemory::write.big.matrix(x=tree@ndmtrx, filename=ndmtrx_file)
+    tree <- rmNdmtrx(tree)
+  }
+  save(list=c('tree', 'ndmtrx_file'), file=file)
+}
+
+#' @name loadTreeMan
+#' @title Load a TreeMan object in serialization format
+#' @description \code{TreeMan} equivalent to \code{load()} but able to handle
+#' node matrices.
+#' @details It is not possible to use \code{save()} on \code{TreeMan} objects
+#' with node matrices. Node matrices are bigmemory matrices and are therefore outside
+#' the R environment, see bigmemory documentation for more information. Saving and loading
+#' a bigmemory matrix may cause memory issues in R and cause R to crash.
+#' 
+#' This function can safely read a \code{TreeMan} object with and without
+#' a node matrix. \code{saveTreeMan()} function stores the tree using the serialization format
+#' and the node matrix as a hidden .csv. Both parts of the tree can be reloaded to an R environment
+#' with \code{loadTreeMan()}. The hidden node matrix filename is based on the file argument:
+#' \code{file + _ndmtrx}
+#' 
+#' Reading and writing trees with \code{saveTreeMan()} and
+#' \code{loadTreeMan} is faster than any of the other read and write functions.
+#' @param file file path
+#' @seealso
+#' \code{\link{saveTreeMan}},
+#' \code{\link{readTree}},\code{\link{writeTree}},
+#' \code{\link{readTrmn}}, \code{\link{writeTrmn}}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree <- randTree(100, wndmtrx=TRUE)
+#' saveTreeMan(tree, file='test.RData')
+#' rm(tree)
+#' tree <- loadTreeMan(file='test.RData')
+#' file.remove('test.RData', 'testRData_ndmtrx')
+loadTreeMan <- function(file) {
+  load(file)
+  if(file.exists(ndmtrx_file)) {
+    tree@ndmtrx <- bigmemory::read.big.matrix(filename=ndmtrx_file,
+                                              type='integer', shared=FALSE)
   }
   tree
 }

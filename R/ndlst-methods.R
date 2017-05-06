@@ -163,8 +163,7 @@
 .getNdmtrxFrmLst <- function(ndlst) {
   # return matrix of 01s for ids that descend from 
   message('Note, trees with `ndmtrx` cannot be saved and loaded using `save()` or `savehistory()`.',
-          ' Loading from these files may cause unusual behaviour.',
-          ' To avoid this issue, use `rmNdmtrx()` before saving and regeneate the `ndmtrx` after loading.')
+          ' Loading from these files may cause unusual behaviour.')
   prids <- sapply(ndlst, function(x) x[['prid']])
   nids <- names(prids)
   prids <- match(prids, nids)

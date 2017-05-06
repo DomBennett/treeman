@@ -38,5 +38,8 @@ writeTree(tree, file='example.tre', ndLabels=ndLabels)
 file.remove('example.tre')
 }
 \seealso{
-\code{\link{readTree}}, \code{\link{randTree}}, \url{https://en.wikipedia.org/wiki/Newick_format}
+\url{https://en.wikipedia.org/wiki/Newick_format},
+\code{\link{readTree}}, \code{\link{randTree}},
+\code{\link{readTrmn}}, \code{\link{writeTrmn}},
+\code{\link{saveTreeMan}}, \code{\link{loadTreeMan}}
 }

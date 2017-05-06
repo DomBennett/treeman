@@ -5,6 +5,11 @@ library(testthat)
 # DATA
 data(mammals)
 
+# ENSURE THIS FILE DOES NOT ALREADY EXIST
+if(file.exists('testRData_ndmtrx')) {
+  file.remove('testRData_ndmtrx')
+}
+
 # RUNNING
 context('Testing \'read-write-methods\'')
 test_that('readTree([w/ spans]) works', {
@@ -98,9 +103,37 @@ test_that('reading and writing with additional slots works', {
   tree <- readTrmn(file='test.trmn')
   expect_true(tree['othr_slt_nms'] == 'confidences')
 })
+test_that('saveTreeMan() works', {
+  tree <- randTree(100)
+  saveTreeMan(tree, file='test.RData')
+  expect_true(file.exists('test.RData'))
+  tree <- randTree(100, wndmtrx=TRUE)
+  saveTreeMan(tree, file='test.RData')
+  expect_true(file.exists('testRData_ndmtrx'))
+  file.remove('testRData_ndmtrx')
+})
+test_that('loadTreeMan() works', {
+  tree <- randTree(100)
+  saveTreeMan(tree, file='test.RData')
+  rm(tree)
+  tree <- loadTreeMan(file='test.RData')
+  expect_false(!is.null(tree@ndmtrx))
+  tree <- randTree(100, wndmtrx=TRUE)
+  saveTreeMan(tree, file='test.RData')
+  rm(tree)
+  tree <- loadTreeMan(file='test.RData')
+  expect_true(!is.null(tree@ndmtrx))
+})
+
 if(file.exists('test.tre')) {
   file.remove('test.tre')
 }
 if(file.exists('test.trmn')) {
   file.remove('test.trmn')
+}
+if(file.exists('test.RData')) {
+  file.remove('test.RData')
+}
+if(file.exists('testRData_ndmtrx')) {
+  file.remove('testRData_ndmtrx')
 }
