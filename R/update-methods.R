@@ -59,9 +59,12 @@ updateSlts <- function(tree) {
 #' large amounts of memory and has no impact on adding or removing tips.
 #' Note, trees with the node matrix can not be written to disk using the
 #' 'serialization format' i.e. with \code{save} or \code{saveRDS}.
+#' The matrix is generated with bigmemory's `as.big.matrix()`.
 #' @param tree \code{TreeMan} object
+#' @param shared T/F, should the bigmatrix be shared? See bigmemory documentation.
 #' @seealso
-#' \code{\link{updateSlts}}, \code{\link{rmNdmtrx}}
+#' \code{\link{updateSlts}}, \code{\link{rmNdmtrx}},
+#' \link{https://cran.r-project.org/web/packages/bigmemory/index.html}
 #' @export
 #' @examples
 #' # library(treeman)
@@ -69,13 +72,13 @@ updateSlts <- function(tree) {
 #' summary(tree)
 #' tree <- addNdmtrx(tree)
 #' summary(tree)
-addNdmtrx <- function(tree) {
+addNdmtrx <- function(tree, shared=FALSE, ...) {
   if(!checkTreeMan(tree)) {
     stop('Invalid tree')
   }
   if(is.null(tree@ndmtrx)) {
     # generate ndmtrx
-    tree@ndmtrx <- .getNdmtrxFrmLst(tree@ndlst)
+    tree@ndmtrx <- .getNdmtrxFrmLst(tree@ndlst, shared=shared, ...)
   }
   tree
 }

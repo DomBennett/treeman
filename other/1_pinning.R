@@ -5,33 +5,44 @@ library(treeman)
 
 # DATA
 data(mammals)  # example mammal tree is 'taxonomically informed', all nodes have taxonyms
-# rslvd names (i.e. with lineages) not in mammals tree generated with MoreTreeTools::taxaResolve
-# load pre-generated dataset from github
+# rslvd names (i.e. with lineages) not in mammals tree generated with taxaResolve()
+# load pre-generated dataset from github, requires internet
 load(url("https://github.com/DomBennett/treeman/raw/master/other/1_pinning.RData"))
 
 # PARAMETERS
-n <- 100  # number of missing mammal species to pin
+n <- 1000  # number of missing mammal species to pin
 
-# PIN
+# CLEAN DATA
 rnds <- sample(1:nrow(rslvd_mammals), n)
 rslvd_mammals <- rslvd_mammals[rnds, ]
-lngs <- plyr::mlply(rslvd_mammals, function(lineage, ...) strsplit(lineage, '\\|')[[1]])
-tids <- gsub("\\s+", "_", rslvd_mammals$search_name)  # always replace spaces with _
+lngs <- lapply(rslvd_mammals$lineage, function(lineage, ...) strsplit(lineage, '\\|')[[1]])
+# remove everything before mammalia
+pull <- sapply(lngs, function(lineage) any(grepl('mammalia', lineage, ignore.case=TRUE)))
+lngs <- lngs[pull]
+lngs <- lapply(lngs, function(lineage) {
+  lineage[-1*(1:(which(grepl('mammalia', lineage, ignore.case=TRUE)) - 1))]
+  })
+# always replace spaces with _
+lngs <- lapply(lngs, function(x) gsub("\\s+", "_", x))
+tids <- gsub("\\s+", "_", rslvd_mammals$search_name)
+tids <- tids[pull]
+cat('[', sum(pull)*100/n, '%] random names are pinnable\n', sep='')
+
+# PIN
 ends <- rep(0, length(tids))  # all tips end in the present
-pinned_tree <- pinTips(tree=mammals, lngs=lngs, tids=tids, end_ages=ends, tree_age=166.2)
-pinned_tree <- updateTree(pinned_tree)
+tree_age <- getAge(mammals)
+pinned_tree <- pinTips(tree=mammals, lngs=lngs, tids=tids,
+                       end_ages=ends, tree_age=tree_age)
+pinned_tree <- updateSlts(pinned_tree)
 p_added <- sum(tids %in% pinned_tree['tips'])*100/n
 cat('[', p_added, '%] of n pinned to mammals\n', sep='')
 
-# VIZ
-library(MoreTreeTools)  # for conversion to phylo
-# taxonyms function not working
+# VIZ (using ape)
 txnym <- function(n) {
   # return taxonyms for node labels, combining any multiple entries with _
   paste0(n[['txnym']], collapse='_')
 }
 writeTree(pinned_tree, file='temp.tre', ndLabels = txnym)
-writeTree(pinned_tree, file='temp.tre')
 tree_phylo <- ape::read.tree('temp.tre')
 plot(tree_phylo, show.tip.label=FALSE, edge.width=0.5, type='fan', no.margin=FALSE,
      edge.color='lightsteelblue3')

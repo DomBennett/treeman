@@ -160,7 +160,7 @@
 # SPECIAL
 
 #' @useDynLib treeman cGetNdmtrx
-.getNdmtrxFrmLst <- function(ndlst) {
+.getNdmtrxFrmLst <- function(ndlst, shared=FALSE, ...) {
   # return matrix of 01s for ids that descend from 
   message('Note, trees with `ndmtrx` cannot be saved and loaded using `save()` or `savehistory()`.',
           ' Loading from these files may cause unusual behaviour.')
@@ -173,7 +173,7 @@
                as.integer(length(nids)),
                as.integer(qry_ids),
                as.integer(prids))
-  res <- bigmemory::as.big.matrix(res, shared=FALSE)
+  res <- bigmemory::as.big.matrix(res, shared=shared, ...)
   res
 }
 # Attemp for making getNdsMat run in parallel

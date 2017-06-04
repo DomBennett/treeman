@@ -68,14 +68,14 @@ setMethod ('as.character', c('x'='Node'),
 #' @exportMethod show
 setMethod ('show', 'Node',
            function(object){
-             cat(as.character(object))
+             cat(summary(object))
            })
 #' @rdname Node-class
 #' @aliases Node-method
 #' @exportMethod print
 setMethod ('print', 'Node',
            function(x){
-             print(as.character(x))
+             print(summary(x))
            })
 #' @rdname Node-class
 #' @aliases Node-method

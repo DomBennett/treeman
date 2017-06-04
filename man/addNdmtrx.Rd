@@ -4,10 +4,12 @@
 \alias{addNdmtrx}
 \title{Add node matrix to a tree}
 \usage{
-addNdmtrx(tree)
+addNdmtrx(tree, shared = FALSE, ...)
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}
+
+\item{shared}{T/F, should the bigmatrix be shared? See bigmemory documentation.}
 }
 \description{
 Return tree with node matrix added.
@@ -18,6 +20,7 @@ determining node ages, number of descendants etc. But it takes up
 large amounts of memory and has no impact on adding or removing tips.
 Note, trees with the node matrix can not be written to disk using the
 'serialization format' i.e. with \code{save} or \code{saveRDS}.
+The matrix is generated with bigmemory's `as.big.matrix()`.
 }
 \examples{
 # library(treeman)
@@ -27,5 +30,6 @@ tree <- addNdmtrx(tree)
 summary(tree)
 }
 \seealso{
-\code{\link{updateSlts}}, \code{\link{rmNdmtrx}}
+\code{\link{updateSlts}}, \code{\link{rmNdmtrx}},
+\link{https://cran.r-project.org/web/packages/bigmemory/index.html}
 }
