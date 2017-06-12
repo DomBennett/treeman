@@ -14,6 +14,21 @@ test_that('getLvng() works', {
   living <- getLvng(tree)
   expect_true(all(living %in% tree['tips']))
 })
+test_that('getUnqNds() works', {
+  tree <- randTree(10)
+  tids <- sample(tree['tips'], 2)
+  unqnds <- getUnqNds(tree, tids)
+  expect_true(length(unqnds) >= length(tids))
+})
+test_that('getCnntdNds() works', {
+  tree <- randTree(10)
+  tids <- sample(tree['tips'], 2)
+  cnntdnds <- getCnnctdNds(tree, tids)
+  prnt <- getPrnt(tree, tids)
+  ptids <- tree[[prnt]]['ptid']
+  expect_false(prnt %in% cnntdnds)
+  expect_true(all(ptids %in% ptids))
+})
 test_that('getTxnyms() works', {
   data(mammals)
   res <- getTxnyms(mammals, 'Homo')[[1]]
@@ -46,7 +61,7 @@ test_that("getPath() works", {
   expect_that(pth[1], equals('t1'))
   expect_that(pth[length(pth)], equals('t10'))
 })
-test_that("getSubtree() works", {
+test_that("getSubtree(id) works", {
   tree <- randTree(10)
   subtree <- getSubtree(tree, 'n2')
   tree_age <- getAge(tree)

@@ -48,9 +48,21 @@ test_that('calcPhyDv() works', {
 })
 test_that('calcFrPrp() works', {
   tree <- randTree(10)
-  sum(sapply(tree@ndlst, function(x) x[['spn']]))
   ed_values <- calcFrPrp(tree, tree['tips'])
-  expect_that(sum(ed_values), equals(tree['pd']))
+  expect_equal(sum(ed_values), tree['pd'])
+})
+test_that('calcPrtFrPrp() works', {
+  tree <- randTree(10)
+  tids <- sample(tree['tips'], 8)
+  ignr <- tree@tips[!tree@tips %in% tids]
+  ed_vals <- calcPrtFrPrp(tree, tids, ignr=ignr)
+  # the sum of the ed vals should be equivalent to the 
+  # total length of the tree with the exclusion of the
+  # branches unique to the ignr tips
+  prt_sum <- sum(ed_vals)
+  unqnds <- getUnqNds(tree, ignr)
+  exp_sum <- tree['pd'] - sum(getNdsSlt(tree, 'spn', unqnds))
+  expect_equal(prt_sum, exp_sum)
 })
 test_that('calcDstMtrx() works', {
   tree <- randTree(10)

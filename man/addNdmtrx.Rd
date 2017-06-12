@@ -10,6 +10,8 @@ addNdmtrx(tree, shared = FALSE, ...)
 \item{tree}{\code{TreeMan} object}
 
 \item{shared}{T/F, should the bigmatrix be shared? See bigmemory documentation.}
+
+\item{...}{\code{as.big.matrix()} additional arguments}
 }
 \description{
 Return tree with node matrix added.

@@ -253,6 +253,7 @@ calcDstRF <- function(tree_1, tree_2, nrmlsd=FALSE,
 #' @details Faith's phylogenetic diversity is calculated as the sum of all connected
 #' branches for specified tips in a tree. It can be used to investigate how biodviersity
 #' as measured by the phylogeny changes. Parallelizable.
+#' The function uses \code{getCnntdNds()}.
 #' @param tree \code{TreeMan} object
 #' @param tids tip ids
 #' @param parallel logical, make parallel?
@@ -261,7 +262,7 @@ calcDstRF <- function(tree_1, tree_2, nrmlsd=FALSE,
 #' Faith, D. (1992). Conservation evaluation and phylogenetic diversity.
 #'  Biological Conservation, 61, 1-10.
 #' @seealso
-#' \code{\link{calcFrPrp}}, \code{\link{calcOvrlp}}
+#' \code{\link{calcFrPrp}}, \code{\link{calcOvrlp}}, \code{\link{getCnntdNds}}
 #' \url{https://github.com/DomBennett/treeman/wiki/calc-methods}
 #' @export
 #' @examples
@@ -270,10 +271,7 @@ calcDstRF <- function(tree_1, tree_2, nrmlsd=FALSE,
 #' calcPhyDv(tree, tree['tips'])
 calcPhyDv <- function(tree, tids,
                       parallel=FALSE, progress="none") {
-  prids <- c(unique(unlist(getNdsPrids(tree, tids))),
-             tids)
-  counts <- table(prids)
-  prids <- names(counts)[counts < length(tids)]
+  prids <- getCnnctdNds(tree, tids)
   spns <- getNdsSlt(tree, slt_nm="spn", ids=prids,
                     parallel=parallel, progress=progress)
   sum(spns)
@@ -292,7 +290,7 @@ calcPhyDv <- function(tree, tids,
 #' Isaac, N.J.B., Turvey, S.T., Collen, B., Waterman, C. and Baillie, J.E.M. (2007). 
 #'  Mammals on the EDGE: conservation priorities based on threat and phylogeny. PLoS ONE, 2, e296.
 #' @seealso
-#' \code{\link{calcPhyDv}}
+#' \code{\link{calcPhyDv}}, \code{\link{calcPrtFrPrp}},
 #' \url{https://github.com/DomBennett/treeman/wiki/calc-methods}
 #' @export
 #' @examples
@@ -303,10 +301,10 @@ calcFrPrp <- function(tree, tids, progress="none") {
   .calc <- function(i) {
     id <- tree@all[i]
     spn <- getNdSlt(tree, "spn", id)
-    kids <- getNdKids(tree, id)
-    if(length(kids) == 0) {
+    if(id %in% tree@tips) {
       spn_shres[i, id] <<- spn
     } else {
+      kids <- getNdKids(tree, id)
       spn_shre <- spn/length(kids)
       spn_shres[i, kids] <<- spn_shre
     }
@@ -314,6 +312,51 @@ calcFrPrp <- function(tree, tids, progress="none") {
   spn_shres <- matrix(0, ncol=tree@ntips, nrow=tree@nall)
   colnames(spn_shres) <- tree@tips
   plyr::m_ply(.data=data.frame(i=1:tree@nall), .fun = .calc,
+              .progress=progress)
+  colSums(spn_shres[, tids])
+}
+
+#' @name calcPrtFrPrp
+#' @title Calculate evolutionary distinctness for part of tree
+#' @description Returns the evolutationary distinctness of ids using the fair proportion metric.
+#' @details Extension of \code{calcFrPrp()} but with ignore argument.
+#' Use \code{ignr} to ignore certain tips from calculation. For example, if any of tips
+#' are extinct you may wish to ignore these.
+#' @param tree \code{TreeMan} object
+#' @param tids tip IDs
+#' @param ignr tips to ignore in calculation
+#' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
+#' @references
+#' Isaac, N.J.B., Turvey, S.T., Collen, B., Waterman, C. and Baillie, J.E.M. (2007). 
+#'  Mammals on the EDGE: conservation priorities based on threat and phylogeny. PLoS ONE, 2, e296.
+#' @seealso
+#' \code{\link{calcFrPrp}}
+#' \url{https://github.com/DomBennett/treeman/wiki/calc-methods}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree <- randTree(10)
+#' calcPrtFrPrp(tree, c('t1','t3'), ignr='t2')
+calcPrtFrPrp <- function(tree, tids, ignr=NULL, progress="none") {
+  .calc <- function(i) {
+    id <- allnds[i]
+    spn <- getNdSlt(tree, "spn", id)
+    if(id %in% tips) {
+      spn_shres[i, id] <<- spn
+    } else {
+      kids <- getNdKids(tree, id)
+      kids <- kids[!kids %in% ignr]
+      if(length(kids) > 0) {
+        spn_shre <- spn/length(kids)
+        spn_shres[i, kids] <<- spn_shre
+      }
+    }
+  }
+  tips <- tree@tips[!tree@tips %in% ignr]
+  allnds <- tree@all[!tree@all %in% ignr]
+  spn_shres <- matrix(0, ncol=length(tips), nrow=length(allnds))
+  colnames(spn_shres) <- tips
+  plyr::m_ply(.data=data.frame(i=1:length(allnds)), .fun = .calc,
               .progress=progress)
   colSums(spn_shres[, tids])
 }

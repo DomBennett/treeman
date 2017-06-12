@@ -152,6 +152,49 @@ getOtgrp <- function(tree, ids) {
 
 # SPECIAL
 
+#' @name getUnqNds
+#' @title Get unique nodes represented by tips
+#' @description Return a list of IDs for any node that are represented by tip IDs given.
+#' @details Returns a vector.
+#' @param tree \code{TreeMan} object
+#' @param tids vector of tip IDs
+#' @seealso
+#' \code{\link{getCnnctdNds}}, \code{\link{calcFrPrp}},
+#' \code{\link{calcPhyDv}}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree <- randTree(10)
+#' unqnds <- getUnqNds(tree, c('t1', 't2'))
+getUnqNds <- function(tree, tids) {
+  rmng <- tree@tips[!tree@tips %in% tids]
+  ignr <- c(unique(unlist(getNdsPrids(tree, tids))), tids)
+  rmng <- c(unique(unlist(getNdsPrids(tree, rmng))), rmng)
+  ignr[!ignr %in% rmng]
+}
+
+#' @name getCnnctdNds
+#' @title Get all nodes connected by given tips
+#' @description Return a vector of IDs of all nodes that are connected to tip IDs given.
+#' @details Returns a vector. This function is the basis for \code{calcPhyDv()}, it determines
+#' the unique set of nodes connected for a set of tips.
+#' @param tree \code{TreeMan} object
+#' @param tids vector of tip IDs
+#' @seealso
+#' \code{\link{getUnqNds}}, \code{\link{calcFrPrp}},
+#' \code{\link{calcPhyDv}}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree <- randTree(10)
+#' cnntdnds <- getCnnctdNds(tree, c('t1', 't2'))
+getCnnctdNds <- function(tree, tids) {
+  prids <- c(unlist(getNdsPrids(tree, tids)),
+             tids)
+  counts <- table(prids)
+  names(counts)[counts < length(tids)]
+}
+
 #' @name getTxnyms
 #' @title Get IDs for nodes represented txnyms
 #' @description Return a list of IDs for any node that contains the given txnyms.

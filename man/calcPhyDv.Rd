@@ -22,6 +22,7 @@ Returns the phylogenetic diversity of a tree for the tips specified.
 Faith's phylogenetic diversity is calculated as the sum of all connected
 branches for specified tips in a tree. It can be used to investigate how biodviersity
 as measured by the phylogeny changes. Parallelizable.
+The function uses \code{getCnntdNds()}.
 }
 \examples{
 library(treeman)
@@ -33,6 +34,6 @@ Faith, D. (1992). Conservation evaluation and phylogenetic diversity.
  Biological Conservation, 61, 1-10.
 }
 \seealso{
-\code{\link{calcFrPrp}}, \code{\link{calcOvrlp}}
+\code{\link{calcFrPrp}}, \code{\link{calcOvrlp}}, \code{\link{getCnntdNds}}
 \url{https://github.com/DomBennett/treeman/wiki/calc-methods}
 }

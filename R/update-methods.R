@@ -62,6 +62,7 @@ updateSlts <- function(tree) {
 #' The matrix is generated with bigmemory's `as.big.matrix()`.
 #' @param tree \code{TreeMan} object
 #' @param shared T/F, should the bigmatrix be shared? See bigmemory documentation.
+#' @param ... \code{as.big.matrix()} additional arguments
 #' @seealso
 #' \code{\link{updateSlts}}, \code{\link{rmNdmtrx}},
 #' \link{https://cran.r-project.org/web/packages/bigmemory/index.html}
