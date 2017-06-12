@@ -47,7 +47,7 @@ tree_phylo <- ape::read.tree('temp.tre')
 plot(tree_phylo, show.tip.label=FALSE, edge.width=0.5, type='fan', no.margin=FALSE,
      edge.color='lightsteelblue3')
 tids <- tids[tids %in% tree_phylo$tip.label]
-# only plot 10 names and only use last two elements of a names -- easier to see
+# only plot 10 names and only use last two elements of a name -- easier to see
 print_tids <- sample(tids, 10, prob=1/sapply(tids, nchar))
 print_names <- unlist(lapply(strsplit(print_tids, '_'),
                              function(x) paste0(x[(length(x)-1):length(x)], collapse=' ')))
