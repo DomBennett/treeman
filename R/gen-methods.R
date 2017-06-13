@@ -121,3 +121,34 @@ unblncdTree <- function(n, wndmtrx=FALSE, parallel=FALSE) {
   }
   tree
 }
+
+#' @name twoer
+#' @title Generate a tree of two tips
+#' @description Returns a \code{TreeMan} tree with two tips and a root.
+#' @details Useful for building larger trees with \code{addClade()}.
+#' Note, a node matrix cannot be added to a tree of two tips.
+#' @param tids tip IDs
+#' @param spns tip spans
+#' @param rid root ID
+#' @param root_spn root span
+#' @seealso
+#' \code{\link{TreeMan-class}}, \code{\link{randTree}}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree <- twoer()
+twoer <- function(tids=c('t1', 't2'), spns=c(1,1),
+                  rid='root', root_spn=0) {
+  ndlst <- list()
+  ndlst[[rid]] <- list('id'=rid, 'prid'=rid,
+                       'ptid'=tids[1:2], 'spn'=root_spn)
+  ndlst[[tids[1]]] <- list('id'=tids[[1]], 'prid'=rid,
+                           'ptid'=NULL, 'spn'=spns[1])
+  ndlst[[tids[2]]] <- list('id'=tids[[2]], 'prid'=rid,
+                           'ptid'=NULL, 'spn'=spns[2])
+  prinds <- c(1, 1, 1)
+  tinds <- c(2, 3)
+  tree <- new('TreeMan', ndlst=ndlst, root='root', wtxnyms=FALSE,
+              ndmtrx=NULL, prinds=prinds, tinds=tinds)
+  updateSlts(tree)
+}

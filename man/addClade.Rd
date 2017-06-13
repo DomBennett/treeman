@@ -17,7 +17,7 @@ addClade(tree, id, clade)
 Returns a tree with added clade
 }
 \details{
-Add a \code{TreeMan} object to an exisiting \code{TreeMan}
+Add a \code{TreeMan} object to an existing \code{TreeMan}
 object by specifying an ID at which to attach. If the id specified
 is an internal node, then the original clade descending from that
 node will be replaced. Before running, ensure no IDs are shared

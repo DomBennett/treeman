@@ -74,6 +74,9 @@ updateSlts <- function(tree) {
 #' tree <- addNdmtrx(tree)
 #' summary(tree)
 addNdmtrx <- function(tree, shared=FALSE, ...) {
+  if(tree@ntips < 3) {
+    stop('Too small for node matrix.')
+  }
   if(!checkTreeMan(tree)) {
     stop('Invalid tree')
   }

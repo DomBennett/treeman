@@ -31,3 +31,7 @@ test_that('unblncdTree() works', {
     expect_that(tree['pd'], is_more_than(tree_age))
   }
 })
+test_that('twoer() works', {
+  tree <- twoer()
+  expect_equal(tree['ntips'], 2)
+})
