@@ -122,6 +122,9 @@ tree['root']   # identify root node
 tree[['t1']]   # return t1 node object
 tree['pd']     # return phylogenetic diversity
 tree['ply']    # is polytomous?
+# Additional special slots
+tree['age']   # get tree's age
+tree['ultr']  # determine if tree is ultrametric
 # Because all nodes are lists with metadata we can readily
 #  get specific information on nodes of interest
 nd <- tree[['n2']]

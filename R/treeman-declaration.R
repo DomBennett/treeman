@@ -64,6 +64,9 @@
 #' tree[['t1']]   # return t1 node object
 #' tree['pd']     # return phylogenetic diversity
 #' tree['ply']    # is polytomous?
+#' # Additional special slots
+#' tree['age']   # get tree's age
+#' tree['ultr']  # determine if tree is ultrametric
 #' # Because all nodes are lists with metadata we can readily
 #' #  get specific information on nodes of interest
 #' nd <- tree[['n2']]
@@ -135,8 +138,11 @@ setMethod('[', c('TreeMan', 'character'),
             if(i == 'ultr') {
               return(isUltrmtrc(tree))
             }
+            if(i == 'age') {
+              return(getAge(tree))
+            }
             if(!i %in% slt_nms) {
-              slt_nms <- paste0(c(slt_nms, 'ultr'), collapse=', ')
+              slt_nms <- paste0(c(slt_nms, 'ultr', 'age'), collapse=', ')
               stop(paste0('`', i, '` not a tree slot. Available slots: ',
                           slt_nms))
             }
