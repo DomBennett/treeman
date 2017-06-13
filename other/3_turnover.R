@@ -3,7 +3,7 @@
 # LIBS
 library(treeman)
 # requires two functions from MoreTreeTools
-source('other/mtt_community_tools.R')
+source('https://raw.githubusercontent.com/DomBennett/treeman/master/other/mtt_community_tools.R')
 
 # PARAMETERS
 ntips <- 500
