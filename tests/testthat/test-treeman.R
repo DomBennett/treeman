@@ -3,7 +3,7 @@ library(treeman)
 library(testthat)
 
 # DATA
-tree <- randTree(100)
+tree <- randTree(100, wndmtrx=sample(c(TRUE, FALSE), 1))
 
 # RUNNING
 context('Testing \'TreeMan Class\'')

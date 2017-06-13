@@ -5,7 +5,7 @@ library(testthat)
 # RUNNING
 context('Testing \'cnvrt-methods\'')
 test_that('TreeMan-to-phylo works', {
-  tree <- randTree(100)
+  tree <- randTree(100, wndmtrx=sample(c(TRUE, FALSE), 1))
   tree <- as(tree, "phylo")
   expect_true("phylo" %in% class(tree))
 })
@@ -20,7 +20,8 @@ test_that('multiPhylo-to-TreeMen works', {
   expect_equal(is(trees), "TreeMen")
 })
 test_that('TreeMen-to-multiPhylo works', {
-  trees <- cTrees(randTree(100), randTree(100), randTree(100))
+  trees <- cTrees(randTree(100), randTree(100),
+                  randTree(100, wndmtrx=sample(c(TRUE, FALSE), 1)))
   trees <- as(trees, "multiPhylo")
   expect_true("multiPhylo" %in% class(trees))
 })

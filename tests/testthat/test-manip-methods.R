@@ -47,7 +47,8 @@ context('Testing \'manip-methods\'')
 test_that('addTip() works', {
   test_tree_size <- 10
   # TEST 1 check for tree without spns
-  tree <- randTree(test_tree_size)
+  tree <- randTree(test_tree_size,
+                   wndmtrx=sample(c(TRUE, FALSE), 1))
   tree <- setNdsSpn(tree, tree['all'], 0)
   tid <- paste0('t', tree['ntips'] + 1)
   sid <- sample(tree['tips'], 1)
@@ -56,7 +57,8 @@ test_that('addTip() works', {
   expect_that(length(getNdKids(new_tree, tree['root'])),
               equals(new_tree['ntips']))
   # TEST 2 check for multiple tips with spns
-  tree <- randTree(test_tree_size)
+  tree <- randTree(test_tree_size,
+                   wndmtrx=sample(c(TRUE, FALSE), 1))
   pd_before <- tree['pd']
   age_before <- getAge(tree)
   tid <- paste0('t', tree['ntips'] + 1)
@@ -80,7 +82,7 @@ test_that('addTip() works', {
 })
 test_that('rmTips() work', {
   n <- 100
-  tree <- randTree(n)
+  tree <- randTree(n, wndmtrx=sample(c(TRUE, FALSE), 1))
   # test dropping 1 tip
   pd_before <- tree['pd']
   tid <- sample(tree['tips'], 1)
@@ -99,7 +101,7 @@ test_that('rmTips() work', {
   expect_that(pd_before, is_more_than(tree['pd']))
 })
 test_that('rmNodes() works', {
-  tree <- randTree(100)
+  tree <- randTree(100, wndmtrx=sample(c(TRUE, FALSE), 1))
   nids <- sample(tree['nds'][tree['nds'] != tree['root']], 10)
   tree <- rmNodes(tree, nids)
   expect_true(tree['ply'])
@@ -112,7 +114,7 @@ test_that('rmNodes() works', {
 test_that('pinTips() work', {
   n_start <- 10
   n_add <- 20
-  tree <- randTree(n_start)
+  tree <- randTree(n_start, wndmtrx=sample(c(TRUE, FALSE), 1))
   tree <- randomLineage(n_start/2, tree)
   pd_before <- tree['pd']
   age_before <- getAge(tree)
@@ -148,7 +150,7 @@ test_that('rmClade() works', {
   t2_age <- getAge(t2)
 })
 test_that('addClade() works', {
-  t1 <- randTree(100)
+  t1 <- randTree(100, wndmtrx=sample(c(TRUE, FALSE), 1))
   cld <- getSubtree(t1, 'n2')
   t2 <- rmClade(t1, 'n2')
   t3 <- addClade(t2, 'n2', cld)

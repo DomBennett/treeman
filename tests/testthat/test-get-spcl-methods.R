@@ -21,13 +21,13 @@ test_that('getLvng() works', {
   expect_true(all(living %in% tree['tips']))
 })
 test_that('getUnqNds() works', {
-  tree <- randTree(10)
+  tree <- randTree(10, wndmtrx=sample(c(TRUE, FALSE), 1))
   tids <- sample(tree['tips'], 2)
   unqnds <- getUnqNds(tree, tids)
   expect_true(length(unqnds) >= length(tids))
 })
 test_that('getCnntdNds() works', {
-  tree <- randTree(10)
+  tree <- randTree(10, wndmtrx=sample(c(TRUE, FALSE), 1))
   tids <- sample(tree['tips'], 2)
   cnntdnds <- getCnnctdNds(tree, tids)
   prnt <- getPrnt(tree, tids)
@@ -41,13 +41,13 @@ test_that('getTxnyms() works', {
   expect_true(res == 'Homo_sapiens')
 })
 test_that('getTreeAge() works', {
-  tree <- randTree(10)
+  tree <- randTree(10, wndmtrx=sample(c(TRUE, FALSE), 1))
   age <- getAge(tree)
   expect_true(age > 0)
   expect_true(age < tree['pd'])
 })
 test_that('getOtgrp() works', {
-  tree <- randTree(10)
+  tree <- randTree(10, wndmtrx=sample(c(TRUE, FALSE), 1))
   rnd_nd <- sample(tree['nds'][tree['nds'] != tree['root']], 1)
   ingrp <- getNdKids(tree, rnd_nd)
   otgrp <- sample(tree['tips'][!tree['tips'] %in% ingrp], 1)
@@ -55,12 +55,13 @@ test_that('getOtgrp() works', {
   expect_that(res, equals(otgrp))
 })
 test_that("getPrnt() works", {
-  tree <- readTree(text="(((A,B),(C,D)),(E,F));")
+  tree <- readTree(text="(((A,B),(C,D)),(E,F));",
+                   wndmtrx=sample(c(TRUE, FALSE), 1))
   prnt <- getPrnt(tree, ids=c("A", "F"))
   expect_true(prnt == tree@root)
 })
 test_that("getPath() works", {
-  tree <- randTree(10)
+  tree <- randTree(10, wndmtrx=sample(c(TRUE, FALSE), 1))
   pth <- getPath(tree, from="t1", to="t10")
   prnt <- getPrnt(tree, ids=c('t1', "t10"))
   expect_true(prnt %in% pth)
@@ -68,7 +69,7 @@ test_that("getPath() works", {
   expect_that(pth[length(pth)], equals('t10'))
 })
 test_that("getSubtree(id) works", {
-  tree <- randTree(10)
+  tree <- randTree(10, wndmtrx=sample(c(TRUE, FALSE), 1))
   subtree <- getSubtree(tree, 'n2')
   tree_age <- getAge(tree)
   subtree_age <- getAge(subtree)

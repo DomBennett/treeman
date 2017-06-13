@@ -5,14 +5,14 @@ library(testthat)
 # RUNNING
 context('Testing \'set-methods\'')
 test_that('setTxnyms() works', {
-  tree <- randTree(100)
+  tree <- randTree(100, wndmtrx=sample(c(TRUE, FALSE), 1))
   txnyms <- paste0('txnym_', 1:tree['nall'])
   names(txnyms) <- tree['all']
   tree <- setTxnyms(tree, txnyms)
   expect_true(tree['wtxnyms'])
 })
 test_that('set_ID() works', {
-  tree <- randTree(100)
+  tree <- randTree(100, wndmtrx=sample(c(TRUE, FALSE), 1))
   vals <- paste0('new_id_', 1:100)
   ids <- tree['tips']
   tree <- setNdsID(tree, ids=ids, vals=vals)
@@ -22,7 +22,7 @@ test_that('set_ID() works', {
   expect_false('new_id_1' %in% tree@tips)
 })
 test_that('setNdSpn() works', {
-  tree <- randTree(10)
+  tree <- randTree(10, wndmtrx=sample(c(TRUE, FALSE), 1))
   before_pd <- tree['pd']
   ids <- tree['all'][tree['all'] != tree['root']]
   id <- sample(ids, 1)
@@ -33,7 +33,7 @@ test_that('setNdSpn() works', {
   expect_that(getNdPrdst(tree, id) + val, equals(before_prdst))
 })
 test_that('setNdsSpn() works', {
-  tree <- randTree(10)
+  tree <- randTree(10, wndmtrx=sample(c(TRUE, FALSE), 1))
   before_pd <- tree['pd']
   before_age <- getAge(tree)
   ids <- tree['all'][tree['all'] != tree['root']]
@@ -46,25 +46,25 @@ test_that('setNdsSpn() works', {
   expect_false(tree['wspn'])
 })
 test_that('setPD() works', {
-  tree <- randTree(10)
+  tree <- randTree(10, wndmtrx=sample(c(TRUE, FALSE), 1))
   tree <- setPD(tree, val=1)
   expect_that(tree['pd'], equals(1))
 })
 test_that('setAge() works', {
-  tree <- randTree(10)
+  tree <- randTree(10, wndmtrx=sample(c(TRUE, FALSE), 1))
   tree <- setAge(tree, val=1)
   tree_age <- getAge(tree)
   expect_that(tree_age, equals(1))
 })
 test_that('setNdOther() works', {
-  tree <- randTree(10)
+  tree <- randTree(10, wndmtrx=sample(c(TRUE, FALSE), 1))
   val <- sample(0:1, size=1)
   tree <- setNdOther(tree, id='t1', val, 'binary_val')
   res <- getNdSlt(tree, id='t1', slt_nm='binary_val')
   expect_that(val, equals(res))
 })
 test_that('setNdsOther() works', {
-  tree <- randTree(10)
+  tree <- randTree(10, wndmtrx=sample(c(TRUE, FALSE), 1))
   vals <- sample(0:1, size=tree['nall'], replace=TRUE)
   tree <- setNdsOther(tree, tree['all'], vals, 'binary_val')
   tree <- updateSlts(tree)
