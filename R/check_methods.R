@@ -2,10 +2,10 @@
 #' @title Check if tree is correct, fast!
 #' @description Return T/F if tree is a true \code{TreeMan} object
 #' @details Whenever a tree is first initiated this check is used.
-#' For more detailed checking use \code{checkTreeMan}.
+#' For more detailed checking use \code{checkNdlst}.
 #' @param object \code{TreeMan} object
 #' @seealso
-#' \code{\link{checkTreeMan}}, \code{\link{checkTreeMen}}
+#' \code{\link{checkNdlst}}, \code{\link{checkTreeMen}}
 #' @export
 fastCheckTreeMan <- function(object) {
   kwn_ids <- names(object@ndlst)
@@ -23,16 +23,21 @@ fastCheckTreeMan <- function(object) {
   test
 }
 
-#' @name checkTreeMan
-#' @title Check if tree is correct
-#' @description Return T/F if tree is a true \code{TreeMan} object
+#' @name checkNdlst
+#' @title Check if ndlst is correct
+#' @description Return T/F fpr \code{ndlst} consistency
 #' @details Tests whether each node in tree points to valid other node IDs. Also
 #' ensures `spn` and `root` are correct. Reports nodes that have errors.
-#' @param object \code{TreeMan} object
+#' @param ndlst \code{ndlst}
+#' @param root root ID
 #' @seealso
 #' \code{\link{fastCheckTreeMan}}, \code{\link{checkTreeMen}}
 #' @export
-checkTreeMan <- function(object) {
+#' @examples
+#' library(treeman)
+#' tree <- randTree(100)
+#' (checkNdlst(tree@ndlst, tree@root))
+checkNdlst <- function(ndlst, root) {
   .check <- function(nd) {
     # must have id
     test_id <- is.character(nd[['id']]) & 'id' %in% names(nd)
@@ -69,9 +74,9 @@ checkTreeMan <- function(object) {
     }
     FALSE
   }
-  nds <- names(object@ndlst)
-  rid <- object@root
-  nd_checks <- sapply(object@ndlst, .check)
+  nds <- names(ndlst)
+  rid <- root
+  nd_checks <- sapply(ndlst, .check)
   if(!all(nd_checks)) {
     msg <- 'These nodes are invalid:\n'
     bad <- which(!nd_checks)
@@ -83,7 +88,7 @@ checkTreeMan <- function(object) {
     return(FALSE)
   }
   if(!rid %in% nds) {
-    msg <- paste0("Root node `", rid, '` not in tree.\n')
+    msg <- paste0("Root node `", rid, '` not in ndlst\n')
     cat(msg, '\n')
     return(FALSE)
   }
@@ -96,7 +101,7 @@ checkTreeMan <- function(object) {
 #' @details Tests whether all trees in object are \code{TreeMan} objects
 #' @param object \code{TreeMen} object
 #' @seealso
-#' \code{\link{checkTreeMan}}
+#' \code{\link{checkNdlst}}
 #' @export
 checkTreeMen <- function(object) {
   .check <- function(i, invlds) {

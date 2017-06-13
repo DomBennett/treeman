@@ -77,7 +77,7 @@ addNdmtrx <- function(tree, shared=FALSE, ...) {
   if(tree@ntips < 3) {
     stop('Too small for node matrix.')
   }
-  if(!checkTreeMan(tree)) {
+  if(!checkNdlst(tree@ndlst, tree@root)) {
     stop('Invalid tree')
   }
   if(is.null(tree@ndmtrx)) {

@@ -14,8 +14,8 @@ Return T/F if tree is a true \code{TreeMan} object
 }
 \details{
 Whenever a tree is first initiated this check is used.
-For more detailed checking use \code{checkTreeMan}.
+For more detailed checking use \code{checkNdlst}.
 }
 \seealso{
-\code{\link{checkTreeMan}}, \code{\link{checkTreeMen}}
+\code{\link{checkNdlst}}, \code{\link{checkTreeMen}}
 }

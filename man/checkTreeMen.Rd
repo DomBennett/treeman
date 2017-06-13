@@ -16,5 +16,5 @@ Return T/F if trees is a true \code{TreeMen} object
 Tests whether all trees in object are \code{TreeMan} objects
 }
 \seealso{
-\code{\link{checkTreeMan}}
+\code{\link{checkNdlst}}
 }

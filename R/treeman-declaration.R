@@ -183,7 +183,7 @@ setMethod('str', c('object'='TreeMan'),
 setMethod('summary', c('object'='TreeMan'),
           function(object){
             if(!fastCheckTreeMan(object)) {
-              stop("Tree is corrupted. Run `checkTreeMan()` to see how.")
+              stop("Tree is corrupted. Run `checkNdlst()` to see how.")
             }
             if(!object@updtd) {
               stop("Tree is not updated since change or initiation. Use `updateSlts()`")
