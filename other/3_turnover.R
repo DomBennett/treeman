@@ -2,22 +2,27 @@
 
 # LIBS
 library(treeman)
-library(MoreTreeTools)
+# requires two functions from MoreTreeTools
+source('other/mtt_community_tools.R')
 
 # PARAMETERS
 ntips <- 500
-tree <- rtree(ntips)
-dpsi <- 10  # power difference
+tree <- ape::rtree(ntips)
+dpsi <- 5  # power difference
 
 # GENERATE DATA
 psi_1 <- dpsi
 psi_2 <- -dpsi
 focal <- round(ntips*0.5)
 mean.incid <- ntips*0.05
-c1 <- genCommData(tree=tree, psi=psi_1, mean.incid=mean.incid,
-                  mean.abun=mean.incid, nsites=1, focal=focal)
-c2 <- genCommData(tree=tree, psi=psi_2, mean.incid=mean.incid,
-                  mean.abun=mean.incid, nsites=1, focal=focal)
+c1 <- genCommData(tree=tree, psi=psi_1,
+                  mean.incid=mean.incid,
+                  mean.abun=mean.incid,
+                  nsites=1, focal=focal)
+c2 <- genCommData(tree=tree, psi=psi_2,
+                  mean.incid=mean.incid,
+                  mean.abun=mean.incid,
+                  nsites=1, focal=focal)
 
 # VIZ
 # construct community matrix for community plot
@@ -43,3 +48,11 @@ hist(null, main="", xlab="", ylab="")
 abline(v=obs_ovrlp, col="red")
 mtext(paste0("P-value: ", signif(p_value, 3)))
 cat("P-value: ", signif(p_value, 3), "\n", sep="")
+
+# Plot both together
+par(mfrow=c(1,2))
+commplot(cmatrix, tree, groups=c(1,2), no.margin=FALSE)
+mtext(text=paste0('psi = ', dpsi))
+hist(null, main="", xlab="", ylab="")
+abline(v=obs_ovrlp, col="red")
+mtext(paste0("P-value: ", signif(p_value, 3)))
