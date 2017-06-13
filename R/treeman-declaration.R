@@ -136,10 +136,10 @@ setMethod('[', c('TreeMan', 'character'),
             # ultr is special, shouldn't be updated when updateSlts()
             # too slow to calculate. Instead only calc if called.
             if(i == 'ultr') {
-              return(isUltrmtrc(tree))
+              return(isUltrmtrc(x))
             }
             if(i == 'age') {
-              return(getAge(tree))
+              return(getAge(x))
             }
             if(!i %in% slt_nms) {
               slt_nms <- paste0(c(slt_nms, 'ultr', 'age'), collapse=', ')
