@@ -130,9 +130,15 @@ setMethod('[', c('TreeMan', 'character'),
             slt_nms <- slt_nms[slt_nms != 'ndmtrx']
             slt_nms <- slt_nms[slt_nms != 'tinds']
             slt_nms <- slt_nms[slt_nms != 'prinds']
+            # ultr is special, shouldn't be updated when updateSlts()
+            # too slow to calculate. Instead only calc if called.
+            if(i == 'ultr') {
+              return(isUltrmtrc(tree))
+            }
             if(!i %in% slt_nms) {
-              slt_nms <- paste0(slt_nms, collapse=', ')
-              stop(paste0('`', i, '` not a tree slot. Available slots: ', slt_nms))
+              slt_nms <- paste0(c(slt_nms, 'ultr'), collapse=', ')
+              stop(paste0('`', i, '` not a tree slot. Available slots: ',
+                          slt_nms))
             }
             slot(x, i)
           })

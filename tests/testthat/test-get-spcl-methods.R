@@ -4,6 +4,12 @@ library(testthat)
 
 # RUNNING
 context('Testing \'get-spcl-methods\'')
+test_that('isUltrmtrc() works',{
+  tree <- randTree(10, wndmtrx=sample(c(TRUE, FALSE), 1))
+  expect_false(isUltrmtrc(tree))
+  tree <- ultrTree(tree)
+  expect_true(isUltrmtrc(tree))
+})
 test_that('getDcsd() works', {
   tree <- randTree(10, wndmtrx=sample(c(TRUE, FALSE), 1))
   dead <- getDcsd(tree)

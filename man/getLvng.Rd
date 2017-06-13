@@ -23,6 +23,6 @@ tree <- randTree(10)
 (getLvng(tree))
 }
 \seealso{
-\code{\link{getDcsd}}, 
+\code{\link{getDcsd}}, \code{\link{isUltrmtrc}},
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }

@@ -1,4 +1,27 @@
 
+# ULTRAMETRIC
+#' @name isUltrmtrc
+#' @title Is tree ultrametric?
+#' @description Return TRUE if all tips end at 0, else FALSE.
+#' @details Returns a boolean. This function works in the background
+#' for the \code{['ultr']} slot in a \code{TreeMan} object.
+#' @param tree \code{TreeMan} object
+#' @param tol zero tolerance
+#' @seealso
+#' \code{\link{getLvng}}, \code{\link{getDcsd}}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree <- randTree(10)
+#' (isUltrmtrc(tree))
+isUltrmtrc <- function(tree, tol=1e-8) {
+  dead <- .livingOrDesceased(tree, tol=tol, bool=FALSE)
+  if(length(dead) > 0) {
+    return(FALSE)
+  }
+  TRUE
+}
+
 # EXTINCT/EXTANT
 .livingOrDesceased <- function(tree, tol=1e-8, bool) {
   if(!is.null(tree@ndmtrx)) {
@@ -29,7 +52,7 @@
 #' @param tree \code{TreeMan} object
 #' @param tol zero tolerance
 #' @seealso
-#' \code{\link{getLvng}}, 
+#' \code{\link{getLvng}}, \code{\link{isUltrmtrc}},
 #' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 #' @export
 #' @examples
@@ -47,7 +70,7 @@ getDcsd <- function(tree, tol=1e-8) {
 #' @param tree \code{TreeMan} object
 #' @param tol zero tolerance
 #' @seealso
-#' \code{\link{getDcsd}}, 
+#' \code{\link{getDcsd}}, \code{\link{isUltrmtrc}},
 #' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 #' @export
 #' @examples
