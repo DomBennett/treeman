@@ -4,8 +4,7 @@
 library(ggplot2)
 
 phyloBuilder <- function (start_tree, max_size, sample_size) {
-  require(MoreTreeTools)
-  tree <- read.tree(text=start_tree)
+  tree <- ape::read.tree(text=start_tree)
   start <- 1
   repeats <- max_size/sample_size
   timings <- rep(NA, repeats)
@@ -28,16 +27,18 @@ phyloBuilder <- function (start_tree, max_size, sample_size) {
 treemanBuilder <- function (start_tree, max_size, sample_size) {
   require(treeman)
   tree <- readTree(text=start_tree)
-  start <- tree['age']
+  start <- tree_age <- getAge(tree)
   repeats <- max_size/sample_size
   timings <- rep(NA, repeats)
   for(i in 1:repeats) {
     timings[i] <- system.time(expr={
       for(j in 1:sample_size) {
-        start <- start/2
         id <- paste0('t', tree['ntips']+1)
         tree <- treeman:::addTip(tree=tree, tid=id, sid='t1',
-                                 start=start, end=0)
+                                 strt_age=start, end=-1,
+                                 tree_age=tree_age)
+        start <- 1
+        tree_age <- tree_age + 1
       }})[3]
   }
   timings
@@ -45,7 +46,7 @@ treemanBuilder <- function (start_tree, max_size, sample_size) {
 
 # RUN
 start_tree <- "(t1:1.0,t2:1.0);"
-max_size <- 1000  # maximum size of tree
+max_size <- 100  # maximum size of tree
 sample_size <- 10
 treeman_res <- treemanBuilder(start_tree, max_size, sample_size)
 phylo_res <- phyloBuilder(start_tree, max_size, sample_size)
