@@ -34,6 +34,6 @@ Faith, D. (1992). Conservation evaluation and phylogenetic diversity.
  Biological Conservation, 61, 1-10.
 }
 \seealso{
-\code{\link{calcFrPrp}}, \code{\link{calcOvrlp}}, \code{\link{getCnntdNds}}
+\code{\link{calcFrPrp}}, \code{\link{calcOvrlp}}, \code{\link{getCnnctdNds}},
 \url{https://github.com/DomBennett/treeman/wiki/calc-methods}
 }

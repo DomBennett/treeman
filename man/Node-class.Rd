@@ -11,8 +11,6 @@
 \alias{Node-method}
 \alias{summary,Node-method}
 \alias{Node-method}
-\alias{[,Node,character,ANY,ANY-method}
-\alias{Node-method}
 \title{Node-class}
 \usage{
 \S4method{as.character}{Node}(x)
@@ -22,8 +20,6 @@
 \S4method{print}{Node}(x)
 
 \S4method{summary}{Node}(object)
-
-\S4method{[}{Node,character,ANY,ANY}(x, i)
 }
 \arguments{
 \item{x}{\code{Node} object}

@@ -425,6 +425,7 @@ saveTreeMan <- function(tree, file) {
 #' tree <- loadTreeMan(file='test.RData')
 #' file.remove('test.RData', 'testRData_ndmtrx')
 loadTreeMan <- function(file) {
+  ndmtrx_file <- NULL
   load(file)
   if(file.exists(ndmtrx_file)) {
     tree@ndmtrx <- bigmemory::read.big.matrix(filename=ndmtrx_file,

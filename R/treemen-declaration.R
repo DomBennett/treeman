@@ -101,6 +101,7 @@ setMethod('[[', c('TreeMen', 'ANY'),
           })
 #' @rdname TreeMen-class
 #' @aliases TreeMen-method
+#' Extract slots from a list of trees
 #' @exportMethod [
 setMethod('[', c('TreeMen', 'character'),
           function(x, i) {

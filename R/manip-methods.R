@@ -371,28 +371,13 @@ pinTips <- function(tree, tids, lngs, end_ages, tree_age) {
     }
     NULL
   }
-  .getPTxnym <- function(tip_txnym, sid, start, end, lng) {
+  .getPTxnym <- function(tip_txnym, sid) {
     gp_txnym <- txnyms[[getNdSlt(tree, 'prid', sid)]]
     s_txnym <- txnyms[[sid]]
-    if(gp_txnym == tip_txnym) {
-      pid_txnym <- tip_txnym
-    } else if(s_txnym == tip_txnym) {
+    if(s_txnym == tip_txnym) {
       pid_txnym <- tip_txnym
     } else {
-      # new internal node gets either sister or new id taxonomy
-      # determine it by whichever has the most branch length
-      sid_spn <- getNdSlt(tree, 'spn', sid)
-      tid_spn <- start - end
-      if(sid_spn > tid_spn) {
-        pid_txnym <- s_txnym
-      } else {
-        # next id in lineage below that matching the grandparent
-        if(gp_txnym %in% lng) {
-          pid_txnym <- lng[which(gp_txnym == lng) + 1]
-        } else {
-          pid_txnym <- tip_txnym
-        }
-      }
+      pid_txnym <- gp_txnym
     }
     pid_txnym
   }
@@ -402,7 +387,7 @@ pinTips <- function(tree, tids, lngs, end_ages, tree_age) {
     lng <- lngs[[i]]
     ptntls <- .getPtntls(lng, end)
     if(is.null(ptntls)) {
-      warning(paste0('[', tid, '] could not be added'))
+      message(paste0('[', tid, '] could not be added'))
       return(NULL)
     }
     rngs <- spn_data[ptntls, , drop=FALSE]
@@ -410,17 +395,17 @@ pinTips <- function(tree, tids, lngs, end_ages, tree_age) {
     # pinning is based on branch length
     # this is not a model, it just ensures
     # taxonomically matching branch lengths
-    # of the tree have equal change.
+    # of the tree have equal chance.
     prbs <- rngs[ ,'start'] - rngs[ ,'end']
     if(sum(prbs) == 0) {
-      warning(paste0('[', tid, '] could not be added'))
+      message(paste0('[', tid, '] could not be added'))
       return(NULL)
     }
     sid <- as.vector(sample(ptntls, prob=prbs, size=1))
     start <- runif(min=rngs[sid, 'end'], max=rngs[sid, 'start'], n=1)
     # taxnomy of tip and parent tip based grandparent
     tip_txnym <- lng[length(lng)]
-    pid_txnym <- .getPTxnym(tip_txnym, sid, start, end, lng)
+    pid_txnym <- .getPTxnym(tip_txnym, sid)
     pid <- paste0('p_', tid, sep='')
     # add tip
     tree <- addTip(tree, tid=tid, sid=sid, strt_age=start,

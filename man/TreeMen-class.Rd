@@ -9,6 +9,13 @@
 \alias{TreeMen-method}
 \alias{[,TreeMen,character,ANY,ANY-method}
 \alias{TreeMen-method}
+\alias{Extract}
+\alias{slots}
+\alias{from}
+\alias{a}
+\alias{list}
+\alias{of}
+\alias{trees}
 \alias{as.character,TreeMen-method}
 \alias{TreeMen-method}
 \alias{show,TreeMen-method}

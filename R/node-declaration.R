@@ -109,8 +109,7 @@ setMethod ('summary', c('object'='Node'),
              }
              cat(msg)
            })
-#' @rdname Node-class
-#' @aliases Node-method
+
 #' @exportMethod [
 setMethod('[', c('Node', 'character'),
           function(x, i) {

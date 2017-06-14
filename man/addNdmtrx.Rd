@@ -33,5 +33,5 @@ summary(tree)
 }
 \seealso{
 \code{\link{updateSlts}}, \code{\link{rmNdmtrx}},
-\link{https://cran.r-project.org/web/packages/bigmemory/index.html}
+\url{https://cran.r-project.org/web/packages/bigmemory/index.html}
 }
