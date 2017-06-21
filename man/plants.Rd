@@ -8,7 +8,7 @@ Durka and Michalski (2012)'s large phylogenetic tree of European vascular plants
 \usage{data(plants)}
 \format{\code{plants} is a \code{TreeMan} object}
 \source{
-    Durka, W. and Michalski, S.G. 2012. Daphne: a dated phylogeny of a large European flora for phylogenetically informed ecological analyses. Ecology 93:2297–2297.
+    Durka, W. and Michalski, S.G. 2012. Daphne: a dated phylogeny of a large European flora for phylogenetically informed ecological analyses. Ecology 93:2297-2297.
 }
 \examples{
 data(plants) # load object

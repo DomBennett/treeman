@@ -19,3 +19,23 @@ Imports:
 Suggests:
     testthat
 RoxygenNote: 6.0.1
+Collate: 
+    'calc-methods.R'
+    'check_methods.R'
+    'cnvrt-methods.R'
+    'gen-methods.R'
+    'get-nd-methods.R'
+    'get-nds-methods.R'
+    'get-spcl-methods.R'
+    'manip-methods.R'
+    'ndlst-methods.R'
+    'ndmtrx-methods.R'
+    'node-declaration.R'
+    'read-write-methods.R'
+    'server-methods.R'
+    'set-methods.R'
+    'treeman-declaration.R'
+    'treemen-declaration.R'
+    'update-methods.R'
+    'viz-methods.R'
+    'zzz.R'
