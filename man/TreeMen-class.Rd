@@ -3,11 +3,10 @@
 \docType{class}
 \name{TreeMen-class}
 \alias{TreeMen-class}
+\alias{TreeMen-method}
 \alias{cTrees,TreeMen-method}
-\alias{TreeMen-method}
 \alias{[[,TreeMen,ANY-method}
-\alias{TreeMen-method}
-\alias{[,TreeMen,character,ANY,ANY-method}
+\alias{[,TreeMen,character,missing,missing-method}
 \alias{TreeMen-method}
 \alias{Extract}
 \alias{slots}
@@ -17,22 +16,17 @@
 \alias{of}
 \alias{trees}
 \alias{as.character,TreeMen-method}
-\alias{TreeMen-method}
 \alias{show,TreeMen-method}
-\alias{TreeMen-method}
 \alias{str,TreeMen-method}
-\alias{TreeMen-method}
 \alias{print,TreeMen-method}
-\alias{TreeMen-method}
 \alias{summary,TreeMen-method}
-\alias{TreeMen-method}
 \title{TreeMen-class}
 \usage{
 \S4method{cTrees}{TreeMen}(x, ...)
 
 \S4method{[[}{TreeMen,ANY}(x, i)
 
-\S4method{[}{TreeMen,character,ANY,ANY}(x, i)
+\S4method{[}{TreeMen,character,missing,missing}(x, i, j, ..., drop = TRUE)
 
 \S4method{as.character}{TreeMen}(x)
 
@@ -50,6 +44,10 @@
 \item{...}{additional tree objects}
 
 \item{i}{tree index (integer or character)}
+
+\item{j}{missing}
+
+\item{drop}{missing}
 
 \item{object}{\code{TreeMen} object}
 

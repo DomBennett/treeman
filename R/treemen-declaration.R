@@ -1,10 +1,13 @@
 #' @name TreeMen-class
 #' @title TreeMen-class
+#' @aliases TreeMen-method
 #' @param x \code{TreeMen} object
 #' @param i tree index (integer or character)
 #' @param object \code{TreeMen} object
 #' @param max.level \code{str()} maximum level
 #' @param ... additional tree objects
+#' @param j missing
+#' @param drop missing
 #' @description S4 class for multiple phylogenetic trees
 #' @slot treelst list of \code{TreeMan} objects
 #' @slot ntips sum of tips per tree
@@ -70,7 +73,6 @@ setGeneric("cTrees", signature=c("x"),
              standardGeneric("cTrees")
            })
 #' @rdname TreeMan-class
-#' @aliases TreeMan-method
 #' @exportMethod cTrees
 setMethod("cTrees", c("TreeMan"),
           function(x, ...) {
@@ -80,7 +82,6 @@ setMethod("cTrees", c("TreeMan"),
             x
             })
 #' @rdname TreeMen-class
-#' @aliases TreeMen-method
 #' @exportMethod cTrees
 setMethod('cTrees', c('TreeMen'),
           function(x, ...) {
@@ -90,7 +91,6 @@ setMethod('cTrees', c('TreeMen'),
 
 # Accessor methods
 #' @rdname TreeMen-class
-#' @aliases TreeMen-method
 #' @exportMethod [[
 setMethod('[[', c('TreeMen', 'ANY'),
           function(x, i) {
@@ -103,8 +103,8 @@ setMethod('[[', c('TreeMen', 'ANY'),
 #' @aliases TreeMen-method
 #' Extract slots from a list of trees
 #' @exportMethod [
-setMethod('[', c('TreeMen', 'character'),
-          function(x, i) {
+setMethod('[', c('TreeMen', 'character', 'missing', 'missing'),
+          function(x, i, j, ..., drop=TRUE) {
             if(!i %in% slotNames(x)) {
               stop(paste0(i, '  not in tree'))
             }
@@ -129,14 +129,12 @@ setAs(from="list", to="TreeMen", def=function(from, to) {
 
 # display methods
 #' @rdname TreeMen-class
-#' @aliases TreeMen-method
 #' @exportMethod as.character
 setMethod('as.character', c('x'='TreeMen'),
           function(x) {
             paste0('TreeMen Object of [', x@ntrees,'] trees')
           })
 #' @rdname TreeMen-class
-#' @aliases TreeMen-method
 #' @exportMethod show
 setMethod('show', 'TreeMen',
           function(object){
@@ -144,7 +142,6 @@ setMethod('show', 'TreeMen',
             cat(msg)
           })
 #' @rdname TreeMen-class
-#' @aliases TreeMen-method
 #' @exportMethod str
 setMethod('str', c('object'='TreeMen'),
           function(object, max.level=2L, ...) {
@@ -154,7 +151,6 @@ setMethod('str', c('object'='TreeMen'),
             str@default(object, max.level=max.level, ...)
           })
 #' @rdname TreeMen-class
-#' @aliases TreeMen-method
 #' @exportMethod print
 setMethod('print', c('x'='TreeMen'),
           function(x){
@@ -162,7 +158,6 @@ setMethod('print', c('x'='TreeMen'),
             print(msg)
           })
 #' @rdname TreeMen-class
-#' @aliases TreeMen-method
 #' @exportMethod summary
 setMethod('summary', c('object'='TreeMen'),
           function(object){

@@ -78,7 +78,7 @@ searchTxnyms <- function (tree, cache=FALSE, parent=NULL, clean=TRUE,
 #' @description Resolve taxonomic names via the Global Names Resolver.
 #' @details Returns dataframe containing GNR metadata for each name wames
 #' that cannot be resolved are returned as NA. Various datasources are 
-#' available, see \url{http://resolver.globalnames.biodinfo.org/data_sources} for a
+#' available, see \url{http://resolver.globalnames.org/data_sources} for a
 #' list and IDs. Default is 4 for NCBI.
 #' @param nms vector of names
 #' @param batch size of the batches to be queried

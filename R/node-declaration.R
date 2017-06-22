@@ -22,9 +22,13 @@
 }
 
 #' @name Node-class
+#' @aliases Node-method
 #' @param x \code{Node} object
 #' @param object \code{Node} object
 #' @param i slot name
+#' @param j missing
+#' @param ... missing
+#' @param drop missing
 #' @title Node-class
 #' @description The \code{Node} is an S4 class used for displaying node information.
 #' It is only generated when a user implements the \code{[[]]} on a tree. Information
@@ -57,28 +61,24 @@ setClass ('Node', representation=representation (
   tip='logical')         # T/F tip node?
 )
 #' @rdname Node-class
-#' @aliases Node-method
 #' @exportMethod as.character
 setMethod ('as.character', c('x'='Node'),
            function(x) {
              paste0('Node Obj. [ID=', x@id, ']')
            })
 #' @rdname Node-class
-#' @aliases Node-method
 #' @exportMethod show
 setMethod ('show', 'Node',
            function(object){
              cat(summary(object))
            })
 #' @rdname Node-class
-#' @aliases Node-method
 #' @exportMethod print
 setMethod ('print', 'Node',
            function(x){
              print(summary(x))
            })
 #' @rdname Node-class
-#' @aliases Node-method
 #' @exportMethod summary
 setMethod ('summary', c('object'='Node'),
            function(object){
@@ -110,9 +110,10 @@ setMethod ('summary', c('object'='Node'),
              cat(msg)
            })
 
+#' @rdname Node-class
 #' @exportMethod [
-setMethod('[', c('Node', 'character'),
-          function(x, i) {
+setMethod('[', c('Node', 'character', 'missing', 'missing'),
+          function(x, i, j, ..., drop=TRUE) {
             if(!i %in% slotNames(x)) {
               stop(paste0(i, '  not in node'))
             }

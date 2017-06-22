@@ -65,7 +65,7 @@ updateSlts <- function(tree) {
 #' @param ... \code{as.big.matrix()} additional arguments
 #' @seealso
 #' \code{\link{updateSlts}}, \code{\link{rmNdmtrx}},
-#' \url{https://cran.r-project.org/web/packages/bigmemory/index.html}
+#' \url{https://cran.r-project.org/package=bigmemory}
 #' @export
 #' @examples
 #' # library(treeman)

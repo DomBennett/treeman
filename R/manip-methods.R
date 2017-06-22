@@ -457,7 +457,7 @@ pinTips <- function(tree, tids, lngs, end_ages, tree_age) {
   spn_data[tree@all, 'end'] <- tmp_spn_data[['end']]
   rm(tmp_spn_data)
   rid <- tree@root
-  #　add oldest to youngest
+  # add oldest to youngest
   ordrd <- order(end_ages, decreasing=TRUE)
   plyr::m_ply(ordrd, .pin)
   tree

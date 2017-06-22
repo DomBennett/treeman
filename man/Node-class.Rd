@@ -3,14 +3,12 @@
 \docType{class}
 \name{Node-class}
 \alias{Node-class}
+\alias{Node-method}
 \alias{as.character,Node-method}
-\alias{Node-method}
 \alias{show,Node-method}
-\alias{Node-method}
 \alias{print,Node-method}
-\alias{Node-method}
 \alias{summary,Node-method}
-\alias{Node-method}
+\alias{[,Node,character,missing,missing-method}
 \title{Node-class}
 \usage{
 \S4method{as.character}{Node}(x)
@@ -20,6 +18,8 @@
 \S4method{print}{Node}(x)
 
 \S4method{summary}{Node}(object)
+
+\S4method{[}{Node,character,missing,missing}(x, i, j, ..., drop = TRUE)
 }
 \arguments{
 \item{x}{\code{Node} object}
@@ -27,6 +27,12 @@
 \item{object}{\code{Node} object}
 
 \item{i}{slot name}
+
+\item{j}{missing}
+
+\item{...}{missing}
+
+\item{drop}{missing}
 }
 \description{
 The \code{Node} is an S4 class used for displaying node information.

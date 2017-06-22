@@ -3,27 +3,20 @@
 \docType{class}
 \name{TreeMan-class}
 \alias{TreeMan-class}
+\alias{TreeMan-method}
 \alias{[[,TreeMan,character-method}
-\alias{TreeMan-method}
-\alias{[,TreeMan,character,ANY,ANY-method}
-\alias{TreeMan-method}
+\alias{[,TreeMan,character,missing,missing-method}
 \alias{as.character,TreeMan-method}
-\alias{TreeMan-method}
 \alias{show,TreeMan-method}
-\alias{TreeMan-method}
 \alias{print,TreeMan-method}
-\alias{TreeMan-method}
 \alias{str,TreeMan-method}
-\alias{TreeMan-method}
 \alias{summary,TreeMan-method}
-\alias{TreeMan-method}
 \alias{cTrees,TreeMan-method}
-\alias{TreeMan-method}
 \title{TreeMan-class}
 \usage{
 \S4method{[[}{TreeMan,character}(x, i)
 
-\S4method{[}{TreeMan,character,ANY,ANY}(x, i)
+\S4method{[}{TreeMan,character,missing,missing}(x, i, j, ..., drop = TRUE)
 
 \S4method{as.character}{TreeMan}(x)
 
@@ -42,11 +35,15 @@
 
 \item{i}{node ID or slot name}
 
+\item{j}{missing}
+
+\item{...}{additional tree objects}
+
+\item{drop}{missing}
+
 \item{object}{\code{TreeMan} object}
 
 \item{max.level}{\code{str()} maximum number of levels to show}
-
-\item{...}{additional tree objects}
 }
 \description{
 S4 class for representing phylogenetic trees as a list of nodes.

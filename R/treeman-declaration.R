@@ -6,12 +6,15 @@
 
 #' @name TreeMan-class
 #' @title TreeMan-class
+#' @aliases TreeMan-method
 #' @description S4 class for representing phylogenetic trees as a list of nodes.
 #' @param x \code{TreeMan} object
 #' @param i node ID or slot name
 #' @param object \code{TreeMan} object
 #' @param max.level \code{str()} maximum number of levels to show
 #' @param ... additional tree objects
+#' @param j missing
+#' @param drop missing
 #' @slot ndlst list of nodes
 #' @slot nds vector of node ids that are internal nodes
 #' @slot nnds numeric of number of internal nodes in tree
@@ -101,7 +104,6 @@ setClass('TreeMan', representation=representation(
 
 # Accessor methods
 #' @rdname TreeMan-class
-#' @aliases TreeMan-method
 #' @exportMethod [[
 setMethod('[[', c('TreeMan', 'character'),
           function(x, i) {
@@ -124,10 +126,8 @@ setMethod('[[', c('TreeMan', 'character'),
             .newNd(x, i)
           })
 #' @rdname TreeMan-class
-#' @aliases TreeMan-method
-#' @exportMethod [
-setMethod('[', c('TreeMan', 'character'),
-          function(x, i) {
+setMethod('[', c('TreeMan', 'character', 'missing', 'missing'),
+          function(x, i, j, ..., drop=TRUE) {
             slt_nms <- slotNames(x)
             slt_nms <- slt_nms[slt_nms != 'ndlst']
             slt_nms <- slt_nms[slt_nms != 'ndmtrx']
@@ -151,14 +151,12 @@ setMethod('[', c('TreeMan', 'character'),
 
 # display methods
 #' @rdname TreeMan-class
-#' @aliases TreeMan-method
 #' @exportMethod as.character
 setMethod('as.character', c('x'='TreeMan'),
           function(x) {
             paste0('TreeMan Object of [', length(x@tips),'] tips')
           })
 #' @rdname TreeMan-class
-#' @aliases TreeMan-method
 #' @exportMethod show
 setMethod('show', 'TreeMan',
           function(object){
@@ -166,7 +164,6 @@ setMethod('show', 'TreeMan',
             cat(msg)
           })
 #' @rdname TreeMan-class
-#' @aliases TreeMan-method
 #' @exportMethod print
 setMethod('print', 'TreeMan',
           function(x){
@@ -174,7 +171,6 @@ setMethod('print', 'TreeMan',
             print(msg)
           })
 #' @rdname TreeMan-class
-#' @aliases TreeMan-method
 #' @exportMethod str
 setMethod('str', c('object'='TreeMan'),
           function(object, max.level=2L, ...) {
@@ -184,7 +180,6 @@ setMethod('str', c('object'='TreeMan'),
             str@default(object, max.level=max.level, ...)
           })
 #' @rdname TreeMan-class
-#' @aliases TreeMan-method
 #' @exportMethod summary
 setMethod('summary', c('object'='TreeMan'),
           function(object){

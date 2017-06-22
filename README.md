@@ -1,5 +1,5 @@
 # treeman
-[![Build Status](https://travis-ci.org/DomBennett/treeman.svg)](https://travis-ci.org/DomBennett/treeman)[![Coverage Status](https://coveralls.io/repos/DomBennett/treeman/badge.svg?branch=master&service=github)](https://coveralls.io/github/DomBennett/treeman?branch=master)[![CRAN downloads](http://cranlogs.r-pkg.org/badges/grand-total/treeman)](https://cran.r-project.org/web/packages/treeman/index.html)[![Rdoc](http://www.rdocumentation.org/badges/version/treeman)](http://www.rdocumentation.org/packages/treeman) 
+[![Build Status](https://travis-ci.org/DomBennett/treeman.svg)](https://travis-ci.org/DomBennett/treeman)[![Coverage Status](https://coveralls.io/repos/DomBennett/treeman/badge.svg?branch=master&service=github)](https://coveralls.io/github/DomBennett/treeman?branch=master)[![CRAN downloads](http://cranlogs.r-pkg.org/badges/grand-total/treeman)](https://CRAN.R-project.org/package=treeman)[![Rdoc](http://www.rdocumentation.org/badges/version/treeman)](http://www.rdocumentation.org/packages/treeman) 
 
 > An R package for manipulating phylogentic trees using an intuitive S4 class structure.
 
