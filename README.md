@@ -3,13 +3,7 @@
 
 > An R package for manipulating phylogentic trees using an intuitive S4 class structure.
 
-The `treeman` R package provides a `list` based class for encoding phylogenetic trees in R, making manipulating phylogenetic trees easier to code and more efficient to run.
-
-**Design features**
-
-* Lightweight (few dependencies)
-* Fast (vectorised or recursive)
-* Simple and intuitive
+The `treeman` R package provides a `list` based class for encoding phylogenetic trees in R, making manipulating phylogenetic trees easier to code and more efficient to run. `treeman` is aimed to be fast, simple and intuitive.
 
 **Installation**
 
@@ -44,7 +38,7 @@ GPL-2
 
 **Status**
 
-Version 1 released.
+Version 1.1 released.
 
 **Reference**
 
