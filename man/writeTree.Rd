@@ -31,8 +31,9 @@ It should only return a single character value that can be added to a newick str
 \examples{
 library(treeman)
 tree <- randTree(10)
+# write out the tree with node labels as IDs
 ndLabels <- function(n) {
-paste0(n[['id']], '_ndlabel')
+n[['id']]
 }
 writeTree(tree, file='example.tre', ndLabels=ndLabels)
 file.remove('example.tre')

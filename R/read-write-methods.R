@@ -19,8 +19,9 @@
 #' @examples
 #' library(treeman)
 #' tree <- randTree(10)
+#' # write out the tree with node labels as IDs
 #' ndLabels <- function(n) {
-#' paste0(n[['id']], '_ndlabel')
+#' n[['id']]
 #' }
 #' writeTree(tree, file='example.tre', ndLabels=ndLabels)
 #' file.remove('example.tre')
@@ -84,7 +85,9 @@ writeTree <- function(tree, file, append=FALSE, ndLabels=function(nd){
   trstr <- paste0(trstr, tpstr)
   # loop through nodes
   plyr::m_ply(2:(length(ndlst) - 1), .fun=tipBytip)
-  trstr <- paste0(trstr, ');')
+  ndlbl <- ndLabels(ndlst[[rid]])
+  spn <- ndlst[[rid]][['spn']]
+  trstr <- paste0(trstr, ')', ndlbl,':', spn, ';')
   write.table(x=trstr, file=file, quote=FALSE, row.names=FALSE,
               col.names=FALSE, append=append)
 }
@@ -133,12 +136,9 @@ readTree <- function(file=NULL, text=NULL, wndmtrx=FALSE, parallel=FALSE,
   # Internals
   .idspn <- function(i) {
     mtdt <- substr(trstr, start=nds[i-1] + 1, stop=nds[i])
-    mtdt <- gsub("(\\(|\\)|,)", "", mtdt)
+    mtdt <- gsub("(\\(|\\)|,|;)", "", mtdt)
     mtdt <- strsplit(mtdt, ":")[[1]]
     if(length(mtdt) == 0) {
-      id <- paste0('n', i)
-      spn <- NA
-    } else if(mtdt[1] == ';') {
       id <- paste0('n', i)
       spn <- NA
     } else if(length(mtdt) == 1) {
@@ -164,9 +164,7 @@ readTree <- function(file=NULL, text=NULL, wndmtrx=FALSE, parallel=FALSE,
   }
   # get nodes from string
   nds <- c(1, as.integer(gregexpr("(,|\\))", trstr)[[1]]) - 1)
-  if(grepl(");", trstr)) {
-    nds <- c(nds, nchar(trstr))
-  }
+  nds <- c(nds, nchar(trstr))
   # get id and spn
   mtdt <- sapply(2:length(nds), FUN=.idspn)
   ids <- mtdt[1, ]

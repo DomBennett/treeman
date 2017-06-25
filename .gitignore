@@ -11,3 +11,7 @@
 
 # gnr cache
 gnr_cache
+
+# data
+*.zip
+newick_examples/
