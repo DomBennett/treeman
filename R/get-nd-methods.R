@@ -5,7 +5,7 @@
 #' @param tree \code{TreeMan} object
 #' @param id node id
 #' @seealso
-#' \code{\link{getNdsLng}}, \code{\link{getTxnyms}},
+#' \code{\link{getNdsLng}}, \code{\link{getNdsFrmTxnyms}},
 #' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 #' @export
 #' @examples
@@ -160,7 +160,7 @@ getNdPrdst <- function(tree, id) {
 #' @title Get a node slot
 #' @description Returns the value of named slot.
 #' @details Returned object depends on name, either character, vector or numeric.
-#' Default node slots are: id, spn, prid, ptid and txnym.
+#' Default node slots are: id, spn, prid, ptid and txnym. If slot is empty, returns NA.
 #' @param tree \code{TreeMan} object
 #' @param slt_nm slot name
 #' @param id node id
@@ -173,7 +173,11 @@ getNdPrdst <- function(tree, id) {
 #' tree <- randTree(10)
 #' getNdSlt(tree, slt_nm='spn', id='t1')  # return span of t1
 getNdSlt <- function(tree, slt_nm, id) {
-  tree@ndlst[[id]][[slt_nm]]
+  res <- tree@ndlst[[id]][[slt_nm]]
+  if(is.null(res)) {
+    res <- NA
+  }
+  res
 }
 
 #' @name getNdPD

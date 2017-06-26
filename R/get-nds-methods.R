@@ -7,7 +7,7 @@
 #' @param parallel logical, make parallel?
 #' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
 #' @seealso
-#' \code{\link{getNdLng}}, \code{\link{getTxnyms}},
+#' \code{\link{getNdLng}}, \code{\link{getNdsFrmTxnyms}},
 #' \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 #' @export
 #' @examples
@@ -108,7 +108,7 @@ getNdsPrdst <- function(tree, ids, parallel=FALSE, progress="none") {
 
 #' @name getNdsSlt
 #' @title Get a node slot for multiple nodes
-#' @description Returns the value of named slot.
+#' @description Returns the values of named slot as a vector for atomic values, else list.
 #' @details Returned object depends on name, either character, vector or numeric. Parallelizable.
 #' Default node slots are: id, spn, prid, ptid and txnym.
 #' @param tree \code{TreeMan} object
@@ -129,9 +129,14 @@ getNdsSlt <- function(tree, slt_nm, ids, parallel=FALSE, progress="none") {
     getNdSlt(tree, slt_nm, ids[i])
   }
   l_data <- data.frame(i=1:length(ids), stringsAsFactors=FALSE)
-  res <- plyr::mdply(.data=l_data, .fun=.get, .parallel=parallel,
+  res <- plyr::mlply(.data=l_data, .fun=.get, .parallel=parallel,
                      .progress=progress)
-  res[ ,2]
+  res <- res[1:length(res)]
+  if(all(sapply(res, length) == 1)) {
+    res <- unlist(res, recursive=FALSE)
+  }
+  names(res) <- ids
+  res
 }
 
 #' @name getNdsKids

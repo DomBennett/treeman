@@ -218,7 +218,7 @@ getCnnctdNds <- function(tree, tids) {
   names(counts)[counts < length(tids)]
 }
 
-#' @name getTxnyms
+#' @name getNdsFrmTxnyms
 #' @title Get IDs for nodes represented txnyms
 #' @description Return a list of IDs for any node that contains the given txnyms.
 #' @details Returns a list. Txnyms must be spelt correctly.
@@ -232,8 +232,8 @@ getCnnctdNds <- function(tree, tids) {
 #' library(treeman)
 #' data(mammals)
 #' # what ID represents the apes?
-#' getTxnyms(mammals, 'Hominoidea')
-getTxnyms <- function(tree, txnyms) {
+#' getNdsFrmTxnyms(mammals, 'Hominoidea')
+getNdsFrmTxnyms <- function(tree, txnyms) {
   # get nd id(s) for taxonyms
   .get <- function(id, txnym, ...) {
     for(t in txnyms) {

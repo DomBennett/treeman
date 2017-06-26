@@ -70,5 +70,17 @@ test_that('setNdsOther() works', {
   tree <- updateSlts(tree)
   summary(tree)
   res <- getNdsSlt(tree, ids=tree['all'], slt_nm='binary_val')
-  expect_that(vals, equals(res))
+  names(res) <- NULL
+  expect_equal(vals, res)
+})
+test_that('rmOtherSlt() works', {
+  tree <- randTree(10, wndmtrx=sample(c(TRUE, FALSE), 1))
+  vals <- sample(0:1, size=tree['nall'], replace=TRUE)
+  tree <- setNdsOther(tree, tree['all'], vals, 'binary_val')
+  tree <- updateSlts(tree)
+  tree <- rmOtherSlt(tree, 'binary_val')
+  tree <- updateSlts(tree)
+  summary(tree)
+  res <- getNdsSlt(tree, ids=tree['all'], slt_nm='binary_val')
+  expect_true(is.na(res[[1]]))
 })

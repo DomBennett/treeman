@@ -39,5 +39,5 @@ nd_labels <- searchTxnyms(tree)
 print(nd_labels)
 }
 \seealso{
-\code{\link{taxaResolve}}, \code{\link{setTxnyms}}, \code{\link{getTxnyms}}
+\code{\link{taxaResolve}}, \code{\link{setTxnyms}}, \code{\link{getNdsFrmTxnyms}}
 }

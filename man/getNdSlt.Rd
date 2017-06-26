@@ -18,7 +18,7 @@ Returns the value of named slot.
 }
 \details{
 Returned object depends on name, either character, vector or numeric.
-Default node slots are: id, spn, prid, ptid and txnym.
+Default node slots are: id, spn, prid, ptid and txnym. If slot is empty, returns NA.
 }
 \examples{
 library(treeman)

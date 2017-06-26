@@ -28,6 +28,6 @@ data(mammals)
 getNdsLng(mammals, id=c('Homo_sapiens', 'Gorilla_gorilla'))
 }
 \seealso{
-\code{\link{getNdLng}}, \code{\link{getTxnyms}},
+\code{\link{getNdLng}}, \code{\link{getNdsFrmTxnyms}},
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }

@@ -48,6 +48,8 @@ test_that('getNdsSlt() works', {
   nd_spns <- getNdsSlt(tree, slt_nm="spn",
                        ids=tree['all'])
   expect_that(sum(nd_spns), equals(tot_pd))
+  ptids <- getNdsSlt(tree, slt_nm='ptid', ids=tree['all'])
+  expect_true(length(ptids[[sample(tree['tips'], 1)]]) == 0)
 })
 test_that('getNdsKids() works', {
   tree <- getTestTree(n)

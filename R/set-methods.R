@@ -304,3 +304,36 @@ setNdsOther <- function(tree, ids, vals, slt_nm, parallel=FALSE, progress="none"
   }
   tree
 }
+
+#' @name rmOtherSlt
+#' @title Remove a user-defined slot
+#' @description Returns a tree with a user-defined tree slot removed.
+#' @details A user can specify a new slot using the \code{setNdSlt()} function
+#' or upon reading a tree. This can be removed using this function by specifying
+#' the name of the slot to be removed.
+#' @param tree \code{TreeMan} object
+#' @param slt_nm name of slot to be removed
+#' @seealso
+#' \code{\link{setNdOther}}, \code{\link{setNdsOther}},
+#' \url{https://github.com/DomBennett/treeman/wiki/set-methods}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree <- randTree(10)
+#' vals <- runif(min=0, max=1, n=tree['nall'])
+#' tree <- setNdsOther(tree, tree['all'], vals, 'confidence')
+#' tree <- updateSlts(tree)
+#' summary(tree)
+#' tree <- rmOtherSlt(tree, 'confidence')
+#' tree <- updateSlts(tree)
+#' summary(tree)
+rmOtherSlt <- function(tree, slt_nm) {
+  .set <- function(id) {
+    tree@ndlst[[id]][[slt_nm]] <<- NULL
+  }
+  l_data <- data.frame(id=tree@all, stringsAsFactors=FALSE)
+  plyr::m_ply(.data=l_data, .fun=.set)
+  tree@updtd <- FALSE
+  tree@othr_slt_nms <- tree@othr_slt_nms[tree@othr_slt_nms != slt_nm]
+  tree
+}

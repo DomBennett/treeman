@@ -67,9 +67,14 @@
 #' tree[['t1']]   # return t1 node object
 #' tree['pd']     # return phylogenetic diversity
 #' tree['ply']    # is polytomous?
-#' # Additional special slots
+#' # Additional special slots (calculated upon call)
 #' tree['age']   # get tree's age
 #' tree['ultr']  # determine if tree is ultrametric
+#' tree['spns']  # get all the spans of the tree IDs
+#' tree['prids'] # get all the IDs of preceding nodes
+#' tree['ptids'] # get all the IDs of following nodes
+#' tree['txnyms'] # get all the taxonyms of all nodes
+#' # In addition [] can be used for any user-defined slot
 #' # Because all nodes are lists with metadata we can readily
 #' #  get specific information on nodes of interest
 #' nd <- tree[['n2']]
@@ -141,8 +146,22 @@ setMethod('[', c('TreeMan', 'character', 'missing', 'missing'),
             if(i == 'age') {
               return(getAge(x))
             }
+            # getNdsSlt extractor
+            xtr_slts <- c('spns', 'prids', 'ptids', 'txnyms')
+            if(i %in% xtr_slts) {
+              slt_nm <- sub('s$', '', i)  # rm s at end
+              res <- getNdsSlt(x, slt_nm, x@all)
+              names(res) <- x@all
+              return(res)
+            }
+            if(i %in% x@othr_slt_nms) {
+              res <- getNdsSlt(x, i, x@all)
+              names(res) <- x@all
+              return(res)
+            }
             if(!i %in% slt_nms) {
-              slt_nms <- paste0(c(slt_nms, 'ultr', 'age'), collapse=', ')
+              slt_nms <- paste0(c(slt_nms, 'ultr', 'age', xtr_slts,
+                                  x@othr_slt_nms), collapse=', ')
               stop(paste0('`', i, '` not a tree slot. Available slots: ',
                           slt_nms))
             }

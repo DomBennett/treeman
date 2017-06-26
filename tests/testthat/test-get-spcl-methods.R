@@ -35,9 +35,9 @@ test_that('getCnntdNds() works', {
   expect_false(prnt %in% cnntdnds)
   expect_true(all(ptids %in% ptids))
 })
-test_that('getTxnyms() works', {
+test_that('getNdsFrmTxnyms() works', {
   data(mammals)
-  res <- getTxnyms(mammals, 'Homo')[[1]]
+  res <- getNdsFrmTxnyms(mammals, 'Homo')[[1]]
   expect_true(res == 'Homo_sapiens')
 })
 test_that('getTreeAge() works', {

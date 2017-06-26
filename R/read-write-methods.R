@@ -97,8 +97,13 @@ writeTree <- function(tree, file, append=FALSE, ndLabels=function(nd){
 #' @description Return a \code{TreeMan} or \code{TreeMen} object from a Newick treefile
 #' @details Read a single or multiple trees from a file, or a text string. Parallelizable
 #' when reading multiple trees.
+#' The function will add any internal node labels in the Newick tree as a user-defined data slots.
+#' The name of this slot is defined with the \code{spcl_slt_nm}.
+#' These data can be accessed/manipulated with the \code{`getNdsSlt()`} function.
+#' Trees are always read as rooted. (Unrooted trees have polytomous root nodes.)
 #' @param file file path
 #' @param text Newick character string
+#' @param spcl_slt_nm name of special slot for internal node labels, default 'Unknown'.
 #' @param wndmtrx T/F add node matrix? Default FALSE.
 #' @param parallel logical, make parallel?
 #' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
@@ -110,9 +115,13 @@ writeTree <- function(tree, file, append=FALSE, ndLabels=function(nd){
 #' @export
 #' @examples
 #' library(treeman)
-#' tree <- readTree(text="((A:1.0,B:1.0):1.0,(C:1.0,D:1.0):1.0);")
-readTree <- function(file=NULL, text=NULL, wndmtrx=FALSE, parallel=FALSE,
-                     progress='none') {
+#' # tree string with internal node labels as bootstrap results
+#' tree <- readTree(text="((A:1.0,B:1.0)0.9:1.0,(C:1.0,D:1.0)0.8:1.0)0.7:1.0;",
+#' spcl_slt_nm='bootstrap')
+#' # retrieve bootstrap values by node
+#' tree['bootstrap']
+readTree <- function(file=NULL, text=NULL, spcl_slt_nm='Unknown', wndmtrx=FALSE,
+                     parallel=FALSE, progress='none') {
   if(!is.null(file)) {
     trstr <- scan(file, what="raw", quiet=TRUE)
   } else {
@@ -120,26 +129,27 @@ readTree <- function(file=NULL, text=NULL, wndmtrx=FALSE, parallel=FALSE,
   }
   if(length(trstr) > 1) {
     trstr <- as.list(trstr)
-    trees <- plyr::mlply(trstr, .fun=.readTree, wndmtrx=wndmtrx,
-                         .progress=progress, .parallel=parallel)
+    trees <- plyr::mlply(trstr, .fun=.readTree, spcl_slt_nm=spcl_slt_nm,
+                         wndmtrx=wndmtrx, .progress=progress, .parallel=parallel)
     names(trees) <- NULL
+    trees <- trees[1:length(trees)]
     tree <- as(trees, 'TreeMen')
   } else {
-    tree <- .readTree(trstr, wndmtrx)
+    tree <- .readTree(trstr, spcl_slt_nm, wndmtrx)
   }
   tree
 }
 
 #' @useDynLib treeman
 #' @useDynLib treeman cFindPrids
-.readTree <- function(trstr, wndmtrx) {
+.readTree <- function(trstr, spcl_slt_nm, wndmtrx) {
   # Internals
   .idspn <- function(i) {
     mtdt <- substr(trstr, start=nds[i-1] + 1, stop=nds[i])
     mtdt <- gsub("(\\(|\\)|,|;)", "", mtdt)
     mtdt <- strsplit(mtdt, ":")[[1]]
+    id <- NA
     if(length(mtdt) == 0) {
-      id <- paste0('n', i)
       spn <- NA
     } else if(length(mtdt) == 1) {
       id <- mtdt
@@ -148,7 +158,6 @@ readTree <- function(file=NULL, text=NULL, wndmtrx=FALSE, parallel=FALSE,
       id <- mtdt[1]
       spn <- as.numeric(mtdt[2])
     } else {
-      id <- paste0('n', i)
       spn <- as.numeric(mtdt[2])
     }
     c(id, spn)
@@ -186,6 +195,24 @@ readTree <- function(file=NULL, text=NULL, wndmtrx=FALSE, parallel=FALSE,
   tinds <- which(!1:length(ids) %in% prinds)
   prinds[is.na(prinds)] <- root
   spns[is.na(spns)] <- 0
+  # move internal node labels to other
+  other <- rep(NA, length(ids))
+  intnds <- 1:length(ids) %in% prinds
+  other[intnds] <- ids[intnds]
+  ids[intnds] <- paste0('n', which(intnds))
+  # rm NAs from IDs
+  pull <- is.na(ids)
+  ids[pull] <- paste0('n', which(pull))
+  # ensure no dups in ids
+  dups <- duplicated(ids)
+  if(any(dups)) {
+    dups <- unique(ids[dups])
+    for(dup in dups) {
+      pull <- ids == dup
+      other[pull] <- ids[pull]
+      ids[pull] <- paste0('n', which(pull))
+    }
+  }
   ptids <- ids[-root]
   ptnds_pool <- prinds[-root]
   ndlst <- lapply(1:length(ids), .add)
@@ -193,6 +220,11 @@ readTree <- function(file=NULL, text=NULL, wndmtrx=FALSE, parallel=FALSE,
   tree <- new('TreeMan', ndlst=ndlst, root=ids[root],
               ndmtrx=NULL, wtxnyms=FALSE,
               prinds=prinds, tinds=tinds)
+  pull <- !is.na(other)
+  if(any(pull)) {
+    tree <- setNdsOther(tree, ids=ids[pull], vals=other[pull],
+                        slt_nm=spcl_slt_nm)
+  }
   tree <- updateSlts(tree)
   if(wndmtrx) {
     tree <- addNdmtrx(tree)

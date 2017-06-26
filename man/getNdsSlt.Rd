@@ -18,7 +18,7 @@ getNdsSlt(tree, slt_nm, ids, parallel = FALSE, progress = "none")
 \item{progress}{name of the progress bar to use, see \code{\link{create_progress_bar}}}
 }
 \description{
-Returns the value of named slot.
+Returns the values of named slot as a vector for atomic values, else list.
 }
 \details{
 Returned object depends on name, either character, vector or numeric. Parallelizable.

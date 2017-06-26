@@ -119,9 +119,14 @@ tree['root']   # identify root node
 tree[['t1']]   # return t1 node object
 tree['pd']     # return phylogenetic diversity
 tree['ply']    # is polytomous?
-# Additional special slots
+# Additional special slots (calculated upon call)
 tree['age']   # get tree's age
 tree['ultr']  # determine if tree is ultrametric
+tree['spns']  # get all the spans of the tree IDs
+tree['prids'] # get all the IDs of preceding nodes
+tree['ptids'] # get all the IDs of following nodes
+tree['txnyms'] # get all the taxonyms of all nodes
+# In addition [] can be used for any user-defined slot
 # Because all nodes are lists with metadata we can readily
 #  get specific information on nodes of interest
 nd <- tree[['n2']]

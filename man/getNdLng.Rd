@@ -24,6 +24,6 @@ data(mammals)
 getNdLng(mammals, id='Homo_sapiens')
 }
 \seealso{
-\code{\link{getNdsLng}}, \code{\link{getTxnyms}},
+\code{\link{getNdsLng}}, \code{\link{getNdsFrmTxnyms}},
 \url{https://github.com/DomBennett/treeman/wiki/get-methods}
 }

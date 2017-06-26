@@ -4,13 +4,15 @@
 \alias{readTree}
 \title{Read a Newick tree}
 \usage{
-readTree(file = NULL, text = NULL, wndmtrx = FALSE, parallel = FALSE,
-  progress = "none")
+readTree(file = NULL, text = NULL, spcl_slt_nm = "Unknown",
+  wndmtrx = FALSE, parallel = FALSE, progress = "none")
 }
 \arguments{
 \item{file}{file path}
 
 \item{text}{Newick character string}
+
+\item{spcl_slt_nm}{name of special slot for internal node labels, default 'Unknown'.}
 
 \item{wndmtrx}{T/F add node matrix? Default FALSE.}
 
@@ -24,10 +26,18 @@ Return a \code{TreeMan} or \code{TreeMen} object from a Newick treefile
 \details{
 Read a single or multiple trees from a file, or a text string. Parallelizable
 when reading multiple trees.
+The function will add any internal node labels in the Newick tree as a user-defined data slots.
+The name of this slot is defined with the \code{spcl_slt_nm}.
+These data can be accessed/manipulated with the \code{`getNdsSlt()`} function.
+Trees are always read as rooted. (Unrooted trees have polytomous root nodes.)
 }
 \examples{
 library(treeman)
-tree <- readTree(text="((A:1.0,B:1.0):1.0,(C:1.0,D:1.0):1.0);")
+# tree string with internal node labels as bootstrap results
+tree <- readTree(text="((A:1.0,B:1.0)0.9:1.0,(C:1.0,D:1.0)0.8:1.0)0.7:1.0;",
+spcl_slt_nm='bootstrap')
+# retrieve bootstrap values by node
+tree['bootstrap']
 }
 \seealso{
 \url{https://en.wikipedia.org/wiki/Newick_format},

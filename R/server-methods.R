@@ -14,7 +14,7 @@
 #' @param clean T/F, ensure returned names contain no special characters?
 #' @param infer T/F, infer taxonyms for unfound nodes?
 #' @seealso
-#' \code{\link{taxaResolve}}, \code{\link{setTxnyms}}, \code{\link{getTxnyms}}
+#' \code{\link{taxaResolve}}, \code{\link{setTxnyms}}, \code{\link{getNdsFrmTxnyms}}
 #' @export
 #' @examples
 #' tree <- randTree(8)
@@ -88,7 +88,7 @@ searchTxnyms <- function (tree, cache=FALSE, parent=NULL, clean=TRUE,
 #' @param cache T/F, create a local cache of downloaded names?
 #' @param parent specify parent of all names to prevent false names
 #' @seealso
-#' \code{\link{searchTxnyms}}, \code{\link{setTxnyms}}, \code{\link{getTxnyms}}
+#' \code{\link{searchTxnyms}}, \code{\link{setTxnyms}}, \code{\link{getNdsFrmTxnyms}}
 #' @export
 #' @examples
 #' my_lovely_names <- c ('Gallus gallus', 'Pongo pingu', 'Homo sapiens',
