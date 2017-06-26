@@ -12,7 +12,7 @@ colnames(treeinfo)
 trfls <- list.files(trdir, pattern='.tre')
 read_failed <- write_failed <- NULL
 read_cntr <- write_cntr <- 0
-for(trfl in trfls[1:10]) {
+for(trfl in trfls) {
   try(expr={
     tree <- readTree(file=file.path(trdir, trfl))
     writeTree(tree, file='temp.tre')
@@ -31,6 +31,7 @@ for(trfl in trfls[1:10]) {
   }
   suppressWarnings(file.remove('temp.tre'))
 }
+write_failed <- write_failed[!write_failed %in% read_failed]
 cat('Read success rate: [', signif(read_cntr/length(trfls), digits=4),
     ']\n', sep='')
 # >99% success rate, failed for certain bad trees in folder

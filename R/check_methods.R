@@ -60,7 +60,7 @@ checkNdlst <- function(ndlst, root) {
     # spns must be 0 or more
     test_spn <- is.numeric(nd[['spn']]) && nd[['spn']] >= 0
     # test self-reference
-    test_sr <- !nd[['prid']] %in% nd['ptid']
+    test_sr <- !nd[['prid']] %in% nd[['ptid']]
     # test root is never a ptid, proxy for circularity
     test_circ <- !rid %in% nd[['ptid']]
     # only root is self-referential
