@@ -397,7 +397,8 @@ pinTips <- function(tree, tids, lngs, end_ages, tree_age) {
     # taxonomically matching branch lengths
     # of the tree have equal chance.
     prbs <- rngs[ ,'start'] - rngs[ ,'end']
-    if(sum(prbs) == 0) {
+    if(sum(prbs) < 10-8) {
+      # cannot add where no branch is available, prbs eqv. to branch length
       message(paste0('[', tid, '] could not be added'))
       return(NULL)
     }

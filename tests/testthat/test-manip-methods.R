@@ -112,12 +112,15 @@ test_that('rmNodes() works', {
   t_age <- getAge(tree)
 })
 test_that('pinTips() work', {
+  # TODO: a better test would be to take a tree with lineages,
+  #  remove a random set of tips and add them again.
   n_start <- 10
   n_add <- 20
   tree <- randTree(n_start, wndmtrx=sample(c(TRUE, FALSE), 1))
   tree <- randomLineage(n_start/2, tree)
   pd_before <- tree['pd']
   age_before <- getAge(tree)
+  ntips_before <- tree['ntips']
   rdata <- randomTips(n_add, tree, getAge(tree))
   tree <- pinTips(tree, tids=rdata[["t"]],
                   lngs=rdata[["l"]],
@@ -128,7 +131,7 @@ test_that('pinTips() work', {
   expect_that(validObject(tree), is_true())
   #expect_that(tree['ntips'], equals(n_start+n_add))  # not necessarily true
   expect_that(pd_before, is_less_than(tree['pd']))
-  expect_that(tree[['new_1']]['txnym'], is_a('character'))
+  expect_gt(tree['ntips'], ntips_before)
   #expect_that(age_before, equals(tree['age']))  # not necessarily true
   writeTree(tree, file='test.tre')  # expect no error
 })
