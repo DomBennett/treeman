@@ -17,7 +17,7 @@ getNdLng <- function(tree, id) {
   .get <- function(txnym, ...) {
     lng <<- c(txnym, lng)
   }
-  prids <- c(id, getNdPrids(tree, id))
+  prids <- getNdPrids(tree, id)
   lng <- NULL
   plyr::m_ply(tree@ndlst[prids], .fun=.get)
   unique(lng)
