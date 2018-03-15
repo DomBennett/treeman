@@ -36,13 +36,15 @@ test_that('calcDstBLD() works', {
   expect_that(d, equals(0))
 })
 test_that('calcDstRF() works', {
-  tree_1 <- readTree(text="((t1,t2),t3);",
+  tree_1 <- readTree(text="((t1,(t2,t3)),t4);",
                      wndmtrx=sample(c(TRUE, FALSE), 1))
-  tree_2 <- readTree(text="((t3,t2),t1);",
+  tree_2 <- readTree(text="((t4,(t3,t2)),t1);",
                      wndmtrx=sample(c(TRUE, FALSE), 1))
   d <- calcDstRF(tree_1, tree_2, nrmlsd=TRUE)
   expect_that(d, equals(1))
-  d <- calcDstRF(tree_1, tree_1, TRUE)
+  d <- calcDstRF(tree_1, tree_2)
+  expect_that(d, equals(2))
+  d <- calcDstRF(tree_1, tree_1, nrmlsd=TRUE)
   expect_that(d, equals(0))
 })
 test_that('calcPhyDv() works', {

@@ -24,7 +24,8 @@ Returns the Robinson-Foulds distance between two trees.
 \details{
 RF distance is calculated as the sum of partitions in one tree that are
 not shared by the other. The maximum number of split differences is the total number
-of nodes in both trees (excluding the roots). Parallelizable.
+of nodes in both trees (excluding the roots). Trees are assumed to be bifurcating,
+this is not tested. The metric is calculated as if trees are unrooted. Parallelizable.
 }
 \examples{
 library(treeman)

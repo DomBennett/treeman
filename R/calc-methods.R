@@ -209,7 +209,8 @@ calcDstBLD <- function(tree_1, tree_2, nrmlsd=FALSE,
 #' @description Returns the Robinson-Foulds distance between two trees.
 #' @details RF distance is calculated as the sum of partitions in one tree that are
 #' not shared by the other. The maximum number of split differences is the total number
-#' of nodes in both trees (excluding the roots). Parallelizable.
+#' of nodes in both trees (excluding the roots). Trees are assumed to be bifurcating,
+#' this is not tested. The metric is calculated as if trees are unrooted. Parallelizable.
 #' @param tree_1 \code{TreeMan} object
 #' @param tree_2 \code{TreeMan} object
 #' @param nrmlsd Boolean, should returned value be between 0 and 1? Default, FALSE.
@@ -229,8 +230,17 @@ calcDstBLD <- function(tree_1, tree_2, nrmlsd=FALSE,
 #' calcDstRF(tree_1, tree_2)
 calcDstRF <- function(tree_1, tree_2, nrmlsd=FALSE,
                       parallel=FALSE, progress="none") {
-  n1 <- tree_1@nds[!tree_1@nds == tree_1@root]
-  n2 <- tree_2@nds[!tree_2@nds == tree_2@root]
+  # get unrooted bipartitions
+  rp_1 <- getNdSlt(tree=tree_1, id=tree_1@root,
+                   slt_nm='ptid')
+  rp_2 <- getNdSlt(tree=tree_2, id=tree_2@root,
+                   slt_nm='ptid')
+  rp_1 <- rp_1[!rp_1 %in% tree_1@tips]
+  rp_2 <- rp_2[!rp_2 %in% tree_2@tips]
+  ignr_1 <- c(rp_1[1], tree_1@root)
+  ignr_2 <- c(rp_2[1], tree_2@root)
+  n1 <- tree_1@nds[!tree_1@nds %in% ignr_1]
+  n2 <- tree_2@nds[!tree_2@nds %in% ignr_2]
   if(progress != "none") {
     cat("Part 1/2 ....\n")
   }
