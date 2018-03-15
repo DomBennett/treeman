@@ -244,11 +244,15 @@ calcDstRF <- function(tree_1, tree_2, nrmlsd=FALSE,
   if(progress != "none") {
     cat("Part 1/2 ....\n")
   }
-  c1 <- getNdsKids(tree_1, n1, parallel=parallel, progress=progress)
+  c1 <- getNdsKids(tree_1, n1, parallel=parallel,
+                   progress=progress)
+  c1 <- lapply(c1, sort)
   if(progress != "none") {
     cat("Part 2/2 ....\n")
   }
-  c2 <- getNdsKids(tree_2, n2, parallel=parallel, progress=progress)
+  c2 <- getNdsKids(tree_2, n2, parallel=parallel,
+                   progress=progress)
+  c2 <- lapply(c2, sort)
   d <- sum(!c1 %in% c2) + sum(!c2 %in% c1)
   if(nrmlsd) {
     max_d <- (length(n1) + length(n2))
