@@ -84,7 +84,7 @@ test_that("getNdsPtids() works", {
   ptids <- getNdsPtids(tree, tree['nds'])
   n1_ptids <- tree['all'][tree['all'] != 'n1']
   expect_true(all(n1_ptids %in% ptids[['n1']]))
-  expect_that(ptids[['t1']], is_null())
+  expect_null(ptids[['t1']])
 })
 test_that("getNdsLng() works", {
   tree <- getTestTree(n)
