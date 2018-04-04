@@ -175,7 +175,7 @@ readTree <- function(file=NULL, text=NULL, spcl_slt_nm='Unknown', wndmtrx=FALSE,
   nds <- c(1, as.integer(gregexpr("(,|\\))", trstr)[[1]]) - 1)
   nds <- c(nds, nchar(trstr))
   # get id and spn
-  mtdt <- sapply(2:length(nds), FUN=.idspn)
+  mtdt <- mapply(2:length(nds), FUN=.idspn)
   ids <- mtdt[1, ]
   spns <- as.numeric(mtdt[2, ])
   rm(mtdt)
@@ -261,11 +261,13 @@ writeTrmn <- function(tree, file) {
     res <- data.frame(tree=ntree, prind=tree@prinds)
     res[['id']] <- names(tree@ndlst)
     if(tree@wspn) {
-      res[['spn']] <- sapply(tree@ndlst, function(x) x[['spn']])
+      res[['spn']] <- vapply(tree@ndlst, function(x) x[['spn']],
+                             numeric(1))
     }
     if(tree@wtxnyms) {
-      res[['txnym']] <- sapply(tree@ndlst,
-                               function(x) paste0(x[['txnym']], collapse='|'))
+      res[['txnym']] <- vapply(tree@ndlst,
+                               function(x) paste0(x[['txnym']], collapse='|'),
+                               character(1))
     }
     # add any additional slots
     if(length(tree@othr_slt_nms) > 0) {

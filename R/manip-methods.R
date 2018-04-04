@@ -16,7 +16,7 @@
 #' (getDcsd(tree))  # list all extinct tips
 ultrTree <- function(tree) {
   # bring tips to maximum possible length
-  tip_dpths <- sapply(getNdsPrids(tree, tree@tips), length)
+  tip_dpths <- vapply(getNdsPrids(tree, tree@tips), length, integer(1))
   tip_spns <- (tree['ntips'] - tip_dpths)
   nd_spns <- rep(1, tree@nnds)
   names(nd_spns) <- tree@nds
@@ -444,7 +444,7 @@ pinTips <- function(tree, tids, lngs, end_ages, tree_age) {
     warning('One or more end ages are less than zero, this will change the age of tree.')
   }
   # make sure lineages are right
-  sapply(lngs, .testLngs)
+  mapply(.testLngs, lngs)
   # generate taxonomy and span data
   txnyms <- getNdsSlt(tree, 'txnym', tree@all)
   txnyms <- c(txnyms, rep(NA, length(tids)*2))

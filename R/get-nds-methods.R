@@ -132,7 +132,7 @@ getNdsSlt <- function(tree, slt_nm, ids, parallel=FALSE, progress="none") {
   res <- plyr::mlply(.data=l_data, .fun=.get, .parallel=parallel,
                      .progress=progress)
   res <- res[1:length(res)]
-  if(all(sapply(res, length) == 1)) {
+  if(all(vapply(res, length, integer(1)) == 1)) {
     res <- unlist(res, recursive=FALSE)
   }
   names(res) <- ids

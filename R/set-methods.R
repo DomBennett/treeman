@@ -224,7 +224,7 @@ setNdsID <- function(tree, ids, vals, parallel=FALSE, progress="none") {
     nd[['prid']] <- .rplc("prid")
     nd
   }
-  sapply(vals, .testSpcls)
+  mapply(FUN = .testSpcls, vals)
   l_data <- data.frame(i=1:length(tree@ndlst), stringsAsFactors=FALSE)
   ndlst <- plyr::mlply(l_data, .fun=.reset, .parallel=parallel, .progress=progress)
   ndlst <- ndlst[1:length(ndlst)]

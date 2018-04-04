@@ -35,11 +35,13 @@ searchTxnyms <- function (tree, cache=FALSE, parent=NULL, clean=TRUE,
   nd_labels <- rep(NA, tree@nall)
   names(nd_labels) <- tree@all
   # for tips use the first word of the name
-  nd_labels[tree@tips] <- sapply(strsplit(tip_labels, "\\s+"), function(x) x[1])
+  nd_labels[tree@tips] <- vapply(strsplit(tip_labels, "\\s+"), function(x) x[1],
+                                 character(1))
   nds_kids <- getNdsKids(tree, ids=nids)
   for(nid in nids) {
     kids <- gsub("_" , " ", nds_kids[[nid]])
-    genus_names <- sapply(strsplit(kids, "\\s+"), function(x) x[1])
+    genus_names <- vapply(strsplit(kids, "\\s+"), function(x) x[1],
+                          character(1))
     if(all(genus_names == genus_names[1])) {
       nd_labels[nid] <- genus_names[1]
     } else {

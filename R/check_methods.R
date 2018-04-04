@@ -89,7 +89,7 @@ checkNdlst <- function(ndlst, root) {
     return(FALSE)
   }
   rid <- root
-  nd_checks <- sapply(ndlst, .check)
+  nd_checks <- vapply(ndlst, .check, logical(1))
   if(!all(nd_checks)) {
     msg <- 'These nodes are invalid:\n'
     bad <- which(!nd_checks)
@@ -119,14 +119,14 @@ checkNdlst <- function(ndlst, root) {
 #' \code{\link{checkNdlst}}
 #' @export
 checkTreeMen <- function(object) {
-  .check <- function(i, invlds) {
+  .check <- function(i) {
     if(class(object@treelst[[i]])[1] != "TreeMan") {
       invlds <<- c(i, invlds)
     }
     NULL
   }
   invlds <- NULL
-  sapply(1:length(object@treelst), .check, invlds=invlds)
+  mapply(.check, i=1:length(object@treelst))
   if(length(invlds) > 0) {
     for(i in invlds) {
       cat("[", i, "] in treelst is not a TreeMan object\n", sep="")

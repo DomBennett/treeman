@@ -160,7 +160,7 @@ getOtgrp <- function(tree, ids) {
   }
   prnt <- getPrnt(tree, ids)
   ptids <- tree@ndlst[[prnt]][['ptid']]
-  cnts <- sapply(ptids, .cntr)
+  cnts <- vapply(ptids, .cntr, integer(1))
   outnd <- names(cnts)[which.min(cnts)]
   kids <- getNdKids(tree, outnd)
   if(length(kids) == 0) {

@@ -30,23 +30,26 @@ pstMnp <- function(tree) {
 #' @export
 updateSlts <- function(tree) {
   # Update the slots for a tree
-  wo_pstndes <- sapply(tree@ndlst,
-                       function(n) length(n[['ptid']]) == 0)
+  wo_pstndes <- vapply(tree@ndlst,
+                       function(n) length(n[['ptid']]) == 0,
+                       logical(1))
   tree@tips <- sort(names(wo_pstndes)[wo_pstndes])
   tree@ntips <- length(tree@tips)
   tree@nds <- sort(names(wo_pstndes)[!wo_pstndes])
   tree@nnds <- length(tree@nds)
   tree@all <- names(tree@ndlst)
   tree@nall <- length(tree@all)
-  tree@wtxnyms <- any(sapply(tree@ndlst, function(n) !is.null(n[['txnym']])))
-  spns <- sapply(tree@ndlst, function(n) n[['spn']])
+  tree@wtxnyms <- any(vapply(tree@ndlst, function(n) !is.null(n[['txnym']]),
+                             logical(1)))
+  spns <- vapply(tree@ndlst, function(n) n[['spn']], numeric(1))
   tree@wspn <- any(spns > 0)
   if(tree@wspn) {
-    tree@pd <- sum(sapply(tree@ndlst, function(n) n[['spn']]))
+    tree@pd <- sum(vapply(tree@ndlst, function(n) n[['spn']], numeric(1)))
   } else {
     tree@pd <- numeric()
   }
-  tree@ply <- any(sapply(tree@ndlst, function(n) length(n[['ptid']]) > 2))
+  tree@ply <- any(vapply(tree@ndlst, function(n) length(n[['ptid']]) > 2,
+                         logical(1)))
   tree@updtd <- TRUE
   initialize(tree)
 }

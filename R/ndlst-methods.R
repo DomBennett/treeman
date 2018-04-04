@@ -86,7 +86,7 @@
 
 .getNdPrdstsFrmLst <- function(ndlst, prinds, id) {
   prids <- .getNdPridsFrmLst(ndlst, prinds, id)
-  sum(sapply(ndlst[prids], function(x) x[['spn']])) +
+  sum(vapply(ndlst[prids], function(x) x[['spn']], numeric(1))) +
     ndlst[[id]][['spn']]
 }
 
@@ -110,7 +110,7 @@
 .getNdPDFrmLst <- function(ndlst, prinds, id) {
   ptids <- .getNdPtidsFrmLst(ndlst, prinds, id)
   if(length(ptids) > 0) {
-    res <- sum(sapply(ndlst[ptids], function(x) x[['spn']]))
+    res <- sum(vapply(ndlst[ptids], function(x) x[['spn']], numeric(1)))
   } else {
     res <- 0
   }
@@ -131,7 +131,7 @@
   .get <- function(x) {
     x[['spn']]
   }
-  res <- sapply(ndlst, .get)
+  res <- vapply(ndlst, .get, numeric(1))
   names(res) <- NULL
   res
 }
@@ -143,7 +143,7 @@
   .get <- function(x) {
     x[['prid']]
   }
-  res <- sapply(ndlst, .get)
+  res <- vapply(ndlst, .get, character(1))
   match(res, names(ndlst))
 }
 
@@ -152,7 +152,7 @@
   .get <- function(x) {
     length(x[['ptid']]) == 0
   }
-  res <- sapply(ndlst, .get)
+  res <- vapply(ndlst, .get, logical(1))
   names(res) <- NULL
   which(res)
 }
@@ -164,7 +164,7 @@
   # return matrix of 01s for ids that descend from 
   message('Note, trees with `ndmtrx` cannot be saved and loaded using `save()` or `savehistory()`.',
           ' Loading from these files may cause unusual behaviour.')
-  prids <- sapply(ndlst, function(x) x[['prid']])
+  prids <- vapply(ndlst, function(x) x[['prid']], character(1))
   nids <- names(prids)
   prids <- match(prids, nids)
   qry_ids <- 1:length(nids)
