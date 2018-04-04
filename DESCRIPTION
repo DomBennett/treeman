@@ -1,7 +1,7 @@
 Package: treeman
 Type: Package
 Title: Phylogenetic Tree Manipulation Class and Methods
-Version: 1.1.1
+Version: 1.1.2
 Date: 2017-05-27
 Author: D.J. Bennett
 Maintainer: D.J. Bennett <dominic.john.bennett@gmail.com>
