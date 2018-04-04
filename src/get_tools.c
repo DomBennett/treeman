@@ -52,7 +52,7 @@ SEXP cGetNdPrids(SEXP prid_, SEXP prids_)
   init_res[1] = -1;
   //loop through until either of
   //the previous two prids equal current prid
-  while(init_res[i-1] != prid &
+  while(init_res[i-1] != prid &&
         init_res[i-2] != prid) {
     init_res[i] = prid;
     prid = prids[prid - 1];
