@@ -1,3 +1,53 @@
+# bipartitions
+#' @name getBiprts
+#' @title Get the sets of labels for each bipartition in tree
+#' @description Returns a list of tip IDs for each branch in the tree. Options
+#' allow the user to act as if the root is not present and to use a universal
+#' code for comparing between trees.
+#' @details Setting \code{root} to FALSE will ignore the bipartitions created by
+#' the root. Setting \code{universal} to TRUE will return a vector of 0s and 1s,
+#' not a list of tips. These codes will always begin with 1, and will allow for
+#' the comparison of splits between trees as they do not have "chiralty", so to
+#' speak.
+#' @param tree \code{TreeMan} object
+#' @param tips vector of tips IDs to use for bipartitions
+#' @param root Include the root for the bipartitions? Default TRUE.
+#' @param universal Create a code for comparing between trees
+#' @seealso
+#' \code{\link{calcDstRF}}
+#' @export
+#' @examples
+#' library(treeman)
+#' tree <- randTree(10)
+#' # get all of the tip IDs for each branch in the rooted tree
+#' (getBiprts(tree))
+#' # ignore the root and get bipartitions for unrooted tree
+#' (getBiprts(tree, root = FALSE))
+#' # use the universal code for comparing splits between trees
+#' (getBiprts(tree, root = FALSE, universal = TRUE))
+getBiprts <- function(tree, tips = tree@tips, root = TRUE, universal = FALSE) {
+  kids <- getNdsKids(tree = tree, ids = tree@nds)
+  res <- lapply(X = kids, FUN = function(x) tips %in% x)
+  if (!root) {
+    n <- vapply(X = res, FUN = sum, FUN.VALUE = integer(1))
+    # drop splits consisting of all tips or just 1
+    res <- res[n < (length(tips) - 1) & n > 1]
+  }
+  if (universal) {
+    res <- unname(vapply(X = res, FUN = function(x) {
+      if (!x[[1]]) {
+        x <- !x
+      }
+      paste0(as.integer(x), collapse = '')
+    }, FUN.VALUE = character(1)))
+    res <- unique(res)
+  } else {
+    res <- lapply(X = res, FUN = function(x) {
+      list(tree@tips[x], tree@tips[!x])
+    })
+  }
+  res
+}
 
 # ULTRAMETRIC
 #' @name isUltrmtrc

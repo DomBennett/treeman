@@ -4,8 +4,7 @@
 \alias{calcDstRF}
 \title{Calculate the Robinson-Foulds distance between two trees}
 \usage{
-calcDstRF(tree_1, tree_2, nrmlsd = FALSE, parallel = FALSE,
-  progress = "none")
+calcDstRF(tree_1, tree_2, nrmlsd = FALSE)
 }
 \arguments{
 \item{tree_1}{\code{TreeMan} object}
@@ -13,10 +12,6 @@ calcDstRF(tree_1, tree_2, nrmlsd = FALSE, parallel = FALSE,
 \item{tree_2}{\code{TreeMan} object}
 
 \item{nrmlsd}{Boolean, should returned value be between 0 and 1? Default, FALSE.}
-
-\item{parallel}{logical, make parallel?}
-
-\item{progress}{name of the progress bar to use, see \code{\link{create_progress_bar}}}
 }
 \description{
 Returns the Robinson-Foulds distance between two trees.

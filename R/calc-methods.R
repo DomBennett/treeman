@@ -214,8 +214,6 @@ calcDstBLD <- function(tree_1, tree_2, nrmlsd=FALSE,
 #' @param tree_1 \code{TreeMan} object
 #' @param tree_2 \code{TreeMan} object
 #' @param nrmlsd Boolean, should returned value be between 0 and 1? Default, FALSE.
-#' @param parallel logical, make parallel?
-#' @param progress name of the progress bar to use, see \code{\link{create_progress_bar}}
 #' @references
 #' Robinson, D. R.; Foulds, L. R. (1981). "Comparison of phylogenetic trees".
 #' Mathematical Biosciences 53: 131-147.
@@ -228,34 +226,17 @@ calcDstBLD <- function(tree_1, tree_2, nrmlsd=FALSE,
 #' tree_1 <- randTree(10)
 #' tree_2 <- randTree(10)
 #' calcDstRF(tree_1, tree_2)
-calcDstRF <- function(tree_1, tree_2, nrmlsd=FALSE,
-                      parallel=FALSE, progress="none") {
-  # get unrooted bipartitions
-  rp_1 <- getNdSlt(tree=tree_1, id=tree_1@root,
-                   slt_nm='ptid')
-  rp_2 <- getNdSlt(tree=tree_2, id=tree_2@root,
-                   slt_nm='ptid')
-  rp_1 <- rp_1[!rp_1 %in% tree_1@tips]
-  rp_2 <- rp_2[!rp_2 %in% tree_2@tips]
-  ignr_1 <- c(rp_1[1], tree_1@root)
-  ignr_2 <- c(rp_2[1], tree_2@root)
-  n1 <- tree_1@nds[!tree_1@nds %in% ignr_1]
-  n2 <- tree_2@nds[!tree_2@nds %in% ignr_2]
-  if(progress != "none") {
-    cat("Part 1/2 ....\n")
-  }
-  c1 <- getNdsKids(tree_1, n1, parallel=parallel,
-                   progress=progress)
-  c1 <- lapply(c1, sort)
-  if(progress != "none") {
-    cat("Part 2/2 ....\n")
-  }
-  c2 <- getNdsKids(tree_2, n2, parallel=parallel,
-                   progress=progress)
-  c2 <- lapply(c2, sort)
-  d <- sum(!c1 %in% c2) + sum(!c2 %in% c1)
+calcDstRF <- function(tree_1, tree_2, nrmlsd=FALSE) {
+  shared_tips <- c(tree_1@tips, tree_2@tips)
+  shared_tips <- shared_tips[duplicated(shared_tips)]
+  b1 <- getBiprts(tree = tree_1, tips = shared_tips, universal = TRUE,
+                  root = FALSE)
+  b2 <- getBiprts(tree = tree_2, tips = shared_tips, universal = TRUE,
+                  root = FALSE)
+  # count unique paritions and sum to calc RFD
+  d <- sum(!b1 %in% b2) + sum(!b2 %in% b1)
   if(nrmlsd) {
-    max_d <- (length(n1) + length(n2))
+    max_d <- (length(b1) + length(b2))
     d <- d/max_d
   }
   d

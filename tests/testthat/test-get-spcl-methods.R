@@ -4,6 +4,25 @@ library(testthat)
 
 # RUNNING
 context('Testing \'get-spcl-methods\'')
+test_that('getBiprts() works',{
+  tree <- randTree(10, wndmtrx = sample(c(TRUE, FALSE), 1))
+  # tip list
+  biprts <- getBiprts(tree = tree)
+  expect_true(all(tree@tips %in% unique(unlist(biprts))))
+  # partial list
+  subsample <- sample(tree@tips, 5)
+  biprts <- getBiprts(tree = tree, tips = subsample)
+  expect_true(all(subsample %in% unique(unlist(biprts))))
+  # unrooted
+  biprts <- getBiprts(tree = tree, root = FALSE)
+  expect_true(length(biprts) == 8)
+  # universal
+  biprts <- getBiprts(tree = tree, universal = TRUE, root = TRUE)
+  expect_true("1111111111" %in% biprts)
+  biprts <- getBiprts(tree = tree, universal = TRUE, root = FALSE)
+  expect_false("1111111111" %in% biprts)
+  expect_true(all(grepl(pattern = "^1", x = biprts)))
+})
 test_that('isUltrmtrc() works',{
   tree <- randTree(10, wndmtrx=sample(c(TRUE, FALSE), 1))
   expect_false(isUltrmtrc(tree))
