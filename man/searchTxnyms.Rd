@@ -29,6 +29,7 @@ All the tip labels are searched against a specified taxonomic database through t
 (So far only tested with NCBI database.)
 Use the infer argument to ensure a taxonym is returned for all nodes. If infer is true,
 all nodes without an identifed taxonym adopt the taxonym of their parent.
+Will raise a warning if connection fails and will return NULL.
 }
 \examples{
 tree <- randTree(8)

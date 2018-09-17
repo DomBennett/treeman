@@ -15,7 +15,7 @@ test_that('getBiprts() works',{
   expect_true(all(subsample %in% unique(unlist(biprts))))
   # unrooted
   biprts <- getBiprts(tree = tree, root = FALSE)
-  expect_true(length(biprts) == 8)
+  expect_true(length(biprts) %in% c(8, 7))
   # universal
   biprts <- getBiprts(tree = tree, universal = TRUE, root = TRUE)
   expect_true("1111111111" %in% biprts)

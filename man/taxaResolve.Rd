@@ -29,6 +29,7 @@ Returns dataframe containing GNR metadata for each name wames
 that cannot be resolved are returned as NA. Various datasources are 
 available, see \url{http://resolver.globalnames.org/data_sources} for a
 list and IDs. Default is 4 for NCBI.
+Will raise a warning if connection fails and will return NULL.
 }
 \examples{
 my_lovely_names <- c ('Gallus gallus', 'Pongo pingu', 'Homo sapiens',

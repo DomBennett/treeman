@@ -8,6 +8,7 @@
 #' (So far only tested with NCBI database.)
 #' Use the infer argument to ensure a taxonym is returned for all nodes. If infer is true,
 #' all nodes without an identifed taxonym adopt the taxonym of their parent.
+#' Will raise a warning if connection fails and will return NULL.
 #' @param tree TreeMan object
 #' @param cache T/F, create a local cache of downloaded names?
 #' @param parent specify parent of all names to prevent false names
@@ -30,10 +31,13 @@ searchTxnyms <- function (tree, cache=FALSE, parent=NULL, clean=TRUE,
   # Use GNR to label all nodes in a phylogeny
   # first replace all _ with spaces
   tip_labels <- gsub ('_', ' ', tree@tips)
-  taxa_res <- taxaResolve(tip_labels, datasource=4, cache=cache, parent=parent)
   nids <- tree@nds
   nd_labels <- rep(NA, tree@nall)
   names(nd_labels) <- tree@all
+  taxa_res <- taxaResolve(tip_labels, datasource=4, cache=cache, parent=parent)
+  if(is.null(taxa_res)) {
+    return(NULL)
+  }
   # for tips use the first word of the name
   nd_labels[tree@tips] <- vapply(strsplit(tip_labels, "\\s+"), function(x) x[1],
                                  character(1))
@@ -82,6 +86,7 @@ searchTxnyms <- function (tree, cache=FALSE, parent=NULL, clean=TRUE,
 #' that cannot be resolved are returned as NA. Various datasources are 
 #' available, see \url{http://resolver.globalnames.org/data_sources} for a
 #' list and IDs. Default is 4 for NCBI.
+#' Will raise a warning if connection fails and will return NULL.
 #' @param nms vector of names
 #' @param batch size of the batches to be queried
 #' @param datasource ID number of the datasource
@@ -159,6 +164,9 @@ taxaResolve <- function (nms, batch=100, datasource=4, genus=TRUE,
     bnms <- split (nms[!deja_vues], ceiling (x/batch))
     for (i in 1:length(btrms)) {
       temp.data <- batchResolve(btrms[[i]])
+      if (is.null(temp.data)) {
+        return(NULL)
+      }
       data[bnms[[i]]] <- temp.data
     }
   }
@@ -215,7 +223,7 @@ taxaResolve <- function (nms, batch=100, datasource=4, genus=TRUE,
   return (res)
 }
 
-.safeFromJSON <- function (url, max_trys=12, power=2) {
+.safeFromJSON <- function (url, max_trys=5, power=2) {
   # Safe wrapper for fromJSON
   trys <- 0
   waittime <- 2
@@ -231,7 +239,8 @@ taxaResolve <- function (nms, batch=100, datasource=4, genus=TRUE,
       return (json_obj)
     }
   }
-  stop("Failed to connect, server may be down.")
+  warning("Failed to connect, server may be down.")
+  list('data' = NULL)
 }
 
 .findClade <- function(lineages) {

@@ -38,10 +38,8 @@ test.lineages <-
 # RUNNING
 context('Testing \'server-methods\'')
 test_that ('.safeFromJSON([basic]) works', {
-  # simply show that an error is thrown and handled
-  expect_that (
-    treeman:::.safeFromJSON (
-      url='dummyaddress', max_trys=0), throws_error())
+  # simply show that a warning is thrown and handled
+  expect_warning(treeman:::.safeFromJSON(url='dummyaddress', max_trys=0))
 })
 test_that ('taxaResolve([basic]) works', {
   test_names <- c("Macaca mulatta", "Gorilla gorilla", "Homo sapiens", "Pan paniscus",
