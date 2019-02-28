@@ -55,6 +55,9 @@ test_that('setAge() works', {
   tree <- setAge(tree, val=1)
   tree_age <- getAge(tree)
   expect_that(tree_age, equals(1))
+  tree <- setAge(tree, val=2)
+  tree_age <- getAge(tree)
+  expect_that(tree_age, equals(2))
 })
 test_that('setNdOther() works', {
   tree <- randTree(10, wndmtrx=sample(c(TRUE, FALSE), 1))

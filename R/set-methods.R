@@ -81,11 +81,13 @@ setPD <- function(tree, val) {
 #' tree <- randTree(10)
 #' tree <- setAge(tree, val=1)
 #' summary(tree)
-setAge <- function(tree, val) {
+setAge <- function (tree, val) {
+  # cdmuir's correction
   tree_age <- getAge(tree)
-  spns <- getNdsSlt(tree, ids=tree@all, slt_nm="spn")
-  spns <- spns/(tree_age)
-  tree <- setNdsSpn(tree, ids=tree@all, vals=spns)
+  spns <- getNdsSlt(tree, ids = tree@all, slt_nm = "spn")
+  # spns <- spns/(tree_age) # previous, incorrect
+  spns <- spns * val / tree_age
+  tree <- setNdsSpn(tree, ids = tree@all, vals = spns)
   tree
 }
 
