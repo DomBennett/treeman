@@ -8,8 +8,7 @@ tree <- randTree(100, wndmtrx=sample(c(TRUE, FALSE), 1))
 # RUNNING
 context('Testing \'TreeMan Class\'')
 test_that('vaildObject() works', {
-  res <- validObject(tree)
-  expect_that(res, is_true())
+  expect_true(validObject(tree))
   tree@ndlst[['n2']][['id']] <- 'oh oh.... invalid ID'
   expect_error(validObject(tree))
 })

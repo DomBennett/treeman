@@ -52,7 +52,7 @@ test_that('calcPhyDv() works', {
   tips <- sample(tree['tips'], 3)
   pd <- calcPhyDv(tree, tips)
   parent <- getPrnt(tree, ids=tips)
-  test_that(pd, is_less_than(tree@ndlst[[parent]][['pd']]))
+  expect_lt(pd, tree['pd'])
 })
 test_that('calcFrPrp() works', {
   tree <- randTree(10, wndmtrx=sample(c(TRUE, FALSE), 1))

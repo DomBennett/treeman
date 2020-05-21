@@ -128,7 +128,7 @@ test_that('pinTips() work', {
                   tree_age=age_before)
   #phylo <- as(tree, 'phylo')
   #plot(phylo)
-  expect_that(validObject(tree), is_true())
+  expect_true(validObject(tree))
   #expect_that(tree['ntips'], equals(n_start+n_add))  # not necessarily true
   expect_that(pd_before, is_less_than(tree['pd']))
   expect_gt(tree['ntips'], ntips_before)
