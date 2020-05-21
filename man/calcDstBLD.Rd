@@ -4,8 +4,7 @@
 \alias{calcDstBLD}
 \title{Calculate the BLD between two trees}
 \usage{
-calcDstBLD(tree_1, tree_2, nrmlsd = FALSE, parallel = FALSE,
-  progress = "none")
+calcDstBLD(tree_1, tree_2, nrmlsd = FALSE, parallel = FALSE, progress = "none")
 }
 \arguments{
 \item{tree_1}{\code{TreeMan} object}

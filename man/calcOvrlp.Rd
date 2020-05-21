@@ -4,8 +4,14 @@
 \alias{calcOvrlp}
 \title{Calculate phylogenetic overlap}
 \usage{
-calcOvrlp(tree, ids_1, ids_2, nrmlsd = FALSE, parallel = FALSE,
-  progress = "none")
+calcOvrlp(
+  tree,
+  ids_1,
+  ids_2,
+  nrmlsd = FALSE,
+  parallel = FALSE,
+  progress = "none"
+)
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}

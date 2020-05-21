@@ -4,8 +4,15 @@
 \alias{addTip}
 \title{Add tip to a tree}
 \usage{
-addTip(tree, tid, sid, strt_age = NULL, end_age = 0, tree_age = NULL,
-  pid = paste0("p_", tid))
+addTip(
+  tree,
+  tid,
+  sid,
+  strt_age = NULL,
+  end_age = 0,
+  tree_age = NULL,
+  pid = paste0("p_", tid)
+)
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}

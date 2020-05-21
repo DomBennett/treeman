@@ -98,7 +98,6 @@ setAge <- function (tree, val) {
 #' @param tree \code{TreeMan} object
 #' @param id id of node whose preceding edge is to be changed
 #' @param val new span
-#' @param ... \code{plyr} arguments
 #' @seealso
 #' \code{\link{setNdsSpn}}
 #' \url{https://github.com/DomBennett/treeman/wiki/set-methods}

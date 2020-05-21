@@ -4,8 +4,14 @@
 \alias{taxaResolve}
 \title{Resolve taxonmic names online}
 \usage{
-taxaResolve(nms, batch = 100, datasource = 4, genus = TRUE,
-  cache = FALSE, parent = NULL)
+taxaResolve(
+  nms,
+  batch = 100,
+  datasource = 4,
+  genus = TRUE,
+  cache = FALSE,
+  parent = NULL
+)
 }
 \arguments{
 \item{nms}{vector of names}

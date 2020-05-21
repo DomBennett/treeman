@@ -4,8 +4,7 @@
 \alias{calcDstTrp}
 \title{Calculate the triplet distance between two trees}
 \usage{
-calcDstTrp(tree_1, tree_2, nrmlsd = FALSE, parallel = FALSE,
-  progress = "none")
+calcDstTrp(tree_1, tree_2, nrmlsd = FALSE, parallel = FALSE, progress = "none")
 }
 \arguments{
 \item{tree_1}{\code{TreeMan} object}

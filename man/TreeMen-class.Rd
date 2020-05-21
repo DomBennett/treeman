@@ -7,7 +7,6 @@
 \alias{cTrees,TreeMen-method}
 \alias{[[,TreeMen,ANY-method}
 \alias{[,TreeMen,character,missing,missing-method}
-\alias{TreeMen-method}
 \alias{Extract}
 \alias{slots}
 \alias{from}

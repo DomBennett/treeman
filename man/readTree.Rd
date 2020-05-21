@@ -4,8 +4,14 @@
 \alias{readTree}
 \title{Read a Newick tree}
 \usage{
-readTree(file = NULL, text = NULL, spcl_slt_nm = "Unknown",
-  wndmtrx = FALSE, parallel = FALSE, progress = "none")
+readTree(
+  file = NULL,
+  text = NULL,
+  spcl_slt_nm = "Unknown",
+  wndmtrx = FALSE,
+  parallel = FALSE,
+  progress = "none"
+)
 }
 \arguments{
 \item{file}{file path}

@@ -4,8 +4,14 @@
 \alias{writeTree}
 \title{Write a Newick tree}
 \usage{
-writeTree(tree, file, append = FALSE, ndLabels = function(nd) {    
-  return(NULL) }, parallel = FALSE, progress = "none")
+writeTree(
+  tree,
+  file,
+  append = FALSE,
+  ndLabels = function(nd) {     return(NULL) },
+  parallel = FALSE,
+  progress = "none"
+)
 }
 \arguments{
 \item{tree}{\code{TreeMan} object}

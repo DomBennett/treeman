@@ -12,8 +12,6 @@ setNdSpn(tree, id, val)
 \item{id}{id of node whose preceding edge is to be changed}
 
 \item{val}{new span}
-
-\item{...}{\code{plyr} arguments}
 }
 \description{
 Return a tree with the span of a node altered.

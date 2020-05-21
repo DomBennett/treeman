@@ -4,8 +4,7 @@
 \alias{searchTxnyms}
 \title{Get node labels based on online taxonomic database}
 \usage{
-searchTxnyms(tree, cache = FALSE, parent = NULL, clean = TRUE,
-  infer = TRUE)
+searchTxnyms(tree, cache = FALSE, parent = NULL, clean = TRUE, infer = TRUE)
 }
 \arguments{
 \item{tree}{TreeMan object}
