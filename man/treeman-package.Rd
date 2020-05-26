@@ -7,7 +7,9 @@ Phylogenetic Tree Manipulation
 }
 \description{
 Manipulate phylogenetic trees in R simply, intuitively and efficiently with
-a list-based tree structure.
+a list-based tree structure. Supported methods include: adding and removing
+tips or nodes, rescaling branches, calculating common phylogenetic metrics plus
+more!
 }
 \details{
 \tabular{ll}{
@@ -24,12 +26,12 @@ D.J. Bennett
 Maintainer: D.J. Bennett <dominic.john.bennett@gmail.com>
 }
 \references{
-No key references
+Bennett, D.J., Sutton, M.D. & Turvey, S.T., 2017. treeman: an R package for efficient and intuitive manipulation of phylogenetic trees. BMC Research Notes, 10(1), p.30. DOI: 10.1186/s13104-016-2340-8
 }
-\keyword{ phylogeny
-evolution
-macroevolution
-tree simulation }
+\concept{phylogeny}
+\concept{evolution}
+\concept{macroevolution}
+\concept{tree simulation}
 \seealso{
 \url{https://github.com/DomBennett/treeman/wiki}
 }
