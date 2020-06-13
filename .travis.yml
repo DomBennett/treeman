@@ -3,9 +3,9 @@ language: r
 warnings_are_errors: false
 sudo: required
 
-r_binary_packages:
- - plyr
- - testthat
+#r_binary_packages:
+# - plyr
+# - testthat
 r_github_packages:
   - jimhester/covr
 
