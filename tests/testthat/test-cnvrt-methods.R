@@ -14,6 +14,20 @@ test_that('phylo-to-TreeMan works', {
   tree <- as(tree, "TreeMan")
   expect_equal(class(tree)[1], "TreeMan")
 })
+test_that('phylo-to-TreeMan works w/ node labels', {
+  tree <- ape::rtree(100)
+  tree$node.label <- paste0("Node", seq_len(tree$Nnode))
+  tree_tm <- as(tree, "TreeMan")
+  expect_equal(class(tree_tm)[1], "TreeMan")
+  expect_true(all(tree_tm["nds"] %in% tree$node.label))
+})
+test_that('phylo-to-TreeMan-to-phylo works w/ node labels', {
+  tree <- ape::rtree(100)
+  tree$node.label <- paste0("Node", seq_len(tree$Nnode))
+  tree_cnvrt <- as(as(tree, "TreeMan"), "phylo")
+  expect_equal(class(tree)[1], "phylo")
+  expect_equal(tree, tree_cnvrt)
+})
 test_that('multiPhylo-to-TreeMen works', {
   trees <- c(ape::rtree(100), ape::rtree(100), ape::rtree(100))
   trees <- as(trees, "TreeMen")
