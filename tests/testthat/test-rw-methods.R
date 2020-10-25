@@ -25,11 +25,19 @@ test_that('readTree([w/o spans]) works', {
   expect_that(tree['ntips'], equals(4))
   expect_false(tree['wspn'])
 })
-test_that('readTree([w/ node labels]) works', {
+test_that('readTree([w/ malformed node labels]) works', {
   text <- "(A,B,(C,D)0.9)0.8;"
   tree <- readTree(text=text, spcl_slt_nm='bootstrap',
                    wndmtrx=sample(c(TRUE, FALSE), 1))
   expect_that(tree['ntips'], equals(4))
+  expect_false(tree['wspn'])
+})
+test_that('readTree([w/ node labels]) works', {
+  text <- "(A,B,(C,D)N1)N2;"
+  tree <- readTree(text=text, spcl_slt_nm='bootstrap',
+                   wndmtrx=sample(c(TRUE, FALSE), 1))
+  expect_that(tree['ntips'], equals(4))
+  expect_that(tree['nds'], equals(c("N1","N2")))
   expect_false(tree['wspn'])
 })
 test_that('writeTree() works', {
