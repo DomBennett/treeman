@@ -4,7 +4,8 @@
 \alias{phylo-to-TreeMan}
 \title{Convert phylo to TreeMan}
 \description{
-Return a \code{TreeMan} from ape's \code{phylo}
+Return a \code{TreeMan} from ape's \code{phylo}. This will
+preserve node labels, if they are a alphanumeric.
 }
 \examples{
 library(treeman)

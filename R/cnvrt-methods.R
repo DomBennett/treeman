@@ -16,7 +16,8 @@ setOldClass('multiPhylo')
 
 #' @name TreeMan-to-phylo
 #' @title Convert TreeMan to phylo
-#' @description Return ape's \code{phylo} from a \code{TreeMan}. This will preserve node labels if they are different from the default labels (n#).
+#' @description Return ape's \code{phylo} from a \code{TreeMan}. This will
+#' preserve node labels if they are different from the default labels (n#).
 #' @seealso 
 #' \code{\link{phylo-to-TreeMan}},
 #' \code{\link{TreeMen-to-multiPhylo}}
@@ -37,8 +38,8 @@ setAs(from="phylo", to="TreeMan", def=function(from, to) {
 
 #' @name phylo-to-TreeMan
 #' @title Convert phylo to TreeMan
-#' @description Return a \code{TreeMan} from ape's \code{phylo}. This will preserve node labels, if they are a alphanumeric.
-
+#' @description Return a \code{TreeMan} from ape's \code{phylo}. This will
+#' preserve node labels, if they are a alphanumeric.
 #' @seealso
 #' \code{\link{TreeMan-to-phylo}},
 #' \code{\link{TreeMen-to-multiPhylo}}
@@ -55,9 +56,9 @@ setAs(from="TreeMan", to="phylo", def=function(from, to) {
   # use a node label function function that writes the node labels during the 
   # conversion, if they are non default.
   if (all(from["nds"] == paste0("n", seq_along(from["nds"])))) {
-    node_labeller <- function(nd) { return(NULL) } # no node labels 
+    nodeLabeller <- function(nd) { return(NULL) } # no node labels 
   } else {
-    nodeLabeller <- function(n) { n[['id']] } # writes node labels 
+    nodeLabeller <- function(nd) { nd[['id']] } # writes node labels 
   }
 
   writeTree(from, file=temp_file, ndLabels = nodeLabeller)
