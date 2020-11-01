@@ -56,10 +56,10 @@ setAs(from="TreeMan", to="phylo", def=function(from, to) {
   if (all(from["nds"] == paste0("n", seq_along(from["nds"])))) {
     node_labeller <- function(nd) { return(NULL) } # no node labels 
   } else {
-    node_labeller <- function(n) { print(n); n[['id']] } # writes node labels 
+    nodeLabeller <- function(n) { n[['id']] } # writes node labels 
   }
 
-  writeTree(from, file=temp_file, ndLabels = node_labeller)
+  writeTree(from, file=temp_file, ndLabels = nodeLabeller)
   tree <- ape::read.tree(file=temp_file)
   file.remove(temp_file)
   return(tree)
