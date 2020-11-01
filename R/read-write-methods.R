@@ -199,7 +199,13 @@ readTree <- function(file=NULL, text=NULL, spcl_slt_nm='Unknown', wndmtrx=FALSE,
   other <- rep(NA, length(ids))
   intnds <- 1:length(ids) %in% prinds
   other[intnds] <- ids[intnds]
-  ids[intnds] <- paste0('n', which(intnds))
+  # overwrite internal node ids only if at least one is malformed
+  if (any(grepl('[^a-zA-Z_0-9]', ids[intnds]))){
+    ids[intnds] <- paste0('n', which(intnds))
+  } else {
+      # if using internal node ids as ids, no need for special slot
+      other[intnds] <- NA
+  }
   # rm NAs from IDs
   pull <- is.na(ids)
   ids[pull] <- paste0('n', which(pull))
