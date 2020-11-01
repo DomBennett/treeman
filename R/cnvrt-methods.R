@@ -16,7 +16,7 @@ setOldClass('multiPhylo')
 
 #' @name TreeMan-to-phylo
 #' @title Convert TreeMan to phylo
-#' @description Return ape's \code{phylo} from a \code{TreeMan}
+#' @description Return ape's \code{phylo} from a \code{TreeMan}. This will preserve node labels if they are different from the default labels (n#).
 #' @seealso 
 #' \code{\link{phylo-to-TreeMan}},
 #' \code{\link{TreeMen-to-multiPhylo}}
@@ -37,7 +37,8 @@ setAs(from="phylo", to="TreeMan", def=function(from, to) {
 
 #' @name phylo-to-TreeMan
 #' @title Convert phylo to TreeMan
-#' @description Return a \code{TreeMan} from ape's \code{phylo}
+#' @description Return a \code{TreeMan} from ape's \code{phylo}. This will preserve node labels, if they are a alphanumeric.
+
 #' @seealso
 #' \code{\link{TreeMan-to-phylo}},
 #' \code{\link{TreeMen-to-multiPhylo}}
