@@ -25,10 +25,19 @@ test_that('readTree([w/o spans]) works', {
   expect_that(tree['ntips'], equals(4))
   expect_false(tree['wspn'])
 })
-test_that('readTree([w/ malformed node labels]) works', {
+test_that('readTree([w/ special node slot]) works', {
   text <- "(A,B,(C,D)0.9)0.8;"
   tree <- readTree(text=text, spcl_slt_nm='bootstrap',
                    wndmtrx=sample(c(TRUE, FALSE), 1))
+  slt_bs <- getNdsSlt(tree = tree, slt_nm = 'bootstrap', ids = tree['nds'])
+  expect_true(all(c('0.9', '0.8') %in% slt_bs))
+  expect_equal(tree['othr_slt_nms'], 'bootstrap')
+  expect_that(tree['ntips'], equals(4))
+  expect_false(tree['wspn'])
+})
+test_that('readTree([w/ non-standard node labels]) works', {
+  text <- "(A,B,(C,D)%N1)!N2;"
+  tree <- readTree(text=text)
   expect_that(tree['ntips'], equals(4))
   expect_false(tree['wspn'])
 })
